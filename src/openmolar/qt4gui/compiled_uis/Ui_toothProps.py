@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/toothProps.ui'
@@ -17,6 +18,7 @@ except AttributeError:
 
 
 class Ui_Form(object):
+
     def setupUi(self, Form):
         Form.setObjectName(_fromUtf8("Form"))
         Form.resize(150, 479)
@@ -32,7 +34,10 @@ class Ui_Form(object):
         self.edit_pushButton.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.edit_pushButton.setText(_fromUtf8(""))
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/pencil.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(
+            QtGui.QPixmap(_fromUtf8(":/icons/pencil.png")),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
         self.edit_pushButton.setIcon(icon)
         self.edit_pushButton.setFlat(True)
         self.edit_pushButton.setObjectName(_fromUtf8("edit_pushButton"))
@@ -47,26 +52,37 @@ class Ui_Form(object):
         self.tooth_label.setObjectName(_fromUtf8("tooth_label"))
         self.horizontalLayout.addWidget(self.tooth_label)
         self.clear_pushButton = QtGui.QPushButton(Form)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        sizePolicy = QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Preferred,
+            QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.clear_pushButton.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.clear_pushButton.sizePolicy(
+            ).hasHeightForWidth(
+            ))
         self.clear_pushButton.setSizePolicy(sizePolicy)
         self.clear_pushButton.setMinimumSize(QtCore.QSize(0, 20))
         self.clear_pushButton.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.clear_pushButton.setText(_fromUtf8(""))
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/eraser.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(
+            QtGui.QPixmap(_fromUtf8(":/eraser.png")),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
         self.clear_pushButton.setIcon(icon1)
         self.clear_pushButton.setFlat(True)
         self.clear_pushButton.setObjectName(_fromUtf8("clear_pushButton"))
         self.horizontalLayout.addWidget(self.clear_pushButton)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.editframe = QtGui.QFrame(Form)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
+        sizePolicy = QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Expanding,
+            QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.editframe.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.editframe.sizePolicy().hasHeightForWidth())
         self.editframe.setSizePolicy(sizePolicy)
         self.editframe.setMinimumSize(QtCore.QSize(131, 24))
         self.editframe.setMaximumSize(QtCore.QSize(16777215, 24))
@@ -146,16 +162,21 @@ class Ui_Form(object):
         self.leftTooth_pushButton.setMaximumSize(QtCore.QSize(80, 16777215))
         self.leftTooth_pushButton.setText(_fromUtf8(""))
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(_fromUtf8(":/back.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(
+            QtGui.QPixmap(_fromUtf8(":/back.png")),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
         self.leftTooth_pushButton.setIcon(icon2)
         self.leftTooth_pushButton.setIconSize(QtCore.QSize(24, 18))
         self.leftTooth_pushButton.setFlat(True)
-        self.leftTooth_pushButton.setObjectName(_fromUtf8("leftTooth_pushButton"))
+        self.leftTooth_pushButton.setObjectName(
+            _fromUtf8("leftTooth_pushButton"))
         self.gridLayout_2.addWidget(self.leftTooth_pushButton, 0, 0, 1, 1)
         self.dressing_pushButton = QtGui.QPushButton(Form)
         self.dressing_pushButton.setMinimumSize(QtCore.QSize(32, 24))
         self.dressing_pushButton.setMaximumSize(QtCore.QSize(80, 40))
-        self.dressing_pushButton.setObjectName(_fromUtf8("dressing_pushButton"))
+        self.dressing_pushButton.setObjectName(
+            _fromUtf8("dressing_pushButton"))
         self.gridLayout_2.addWidget(self.dressing_pushButton, 1, 2, 1, 1)
         self.pushButton = QtGui.QPushButton(Form)
         self.pushButton.setMinimumSize(QtCore.QSize(32, 24))
@@ -169,11 +190,15 @@ class Ui_Form(object):
         self.rightTooth_pushButton.setMaximumSize(QtCore.QSize(80, 16777215))
         self.rightTooth_pushButton.setText(_fromUtf8(""))
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(_fromUtf8(":/forward.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon3.addPixmap(
+            QtGui.QPixmap(_fromUtf8(":/forward.png")),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
         self.rightTooth_pushButton.setIcon(icon3)
         self.rightTooth_pushButton.setIconSize(QtCore.QSize(24, 18))
         self.rightTooth_pushButton.setFlat(True)
-        self.rightTooth_pushButton.setObjectName(_fromUtf8("rightTooth_pushButton"))
+        self.rightTooth_pushButton.setObjectName(
+            _fromUtf8("rightTooth_pushButton"))
         self.gridLayout_2.addWidget(self.rightTooth_pushButton, 0, 2, 1, 1)
         self.verticalLayout.addLayout(self.gridLayout_2)
         self.line = QtGui.QFrame(Form)
@@ -188,7 +213,8 @@ class Ui_Form(object):
         self.cb_scrollArea.setObjectName(_fromUtf8("cb_scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 144, 147))
-        self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
+        self.scrollAreaWidgetContents.setObjectName(
+            _fromUtf8("scrollAreaWidgetContents"))
         self.cb_scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.verticalLayout.addWidget(self.cb_scrollArea)
 
@@ -237,4 +263,3 @@ if __name__ == "__main__":
     ui.setupUi(Form)
     Form.show()
     sys.exit(app.exec_())
-

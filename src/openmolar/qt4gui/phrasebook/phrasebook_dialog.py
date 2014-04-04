@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License
-# for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from PyQt4 import QtGui, QtCore
 import types
@@ -15,12 +31,13 @@ from openmolar.dbtools.phrasebook import PHRASEBOOKS
 try:
     from collections import OrderedDict
 except ImportError:
-    #OrderedDict only came in python 2.7
+    # OrderedDict only came in python 2.7
     print "using openmolar.backports for OrderedDict"
     from openmolar.backports import OrderedDict
 
 
 class shadePicker(QtGui.QFrame):
+
     def __init__(self, parent=None):
         super(shadePicker, self).__init__(parent)
 
@@ -30,18 +47,19 @@ class shadePicker(QtGui.QFrame):
         self.cb.setText(_("Shade"))
 
         self.comboBox = QtGui.QComboBox(self)
-        self.comboBox.addItems(["A1","A2","A3","A3.5","A4","B1","B2","B3","B4",
-        "C1","C2","C3","C4","D1","D2","D3","D4"])
+        self.comboBox.addItems(
+            ["A1", "A2", "A3", "A3.5", "A4", "B1", "B2", "B3", "B4",
+             "C1", "C2", "C3", "C4", "D1", "D2", "D3", "D4"])
         self.comboBox.setCurrentIndex(-1)
 
         layout.addWidget(self.cb)
         layout.addWidget(self.comboBox)
         spacerItem = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding,
-            QtGui.QSizePolicy.Minimum)
+                                       QtGui.QSizePolicy.Minimum)
         layout.addItem(spacerItem)
 
         QtCore.QObject.connect(self.comboBox,
-            QtCore.SIGNAL("currentIndexChanged(int)"), self.slot)
+                               QtCore.SIGNAL("currentIndexChanged(int)"), self.slot)
 
     def slot(self, index):
         self.cb.setChecked(True)
@@ -49,7 +67,9 @@ class shadePicker(QtGui.QFrame):
     def result(self):
         return _("Shade") + " - " + self.comboBox.currentText()
 
+
 class PhraseBookDialog(QtGui.QDialog):
+
     def __init__(self, parent=None, id=0):
         QtGui.QDialog.__init__(self, parent)
         self.setWindowTitle(_("Phrase Book"))
@@ -59,7 +79,7 @@ class PhraseBookDialog(QtGui.QDialog):
         self.buttonBox = QtGui.QDialogButtonBox(self)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(
-            QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+            QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setCenterButtons(True)
         self.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), self.accept)
         self.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), self.reject)
@@ -84,7 +104,7 @@ class PhraseBookDialog(QtGui.QDialog):
                     layout.addStretch()
                 elif phrase.hasAttribute("sub_heading"):
                     text = phrase.firstChild.data
-                    label = QtGui.QLabel(u"<b>%s</b>"%text)
+                    label = QtGui.QLabel(u"<b>%s</b>" % text)
                     layout.addWidget(label)
                 else:
                     text = phrase.firstChild.data
@@ -100,20 +120,20 @@ class PhraseBookDialog(QtGui.QDialog):
                     self.dict[sp.cb] = sp.result
 
             spacerItem = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum,
-            QtGui.QSizePolicy.Expanding)
+                                           QtGui.QSizePolicy.Expanding)
             layout.addItem(spacerItem)
 
             self.tabWidget.addTab(page, icon, header[0].firstChild.data)
 
     def sizeHint(self):
-        return QtCore.QSize(800,400)
+        return QtCore.QSize(800, 400)
 
     @property
     def selectedPhrases(self):
         retlist = []
         for cb, value in self.dict.iteritems():
             if cb.isChecked():
-                if type(value) == types.MethodType:
+                if isinstance(value, types.MethodType):
                     text = value()
                 else:
                     text = value

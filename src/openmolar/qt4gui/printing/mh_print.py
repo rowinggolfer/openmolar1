@@ -1,30 +1,31 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2012-2013,  Neil Wallace <neil@openmolar.com>                  ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
-
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from __future__ import division
 import datetime
 
-from PyQt4 import QtCore,QtGui
+from PyQt4 import QtCore, QtGui
 
 from openmolar.settings import localsettings
 
@@ -33,13 +34,16 @@ MARGIN_RIGHT = 25
 MARGIN_TOP = 20
 MARGIN_BOTTOM = 30
 
-#alter this to print rectangles
+# alter this to print rectangles
 DEBUG = False
 
+
 class MHPrint(object):
+
     '''
     A class to print the MH form for a patient
     '''
+
     def __init__(self, pt, parent):
         self.pt = pt
         self.parent = parent
@@ -64,26 +68,30 @@ class MHPrint(object):
             print a rectangle
             '''
             bottom_y = y + line_height
-            left_point = QtCore.QPointF(MARGIN_LEFT + left*col_width, bottom_y)
+            left_point = QtCore.QPointF(
+                MARGIN_LEFT +
+                left *
+                col_width,
+                bottom_y)
             right_point = QtCore.QPointF(
-                MARGIN_LEFT + (left +colspan) *col_width, bottom_y)
+                MARGIN_LEFT + (left + colspan) * col_width, bottom_y)
             painter.drawLine(left_point, right_point)
 
         def print_text(text, y, left=0, colspan=12, rowspan=1,
-        option=QtCore.Qt.AlignLeft):
+                       option=QtCore.Qt.AlignLeft):
             '''
             print the text in a box
             '''
             rect = QtCore.QRectF(
-                MARGIN_LEFT + left*col_width, y,
-                colspan*col_width-5, line_height * rowspan
-                )
+                MARGIN_LEFT + left * col_width, y,
+                colspan * col_width - 5, line_height * rowspan
+            )
             if DEBUG:
                 painter.drawRect(rect)
-            text_option = QtGui.QTextOption(option|QtCore.Qt.AlignVCenter)
+            text_option = QtGui.QTextOption(option | QtCore.Qt.AlignVCenter)
             text_option.setWrapMode(text_option.NoWrap)
             painter.drawText(rect, text, text_option)
-            return line_height*rowspan # so that y can be adjusted accordingly
+            return line_height * rowspan  # so that y can be adjusted accordingly
 
         dialog = QtGui.QPrintDialog(self.printer, self.parent)
 
@@ -93,8 +101,8 @@ class MHPrint(object):
         page_width = self.printer.pageRect().width() - (
             MARGIN_LEFT + MARGIN_RIGHT)
 
-        #use a 12 column grid
-        col_width = page_width/12
+        # use a 12 column grid
+        col_width = page_width / 12
 
         painter = QtGui.QPainter(self.printer)
         pen = QtGui.QPen(QtCore.Qt.black)
@@ -106,7 +114,7 @@ class MHPrint(object):
         painter.setFont(font)
 
         line_height = QtGui.QFontMetrics(painter.font()).height()
-        padding = line_height/6
+        padding = line_height / 6
 
         y = MARGIN_TOP
 
@@ -118,20 +126,19 @@ class MHPrint(object):
 
         print_line(y)
 
-        y += 2*line_height
+        y += 2 * line_height
 
         painter.setFont(QtGui.QFont("sans", 9))
         line_height = QtGui.QFontMetrics(painter.font()).height()
-        padding = line_height/3
+        padding = line_height / 3
 
-        print_text(str(self.pt.serialno), MARGIN_TOP, 11,1)
+        print_text(str(self.pt.serialno), MARGIN_TOP, 11, 1)
 
         bold_on()
 
         y += print_text(_("PLEASE CHECK/COMPLETE THESE DETAILS"), y)
         y += padding
         section_bottom = y
-
 
         print_text(_("Address"), y, 0, colspan=2, option=QtCore.Qt.AlignRight)
         bold_off()
@@ -143,13 +150,13 @@ class MHPrint(object):
             self.pt.addr3,
             self.pt.town,
             self.pt.county,
-            self.pt.pcde):
+                self.pt.pcde):
             if value in (None, ""):
                 continue
 
             y += print_text(value, y, 2, colspan=5)
 
-        y = section_bottom #move back up to print next rows
+        y = section_bottom  # move back up to print next rows
 
         for field, value in (
             (_("Date of Birth"), localsettings.formatDate(self.pt.dob)),
@@ -158,9 +165,9 @@ class MHPrint(object):
             (_("Mobile"), self.pt.mobile),
             (_("Email"), self.pt.email1),
             (_("Alternate Email"), self.pt.email2),
-            ):
+        ):
             if (value in (None, "")
-            and field in (_("Work tel"),_("Alternate Email"))):
+               and field in (_("Work tel"), _("Alternate Email"))):
                 continue
 
             bold_on()
@@ -173,11 +180,11 @@ class MHPrint(object):
 
         y += line_height
         print_line(y)
-        y += 2*line_height
+        y += 2 * line_height
 
         bold_on()
         print_text(_("Please Circle"), y, 6, colspan=2,
-            option=QtCore.Qt.AlignCenter)
+                   option=QtCore.Qt.AlignCenter)
         y += print_text(_("Give Details"), y, 8, colspan=4)
 
         y += print_text(_("ARE YOU CURRENTLY?"), y, 0, colspan=6)
@@ -203,7 +210,12 @@ class MHPrint(object):
             print_text(_("Pregnant or Breast Feeding?"), y, 0.5, 5.5)
             print_line(y, 8, 4)
             print_text(_("Yes"), y, 6, colspan=1, option=QtCore.Qt.AlignRight)
-            y += print_text(_("No"), y, 7, colspan=1, option=QtCore.Qt.AlignLeft)
+            y += print_text(
+                _("No"),
+                y,
+                7,
+                colspan=1,
+                option=QtCore.Qt.AlignLeft)
 
         y += line_height
         bold_on()
@@ -211,24 +223,60 @@ class MHPrint(object):
         y += padding
         bold_off()
 
-        print_text(_("Yes"), y, 6, colspan=1, rowspan=2, option=QtCore.Qt.AlignRight)
-        print_text(_("No"), y, 7, colspan=1, rowspan=2, option=QtCore.Qt.AlignLeft)
-        y += print_text(_("Allergies to Any Medicines or Substances?"), y, 0.5, 5.5)
+        print_text(
+            _("Yes"),
+            y,
+            6,
+            colspan=1,
+            rowspan=2,
+            option=QtCore.Qt.AlignRight)
+        print_text(
+            _("No"),
+            y,
+            7,
+            colspan=1,
+            rowspan=2,
+            option=QtCore.Qt.AlignLeft)
+        y += print_text(
+            _("Allergies to Any Medicines or Substances?"),
+            y,
+            0.5,
+            5.5)
         print_line(y, 8, 4)
         y += print_text(_("eg. Penicillin, aspirin or latex."), y, 2, 4)
 
         y += padding
 
-        print_text(_("Bronchitis, Asthma, other Chest Conditions?"), y, 0.5, 5.5)
+        print_text(
+            _("Bronchitis, Asthma, other Chest Conditions?"),
+            y,
+            0.5,
+            5.5)
         print_line(y, 8, 4)
         print_text(_("Yes"), y, 6, colspan=1, option=QtCore.Qt.AlignRight)
         y += print_text(_("No"), y, 7, colspan=1, option=QtCore.Qt.AlignLeft)
 
         y += padding
 
-        print_text(_("Yes"), y, 6, colspan=1, rowspan=2, option=QtCore.Qt.AlignRight)
-        print_text(_("No"), y, 7, colspan=1, rowspan=2, option=QtCore.Qt.AlignLeft)
-        y += print_text(_("Heart Problems, Angina, Blood pressure"), y, 0.5, 5.5)
+        print_text(
+            _("Yes"),
+            y,
+            6,
+            colspan=1,
+            rowspan=2,
+            option=QtCore.Qt.AlignRight)
+        print_text(
+            _("No"),
+            y,
+            7,
+            colspan=1,
+            rowspan=2,
+            option=QtCore.Qt.AlignLeft)
+        y += print_text(
+            _("Heart Problems, Angina, Blood pressure"),
+            y,
+            0.5,
+            5.5)
         print_line(y, 8, 4)
         y += print_text(_("problems, or a stroke?"), y, 2, 4)
 
@@ -248,23 +296,55 @@ class MHPrint(object):
 
         y += padding
 
-        print_text(_("Yes"), y, 6, colspan=1, rowspan=2, option=QtCore.Qt.AlignRight)
-        print_text(_("No"), y, 7, colspan=1, rowspan=2, option=QtCore.Qt.AlignLeft)
-        y += print_text(_("Bruising or persistant bleeding after"), y, 0.5, 5.5)
+        print_text(
+            _("Yes"),
+            y,
+            6,
+            colspan=1,
+            rowspan=2,
+            option=QtCore.Qt.AlignRight)
+        print_text(
+            _("No"),
+            y,
+            7,
+            colspan=1,
+            rowspan=2,
+            option=QtCore.Qt.AlignLeft)
+        y += print_text(
+            _("Bruising or persistant bleeding after"),
+            y,
+            0.5,
+            5.5)
         print_line(y, 8, 4)
         y += print_text(_("surgery or tooth extraction?"), y, 2, 4)
 
         y += padding
 
-        print_text(_("Yes"), y, 6, colspan=1, rowspan=2, option=QtCore.Qt.AlignRight)
-        print_text(_("No"), y, 7, colspan=1, rowspan=2, option=QtCore.Qt.AlignLeft)
+        print_text(
+            _("Yes"),
+            y,
+            6,
+            colspan=1,
+            rowspan=2,
+            option=QtCore.Qt.AlignRight)
+        print_text(
+            _("No"),
+            y,
+            7,
+            colspan=1,
+            rowspan=2,
+            option=QtCore.Qt.AlignLeft)
         y += print_text(_("Any Infectious Diseases"), y, 0.5, 5.5)
         print_line(y, 8, 4)
         y += print_text(_("(including HIV and Hepatitis)?"), y, 2, 4)
 
         y += line_height
         bold_on()
-        y += print_text(_("DID YOU, AS A CHILD OR SINCE HAVE"), y, 0, colspan=6)
+        y += print_text(
+            _("DID YOU, AS A CHILD OR SINCE HAVE"),
+            y,
+            0,
+            colspan=6)
         y += padding
         bold_off()
 
@@ -275,14 +355,22 @@ class MHPrint(object):
 
         y += padding
 
-        print_text(_("Liver Disease (eg. Jaundice or Hepatitis)?"), y, 0.5, 5.5)
+        print_text(
+            _("Liver Disease (eg. Jaundice or Hepatitis)?"),
+            y,
+            0.5,
+            5.5)
         print_line(y, 8, 4)
         print_text(_("Yes"), y, 6, colspan=1, option=QtCore.Qt.AlignRight)
         y += print_text(_("No"), y, 7, colspan=1, option=QtCore.Qt.AlignLeft)
 
         y += padding
 
-        print_text(_("A bad reaction to a Local or General Anaesthetic?"), y, 0.5, 5.5)
+        print_text(
+            _("A bad reaction to a Local or General Anaesthetic?"),
+            y,
+            0.5,
+            5.5)
         print_line(y, 8, 4)
         print_text(_("Yes"), y, 6, colspan=1, option=QtCore.Qt.AlignRight)
         y += print_text(_("No"), y, 7, colspan=1, option=QtCore.Qt.AlignLeft)
@@ -310,26 +398,40 @@ class MHPrint(object):
 
         y += padding
 
-        print_text(_("Yes"), y, 6, colspan=1, rowspan=2, option=QtCore.Qt.AlignRight)
-        print_text(_("No"), y, 7, colspan=1, rowspan=2, option=QtCore.Qt.AlignLeft)
+        print_text(
+            _("Yes"),
+            y,
+            6,
+            colspan=1,
+            rowspan=2,
+            option=QtCore.Qt.AlignRight)
+        print_text(
+            _("No"),
+            y,
+            7,
+            colspan=1,
+            rowspan=2,
+            option=QtCore.Qt.AlignLeft)
         y += print_text(_("Treatment that required you to be"), y, 0.5, 5.5)
         print_line(y, 8, 4)
         y += print_text(_("in Hospital?"), y, 2, 4)
         y += padding
 
-        print_text(_("A close relative with Creutzfeldt Jacob Disease?"), y, 0.5, 5.5)
+        print_text(
+            _("A close relative with Creutzfeldt Jacob Disease?"),
+            y,
+            0.5,
+            5.5)
         print_line(y, 8, 4)
         print_text(_("Yes"), y, 6, colspan=1, option=QtCore.Qt.AlignRight)
         y += print_text(_("No"), y, 7, colspan=1, option=QtCore.Qt.AlignLeft)
 
-
         y += line_height
         print_line(y)
-        y += line_height*2
+        y += line_height * 2
         bold_on()
         print_text(
-_("PLEASE GIVE ANY OTHER DETAILS WHICH YOU THINK MAY BE RELEVANT TO YOUR DENTIST")
-        , y)
+            _("PLEASE GIVE ANY OTHER DETAILS WHICH YOU THINK MAY BE RELEVANT TO YOUR DENTIST"), y)
 
         y = self.printer.pageRect().height() - MARGIN_BOTTOM
 
@@ -341,7 +443,7 @@ _("PLEASE GIVE ANY OTHER DETAILS WHICH YOU THINK MAY BE RELEVANT TO YOUR DENTIST
 
 
 if __name__ == "__main__":
-    #DEBUG = True
+    # DEBUG = True
     localsettings.initiate()
     app = QtGui.QApplication([])
     from openmolar.dbtools.patient_class import patient
@@ -351,4 +453,3 @@ if __name__ == "__main__":
 
     mh_print = MHPrint(pt, mw)
     mh_print.print_()
-

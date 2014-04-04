@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License
-# for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 has one class, a custom widget which inherits from QWidget
@@ -22,7 +38,9 @@ from openmolar.qt4gui import colours
 
 LOGGER = logging.getLogger("openmolar")
 
+
 class chartWidget(QtGui.QWidget):
+
     '''
     a custom widget to show a standard UK dental chart
     - allows for user navigation with mouse and/or keyboard
@@ -40,12 +58,12 @@ class chartWidget(QtGui.QWidget):
         QtGui.QWidget.__init__(self, parent)
 
         self.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,
-        QtGui.QSizePolicy.Expanding))
+                                             QtGui.QSizePolicy.Expanding))
 
-        self.grid = (["ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1', \
-        'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8'],
-        ["lr8", "lr7", "lr6", "lr5", 'lr4', 'lr3', 'lr2', 'lr1', \
-        'll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8'])
+        self.grid = (["ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1',
+                      'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8'],
+                     ["lr8", "lr7", "lr6", "lr5", 'lr4', 'lr3', 'lr2', 'lr1',
+                      'll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8'])
 
         self.clear()
         self.isStaticChart = True
@@ -61,13 +79,13 @@ class chartWidget(QtGui.QWidget):
         '''
         #--clear individual teeth
         self.ur8, self.ur7, self.ur6, self.ur5, self.ur4, self.ur3, self.ur2, \
-        self.ur1 = [] ,[], [], [], [], [], [], []
+            self.ur1 = [], [], [], [], [], [], [], []
         self.ul8, self.ul7, self.ul6, self.ul5, self.ul4, self.ul3, self.ul2, \
-        self.ul1 = [], [], [], [], [], [], [], []
+            self.ul1 = [], [], [], [], [], [], [], []
         self.ll8, self.ll7, self.ll6, self.ll5, self.ll4, self.ll3, self.ll2, \
-        self.ll1 = [], [], [], [], [], [], [], []
+            self.ll1 = [], [], [], [], [], [], [], []
         self.lr8, self.lr7, self.lr6, self.lr5, self.lr4, self.lr3, self.lr2, \
-        self.lr1 = [], [], [], [], [], [], [], []
+            self.lr1 = [], [], [], [], [], [], [], []
 
         #--clear comments
         self.commentedTeeth = []
@@ -78,14 +96,14 @@ class chartWidget(QtGui.QWidget):
         else:
             #-- set to an adult dentition
             self.chartgrid = {
-            'lr1' : 'lr1', 'lr3' : 'lr3', 'lr2' : 'lr2', 'lr5' : 'lr5',
-            'lr4' : 'lr4', 'lr7' : 'lr7', 'lr6' : 'lr6', 'lr8' : 'lr8',
-            'ul8' : 'ul8', 'ul2' : 'ul2', 'ul3' : 'ul3', 'ul1' : 'ul1',
-            'ul6' : 'ul6', 'ul7' : 'ul7', 'ul4' : 'ul4', 'ul5' : 'ul5',
-            'ur4' : 'ur4', 'ur5' : 'ur5', 'ur6' : 'ur6', 'ur7' : 'ur7',
-            'ur1' : 'ur1', 'ur2' : 'ur2', 'ur3' : 'ur3', 'ur8' : 'ur8',
-            'll8' : 'll8', 'll3' : 'll3', 'll2' : 'll2', 'll1' : 'll1',
-            'll7' : 'll7', 'll6' : 'll6', 'll5' : 'll5', 'll4': 'll4'
+                'lr1': 'lr1', 'lr3': 'lr3', 'lr2': 'lr2', 'lr5': 'lr5',
+                'lr4': 'lr4', 'lr7': 'lr7', 'lr6': 'lr6', 'lr8': 'lr8',
+                'ul8': 'ul8', 'ul2': 'ul2', 'ul3': 'ul3', 'ul1': 'ul1',
+                'ul6': 'ul6', 'ul7': 'ul7', 'ul4': 'ul4', 'ul5': 'ul5',
+                'ur4': 'ur4', 'ur5': 'ur5', 'ur6': 'ur6', 'ur7': 'ur7',
+                'ur1': 'ur1', 'ur2': 'ur2', 'ur3': 'ur3', 'ur8': 'ur8',
+                'll8': 'll8', 'll3': 'll3', 'll2': 'll2', 'll1': 'll1',
+                'll7': 'll7', 'll6': 'll6', 'll5': 'll5', 'll4': 'll4'
             }
 
             self.showSelected = False
@@ -124,7 +142,7 @@ class chartWidget(QtGui.QWidget):
         '''
         select multiple teeth
         '''
-        if self.selected == [-1,-1]:
+        if self.selected == [-1, -1]:
             return True
         if self.selected in self.multiSelection:
             while self.selected in self.multiSelection:
@@ -178,9 +196,9 @@ class chartWidget(QtGui.QWidget):
         for prop in proplist:
             if prop != "":
                 if not re.match("!.*", prop):
-                    prop = "%s "% prop.lower()
+                    prop = "%s " % prop.lower()
                 else:
-                    prop = "%s "% prop
+                    prop = "%s " % prop
                 self.__dict__[tooth].append(prop)
 
     def mouseMoveEvent(self, event):
@@ -200,15 +218,15 @@ class chartWidget(QtGui.QWidget):
         try:
             tooth = self.grid[y][x]
             show = False
-            advisory = "<center><b>   %s   </b></center><hr />"% tooth.upper()
+            advisory = "<center><b>   %s   </b></center><hr />" % tooth.upper()
             for fill in self.__dict__[tooth]:
                 if not re.match("!.*", fill):
                     fill = fill.upper()
-                advisory += "%s <br />"% fill
+                advisory += "%s <br />" % fill
                 show = True
             if show:
                 QtGui.QToolTip.showText(event.globalPos(),
-                advisory.rstrip("<br />"))
+                                        advisory.rstrip("<br />"))
             else:
                 QtGui.QToolTip.showText(event.globalPos(), "")
         except IndexError:
@@ -240,30 +258,32 @@ class chartWidget(QtGui.QWidget):
         shiftClick = (event.modifiers() == QtCore.Qt.ShiftModifier)
 
         [px, py] = self.selected
-        if px == -1: px=0
-        if py == -1: py=0
+        if px == -1:
+            px = 0
+        if py == -1:
+            py = 0
         #-- needed for shiftClick
         if px <= x:
-            lowx,highx = px,x
+            lowx, highx = px, x
         else:
-            lowx,highx = x,px
+            lowx, highx = x, px
 
         if shiftClick:
-            for row in set((py,y)):
-                for column in range(lowx, highx+1):
+            for row in set((py, y)):
+                for column in range(lowx, highx + 1):
                     if not [column, row] in self.multiSelection:
-                        self.multiSelection.append([column,row])
-        self.setSelected(x, y, showSelection = True)
+                        self.multiSelection.append([column, row])
+        self.setSelected(x, y, showSelection=True)
 
         if ctrlClick:
-            if [px,py] not in self.multiSelection:
-                self.multiSelection.append([px,py])
+            if [px, py] not in self.multiSelection:
+                self.multiSelection.append([px, py])
             if not self.multiSelectADD():
                 try:
-                    x,y = self.multiSelection[-1]
+                    x, y = self.multiSelection[-1]
                 except IndexError:
                     pass
-            self.setSelected(x, y, showSelection = True)
+            self.setSelected(x, y, showSelection=True)
         else:
             if not shiftClick:
                 self.multiSelectCLEAR()
@@ -271,8 +291,8 @@ class chartWidget(QtGui.QWidget):
         teeth = []
         if x != -1:
             teeth.append(self.grid[y][x])
-        for (a,b) in self.multiSelection:
-            if (a,b) != (x,y):
+        for (a, b) in self.multiSelection:
+            if (a, b) != (x, y):
                 teeth.append(self.grid[b][a])
 
         self.teeth_selected_signal.emit(teeth)
@@ -281,11 +301,11 @@ class chartWidget(QtGui.QWidget):
             if event.button() == 2:
                 tooth = teeth[0]
                 QtCore.QTimer.singleShot(200, partial(
-                    self.raise_context_menu, tooth , event.globalPos()))
+                    self.raise_context_menu, tooth, event.globalPos()))
         except AttributeError:
-            pass #keyboard events have no attribute "button"
+            pass  # keyboard events have no attribute "button"
         except IndexError:
-            pass # teeth is an empty list!
+            pass  # teeth is an empty list!
 
     def raise_context_menu(self, tooth, point):
         if self.isStaticChart:
@@ -300,7 +320,7 @@ class chartWidget(QtGui.QWidget):
 
             for prop in self.__dict__[tooth]:
                 prop = prop.upper().strip(" ")
-                action = menu.addAction("%s %s"%(_("Delete"), prop))
+                action = menu.addAction("%s %s" % (_("Delete"), prop))
                 action.triggered.connect(partial(
                     self.delete_prop_signal.emit, prop))
 
@@ -360,15 +380,15 @@ class chartWidget(QtGui.QWidget):
         '''
         x, y = self.selected
         if event.key() == QtCore.Qt.Key_Left:
-            x = 15 if x == 0 else x-1
+            x = 15 if x == 0 else x - 1
         elif event.key() == QtCore.Qt.Key_Right:
-            x = 0 if x == 15 else x+1
+            x = 0 if x == 15 else x + 1
         elif event.key() == QtCore.Qt.Key_Up:
-            y = 1if y == 0 else y-1
+            y = 1if y == 0 else y - 1
         elif event.key() == QtCore.Qt.Key_Down:
-            y=0 if y == 1 else y+1
+            y = 0 if y == 1 else y + 1
         elif event.key() == QtCore.Qt.Key_Return:
-            if y==0:
+            if y == 0:
                 if x == 15:
                     y = 1
                 else:
@@ -406,7 +426,7 @@ class chartWidget(QtGui.QWidget):
 
         #--big horizontal dissection of entire widget
         painter.drawLine(leftpad, self.height() / 2, self.width() - rightpad,
-        self.height() / 2)
+                         self.height() / 2)
         #--vertical dissection of entire widget
         painter.drawLine(self.width() / 2, 0, self.width() / 2, self.height())
 
@@ -416,9 +436,9 @@ class chartWidget(QtGui.QWidget):
             else:
                 midx = 0
             for y in range(2):
-                tooth_notation  =  self.grid[y][x]
-                rect  =  QtCore.QRectF(x * xOffset + midx, y *yOffset,
-                xOffset, yOffset).adjusted(0.5, 0.5, -0.5, -0.5)
+                tooth_notation = self.grid[y][x]
+                rect = QtCore.QRectF(x * xOffset + midx, y * yOffset,
+                                     xOffset, yOffset).adjusted(0.5, 0.5, -0.5, -0.5)
 
                 #-- draw a tooth (subroutine)
                 self.tooth(painter, rect, tooth_notation)
@@ -452,11 +472,11 @@ class chartWidget(QtGui.QWidget):
         if self.showLeftRight:
             #--show left/right (this is done here to avoid being overwritten
             #--during the rest of the paint job
-            painter.drawText(textRect, QtCore.Qt.AlignRight|
-            QtCore.Qt.AlignVCenter, (_("Left")))
+            painter.drawText(textRect, QtCore.Qt.AlignRight |
+                             QtCore.Qt.AlignVCenter, (_("Left")))
 
-            painter.drawText(textRect, QtCore.Qt.AlignLeft|
-            QtCore.Qt.AlignVCenter, (_("Right")))
+            painter.drawText(textRect, QtCore.Qt.AlignLeft |
+                             QtCore.Qt.AlignVCenter, (_("Right")))
 
         #--free the painter's saved state
         painter.restore()
@@ -472,7 +492,7 @@ class chartWidget(QtGui.QWidget):
 
         #-- split tooth rectangle into a large graphic square...
         #-- and a smaller text square
-        thirdheight = rect.height()*1/3
+        thirdheight = rect.height() * 1 / 3
         if isUpper:
             #-- the 2 allows for the "select" box to be drawn around the tooth
             toothRect = rect.adjusted(0, 2, 0, -thirdheight)
@@ -486,13 +506,13 @@ class chartWidget(QtGui.QWidget):
         painter.setBrush(colours.IVORY)
         toothid = self.chartgrid[ident]
 
-        ###################### DRAW THE TOOTH's TEXT###########################
+        # DRAW THE TOOTH's TEXT###########################
         #--tooth ident is always ur1, ur2 ...
         #--tooth name is more flexible for deciduous teeth etc...
         toothtext = toothid[2]
-        #check for deciduous teeth
+        # check for deciduous teeth
         if toothtext in ("A", "B", "C", "D", "E", "*"):
-            #################BABY TOOTH###########################
+            # BABY TOOTH###########################
             #-- paint deciduous notation in RED
             painter.save()
             if self.isEnabled():
@@ -503,9 +523,10 @@ class chartWidget(QtGui.QWidget):
             painter.restore()
 
             #-- and "shrink" the tooth
-            toothRect = toothRect.adjusted(toothRect.width()*0.1,
-            toothRect.height()*0.15,-toothRect.width()*0.1,
-            -toothRect.height()*0.15)
+            toothRect = toothRect.adjusted(toothRect.width() * 0.1,
+                                           toothRect.height(
+                                           ) * 0.15, -toothRect.width() * 0.1,
+                                           -toothRect.height() * 0.15)
 
         else:
             #--adult tooth
@@ -533,18 +554,18 @@ class chartWidget(QtGui.QWidget):
             painter.drawText(comRect, QtCore.Qt.AlignCenter, "!")
             painter.restore()
         for prop in ("rt ", "ap ", "-m,1 ", "-m,2 ",
-        "+p ", "+s ", "oe", "px", "px+"):
+                     "+p ", "+s ", "oe", "px", "px+"):
             #-- these properties are written in... not drawn
             if prop in props:
                 painter.save()
                 comRect = textRect.adjusted(0, 0, -textRect.width() * 0.6,
-                0)
+                                            0)
                 painter.setPen(QtGui.QPen(QtCore.Qt.blue, 1))
                 painter.drawRect(comRect)
                 sansFont = QtGui.QFont("Helvetica", 7)
                 painter.setFont(sansFont)
                 painter.drawText(comRect, QtCore.Qt.AlignCenter,
-                prop.upper())
+                                 prop.upper())
                 painter.restore()
 
         toothS = toothSurfaces(self, toothRect, toothid, self.isStaticChart)
@@ -554,10 +575,12 @@ class chartWidget(QtGui.QWidget):
 
 
 class toothSurfaces():
+
     '''
     draws the tooth surfaces
     '''
-    def __init__(self, parent, rect, ident, isStatic = True):
+
+    def __init__(self, parent, rect, ident, isStatic=True):
         '''
         initiate using the following args
         parent (a Qwidget), rect (a Qrect), ident (eg. ur5),
@@ -589,22 +612,22 @@ class toothSurfaces():
         self.innerRect = self.rect.adjusted(irw, irh, -irw, -irh)
 
     def setProps(self, props):
-        #LOGGER.debug(props)
+        # LOGGER.debug(props)
         self.props = props
 
     def draw(self, parent, painter=None):
-        if painter == None:
+        if painter is None:
             self.painter = QtGui.QPainter(parent)
         else:
             self.painter = painter
         for prop in self.props:
             if re.match("(br/)?cr,ic|im/", prop):
-                adj = self.rect.height()/2
+                adj = self.rect.height() / 2
                 if self.isUpper:
                     rect_ = self.rect.adjusted(0, 0, 0, adj)
                     svg_path = ":lower_implant.svg"
                 else:
-                    rect_ = self.rect.adjusted(0,-adj,-0,0)
+                    rect_ = self.rect.adjusted(0, -adj, -0, 0)
                     svg_path = ":upper_implant.svg"
                 QtSvg.QSvgRenderer(svg_path).render(painter, rect_)
 
@@ -614,8 +637,8 @@ class toothSurfaces():
             if re.match("\(.*", prop):
                 #-- brackets are used to indicate the start/end of a bridge
                 #--let's see bridge start by shrinking that edge.
-                ##TODO - draw a demarcation line here??
-                adj = self.rect.width()*0.10
+                # TODO - draw a demarcation line here??
+                adj = self.rect.width() * 0.10
                 if self.isUpper:
                     self.rect = self.rect.adjusted(adj, 0, 0, 0)
                 else:
@@ -626,7 +649,7 @@ class toothSurfaces():
 
             elif re.match(".*\)$", prop):
                 #--other end of a bridge
-                adj = self.rect.width()*0.10
+                adj = self.rect.width() * 0.10
                 if self.isUpper:
                     self.rect = self.rect.adjusted(0, 0, -adj, 0)
                 else:
@@ -634,20 +657,27 @@ class toothSurfaces():
                 prop = prop.strip(")")
 
             if "br/p" in prop:
-                #bridge pontic found - shrink
+                # bridge pontic found - shrink
                 self.rect = self.rect.adjusted(0, self.rect.height() * 0.10, 0,
-                -self.rect.height() * 0.10)
-
+                                               -self.rect.height() * 0.10)
 
         #--draw the tooth if static chart or properties to show
         #--leave blank if treatment chart.
         if self.isStatic or self.props != []:
             self.painter.drawRect(self.rect)
             self.painter.drawRect(self.innerRect)
-            self.painter.drawLine(self.rect.topLeft(), self.innerRect.topLeft())
-            self.painter.drawLine(self.rect.topRight(), self.innerRect.topRight())
-            self.painter.drawLine(self.rect.bottomLeft(), self.innerRect.bottomLeft())
-            self.painter.drawLine(self.rect.bottomRight(), self.innerRect.bottomRight())
+            self.painter.drawLine(
+                self.rect.topLeft(),
+                self.innerRect.topLeft())
+            self.painter.drawLine(
+                self.rect.topRight(),
+                self.innerRect.topRight())
+            self.painter.drawLine(
+                self.rect.bottomLeft(),
+                self.innerRect.bottomLeft())
+            self.painter.drawLine(
+                self.rect.bottomRight(),
+                self.innerRect.bottomRight())
 
         #-deciduous (ie. indeterminate) 6, 7, 8 are marked as "*"
         #--paint over these.
@@ -659,9 +689,9 @@ class toothSurfaces():
 
         #--set variables for fill draw points
         #--this are NOT static as the widget is resizable
-        ##TODO I could probably get performance improvement here.
-        ##by having a default set which changes only if the "tooth" has been
-        ##resized.
+        # TODO I could probably get performance improvement here.
+        # by having a default set which changes only if the "tooth" has been
+        # resized.
 
         if self.props != []:
             if self.backTooth:
@@ -713,26 +743,26 @@ class toothSurfaces():
                 material = ""
                 self.painter.save()
 
-                prop =  prop.strip("#&")
+                prop = prop.strip("#&")
                 if prop == "pv":
                     prop = "pv,pj"
                 if re.match("!.*", prop):
                     prop = ""
-                if "/"  in prop:
+                if "/" in prop:
                     if re.match("\(.*", prop):
                         #--start of a bridge
                         leading_bracket = True
                         prop = prop[1:]
                     else:
                         leading_bracket = False
-                    if re.match("br/",prop):
+                    if re.match("br/", prop):
                         #--bridge
                         prop = prop[3:]
                         if leading_bracket:
                             prop = prop.replace(",", ",(")
                         if "p," in prop:
                             #--some gold crowns are cr/modbl,go
-                            prop = "PONTIC,%s"% prop[2:]
+                            prop = "PONTIC,%s" % prop[2:]
                         if "mr" in prop:
                             prop = "p,mr"
                     elif re.match("im/", prop):
@@ -753,14 +783,14 @@ class toothSurfaces():
                             #-- change this to "mod,gi"
                             prop = prop[3:] + ",gl"
 
-                if prop[:2] in ("tm","at"):
+                if prop[:2] in ("tm", "at"):
                     erase_color = parent.palette().background().color()
                     self.painter.setPen(erase_color)
                     self.painter.setBrush(erase_color)
                     self.painter.drawRect(self.rect)
                     self.painter.setPen(QtGui.QPen(QtCore.Qt.gray, 1))
                     self.painter.drawText(self.rect, QtCore.Qt.AlignCenter,
-                    prop.upper())
+                                          prop.upper())
 
                     prop = ""
                 if prop[:2] in ("ue", "pe", "oe", "rp"):
@@ -772,16 +802,20 @@ class toothSurfaces():
                     self.painter.drawRect(self.rect)
                     self.painter.setPen(QtGui.QPen(QtCore.Qt.black, 1))
                     if self.backTooth:
-                        self.painter.drawText(self.rect, QtCore.Qt.AlignCenter, prop)
+                        self.painter.drawText(
+                            self.rect,
+                            QtCore.Qt.AlignCenter,
+                            prop)
                     else:
                         self.painter.drawText(self.rect.adjusted(0,
-                        self.rect.height() / 2, 0, 0),
-                        QtCore.Qt.AlignCenter, prop)
+                                                                 self.rect.height(
+                                                                 ) / 2, 0, 0),
+                                              QtCore.Qt.AlignCenter, prop)
                     #--prevent the o's and p's being interpreted as fills
                     prop = ""
 
                 if ",pr" in prop:
-                    #TODO - pin??
+                    # TODO - pin??
                     prop = prop.replace(",pr", "")
 
                 if "," in prop:
@@ -815,7 +849,7 @@ class toothSurfaces():
                 if material == "co":
                     self.painter.setBrush(colours.COMP)
                 elif material in ("pj", "ot", "pi", "a1", "a2", "v1", "v2",
-                "opal", "opalite", "lava", "core", "ic", "ever"):
+                                  "opal", "opalite", "lava", "core", "ic", "ever"):
                     self.painter.setBrush(colours.PORC)
                 elif material == "gl":
                     self.painter.setBrush(colours.GI)
@@ -831,7 +865,7 @@ class toothSurfaces():
                     self.painter.setPen(QtGui.QPen(colours.FISSURE, 1))
                     self.painter.setBrush(colours.FISSURE)
                 else:
-                    LOGGER.debug("unhandled material colour %s %s %s"% (
+                    LOGGER.debug("unhandled material colour %s %s %s" % (
                         self.toothtext, prop, material))
 
                 if self.quadrant[1] == "l" and prop != "dr":
@@ -852,44 +886,60 @@ class toothSurfaces():
                         crRect = self.rect.adjusted(0, 2, 0, -2)
                     self.painter.drawRect(crRect)
                     self.painter.drawRect(self.innerRect)
-                    self.painter.drawLine(crRect.topLeft(), self.innerRect.topLeft())
-                    self.painter.drawLine(crRect.topRight(), self.innerRect.topRight())
+                    self.painter.drawLine(
+                        crRect.topLeft(),
+                        self.innerRect.topLeft())
+                    self.painter.drawLine(
+                        crRect.topRight(),
+                        self.innerRect.topRight())
                     self.painter.drawLine(crRect.bottomLeft(),
-                    self.innerRect.bottomLeft())
+                                          self.innerRect.bottomLeft())
 
                     self.painter.drawLine(crRect.bottomRight(),
-                    self.innerRect.bottomRight())
+                                          self.innerRect.bottomRight())
 
                     if self.backTooth:
                         self.painter.drawText(self.rect, QtCore.Qt.AlignCenter,
-                        material)
+                                              material)
                     else:
                         self.painter.drawText(self.rect.adjusted(0,
-                        self.rect.height() / 2, 0, 0), QtCore.Qt.AlignCenter,
-                        material)
+                                                                 self.rect.height(
+                                                                 ) / 2, 0, 0), QtCore.Qt.AlignCenter,
+                                              material)
 
                 if prop == "pv" and self.isUpper:
                     self.painter.drawPolygon(QtGui.QPolygon(
-                    [self.rect.topLeft().x(), self.rect.topLeft().y(),
-                    self.rect.topRight().x(), self.rect.topRight().y(),
-                    self.innerRect.topRight().x(), self.innerRect.topRight().y(),
-                    self.innerRect.topLeft().x(), self.innerRect.topLeft().y()]))
+                                             [self.rect.topLeft(
+                                             ).x(), self.rect.topLeft().y(),
+                                                 self.rect.topRight().x(
+                                                 ), self.rect.topRight(
+                                                 ).y(),
+                                                 self.innerRect.topRight().x(
+                                                 ), self.innerRect.topRight(
+                                                 ).y(),
+                                                 self.innerRect.topLeft().x(), self.innerRect.topLeft().y()]))
 
                     self.painter.drawText(self.rect.adjusted(0, 0, 0,
-                    -self.rect.height() / 2), QtCore.Qt.AlignCenter, prop)
+                                                             -self.rect.height() / 2), QtCore.Qt.AlignCenter, prop)
 
                     prop = ""
 
                 if prop == "pv" and not self.isUpper:
                     self.painter.drawPolygon(QtGui.QPolygon(
-                    [self.rect.bottomLeft().x(), self.rect.bottomLeft().y(),
-                    self.rect.bottomRight().x(), self.rect.bottomRight().y(),
-                    self.innerRect.bottomRight().x(), self.innerRect.bottomRight().y(),
-                    self.innerRect.bottomLeft().x(), self.innerRect.bottomLeft().y()]))
+                                             [self.rect.bottomLeft(
+                                             ).x(), self.rect.bottomLeft().y(),
+                                                 self.rect.bottomRight().x(
+                                                 ), self.rect.bottomRight(
+                                                 ).y(),
+                                                 self.innerRect.bottomRight().x(
+                                                 ), self.innerRect.bottomRight(
+                                                 ).y(),
+                                                 self.innerRect.bottomLeft().x(), self.innerRect.bottomLeft().y()]))
 
                     self.painter.drawText(self.rect.adjusted(0,
-                    self.rect.height() / 2, 0, 0),
-                    QtCore.Qt.AlignCenter, prop)
+                                                             self.rect.height(
+                                                             ) / 2, 0, 0),
+                                          QtCore.Qt.AlignCenter, prop)
 
                     prop = ""
 
@@ -899,101 +949,101 @@ class toothSurfaces():
 
                     self.painter.setPen(QtGui.QPen(QtCore.Qt.red, 4))
                     self.painter.drawLine(self.rect.topLeft(),
-                    self.rect.bottomRight())
+                                          self.rect.bottomRight())
 
                     self.painter.drawLine(self.rect.topRight(),
-                    self.rect.bottomLeft())
+                                          self.rect.bottomLeft())
 
                     self.painter.restore()
 
-                #IGNORE LIST
+                # IGNORE LIST
                 if prop in ("px", "oe"):
-                    prop=""
+                    prop = ""
 
                 prop = prop.replace("l", "p")
                 shapes = []
                 if self.backTooth:
                     if "fs" in prop:
                         shapes.append(QtGui.QPolygon(
-                        [dx, ey-1, fx, ey-1, fx+1, ey+1, dx, ey+1]))
+                                      [dx, ey - 1, fx, ey - 1, fx + 1, ey + 1, dx, ey + 1]))
                         shapes.append(QtGui.QPolygon(
-                        [ex-1, dy, ex+1, dy, ex+1, fy, ex-1, fy]))
+                                      [ex - 1, dy, ex + 1, dy, ex + 1, fy, ex - 1, fy]))
                     elif "dr" in prop:
                         n = QtGui.QPolygon([cx, dy, dx, by, fx, by, hx, dy,
-                        hx, fy, fx, hy, dx, hy, cx, fy])
+                                            hx, fy, fx, hy, dx, hy, cx, fy])
                         shapes.append(n)
                     elif re.match("[modbp]{5}", prop):
                         n = QtGui.QPolygon([ax, by, cx, dy, dx, dy, dx, by,
-                        fx, by, fx, dy, gx, dy, ix, by, ix, hy, gx, fy, fx,
-                        fy, fx, hy, dx, hy, dx, fy, cx, fy, ax, hy])
+                                            fx, by, fx, dy, gx, dy, ix, by, ix, hy, gx, fy, fx,
+                                            fy, fx, hy, dx, hy, dx, fy, cx, fy, ax, hy])
                         shapes.append(n)
                     elif re.match("[modb]{4}", prop):
                         n = QtGui.QPolygon([ax, by, dx, dy, dx, by, fx, by,
-                        fx, dy, ix, by, ix, hy, fx, fy, dx, fy, ax, hy])
+                                            fx, dy, ix, by, ix, hy, fx, fy, dx, fy, ax, hy])
                         shapes.append(n)
                     elif re.match("[modp]{4}", prop):
                         n = QtGui.QPolygon([ax, by, dx, dy, fx, dy, ix, by,
-                        ix, hy, fx, fy, fx, hy, dx, hy, dx, fy, ax, hy])
+                                            ix, hy, fx, fy, fx, hy, dx, hy, dx, fy, ax, hy])
                         shapes.append(n)
                     elif re.match("[mod]{3}", prop):
                         n = QtGui.QPolygon([ax, by, dx, dy, fx, dy, ix, by,
-                        ix, hy, fx, fy, dx, fy, ax, hy])
+                                            ix, hy, fx, fy, dx, fy, ax, hy])
                         shapes.append(n)
                     elif re.match("[mob]{3}", prop):
                         n = QtGui.QPolygon([dx, dy, ex, dy, ex, by, fx, by,
-                        fx, dy, gx, dy, ix, by, ix, hy, gx, fy, dx, fy])
+                                            fx, dy, gx, dy, ix, by, ix, hy, gx, fy, dx, fy])
                         shapes.append(n)
                     elif re.match("[mop]{3}", prop):
                         n = QtGui.QPolygon([dx, dy, gx, dy, ix, by, ix, hy,
-                        gx, fy, fx, fy, fx, hy, ex, hy, ex, fy, dx, fy])
+                                            gx, fy, fx, fy, fx, hy, ex, hy, ex, fy, dx, fy])
                         shapes.append(n)
                     elif re.match("[dob]{3}", prop):
                         n = QtGui.QPolygon([ax, cy, cx, dy, ex, dy, ex, by,
-                        fx, by, fx, dy, fx, dy, fx, fy, cx, fy, ax, gy])
+                                            fx, by, fx, dy, fx, dy, fx, fy, cx, fy, ax, gy])
                         shapes.append(n)
                     elif re.match("[dop]{3}", prop):
                         n = QtGui.QPolygon([ax, cy, cx, dy, fx, dy, fx, fy,
-                        ex, fy, ex, hy, dx, hy, dx, fy, cx, fy, ax, gy])
+                                            ex, fy, ex, hy, dx, hy, dx, fy, cx, fy, ax, gy])
                         shapes.append(n)
                     elif re.match("[mbd]{3}", prop):
                         n = QtGui.QPolygon([ax, by, dx, ay, fx, ay, ix, by,
-                        ix, ey, hx, ey, hx, cy, bx, cy, bx, ey, ax, ey])
+                                            ix, ey, hx, ey, hx, cy, bx, cy, bx, ey, ax, ey])
                         shapes.append(n)
                     elif re.match("[mpd]{3}", prop):
                         n = QtGui.QPolygon([ax, ey, bx, ey, bx, hy, hx, hy,
-                        hx, ey, ix, ey, ix, gy, gx, iy, bx, iy, ax, gy])
+                                            hx, ey, ix, ey, ix, gy, gx, iy, bx, iy, ax, gy])
                         shapes.append(n)
                     elif re.match("[ob]{2}", prop):
                         n = QtGui.QPolygon([cx, ay, gx, ay, fx, cy, fx, fy,
-                        dx, fy, dx, cy])
+                                            dx, fy, dx, cy])
                         shapes.append(n)
                     elif re.match("[op]{2}", prop):
                         n = QtGui.QPolygon([dx, dy, fx, dy, fx, gy, gx, iy,
-                        cx, iy, dx, gy])
+                                            cx, iy, dx, gy])
                         shapes.append(n)
                     elif re.match("[mb]{2}", prop):
                         n = QtGui.QPolygon([dx, ay, fx, ay, ix, by, ix, ey,
-                        hx, ey, hx, dy, fx, cy, dx, cy, bx, by])
+                                            hx, ey, hx, dy, fx, cy, dx, cy, bx, by])
                         shapes.append(n)
                     elif re.match("[mp]{2}", prop):
                         n = QtGui.QPolygon([dx, iy, fx, iy, ix, hy, ix, ey,
-                        hx, ey, hx, fy, fx, gy, dx, gy, bx, hy])
+                                            hx, ey, hx, fy, fx, gy, dx, gy, bx, hy])
                         shapes.append(n)
                     elif re.match("[db]{2}", prop):
                         n = QtGui.QPolygon([fx, ay, dx, ay, ax, by, ax, ey,
-                        bx, ey, bx, dy, dx, cy, fx, cy, hx, by])
+                                            bx, ey, bx, dy, dx, cy, fx, cy, hx, by])
                         shapes.append(n)
                     elif re.match("[dp]{2}", prop):
                         n = QtGui.QPolygon([fx, iy, dx, iy, ax, hy, ax, ey,
-                        bx, ey, bx, fy, dx, gy, fx, gy, hx, hy])
+                                            bx, ey, bx, fy, dx, gy, fx, gy, hx, hy])
                         shapes.append(n)
                     elif re.match("[mo]{2}", prop):
                         n = QtGui.QPolygon([dx, dy, gx, dy, ix, cy, ix, gy,
-                        gx, fy, dx, fy])
+                                            gx, fy, dx, fy])
                         shapes.append(n)
                     elif re.match("[do]{2}", prop):
                         n = QtGui.QPolygon([ax, cy, cx, dy, fx, dy, fx, fy,
-                        cx, fy, ax, gy])
+                                            cx, fy, ax, gy])
                         shapes.append(n)
 
                     elif "o" in prop:
@@ -1011,110 +1061,118 @@ class toothSurfaces():
                     elif "b" in prop:
                         n = QtGui.QPolygon([bx, ay, hx, ay, fx, cy, dx, cy])
                         shapes.append(n)
-                else: #front tooth
+                else:  # front tooth
                     if "dr" in prop:
                         n = QtGui.QPolygon([cx, dy, dx, by, fx, by, hx, dy,
-                        hx, fy, fx, hy, dx, hy, cx, fy])
+                                            hx, fy, fx, hy, dx, hy, cx, fy])
                         shapes.append(n)
                     elif re.match("[mbd]{3}", prop):
                         n = QtGui.QPolygon([ax, by, dx, ay, fx, ay, ix, by,
-                        ix, ey, hx, ey, hx, cy, bx, cy, bx, ey, ax, ey])
+                                            ix, ey, hx, ey, hx, cy, bx, cy, bx, ey, ax, ey])
                         shapes.append(n)
                     elif re.match("[mpd]{3}", prop):
                         n = QtGui.QPolygon([ax, ey, bx, ey, bx, hy, hx, hy,
-                        hx, ey, ix, ey, ix, gy, gx, iy, bx, iy, ax, gy])
+                                            hx, ey, ix, ey, ix, gy, gx, iy, bx, iy, ax, gy])
                         shapes.append(n)
                     elif re.match("[ib]{2}", prop):
                         n = QtGui.QPolygon([cx, ay, gx, ay, fx, cy, fx, fy,
-                        dx, fy, dx, cy])
+                                            dx, fy, dx, cy])
                         shapes.append(n)
                     elif re.match("[ip]{2}", prop):
                         n = QtGui.QPolygon([dx, dy, fx, dy, fx, gy, gx, iy,
-                        cx, iy, dx, gy])
+                                            cx, iy, dx, gy])
                         shapes.append(n)
                     elif re.match("[mb]{2}", prop):
                         n = QtGui.QPolygon([dx, ay, fx, ay, ix, by, ix, ey,
-                        hx, ey, hx, dy, fx, cy, dx, cy, bx, by])
+                                            hx, ey, hx, dy, fx, cy, dx, cy, bx, by])
                         shapes.append(n)
                     elif re.match("[mp]{2}", prop):
                         n = QtGui.QPolygon([dx, iy, fx, iy, ix, hy, ix, ey,
-                        hx, ey, hx, fy, fx, gy, dx, gy, bx, hy])
+                                            hx, ey, hx, fy, fx, gy, dx, gy, bx, hy])
                         shapes.append(n)
                     elif re.match("[db]{2}", prop):
                         n = QtGui.QPolygon([fx, ay, dx, ay, ax, by, ax, ey,
-                        bx, ey, bx, dy, dx, cy, fx, cy, hx, by])
+                                            bx, ey, bx, dy, dx, cy, fx, cy, hx, by])
                         shapes.append(n)
                     elif re.match("[dp]{2}", prop):
                         n = QtGui.QPolygon([fx, iy, dx, iy, ax, hy, ax, ey,
-                        bx, ey, bx, fy, dx, gy, fx, gy, hx, hy])
+                                            bx, ey, bx, fy, dx, gy, fx, gy, hx, hy])
                         shapes.append(n)
                     elif re.match("[mid]{3}", prop):
                         n = QtGui.QPolygon([ax, cy, cx, dy,
-                        self.innerRect.topLeft().x(),self.innerRect.topLeft().y(),
-                        self.innerRect.topRight().x(),self.innerRect.topRight().y(),
-                        gx, dy, ix, cy, ix, gy, gx, fy,
-                        self.innerRect.bottomRight().x(),
-                        self.innerRect.bottomRight().y(),
-                        self.innerRect.bottomLeft().x(),
-                        self.innerRect.bottomLeft().y(),cx, fy, ax, gy])
+                                            self.innerRect.topLeft().x(
+                                            ), self.innerRect.topLeft().y(),
+                                            self.innerRect.topRight().x(
+                                            ), self.innerRect.topRight().y(),
+                                            gx, dy, ix, cy, ix, gy, gx, fy,
+                                            self.innerRect.bottomRight().x(),
+                                            self.innerRect.bottomRight().y(),
+                                            self.innerRect.bottomLeft().x(),
+                                            self.innerRect.bottomLeft().y(), cx, fy, ax, gy])
                         shapes.append(n)
                     elif re.match("[mi]{2}", prop):
                         n = QtGui.QPolygon([self.innerRect.topLeft().x(),
-                        self.innerRect.topLeft().y(),
-                        self.innerRect.topRight().x(),self.innerRect.topRight().y(),
-                        gx, dy, ix, cy, ix, gy, gx, fy,
-                        self.innerRect.bottomRight().x(),
-                        self.innerRect.bottomRight().y(),
-                        self.innerRect.bottomLeft().x(),
-                        self.innerRect.bottomLeft().y(),
-                        ])
+                                            self.innerRect.topLeft().y(),
+                                            self.innerRect.topRight().x(
+                                            ), self.innerRect.topRight().y(),
+                                            gx, dy, ix, cy, ix, gy, gx, fy,
+                                            self.innerRect.bottomRight().x(),
+                                            self.innerRect.bottomRight().y(),
+                                            self.innerRect.bottomLeft().x(),
+                                            self.innerRect.bottomLeft().y(),
+                                            ])
                         shapes.append(n)
                     elif re.match("[di]{2}", prop):
                         n = QtGui.QPolygon([ax, cy, cx, dy,
-                        self.innerRect.topLeft().x(),self.innerRect.topLeft().y(),
-                        self.innerRect.topRight().x(),self.innerRect.topRight().y(),
-                        self.innerRect.bottomRight().x(),
-                        self.innerRect.bottomRight().y(),
-                        self.innerRect.bottomLeft().x(),
-                        self.innerRect.bottomLeft().y(),
-                        cx, fy, ax, gy])
+                                            self.innerRect.topLeft().x(
+                                            ), self.innerRect.topLeft().y(),
+                                            self.innerRect.topRight().x(
+                                            ), self.innerRect.topRight().y(),
+                                            self.innerRect.bottomRight().x(),
+                                            self.innerRect.bottomRight().y(),
+                                            self.innerRect.bottomLeft().x(),
+                                            self.innerRect.bottomLeft().y(),
+                                            cx, fy, ax, gy])
                         shapes.append(n)
                     elif "i" in prop:
                         n = QtGui.QPolygon([self.innerRect.topLeft().x(),
-                        self.innerRect.topLeft().y(),
-                        self.innerRect.topRight().x(),
-                        self.innerRect.topRight().y(),
-                        self.innerRect.bottomRight().x(),
-                        self.innerRect.bottomRight().y(),
-                        self.innerRect.bottomLeft().x(),
-                        self.innerRect.bottomLeft().y()])
+                                            self.innerRect.topLeft().y(),
+                                            self.innerRect.topRight().x(),
+                                            self.innerRect.topRight().y(),
+                                            self.innerRect.bottomRight().x(),
+                                            self.innerRect.bottomRight().y(),
+                                            self.innerRect.bottomLeft().x(),
+                                            self.innerRect.bottomLeft().y()])
                         shapes.append(n)
                     elif "m" in prop:
                         shapes.append(QtGui.QPolygon(
-                        [hx, dy, ix, dy, ix, fy, hx, fy, gx, ey]))
+                                      [hx, dy, ix, dy, ix, fy, hx, fy, gx, ey]))
                     elif "d" in prop:
                         shapes.append(QtGui.QPolygon(
-                        [ax, dy, bx, dy, cx, ey, bx, fy, ax, fy]))
+                                      [ax, dy, bx, dy, cx, ey, bx, fy, ax, fy]))
                     elif "p" in prop:
                         shapes.append(QtGui.QPolygon([cx, hy, cx, gy, ex, fy,
-                        gx, gy, gx, hy, fx, iy, dx, iy]))
+                                                      gx, gy, gx, hy, fx, iy, dx, iy]))
                     elif "b" in prop:
                         shapes.append(QtGui.QPolygon([cx, cy, cx, ay, ex, ay,
-                        gx, ay, gx, cy, fx, dy, dx, dy]))
+                                                      gx, ay, gx, cy, fx, dy, dx, dy]))
                 for shape in shapes:
                     self.painter.drawPolygon(shape)
 
                 self.painter.restore()
 
+
 class ToothImage(QtGui.QWidget):
+
     '''
     a class to grab an image of the tooth widget
     '''
+
     def __init__(self, tooth, props, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.tooth = tooth
         self.props = props
-        LOGGER.debug("tooth image %s with props %s"% (tooth, props))
+        LOGGER.debug("tooth image %s with props %s" % (tooth, props))
 
     def paintEvent(self, event=None):
         recd = QtCore.QRectF(0, 0, self.width(), self.height())
@@ -1135,7 +1193,7 @@ class ToothImage(QtGui.QWidget):
 
 if __name__ == "__main__":
     def signal_catcher(*args):
-        LOGGER.info("signal caught %s"% str(args))
+        LOGGER.info("signal caught %s" % str(args))
 
     LOGGER.setLevel(logging.DEBUG)
     from gettext import gettext as _
@@ -1143,23 +1201,44 @@ if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
     form = chartWidget()
     form.chartgrid = {'lr1': 'lr1', 'lr3': 'lr3', 'lr2': 'lr2', 'lr5': 'lr5',
-    'lr4': 'lr4', 'lr7': 'lr7', 'lr6': 'lr6', 'lr8': 'lr8','ul8': '***',
-    'ul2': 'ul2', 'ul3': 'ulC', 'ul1': 'ul1', 'ul6': 'ul6', 'ul7': 'ul7',
-    'ul4': 'ul4', 'ul5': 'ul5', 'ur4': 'ur4','ur5': 'ur5', 'ur6': 'ur6',
-    'ur7': 'ur7', 'ur1': 'ur1', 'ur2': 'ur2', 'ur3': 'ur3', 'ur8': 'ur8',
-    'll8': 'll8', 'll3': 'll3','ll2': 'll2', 'll1': 'll1', 'll7': 'll7',
-    'll6': 'll6', 'll5': 'll5', 'll4': 'll4'}
+                      'lr4': 'lr4',
+                      'lr7': 'lr7',
+                      'lr6': 'lr6',
+                      'lr8': 'lr8',
+                      'ul8': '***',
+                      'ul2': 'ul2',
+                      'ul3': 'ulC',
+                      'ul1': 'ul1',
+                      'ul6': 'ul6',
+                      'ul7': 'ul7',
+                      'ul4': 'ul4',
+                      'ul5': 'ul5',
+                      'ur4': 'ur4',
+                      'ur5': 'ur5',
+                      'ur6': 'ur6',
+                      'ur7': 'ur7',
+                      'ur1': 'ur1',
+                      'ur2': 'ur2',
+                      'ur3': 'ur3',
+                      'ur8': 'ur8',
+                      'll8': 'll8',
+                      'll3': 'll3',
+                      'll2': 'll2',
+                      'll1': 'll1',
+                      'll7': 'll7',
+                      'll6': 'll6', 'll5': 'll5', 'll4': 'll4'}
 
     for properties in (
-    ("ur7", "ex "), ("ur6", "gi/modbp mb"), ("ur5", "cr,go mp"),
-    ("ur4", "mop,co"), ("ur3", "AT"), ("ur2", "di,co b"), ("ur1", "pv rt"),
-    ("ul1", "cr,pj"), ("ul2", "dp,co b,co"), ("ul3","di p,go"),
-    ("ll3", "pv"), ("ll2", "dip"), ("ll1", "midi"),
-    ("lr1", "mpd"), ("lr2", "mld,gl"), ("lr3", "dr"),
-    ("ul4", "do"), ("ul6", "mo"), ("lr8", "("),
-    ("ul7", "mop,co"), ("ur8", "mdb,gl mpd,go ob"), ("ll4", "b,gl dl,co"),
-    ("ll5", "ob ml"), ("ll6", "mod,co"), ("ll7", "pe"), ("ll8", "ue !watch"),
-    ("lr4", "im/tit"), ("lr5", "dr"), ("lr7", "fs"), ("lr6", "modbl,pr")):
+        ("ur7", "ex "), ("ur6", "gi/modbp mb"), ("ur5", "cr,go mp"),
+        ("ur4", "mop,co"), ("ur3", "AT"), ("ur2", "di,co b"), ("ur1", "pv rt"),
+        ("ul1", "cr,pj"), ("ul2", "dp,co b,co"), ("ul3", "di p,go"),
+        ("ll3", "pv"), ("ll2", "dip"), ("ll1", "midi"),
+        ("lr1", "mpd"), ("lr2", "mld,gl"), ("lr3", "dr"),
+        ("ul4", "do"), ("ul6", "mo"), ("lr8", "("),
+        ("ul7", "mop,co"), ("ur8", "mdb,gl mpd,go ob"), ("ll4", "b,gl dl,co"),
+        ("ll5", "ob ml"), ("ll6", "mod,co"), (
+            "ll7", "pe"), ("ll8", "ue !watch"),
+            ("lr4", "im/tit"), ("lr5", "dr"), ("lr7", "fs"), ("lr6", "modbl,pr")):
         form.setToothProps(properties[0], properties[1])
 
     form.flip_deciduous_signal.connect(signal_catcher)
@@ -1173,4 +1252,3 @@ if __name__ == "__main__":
     pixmap.save("/home/neil/chart.png")
     form.selected = [0, 2]
     sys.exit(app.exec_())
-

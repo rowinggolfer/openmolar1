@@ -1,9 +1,27 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
+
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
@@ -13,23 +31,27 @@ from openmolar.qt4gui.fees import manipulate_plan
 
 from openmolar.qt4gui.compiled_uis import Ui_hygenist_wizard
 
+
 class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
-    def __init__(self,parent=None):
+
+    def __init__(self, parent=None):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
         self.om_gui = parent
-        self.practitioners=localsettings.activedents+localsettings.activehygs
+        self.practitioners = localsettings.activedents + \
+            localsettings.activehygs
         self.dents_comboBox.addItems(self.practitioners)
         self.setPractitioner(localsettings.clinicianNo)
 
         if self.om_gui.pt.has_planned_perio_txs:
             tx_list = ""
             for trt in self.om_gui.pt.treatment_course.periopl.split(" "):
-                tx_list += "<li>%s</li>"% trt
-            self.label.setText(u"<b>%s</b><hr /><ul>%s</ul>"% (
-            _("WARNING - THE FOLLOWING TREATMENTS ARE ALREADY PLANNED."),
-            tx_list
-            ))
+                tx_list += "<li>%s</li>" % trt
+            self.label.setText(u"<b>%s</b><hr /><ul>%s</ul>" % (
+                               _(
+                               "WARNING - THE FOLLOWING TREATMENTS ARE ALREADY PLANNED."),
+                               tx_list
+                               ))
             self.buttonBox.setEnabled(False)
             self.pushButton.clicked.connect(self._re_enable)
             self.groupBox.hide()
@@ -51,7 +73,8 @@ class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
         '''
         try:
             inits = localsettings.ops[arg]
-            self.dents_comboBox.setCurrentIndex(self.practitioners.index(inits))
+            self.dents_comboBox.setCurrentIndex(
+                self.practitioners.index(inits))
         except:
             self.dents_comboBox.setCurrentIndex(-1)
 
@@ -60,9 +83,9 @@ class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
         if self.sp_radioButton.isChecked():
             return "SP"
         elif self.db_radioButton.isChecked():
-           return "SP-"
+            return "SP-"
         elif self.extsp_radioButton.isChecked():
-           return "SP+"
+            return "SP+"
 
     @property
     def dent(self):
@@ -73,7 +96,7 @@ class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
         called to exec the dialog
         '''
         result = True
-        while result == True:
+        while result:
             if self.exec_():
                 if self.dent == "":
                     message = _("Please enter a dentist / hygienist")
@@ -104,18 +127,20 @@ class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
             if self.trt in pt.treatment_course.periopl:
                 n_txs = pt.treatment_course.periocmp.split(
                     " ").count(self.trt) + 1
-                hash_ = localsettings.hash_func("%sperio%s%s"% (courseno, n_txs, self.trt))
+                hash_ = localsettings.hash_func(
+                    "%sperio%s%s" %
+                    (courseno, n_txs, self.trt))
                 tx_hash = TXHash(hash_)
                 manipulate_plan.tx_hash_complete(self.om_gui, tx_hash)
             else:
-                trts = (("perio", "%s"% self.trt),)
+                trts = (("perio", "%s" % self.trt),)
                 manipulate_plan.add_treatments_to_plan(self.om_gui, trts, True)
 
             newnotes = unicode(
                 self.om_gui.ui.notesEnter_textEdit.toPlainText().toUtf8())
             if newnotes != "" and newnotes[-1] != "\n":
-                    newnotes += "\n"
-            newnotes += "%s %s %s\n"%(
+                newnotes += "\n"
+            newnotes += "%s %s %s\n" % (
                 self.trt,
                 _("performed by"),
                 self.dent)
@@ -129,7 +154,7 @@ class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
 if __name__ == "__main__":
     localsettings.initiate()
     localsettings.loadFeeTables()
-    localsettings.station="reception"
+    localsettings.station = "reception"
 
     from openmolar.qt4gui import maingui
     from openmolar.dbtools import patient_class

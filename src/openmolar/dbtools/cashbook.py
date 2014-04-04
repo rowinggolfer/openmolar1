@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License
-# for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 This modules provides functions that read and write to the cashbook
@@ -24,6 +40,7 @@ LOGGER = logging.getLogger("openmolar")
 # this variable allows HISTORIC cashbook entries to be altered (by supervisor)
 full_edit = False
 
+
 def viewitems(obj):
     '''
     provides 2.7 functionality for 2.6 and under
@@ -33,15 +50,17 @@ def viewitems(obj):
 
 
 class CashBookCodesDict(dict):
+
     '''
     A dictionary of cashbookCodes called at module initialisation
     '''
+
     def __init__(self):
         dict.__init__(self)
         self.get_values()
         try:
             self.viewitems
-        except AttributeError: #patched for python <2.7
+        except AttributeError:  # patched for python <2.7
             self.viewitems = functools.partial(viewitems, self)
 
     def get_values(self):
@@ -61,7 +80,7 @@ class CashBookCodesDict(dict):
 
 
 def paymenttaken(sno, name, dent, csetyp, cash, cheque, card,
-sundry_cash, sundry_cheque, sundry_card, hdp, other, refund):
+                 sundry_cash, sundry_cheque, sundry_card, hdp, other, refund):
     '''
     called when a payment has been taken at the desk
     '''
@@ -72,13 +91,13 @@ sundry_cash, sundry_cheque, sundry_card, hdp, other, refund):
     queries = []
     for i, amount in enumerate(
         (cash, cheque, card, sundry_cash,
-        sundry_cheque, sundry_card, hdp, other, refund)
-        ):
+         sundry_cheque, sundry_card, hdp, other, refund)
+    ):
         if amount != 0:
             queries.append('''
             insert into cashbook set cbdate = date(NOW()),
             ref="%06d", linkid=0, descr="%s", code=%d, dntid=%d, amt=%d
-            '''%(sno, name, codes[i], dent, amount))
+            ''' % (sno, name, codes[i], dent, amount))
     if queries != []:
         db = connect()
         cursor = db.cursor()
@@ -87,11 +106,12 @@ sundry_cash, sundry_cheque, sundry_card, hdp, other, refund):
             dbOK = dbOK and cursor.execute(query)
         db.commit()
         cursor.close()
-        #db.close()
+        # db.close()
         return dbOK
 
+
 def details(dent, startdate, enddate,
-treatment_only=False, sundries_only=False):
+            treatment_only=False, sundries_only=False):
     '''
     retrns an html version of the cashbook table
     '''
@@ -99,12 +119,12 @@ treatment_only=False, sundries_only=False):
     db = connect()
     cursor = db.cursor()
 
-    #note - len(headers) is used writing out the html
+    # note - len(headers) is used writing out the html
     headers = ("cbdate", "Serial NO", "Dentist", "Patient", "code", "cash",
-    "cheque", "card", "unknown", "amt")
+               "cheque", "card", "unknown", "amt")
 
     if full_edit or (startdate.toPyDate() <=
-    localsettings.currentDay() <= enddate.toPyDate()):
+                     localsettings.currentDay() <= enddate.toPyDate()):
         headers += ("edit",)
 
     if dent == "*ALL*":
@@ -112,7 +132,7 @@ treatment_only=False, sundries_only=False):
         dentist = "All Dentists"
     else:
         dentist = localsettings.ops_reverse[str(dent)]
-        cond1 = 'dntid="%s" and '% dentist
+        cond1 = 'dntid="%s" and ' % dentist
 
     restriction_header = ""
     if treatment_only:
@@ -124,29 +144,31 @@ treatment_only=False, sundries_only=False):
     else:
         restriction_header = "ALL PAYMENTS"
 
-
     #-- note - mysqldb doesn't play nice with DATE_FORMAT
     #-- hence the string is formatted entirely using python formatting
     query = '''select
     DATE_FORMAT(cbdate, '%s'), ref, dntid, descr, code, amt, cbdate, id
     from cashbook where %s cbdate>='%s' and cbdate<='%s'
-    order by cbdate'''%(
-    localsettings.OM_DATE_FORMAT, cond1,
-    startdate.toPyDate(), enddate.toPyDate())
+    order by cbdate''' % (
+        localsettings.OM_DATE_FORMAT, cond1,
+        startdate.toPyDate(), enddate.toPyDate())
 
     cursor.execute(query)
 
     rows = cursor.fetchall()
 
     retarg = "<h3>Cashbook - "
-    retarg += "%s - %s - %s (inclusive) - %s</h3>"% (dentist,
-    localsettings.formatDate(startdate.toPyDate()),
-    localsettings.formatDate(enddate.toPyDate()),
-    restriction_header)
+    retarg += "%s - %s - %s (inclusive) - %s</h3>" % (dentist,
+                                                      localsettings.formatDate(
+                                                          startdate.toPyDate(
+                                                          )),
+                                                      localsettings.formatDate(
+                                                      enddate.toPyDate()),
+                                                      restriction_header)
 
     retarg += '<table width="100%" border="1"> <tr>'
     for header in headers:
-        retarg += "<th>%s</th>"% header
+        retarg += "<th>%s</th>" % header
     retarg += '</tr>'
     odd = True
     total, cashTOT, chequeTOT, cardTOT, otherTOT = 0, 0, 0, 0, 0
@@ -160,48 +182,48 @@ treatment_only=False, sundries_only=False):
 
         #-- a row is  (date,sno,dnt,patient,code,amount)
 
-        retarg += '<td>%s</td><td>%s</td>'% (row[0], row[1])
-        retarg += '<td>%s</td>'% localsettings.ops.get(row[2])
-        retarg += '<td>%s</td>'% row[3]
+        retarg += '<td>%s</td><td>%s</td>' % (row[0], row[1])
+        retarg += '<td>%s</td>' % localsettings.ops.get(row[2])
+        retarg += '<td>%s</td>' % row[3]
         CODE = cashbookCodesDict.get(row[4])
-        retarg += '<td>%s</td>'% CODE
+        retarg += '<td>%s</td>' % CODE
         amt = row[5]
         amt_str = localsettings.formatMoney(amt)
 
         if "CASH" in CODE:
-            retarg += '<td align="right">%s</td>'% amt_str
+            retarg += '<td align="right">%s</td>' % amt_str
             cashTOT += amt
             retarg += "<td> </td>" * 3
         elif "CHEQUE" in CODE:
-            retarg += '<td> </td><td align="right">%s</td>'% amt_str
+            retarg += '<td> </td><td align="right">%s</td>' % amt_str
             chequeTOT += amt
             retarg += "<td> </td>" * 2
         elif "CARD" in CODE:
             retarg += "<td> </td>" * 2
-            retarg += '<td align="right">%s</td>'% amt_str
+            retarg += '<td align="right">%s</td>' % amt_str
             cardTOT += amt
             retarg += "<td> </td>"
         else:
             retarg += "<td> </td>" * 3
-            retarg += '<td align="right">%s</td>'% amt_str
+            retarg += '<td align="right">%s</td>' % amt_str
             otherTOT += amt
 
-        retarg += '<td align="right">%s</td>'% amt_str
+        retarg += '<td align="right">%s</td>' % amt_str
         if len(headers) == 11:
             if full_edit or row[6] == localsettings.currentDay():
                 retarg += '''<td align="center">
-                <a href="edit_%s">edit</a></td>'''% row[7]
+                <a href="edit_%s">edit</a></td>''' % row[7]
             else:
                 retarg += '<td align="center">n/a</a>'
         retarg += '</tr>\n'
         total += amt
 
-    sum_text = "= %s + %s + %s + %s"% (
+    sum_text = "= %s + %s + %s + %s" % (
         localsettings.pence_to_pounds(cashTOT),
         localsettings.pence_to_pounds(chequeTOT),
         localsettings.pence_to_pounds(cardTOT),
         localsettings.pence_to_pounds(otherTOT)
-        )
+    )
 
     retarg += '''<tr><td colspan="4">%s</td>
     <td><b>TOTAL</b></td>
@@ -209,17 +231,17 @@ treatment_only=False, sundries_only=False):
     <td align="right"><b>%s</b></td>
     <td align="right"><b>%s</b></td>
     <td align="right"><b>%s</b></td>
-    <td align="right"><b>%s</b></td></tr>'''% (
-    sum_text.replace("+ -", "- "),
-    localsettings.formatMoney(cashTOT),
-    localsettings.formatMoney(chequeTOT),
-    localsettings.formatMoney(cardTOT),
-    localsettings.formatMoney(otherTOT),
-    localsettings.formatMoney(total))
+    <td align="right"><b>%s</b></td></tr>''' % (
+        sum_text.replace("+ -", "- "),
+        localsettings.formatMoney(cashTOT),
+        localsettings.formatMoney(chequeTOT),
+        localsettings.formatMoney(cardTOT),
+        localsettings.formatMoney(otherTOT),
+        localsettings.formatMoney(total))
 
     retarg += '</table>'
     cursor.close()
-    #db.close()
+    # db.close()
     return retarg
 
 #--initiate the cashbook dictionary on module import

@@ -1,24 +1,26 @@
-#! /usr/bin/python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2013, Neil Wallace <neil@openmolar.com>                        ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from functools import partial
 import logging
@@ -35,7 +37,7 @@ LOGGER = logging.getLogger("openmolar")
 try:
     from collections import OrderedDict
 except ImportError:
-    #OrderedDict only came in python 2.7
+    # OrderedDict only came in python 2.7
     LOGGER.warning("using openmolar.backports for OrderedDict")
     from openmolar.backports import OrderedDict
 
@@ -49,10 +51,12 @@ from feescale_choice_dialog import ChoiceDialog
 
 from openmolar.dbtools.feescales import feescale_handler, FEESCALE_DIR
 
+
 class ControlPanel(QtGui.QTabWidget):
     item_selected = QtCore.pyqtSignal(object)
     shortcut_selected = QtCore.pyqtSignal(object)
     compare_item_signal = QtCore.pyqtSignal(object)
+
     def __init__(self, parent=None):
         QtGui.QTabWidget.__init__(self, parent)
         self.items_list_view = QtGui.QListView()
@@ -72,7 +76,7 @@ class ControlPanel(QtGui.QTabWidget):
         list_model = ComplexShortcutsListModel(parser)
         self.complex_shortcuts_list_view.setModel(list_model)
         self.complex_shortcuts_list_view.selectionModel(
-            ).currentRowChanged.connect(self._shortcut_selected)
+        ).currentRowChanged.connect(self._shortcut_selected)
 
     def _item_selected(self, new_index, old_index):
         self.item_selected.emit(new_index)
@@ -84,10 +88,10 @@ class ControlPanel(QtGui.QTabWidget):
         id = self.items_list_view.model().id_from_index(index)
         qmenu = QtGui.QMenu(self)
 
-        compare_action = QtGui.QAction("%s %s %s"%(_("Compare"),
-        id,  _("with similar ids in other feescales")), self)
+        compare_action = QtGui.QAction("%s %s %s" % (_("Compare"),
+        id, _("with similar ids in other feescales")), self)
         cancel_action = QtGui.QAction(_("Cancel"), self)
-        #not connected to anything.. f clicked menu will simply die!
+        # not connected to anything.. f clicked menu will simply die!
 
         compare_action.triggered.connect(
             partial(self.compare_item_signal.emit, id))
@@ -163,7 +167,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         icon = QtGui.QIcon(":database.png")
         action_pull = QtGui.QAction(icon, _("Pull"), self)
         action_pull.setToolTip(
-        _("generate local files containing the database feescales"))
+            _("generate local files containing the database feescales"))
 
         icon = QtGui.QIcon(":database.png")
         action_commit = QtGui.QAction(icon, _("Commit"), self)
@@ -190,7 +194,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         action_find = QtGui.QAction(icon, _("Find"), self)
         action_find.setShortcut("Ctrl+F")
         action_find.setToolTip(
-        _("Search current file for first forward match of entered text"))
+            _("Search current file for first forward match of entered text"))
 
         action_find_again = QtGui.QAction(icon, _("Find Again"), self)
         action_find_again.setShortcut("Ctrl+G")
@@ -216,12 +220,12 @@ class FeescaleEditor(QtGui.QMainWindow):
 
         action_diff = QtGui.QAction(_("Show Database Diff"), self)
         action_diff.setToolTip(
-        _("Show the diff between the current file and the "
+            _("Show the diff between the current file and the "
         "corresponding file stored in the database"))
 
         action_compare = QtGui.QAction(_("Compare 2 Feescales"), self)
         action_compare.setToolTip(
-        _("Show the diff between the current file and a selected other"))
+            _("Show the diff between the current file and a selected other"))
 
         self.main_toolbar.addAction(action_pull)
         self.main_toolbar.addAction(action_commit)
@@ -260,7 +264,8 @@ class FeescaleEditor(QtGui.QMainWindow):
         self.action_refactor = QtGui.QAction(_("XML tidy"), self)
         self.action_refactor.triggered.connect(self.refactor)
 
-        self.action_check_parseable = QtGui.QAction(_("Check Well Formed"), self)
+        self.action_check_parseable = QtGui.QAction(
+            _("Check Well Formed"), self)
         self.action_check_parseable.triggered.connect(self.check_parseable)
 
         self.action_check_validity = QtGui.QAction(_("Check Validity"), self)
@@ -323,7 +328,7 @@ class FeescaleEditor(QtGui.QMainWindow):
             m.setStandardButtons(QtGui.QMessageBox.NoButton)
             m.setWindowTitle(_("advisory"))
             m.setModal(False)
-            QtCore.QTimer.singleShot(3*1000, m.accept)
+            QtCore.QTimer.singleShot(3 * 1000, m.accept)
             m.show()
         elif importance == 1:
             LOGGER.info(message)
@@ -333,20 +338,20 @@ class FeescaleEditor(QtGui.QMainWindow):
             QtGui.QMessageBox.warning(self, _("Error"), message)
 
     def sizeHint(self):
-        return QtCore.QSize(800,500)
+        return QtCore.QSize(800, 500)
 
     def closeEvent(self, event=None):
         '''
         called when application closes.
         '''
         if self.is_dirty:
-            message = u"<b>%s</b><hr />%s"%(
+            message = u"<b>%s</b><hr />%s" % (
                 _("WARNING - you have unsaved changes!"),
                 _("Are you sure you want to quit?"))
 
             if QtGui.QMessageBox.question(self, _("Confirm"),
             message,
-            QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel,
+            QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
             QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
                 event.ignore()
                 return
@@ -364,12 +369,12 @@ class FeescaleEditor(QtGui.QMainWindow):
             if parser in self._known_deleted_parsers:
                 pass
             elif parser.is_deleted:
-                message = u"%s<br />%s<hr />%s"% (parser.filepath,
+                message = u"%s<br />%s<hr />%s" % (parser.filepath,
                 _("has been deleted!"),
-                _("Save now?") )
+                    _("Save now?"))
                 if QtGui.QMessageBox.question(self, _("Question"),
                 message,
-                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
                 QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
                     self.feescale_handler.save_xml(parser.ix, parser.text)
                     self.advise(_("File Saved"), 1)
@@ -377,17 +382,17 @@ class FeescaleEditor(QtGui.QMainWindow):
                     self._known_deleted_parsers.append(parser)
 
             elif parser.is_externally_modified:
-                message = u"%s<br />%s<hr />%s"% (parser.filepath,
+                message = u"%s<br />%s<hr />%s" % (parser.filepath,
                 _("has been modified!"),
-                _("Do you want to reload now and lose current changes?") \
-                if parser.is_dirty else _("Do you want to reload now?"))
+                    _("Do you want to reload now and lose current changes?")
+                    if parser.is_dirty else _("Do you want to reload now?"))
 
                 if QtGui.QMessageBox.question(self, _("Question"),
                 message,
-                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
                 QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
                     LOGGER.debug(
-                    "reloading externally modified %s"% parser.filepath)
+                        "reloading externally modified %s" % parser.filepath)
                     parser.refresh()
                     self.view_feescale(self.tab_widget.currentIndex())
 
@@ -409,7 +414,7 @@ class FeescaleEditor(QtGui.QMainWindow):
             try:
                 fp.parse_file()
             except:
-                message = u"%s '%s'"% (_("unable to parse file"), filepath)
+                message = u"%s '%s'" % (_("unable to parse file"), filepath)
                 self.advise(message, 2)
                 LOGGER.exception(message)
 
@@ -435,7 +440,7 @@ class FeescaleEditor(QtGui.QMainWindow):
             text = self.current_parser.text
             self.text_editors[i].setText(text)
             self.setWindowTitle(
-            "%s - %s" %(self.window_title, self.current_parser.description))
+                "%s - %s" % (self.window_title, self.current_parser.description))
             self.update_index()
         else:
             QtGui.QMessageBox.information(self, _("Information"),
@@ -446,7 +451,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         gets files from the database at startup
         '''
         unwritten, modified = \
-        self.feescale_handler.non_existant_and_modified_local_files()
+            self.feescale_handler.non_existant_and_modified_local_files()
 
         for xml_file in unwritten:
             f = open(xml_file.filepath, "w")
@@ -456,10 +461,10 @@ class FeescaleEditor(QtGui.QMainWindow):
         self._checking_files = True
 
         for xml_file in modified:
-            message = "%s '%s' %s<hr />%s"% (
-            _("Local Feescale"), xml_file.filepath,
-            _("differs from the database version"),
-            _("Do you wish to overwrite it with the stored data?"))
+            message = "%s '%s' %s<hr />%s" % (
+                _("Local Feescale"), xml_file.filepath,
+                _("differs from the database version"),
+                _("Do you wish to overwrite it with the stored data?"))
 
             mb = QtGui.QMessageBox(None)
             mb.setWindowTitle(_("Confirm"))
@@ -473,7 +478,7 @@ class FeescaleEditor(QtGui.QMainWindow):
 
             result = mb.exec_()
             if result not in (mb.Ok, mb.Cancel):
-                #show diff
+                # show diff
                 f = open(xml_file.filepath, "r")
                 local_data = f.read()
                 f.close()
@@ -512,7 +517,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         xml = re.sub(">[\s]*<", "><", xml)
         dom = minidom.parseString(xml)
 
-        #don't use setText here that updates orig_text and is_dirty won't work
+        # don't use setText here that updates orig_text and is_dirty won't work
         self.text_edit.update_text(dom.toprettyxml())
 
     def check_parseable(self, action=None, show_message=True):
@@ -523,7 +528,7 @@ class FeescaleEditor(QtGui.QMainWindow):
                 self.advise(_("feescale is well formed"), 1)
             return True
         except Exception as exc:
-            self.advise(u"<b>%s</b><hr />%s"% (
+            self.advise(u"<b>%s</b><hr />%s" % (
                 _("feescale is not well formed"), exc.message), 2)
         return False
 
@@ -538,10 +543,10 @@ class FeescaleEditor(QtGui.QMainWindow):
     def find_item(self, index):
         item_count = 0
         for lineno, line in enumerate(self.text_edit.text().split("\n")):
-            if item_count == index.row()+1:
+            if item_count == index.row() + 1:
                 self.text_edit.setFocus(True)
-                self.text_edit.setFirstVisibleLine(lineno-2)
-                self.text_edit.setCursorPosition(lineno-1, 0)
+                self.text_edit.setFirstVisibleLine(lineno - 2)
+                self.text_edit.setCursorPosition(lineno - 1, 0)
                 self.text_edit.ensureCursorVisible()
                 break
 
@@ -559,7 +564,7 @@ class FeescaleEditor(QtGui.QMainWindow):
     @property
     def compare_items_dockwidget(self):
         if self._compare_items_dockwidget is None:
-            self._compare_items_dockwidget= CompareItemsDockWidget(
+            self._compare_items_dockwidget = CompareItemsDockWidget(
                 self.feescale_parsers.values(), self)
             self.addDockWidget(QtCore.Qt.BottomDockWidgetArea,
                 self._compare_items_dockwidget)
@@ -568,9 +573,9 @@ class FeescaleEditor(QtGui.QMainWindow):
     def find_shortcut(self, index):
         count_ = 0
         for lineno, line in enumerate(self.text_edit.text().split("\n")):
-            if count_ == index.row()+1:
+            if count_ == index.row() + 1:
                 self.text_edit.setFocus(True)
-                self.text_edit.setCursorPosition(lineno-1, 0)
+                self.text_edit.setCursorPosition(lineno - 1, 0)
                 self.text_edit.ensureCursorVisible()
                 break
 
@@ -587,8 +592,8 @@ class FeescaleEditor(QtGui.QMainWindow):
 
     def find_again(self):
         if not self.text_edit.findFirst(
-        self.search_text, True, True, True, True):
-            self.advise("'%s' %s"% (self.search_text, _("not found")))
+                self.search_text, True, True, True, True):
+            self.advise("'%s' %s" % (self.search_text, _("not found")))
 
     def roundup_fees(self):
         dl = RoundupFeesDialog(self)
@@ -623,15 +628,15 @@ class FeescaleEditor(QtGui.QMainWindow):
     def zero_charges(self):
         if QtGui.QMessageBox.question(self, _("Confirm"),
         _("Zero all patient charges in the current feescale?"),
-        QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel,
-        QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok:
+            QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
+                QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok:
             self.current_parser.zero_charges()
             self.text_edit.setText(self.current_parser.text)
 
     def save_files(self):
         if QtGui.QMessageBox.question(self, _("confirm"),
         _("Save all files?"),
-        QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel
+            QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel
         ) == QtGui.QMessageBox.Cancel:
             return
 
@@ -646,11 +651,11 @@ class FeescaleEditor(QtGui.QMainWindow):
                 parser.saved_xml = parser.text
                 parser.reset_orig_modified()
                 i += 1
-        self.advise(u"%s %s"% (i, _("Files saved")), 1)
+        self.advise(u"%s %s" % (i, _("Files saved")), 1)
 
     def save(self):
         LOGGER.debug("save")
-        self.save_as(filepath = self.current_parser.filepath)
+        self.save_as(filepath=self.current_parser.filepath)
 
     def save_as(self, bool_=None, filepath=None):
         '''
@@ -661,8 +666,8 @@ class FeescaleEditor(QtGui.QMainWindow):
         try:
             if filepath is None:
                 filepath = QtGui.QFileDialog.getSaveFileName(self,
-                _("save as"),parser.filepath,
-                "%s %s"% (_("xml_files"),"(*.xml)"))
+                _("save as"), parser.filepath,
+                    "%s %s" % (_("xml_files"), "(*.xml)"))
             if filepath == '':
                 return
             if not re.match(".*\.xml$", filepath):
@@ -671,7 +676,7 @@ class FeescaleEditor(QtGui.QMainWindow):
             f.write(parser.text)
             f.close()
             if filepath != parser.filepath:
-                self.advise("%s %s"% (_("Copy saved to"), filepath), 1)
+                self.advise("%s %s" % (_("Copy saved to"), filepath), 1)
                 if os.path.dirname(filepath) == FEESCALE_DIR:
                     self.advise(_("Reload files to edit the new feescale"), 1)
             else:
@@ -682,17 +687,17 @@ class FeescaleEditor(QtGui.QMainWindow):
                 self.advise(_("File Saved"), 1)
         except Exception as exc:
             LOGGER.exception("unable to save")
-            self.advise(_("File not saved")+" - %s"% exc, 2)
+            self.advise(_("File not saved") + " - %s" % exc, 2)
 
     def refresh_files(self):
         if self.is_dirty and (
-        QtGui.QMessageBox.question(self, _("confirm"),
-        u"<b>%s</b><hr />%s"%(
-        _("Warning - you have unsaved changes,"" "
+            QtGui.QMessageBox.question(self, _("confirm"),
+        u"<b>%s</b><hr />%s" % (
+                                       _("Warning - you have unsaved changes,"" "
         "if you refresh now, these will be lost"),
         _("Refresh anyway?")),
-        QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel
-        ) == QtGui.QMessageBox.Cancel):
+                QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel
+            ) == QtGui.QMessageBox.Cancel):
             return
 
         for fp in self.feescale_parsers.values():
@@ -702,14 +707,14 @@ class FeescaleEditor(QtGui.QMainWindow):
     def apply_changes(self):
         if QtGui.QMessageBox.question(self, _("confirm"),
         _("commit all local files to database?"),
-        QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel
+            QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel
         ) == QtGui.QMessageBox.Ok:
             message = self.feescale_handler.update_db_all()
             LOGGER.info("message")
-            self.advise("<pre>%s</pre>"% message, 1)
+            self.advise("<pre>%s</pre>" % message, 1)
 
     def cursor_position_changed(self, row, col):
-        self.cursor_pos_label.setText("Line %d, Column %d"% (row+1, col))
+        self.cursor_pos_label.setText("Line %d, Column %d" % (row + 1, col))
 
     def text_changed(self):
         new_text = self.text_edit.text()
@@ -741,12 +746,12 @@ class FeescaleEditor(QtGui.QMainWindow):
             _("you have no other files available for comparison"))
             return
 
-        message = "%s<br /><b>%s (%s)</b><hr />%s"% (
-        _("Which feescale would you like to compare "
+        message = "%s<br /><b>%s (%s)</b><hr />%s" % (
+            _("Which feescale would you like to compare "
         "with the current feescale"),
-        self.current_parser.ix,
-        self.current_parser.description,
-        _("Please make a choice"))
+            self.current_parser.ix,
+            self.current_parser.description,
+            _("Please make a choice"))
 
         dl = ChoiceDialog(message, options, self)
         if dl.exec_():
@@ -762,7 +767,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         try:
             for parser in self.feescale_parsers.values():
                 if parser.is_dirty:
-                    LOGGER.debug("%s is dirty"% parser.filepath)
+                    LOGGER.debug("%s is dirty" % parser.filepath)
                     return True
             return False
         except:

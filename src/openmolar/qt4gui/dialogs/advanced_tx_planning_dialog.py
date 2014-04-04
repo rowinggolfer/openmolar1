@@ -1,24 +1,26 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2013, Neil Wallace <rowinggolfer@googlemail.com>               ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import re
 
@@ -32,6 +34,7 @@ from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 
 class TxDisplayWidget(QtGui.QWidget):
     text_edited = QtCore.pyqtSignal()
+
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
 
@@ -61,19 +64,19 @@ class TxDisplayWidget(QtGui.QWidget):
         self.cmp_lineedit.textChanged.connect(self.text_edited.emit)
 
     def _complete_treatments(self):
-        self.cmp_lineedit.setText(u"%s %s"% (self.cmp_text, self.plan_text))
+        self.cmp_lineedit.setText(u"%s %s" % (self.cmp_text, self.plan_text))
         self.pl_lineedit.setText("")
 
     @property
     def plan_text(self):
         txt = unicode(self.pl_lineedit.text().toUtf8())
-        #denture codes are dumb!
+        # denture codes are dumb!
         return re.sub("SR\ ", "SR_", txt)
 
     @property
     def cmp_text(self):
         txt = unicode(self.cmp_lineedit.text().toUtf8())
-        #denture codes are dumb!
+        # denture codes are dumb!
         return re.sub("SR\ ", "SR_", txt)
 
     @property
@@ -91,6 +94,7 @@ class TxDisplayWidget(QtGui.QWidget):
 
 class AdvancedTxPlanningDialog(ExtendableDialog):
     SHOW_CHART_ITEMS = False
+
     def __init__(self, parent=None):
         ExtendableDialog.__init__(self, parent, remove_stretch=True)
         self.setWindowTitle(_("Advanced Treatment Planning"))
@@ -172,8 +176,8 @@ class AdvancedTxPlanningDialog(ExtendableDialog):
         if self.pt is None:
             return
         for att in CURRTRT_ROOT_ATTS:
-            pl = self.pt.treatment_course.__dict__["%spl"% att]
-            cmp = self.pt.treatment_course.__dict__["%scmp"% att]
+            pl = self.pt.treatment_course.__dict__["%spl" % att]
+            cmp = self.pt.treatment_course.__dict__["%scmp" % att]
             widg = self.widgets[att]
             widg.set_plan_text(pl)
             widg.set_completed_text(cmp)
@@ -208,7 +212,7 @@ class AdvancedTxPlanningDialog(ExtendableDialog):
             att_widg = self.widgets[att]
             if att_widg.plan_edited:
                 exist_items = \
-                    self.pt.treatment_course.__dict__["%spl"% att].split(" ")
+                    self.pt.treatment_course.__dict__["%spl" % att].split(" ")
                 new_list = att_widg.plan_text.split(" ")
                 for item in set(new_list):
                     if item == "":
@@ -216,13 +220,14 @@ class AdvancedTxPlanningDialog(ExtendableDialog):
                     n_adds = new_list.count(item) - exist_items.count(item)
                     for i in range(n_adds):
                         yield att, item
+
     @property
     def _new_cmp_items(self):
         for att in CURRTRT_ROOT_ATTS:
             att_widg = self.widgets[att]
             if att_widg.cmp_edited:
                 exist_items = \
-                    self.pt.treatment_course.__dict__["%scmp"% att].split(" ")
+                    self.pt.treatment_course.__dict__["%scmp" % att].split(" ")
                 new_list = att_widg.cmp_text.split(" ")
                 for item in set(new_list):
                     if item == "":
@@ -230,6 +235,7 @@ class AdvancedTxPlanningDialog(ExtendableDialog):
                     n_adds = new_list.count(item) - exist_items.count(item)
                     for i in range(n_adds):
                         yield att, item
+
     @property
     def _deleted_plan_items(self):
         for att in CURRTRT_ROOT_ATTS:
@@ -237,13 +243,14 @@ class AdvancedTxPlanningDialog(ExtendableDialog):
             if att_widg.plan_edited:
                 new_items = att_widg.plan_text.split(" ")
                 exist_items = \
-                    self.pt.treatment_course.__dict__["%spl"% att].split(" ")
+                    self.pt.treatment_course.__dict__["%spl" % att].split(" ")
                 for item in set(exist_items):
                     if item == "":
                         continue
                     n_adds = exist_items.count(item) - new_items.count(item)
                     for i in range(n_adds):
                         yield att, item
+
     @property
     def _deleted_cmp_items(self):
         for att in CURRTRT_ROOT_ATTS:
@@ -251,7 +258,7 @@ class AdvancedTxPlanningDialog(ExtendableDialog):
             if att_widg.cmp_edited:
                 new_items = att_widg.cmp_text.split(" ")
                 exist_items = \
-                    self.pt.treatment_course.__dict__["%scmp"% att].split(" ")
+                    self.pt.treatment_course.__dict__["%scmp" % att].split(" ")
                 for item in set(exist_items):
                     if item == "":
                         continue
@@ -305,7 +312,6 @@ class AdvancedTxPlanningDialog(ExtendableDialog):
         return False
 
 
-
 if __name__ == "__main__":
     from gettext import gettext as _
     from openmolar.dbtools.patient_class import patient
@@ -316,14 +322,14 @@ if __name__ == "__main__":
     dl = AdvancedTxPlanningDialog(mw)
     if dl.exec_():
         for att, item in dl.deleted_plan_items:
-            print "%spl %s deleted" %(att, item)
+            print "%spl %s deleted" % (att, item)
         for att, item in dl.deleted_cmp_items:
-            print "%scmp %s deleted" %(att, item)
+            print "%scmp %s deleted" % (att, item)
         for att, item in dl.new_plan_items:
-            print "%spl %s added" %(att, item)
+            print "%spl %s added" % (att, item)
         for att, item in dl.new_cmp_items:
-            print "%scmp %s added" %(att, item)
+            print "%scmp %s added" % (att, item)
         for att, item in dl.completed_items:
-            print "%s %s was completed" %(att, item)
+            print "%s %s was completed" % (att, item)
         for att, item in dl.reversed_items:
-            print "%s %s was reveresed" %(att, item)
+            print "%s %s was reveresed" % (att, item)

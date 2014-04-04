@@ -1,12 +1,29 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# See the GNU General Public License for more details.
 
-import re, sys
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
+
+import re
+import sys
 from xml.dom import minidom
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
@@ -25,7 +42,9 @@ ADULTMOUTH = []
 for tooth in mouth:
     ADULTMOUTH.append(tooth)
 
+
 class DeciduousAttributeModel(QtCore.QAbstractTableModel):
+
     def __init__(self, table, parent=None):
         QtCore.QAbstractTableModel.__init__(self, parent)
         self.attributes = DECIDMOUTH
@@ -43,13 +62,13 @@ class DeciduousAttributeModel(QtCore.QAbstractTableModel):
 
     def rowCount(self, index):
         if self._rowcount is None:
-            self._rowcount = len(self.attributes)//2
+            self._rowcount = len(self.attributes) // 2
         return self._rowcount
 
     def columnCount(self, index):
         return 4
 
-    def data(self, index,role):
+    def data(self, index, role):
         if role != QtCore.Qt.DisplayRole:
             return QtCore.QVariant()
 
@@ -64,11 +83,14 @@ class DeciduousAttributeModel(QtCore.QAbstractTableModel):
 
 
 class AdultAttributeModel(DeciduousAttributeModel):
+
     def __init__(self, table, parent=None):
         DeciduousAttributeModel.__init__(self, table, parent)
         self.attributes = ADULTMOUTH
 
+
 class FeescaleTestingDialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
+
     def __init__(self, parent=None):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
@@ -88,7 +110,7 @@ class FeescaleTestingDialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
         self.setWindowTitle(_("Shortcut tester"))
 
         self.connect(self.comboBox, QtCore.SIGNAL("currentIndexChanged (int)"),
-            self.change_table)
+                     self.change_table)
 
         self.pushButton.clicked.connect(self.check_codes)
 
@@ -127,14 +149,14 @@ class FeescaleTestingDialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
                 if complex_shortcut.matches(att, tx):
                     complex_matches.append(att)
 
-            usercode = "%s %s"% (att, tx)
+            usercode = "%s %s" % (att, tx)
             code = self.current_table.getItemCodeFromUserCode(usercode)
             if code == "-----":
                 self.line_edits[att].setText("")
             else:
                 description = self.current_table.getItemDescription(
-                code, usercode)
-                self.line_edits[att].setText("%s %s"%(code, description))
+                    code, usercode)
+                self.line_edits[att].setText("%s %s" % (code, description))
         for model in (self.model2, self.model3):
             model.code = tx
             model.reset()
@@ -145,10 +167,11 @@ class FeescaleTestingDialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
 
         if complex_matches != []:
             QtGui.QMessageBox.information(self, _("Information"),
-            "%s '%s' %s<hr />%s"% (
-            _("This feescale handles"), tx,
-            _("as a complex code for the following attributes."),
-            complex_matches))
+                                          "%s '%s' %s<hr />%s" % (
+                                              _("This feescale handles"), tx,
+                                              _(
+                                                  "as a complex code for the following attributes."),
+                                              complex_matches))
 
     @property
     def current_table(self):

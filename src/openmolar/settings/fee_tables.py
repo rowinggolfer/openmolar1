@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# See the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import datetime
 import logging
@@ -20,11 +36,12 @@ from openmolar.dbtools.feescales import feescale_handler
 try:
     from collections import OrderedDict
 except ImportError:
-    #OrderedDict only came in python 2.7
+    # OrderedDict only came in python 2.7
     print "using openmolar.backports for OrderedDict"
     from openmolar.backports import OrderedDict
 
 LOGGER = logging.getLogger("openmolar")
+
 
 def isParseable(data):
     '''
@@ -38,6 +55,7 @@ def isParseable(data):
         return (False, str(exc))
     return (True, "")
 
+
 def getListFromNode(node, id):
     '''
     get the text data from the first child of any such nodes
@@ -49,6 +67,7 @@ def getListFromNode(node, id):
         for child in children:
             values.append(child.data.strip())
     return values
+
 
 def getTextFromNode(node, id):
     '''
@@ -62,22 +81,27 @@ def getTextFromNode(node, id):
             text += child.data.strip()
     return text
 
+
 def getBoolFromNode(node, id, default=False):
     '''
     get the text data from the first child of any such nodes
     '''
     if default:
-        return not getTextFromNode(node, id) in ("False","0")
+        return not getTextFromNode(node, id) in ("False", "0")
     else:
-        return getTextFromNode(node, id) in ("True","1")
+        return getTextFromNode(node, id) in ("True", "1")
+
 
 def _stripped(xml_string):
         return xml_string.replace("&gt;", ">").replace("&lt;", "<")
 
+
 class FeeTables(object):
+
     '''
     a wrapper class to contain as many fee tables as the user has outlined.
     '''
+
     def __init__(self):
         self.tables = OrderedDict()
         self.warnings = []
@@ -93,7 +117,7 @@ class FeeTables(object):
         if not self.default_table:
             self.warnings.append("No Feetables Found")
         else:
-            LOGGER.info("Default FeeTable = %s"% self.default_table)
+            LOGGER.info("Default FeeTable = %s" % self.default_table)
 
     @property
     def default_csetype(self):
@@ -186,20 +210,20 @@ class FeeTables(object):
         '''
         a readable description of the object
         '''
-        retarg = "%d Tables \n"% len(self.tables)
+        retarg = "%d Tables \n" % len(self.tables)
         for key in self.tables:
             table = self.tables[key]
             retarg += "===" * 12 + "\n"
-            retarg += "   table %s - %s\n"% (key, table.briefName)
-            retarg += "%s \n"% table.description
-            retarg += "valid %s - %s\n"% (
-            localsettings.formatDate(table.startDate),
-            localsettings.formatDate(table.endDate))
+            retarg += "   table %s - %s\n" % (key, table.briefName)
+            retarg += "%s \n" % table.description
+            retarg += "valid %s - %s\n" % (
+                localsettings.formatDate(table.startDate),
+                localsettings.formatDate(table.endDate))
 
-            retarg += "       categories %s\n"% table.categories
-            retarg += "       fee cols %s\n"% str(table.feeColNames)
-            retarg += "    pt_fee cols %s\n"% str(table.pt_feeColNames)
-            retarg += "       query %s\n"% table.columnQuery
+            retarg += "       categories %s\n" % table.categories
+            retarg += "       fee cols %s\n" % str(table.feeColNames)
+            retarg += "    pt_fee cols %s\n" % str(table.pt_feeColNames)
+            retarg += "       query %s\n" % table.columnQuery
             retarg += "===" * 12 + "\n"
         return retarg
 
@@ -221,21 +245,24 @@ class FeeTables(object):
             try:
                 table.load_from_xml()
             except Exception as exc:
-                message = "%s %s %s"%(
+                message = "%s %s %s" % (
                     _("feesscale"),
                     table.database_ix,
                     _("Failed to Load")
-                    )
+                )
 
                 LOGGER.exception(message)
-                self.warnings.append(message + "<hr /><pre>%s</pre>"% exc)
+                self.warnings.append(message + "<hr /><pre>%s</pre>" % exc)
+
 
 class FeeTable(object):
+
     '''
     a class to contain and allow quick access to data stored in a fee table
     '''
+
     def __init__(self, ix, xml_data):
-        LOGGER.info("initiating Feetable %s"% ix)
+        LOGGER.info("initiating Feetable %s" % ix)
         self.database_ix = ix
         self.dom = minidom.parseString(xml_data)
 
@@ -255,19 +282,19 @@ class FeeTable(object):
         self.item_modifiers = []
 
         self.ui_lists = {
-            "crown_buttons":[],
-            "implant_buttons":[],
-            "fs_buttons":[],
-            "endo_buttons":[],
-            "surgical_buttons":[],
-            "post_buttons":[],
-            }
+            "crown_buttons": [],
+            "implant_buttons": [],
+            "fs_buttons": [],
+            "endo_buttons": [],
+            "surgical_buttons": [],
+            "post_buttons": [],
+        }
 
     def __repr__(self):
         '''
         a readable description of the object
         '''
-        return "FeeTable %s database index %s - has %s feeItems"% (
+        return "FeeTable %s database index %s - has %s feeItems" % (
             self.briefName, self.database_ix, len(self.feesDict))
 
     @property
@@ -297,9 +324,9 @@ class FeeTable(object):
             try:
                 text = node.firstChild.data.strip(" \n")
                 self.categories.append(text)
-            except AttributeError: #no categories
+            except AttributeError:  # no categories
                 pass
-        LOGGER.debug("categories = %s"% str(self.categories))
+        LOGGER.debug("categories = %s" % str(self.categories))
 
     def setSectionHeaders(self):
         '''
@@ -311,7 +338,7 @@ class FeeTable(object):
             id = node.getAttribute("id")
             text = node.childNodes[0].data.strip(" \n")
             self.headers[id] = text
-        LOGGER.debug("section headers = %s"% sorted(self.headers))
+        LOGGER.debug("section headers = %s" % sorted(self.headers))
 
     def setTableDescription(self):
         '''
@@ -321,7 +348,7 @@ class FeeTable(object):
         node = self.dom.getElementsByTagName("feescale_description")[0]
         text = node.childNodes[0].data.strip(" \n")
         self.description = text
-        LOGGER.info("Feetable description = %s"% self.description)
+        LOGGER.info("Feetable description = %s" % self.description)
 
     def setStartDate(self):
         '''
@@ -333,7 +360,7 @@ class FeeTable(object):
         month = start_node.getElementsByTagName("month")[0].childNodes[0].data
         year = start_node.getElementsByTagName("year")[0].childNodes[0].data
         self.startDate = datetime.date(int(year), int(month), int(day))
-        LOGGER.debug("startDate = %s"% self.startDate)
+        LOGGER.debug("startDate = %s" % self.startDate)
 
     def setEndDate(self):
         '''
@@ -350,12 +377,12 @@ class FeeTable(object):
         month = end_node.getElementsByTagName("month")[0].childNodes[0].data
         year = end_node.getElementsByTagName("year")[0].childNodes[0].data
         self.endDate = datetime.date(int(year), int(month), int(day))
-        LOGGER.debug("endDate = %s"% self.endDate)
+        LOGGER.debug("endDate = %s" % self.endDate)
 
     def get_ui_buttons(self, tagname):
         for ix, node in enumerate(self.dom.getElementsByTagName(tagname)):
             chart_button = namedtuple('Button',
-                    ("ix", "shortcut", "description", "tooltip"))
+                                     ("ix", "shortcut", "description", "tooltip"))
             chart_button.ix = ix
             chart_button.description = node.getAttribute("description")
             chart_button.tooltip = node.getAttribute("tooltip")
@@ -379,7 +406,7 @@ class FeeTable(object):
             if fee_item.usercode is None:
                 pass
             elif fee_item.is_regex:
-                #use pre-compiled regex as the key
+                # use pre-compiled regex as the key
                 key = re.compile(fee_item.usercode)
                 if fee_item.pt_attribute == "chart":
                     self.chartRegexCodes[key] = item_code
@@ -421,10 +448,10 @@ class FeeTable(object):
         shortcut will be something like "CR,GO" or "MOD,CO"
         if not found, "-----" will be returned
         '''
-        LOGGER.debug("getToothCode for %s%s"% (tooth, shortcut))
+        LOGGER.debug("getToothCode for %s%s" % (tooth, shortcut))
 
         for key in self.chartRegexCodes:
-            if key.match(tooth+shortcut):
+            if key.match(tooth + shortcut):
                 return self.chartRegexCodes[key]
         return self.chartPlainCodes.get(shortcut, "-----")
 
@@ -432,7 +459,7 @@ class FeeTable(object):
         '''
         return the itemcode associated with it, otherwise, return "-----"
         '''
-        LOGGER.debug("looking up usercode %s"% arg)
+        LOGGER.debug("looking up usercode %s" % arg)
         for key in self.otherRegexCodes:
             if key.match(arg):
                 return self.otherRegexCodes[key]
@@ -443,12 +470,12 @@ class FeeTable(object):
         '''
         returns a tuple of (fee, ptfee) for an item
         '''
-        LOGGER.debug("%s %s %s"% ('looking up a fee for', itemcode, shortcut))
+        LOGGER.debug("%s %s %s" % ('looking up a fee for', itemcode, shortcut))
 
         try:
             fee_item = self.feesDict[itemcode]
         except KeyError:
-            LOGGER.warning("itemcode %s not found in feetable %s"% (
+            LOGGER.warning("itemcode %s not found in feetable %s" % (
                 itemcode, self.database_ix))
             return (0, 0)
 
@@ -458,15 +485,15 @@ class FeeTable(object):
         if fee_item.has_fee_shortcuts:
             return fee_item.get_fees_from_fee_shortcuts(shortcut)
 
-        #complex codes have a different fee if there are multiple
-        #in the estimate already
+        # complex codes have a different fee if there are multiple
+        # in the estimate already
         existing_no = 0
         for existing_est in pt.estimates:
             if (existing_est.itemcode == itemcode and
-            csetype == existing_est.csetype):
+               csetype == existing_est.csetype):
                 existing_no += 1
 
-        return fee_item.get_fees(existing_no+1)
+        return fee_item.get_fees(existing_no + 1)
 
     def getFees(self, itemcode, pt, csetype, shortcut):
         '''
@@ -480,13 +507,13 @@ class FeeTable(object):
         '''
         returns a tuple of (fee, ptfee) for an item
         '''
-        LOGGER.debug("recalculating fee for itemcode %s with %d items"% (
+        LOGGER.debug("recalculating fee for itemcode %s with %d items" % (
             itemcode, item_no))
 
         try:
             fee_item = self.feesDict[itemcode]
         except KeyError:
-            LOGGER.warning("itemcode %s not found in feetable %s"% (
+            LOGGER.warning("itemcode %s not found in feetable %s" % (
                 itemcode, self.database_ix))
             return (0, 0)
 
@@ -495,7 +522,7 @@ class FeeTable(object):
 
     def apply_modifiers(self, gross, charge, itemcode, pt):
         for modifier in self.item_modifiers:
-            LOGGER.debug("checking modifier %s"% modifier)
+            LOGGER.debug("checking modifier %s" % modifier)
             if modifier.condition_met(pt) and modifier.item_id_match(itemcode):
                 return modifier.gross_mod(gross), modifier.charge_mod(charge)
         return gross, charge
@@ -508,7 +535,7 @@ class FeeTable(object):
         try:
             return self.feesDict[itemcode].description
         except KeyError:
-            return u"%s (%s)"% (_("OTHER TREATMENT"), usercode)
+            return u"%s (%s)" % (_("OTHER TREATMENT"), usercode)
 
     @property
     def other_shortcuts(self):
@@ -521,12 +548,14 @@ class FeeTable(object):
 
 
 class FeeItem(object):
+
     '''
     this class handles the calculation of fees
     part of the challenge is recognising the fact that
     2x an item is not necessarily
     the same as double the fee for a single item etc..
     '''
+
     def __init__(self, table, itemcode, element):
         self.table = table
         self.itemcode = itemcode
@@ -579,7 +608,7 @@ class FeeItem(object):
             fee = int(getTextFromNode(node, "gross"))
             self.fees.append(fee)
 
-            try: # charge is an optional field.
+            try:  # charge is an optional field.
                 charge = int(getTextFromNode(node, "charge"))
                 self.ptFees.append(charge)
             except ValueError:
@@ -593,13 +622,13 @@ class FeeItem(object):
                 self.fee_shortcuts.append(re.compile(shortcut_match))
 
     def __repr__(self):
-        return "FeeItem '%s' %s %s %s %s"% (
+        return "FeeItem '%s' %s %s %s %s" % (
             self.itemcode,
             self.description,
             str(self.fees),
             str(self.ptFees),
             str(self.brief_descriptions)
-            )
+        )
 
     @property
     def has_pt_fees(self):
@@ -622,10 +651,10 @@ class FeeItem(object):
             fsfd = self.fee_shortcuts[index].pattern
             if self.pt_attribute == "chart":
                 return fsfd
-            return "%s %s"% (self.pt_attribute, fsfd)
+            return "%s %s" % (self.pt_attribute, fsfd)
         except IndexError:
             pass
-        except AttributeError: #not regex? I can't see this happening?
+        except AttributeError:  # not regex? I can't see this happening?
             pass
         return self.usercode
 
@@ -635,7 +664,7 @@ class FeeItem(object):
             return None
         if self.pt_attribute == "chart":
             return self.shortcut
-        return"%s %s"% (self.pt_attribute, self.shortcut)
+        return"%s %s" % (self.pt_attribute, self.shortcut)
 
     @property
     def forbid_reason(self):
@@ -651,7 +680,7 @@ class FeeItem(object):
         fee = self.get_fee(item_no)
         ptFee = self.get_fee(item_no, charge=True)
 
-        if ptFee == None:
+        if ptFee is None:
             return (fee, fee)
         else:
             return (fee, ptFee)
@@ -664,8 +693,8 @@ class FeeItem(object):
         but that has only 1 itemcode on NHS feescale :(
         '''
         for i, compiled_regex in enumerate(self.fee_shortcuts):
-            LOGGER.debug("Comparing '%s' with regex '%s'"% (
-            shortcut, compiled_regex.pattern))
+            LOGGER.debug("Comparing '%s' with regex '%s'" % (
+                         shortcut, compiled_regex.pattern))
 
             if compiled_regex.match(shortcut):
                 fee = self.fees[i]
@@ -676,7 +705,7 @@ class FeeItem(object):
                 return fee, charge
 
         LOGGER.warning(
-        "error getting fee from fee_shortcut. returning default")
+            "error getting fee from fee_shortcut. returning default")
         return self.get_fees()
 
     def get_fee(self, item_no=1, charge=False):
@@ -685,7 +714,7 @@ class FeeItem(object):
         if charge is true, then return the "charge" rather than the gross fee
         '''
         LOGGER.debug(
-            "FeeItem.get_fee(item_no=%d, charge=%s)"% (item_no, charge))
+            "FeeItem.get_fee(item_no=%d, charge=%s)" % (item_no, charge))
         if charge:
             if self.ptFees == []:
                 return None
@@ -695,42 +724,45 @@ class FeeItem(object):
 
         if self.is_simple or item_no == 1:
             fee = feeList[0]
-            LOGGER.debug("simple addition of 1st item, fee=%s"% fee)
+            LOGGER.debug("simple addition of 1st item, fee=%s" % fee)
             return fee
 
-        LOGGER.warning("Complex FeeItem fee lookup, item_no=%d"% item_no)
+        LOGGER.warning("Complex FeeItem fee lookup, item_no=%d" % item_no)
         for i, condition in enumerate(self.conditions):
-            LOGGER.debug("checking condition '%s'"% condition)
-            if condition == "item_no=%d"% item_no:
+            LOGGER.debug("checking condition '%s'" % condition)
+            if condition == "item_no=%d" % item_no:
                 fee = feeList[i]
-                LOGGER.debug("condition met '%s' fee=%s"% (condition, fee))
+                LOGGER.debug("condition met '%s' fee=%s" % (condition, fee))
                 return fee
             m = re.match("item_no>(\d+)", condition)
             if m and item_no > int(m.groups()[0]):
                 fee = feeList[i]
-                LOGGER.debug("condition met '%s' fee=%s"% (condition, fee))
+                LOGGER.debug("condition met '%s' fee=%s" % (condition, fee))
                 return fee
             m = re.match("item_no<(\d+)", condition)
             if m and item_no < int(m.groups()[0]):
                 fee = feeList[i]
-                LOGGER.debug("condition met '%s' fee=%s"% (condition, fee))
+                LOGGER.debug("condition met '%s' fee=%s" % (condition, fee))
                 return fee
             m = re.match("(\d+)<item_no<(\d+)", condition)
             if m and int(m.groups()[0]) < item_no < int(m.groups()[1]):
                 fee = feeList[i]
-                LOGGER.debug("condition met '%s' fee=%s"% (condition, fee))
+                LOGGER.debug("condition met '%s' fee=%s" % (condition, fee))
                 return fee
 
-        #if all has failed.... go with the simple one
+        # if all has failed.... go with the simple one
         LOGGER.debug("no conditions met... returning simple fee")
         return feeList[0]
 
+
 class ComplexShortcut(object):
+
     '''
     this class allows complex logic to be placed into an xml feescale
     complex shortcuts are checked for a match with treatment items
     before the simple one-to-one feeitems are considered.
     '''
+
     def __init__(self, element):
 
         shortcut_node = element.getElementsByTagName("shortcut")[0]
@@ -738,9 +770,9 @@ class ComplexShortcut(object):
         self.pt_attribute = shortcut_node.getAttribute("att")
 
         shortcut = shortcut_node.childNodes[0].data
-        LOGGER.debug("Complex shortcut %s %s"% (self.pt_attribute, shortcut))
+        LOGGER.debug("Complex shortcut %s %s" % (self.pt_attribute, shortcut))
         if self.pt_attribute != "chart":
-            shortcut = "%s %s"% (self.pt_attribute, shortcut)
+            shortcut = "%s %s" % (self.pt_attribute, shortcut)
         if self.is_regex:
             self.shortcut = re.compile(shortcut)
         else:
@@ -772,19 +804,21 @@ class ComplexShortcut(object):
         '''
         if re.match("[ul][lr][1-8A-E]", att):
             if self.is_regex:
-                return self.shortcut.match("%s%s"% (att, shortcut))
+                return self.shortcut.match("%s%s" % (att, shortcut))
             return self.shortcut == shortcut
         else:
-            usercode = "%s %s"% (att, shortcut)
+            usercode = "%s %s" % (att, shortcut)
             if self.is_regex:
                 return self.shortcut.match(usercode)
             return self.shortcut == usercode
 
     def __repr__(self):
-        return ("Complex shortcut, '%s'"% (
+        return ("Complex shortcut, '%s'" % (
             self.shortcut if not self.is_regex else self.shortcut.pattern))
 
+
 class CaseAction(object):
+
     '''
     a simple class to store what should be performed when a ComplexShortcut
     is matched
@@ -807,7 +841,7 @@ class CaseAction(object):
             self._is_handled = self.NOT_HANDLED
         elif handled == "part":
             self._is_handled = self.PARTIALLY_HANDLED
-        else: #default is fully handled!
+        else:  # default is fully handled!
             self._is_handled = self.FULLY_HANDLED
 
         removal_nodes = case_node.getElementsByTagName("remove_item")
@@ -837,15 +871,17 @@ class CaseAction(object):
         return self._is_handled
 
     def __repr__(self):
-        return "CaseAction '%s' '%s'"% (self.condition, self.message)
+        return "CaseAction '%s' '%s'" % (self.condition, self.message)
 
 
 class Modifier(object):
+
     '''
     feescales can have modifier elements.
     An example of this is you may wish to not charge for some items on certain
     age groups.
     '''
+
     def __init__(self, modifier_node):
         self.conditions = []
         self.item_ids = []
@@ -863,14 +899,14 @@ class Modifier(object):
                 self.item_ids.append(item_id)
         try:
             self._gross_fee = int(modifier_node.getElementsByTagName(
-            "gross")[0].firstChild.data)
+                                  "gross")[0].firstChild.data)
         except IndexError:
-            pass # no gross fee modification
+            pass  # no gross fee modification
         try:
             self._charge_fee = int(modifier_node.getElementsByTagName(
-            "charge")[0].firstChild.data)
+                                   "charge")[0].firstChild.data)
         except IndexError:
-            pass # no charge fee modication
+            pass  # no charge fee modication
 
     def item_id_match(self, item_id):
         LOGGER.debug(item_id)
@@ -894,7 +930,7 @@ class Modifier(object):
             if m:
                 years, months = pt.age_course_start
                 years_, months_ = int(m.groups()[0]), int(m.groups()[1])
-                if years < years_ or ( years == years_ and months < months_):
+                if years < years_ or (years == years_ and months < months_):
                     return True
             m = re.match("cset=(.*)$", condition)
             if m and pt.cset == m.groups()[0]:
@@ -921,7 +957,7 @@ class Modifier(object):
         return fee
 
     def __repr__(self):
-        return "Modifier conditions = %s"% self.conditions
+        return "Modifier conditions = %s" % self.conditions
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
@@ -934,7 +970,7 @@ if __name__ == "__main__":
 
     print table.hasPtCols
     for i, complex_shortcut in enumerate(table.complex_shortcuts):
-        print "looking for SP in complex_shortcut %d"% i
+        print "looking for SP in complex_shortcut %d" % i
         if complex_shortcut.matches("perio", "SP"):
             print "    match found"
 

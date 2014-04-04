@@ -1,25 +1,43 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import MySQLdb
 from openmolar import connect
 from openmolar.dbtools import patient_class
 from openmolar.settings import localsettings
 
+
 def commit(pt):
-    sqlcond=""
+    sqlcond = ""
     values = []
     for attr in patient_class.patientTableAtts:
         value = pt.__dict__[attr]
         if value:
-            sqlcond += '%s = %%s,'% attr
+            sqlcond += '%s = %%s,' % attr
             values.append(value)
 
-    sqlcommand= "insert into patients SET %s serialno=%%s"%sqlcond
+    sqlcommand = "insert into patients SET %s serialno=%%s" % sqlcond
 
     query = "select max(serialno) from patients"
 
@@ -28,10 +46,10 @@ def commit(pt):
         db = connect.connect()
         cursor = db.cursor()
         cursor.execute(query)
-        currentMax=cursor.fetchone()[0]
+        currentMax = cursor.fetchone()[0]
 
         if currentMax:
-            newSerialno = currentMax+1
+            newSerialno = currentMax + 1
         else:
             newSerialno = 1
         try:
@@ -40,7 +58,7 @@ def commit(pt):
             db.commit()
             break
 
-        except connect.IntegrityError, e:
+        except connect.IntegrityError as e:
             print "error saving new patient, will retry with new serialno"
             print e
             newSerialno = -1
@@ -48,15 +66,15 @@ def commit(pt):
         Attempts += 1
         if Attemps > 20:
             break
-    #db.close()
+    # db.close()
     return newSerialno
 
 if __name__ == "__main__":
     global pt
     from openmolar.dbtools import patient_class
     import copy
-    pt= patient_class.patient(0)
-    pt.fname="Norman"
-    pt.sname="Wisdom"
-    #ok - so a trivial change has been made - now write to the database
+    pt = patient_class.patient(0)
+    pt.fname = "Norman"
+    pt.sname = "Wisdom"
+    # ok - so a trivial change has been made - now write to the database
     print commit(pt)

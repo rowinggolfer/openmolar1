@@ -1,24 +1,26 @@
-#! /usr/bin/python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2013, Neil Wallace <neil@openmolar.com>                        ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from functools import partial
 import logging
@@ -47,14 +49,16 @@ STYLESHEET = os.path.join(
 try:
     from collections import OrderedDict
 except ImportError:
-    #OrderedDict only came in python 2.7
+    # OrderedDict only came in python 2.7
     LOGGER.warning("using openmolar.backports for OrderedDict")
     from openmolar.backports import OrderedDict
 
 from openmolar.dbtools.phrasebook import PHRASEBOOKS
 
+
 class ControlPanel(QtGui.QListView):
     phrase_selected = QtCore.pyqtSignal(object)
+
     def __init__(self, parent=None):
         QtGui.QListView.__init__(self, parent)
         self.list_model = PhrasesListModel()
@@ -122,7 +126,7 @@ class PhrasebookEditor(QtGui.QMainWindow):
         action_find = QtGui.QAction(icon, _("Find"), self)
         action_find.setShortcut("Ctrl+F")
         action_find.setToolTip(
-        _("Search current file for first forward match of entered text"))
+            _("Search current file for first forward match of entered text"))
 
         action_find_again = QtGui.QAction(icon, _("Find Again"), self)
         action_find_again.setShortcut("Ctrl+G")
@@ -145,7 +149,8 @@ class PhrasebookEditor(QtGui.QMainWindow):
         self.action_refactor = QtGui.QAction(_("XML tidy"), self)
         self.action_refactor.triggered.connect(self.refactor)
 
-        self.action_check_parseable = QtGui.QAction(_("Check Well Formed"), self)
+        self.action_check_parseable = QtGui.QAction(
+            _("Check Well Formed"), self)
         self.action_check_parseable.triggered.connect(self.check_parseable)
 
         self.action_check_validity = QtGui.QAction(_("Check Validity"), self)
@@ -187,7 +192,7 @@ class PhrasebookEditor(QtGui.QMainWindow):
             m.setStandardButtons(QtGui.QMessageBox.NoButton)
             m.setWindowTitle(_("advisory"))
             m.setModal(False)
-            QtCore.QTimer.singleShot(3*1000, m.accept)
+            QtCore.QTimer.singleShot(3 * 1000, m.accept)
             m.show()
         elif importance == 1:
             LOGGER.info(message)
@@ -197,21 +202,21 @@ class PhrasebookEditor(QtGui.QMainWindow):
             QtGui.QMessageBox.warning(self, _("Error"), message)
 
     def sizeHint(self):
-        return QtCore.QSize(800,500)
+        return QtCore.QSize(800, 500)
 
     def closeEvent(self, event=None):
         '''
         called when application closes.
         '''
         if self.is_dirty:
-            message = u"<b>%s</b><hr />%s"%(
+            message = u"<b>%s</b><hr />%s" % (
                 _("WARNING - you have unsaved changes!"),
                 _("Are you sure you want to quit?"))
 
             if QtGui.QMessageBox.question(self, _("Confirm"),
-            message,
-            QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel,
-            QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+                                          message,
+                                          QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
+                                          QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
                 event.ignore()
                 return
         self.closed_signal.emit()
@@ -246,19 +251,18 @@ class PhrasebookEditor(QtGui.QMainWindow):
         self.loading = False
 
     def view_phrasebook(self, ix=0):
-        LOGGER.debug("View phrasebook %s"% ix)
+        LOGGER.debug("View phrasebook %s" % ix)
         while self.loading:
             QtCore.QTimer.singleShot(1000, self.view_phrasebook)
             return
         if len(self.text_editors) > 0:
             self.control_panel.set_xml(self.text_editors[ix].text)
             self.setWindowTitle(
-            "%s - %s" %(self.window_title, ix))
+                "%s - %s" % (self.window_title, ix))
             self.update_index()
         else:
             QtGui.QMessageBox.information(self, _("Information"),
-            _("You appear to have no phrasebooks installed in your database"))
-
+                                          _("You appear to have no phrasebooks installed in your database"))
 
     def update_index(self):
         self.control_panel.set_xml(self.text)
@@ -277,7 +281,7 @@ class PhrasebookEditor(QtGui.QMainWindow):
         xml = re.sub(">[\s]*<", "><", self.text)
         dom = minidom.parseString(xml)
 
-        #don't use setText here that updates orig_text and is_dirty won't work
+        # don't use setText here that updates orig_text and is_dirty won't work
         self.text_edit.update_text(dom.toprettyxml())
 
     def check_parseable(self, action=None, show_message=True):
@@ -287,12 +291,12 @@ class PhrasebookEditor(QtGui.QMainWindow):
                 self.advise(_("Phrasebook is well formed"), 1)
             return True
         except Exception as exc:
-            self.advise(u"<b>%s</b><hr />%s"% (
+            self.advise(u"<b>%s</b><hr />%s" % (
                 _("Phrasebook is not well formed"), exc.message), 2)
         return False
 
     def check_validity(self):
-        result, message  = self.check_xml_validity(self.text)
+        result, message = self.check_xml_validity(self.text)
         if result:
             self.advise(_("Phrasebook is valid"), 1)
         else:
@@ -315,10 +319,10 @@ class PhrasebookEditor(QtGui.QMainWindow):
     def find_phrase(self, index):
         phrase_count = 0
         for lineno, line in enumerate(self.text.split("\n")):
-            if phrase_count == index.row()+1:
+            if phrase_count == index.row() + 1:
                 self.text_edit.setFocus(True)
-                self.text_edit.setFirstVisibleLine(lineno-2)
-                self.text_edit.setCursorPosition(lineno-1, 0)
+                self.text_edit.setFirstVisibleLine(lineno - 2)
+                self.text_edit.setCursorPosition(lineno - 1, 0)
                 self.text_edit.ensureCursorVisible()
                 break
 
@@ -338,8 +342,8 @@ class PhrasebookEditor(QtGui.QMainWindow):
 
     def find_again(self):
         if not self.text_edit.findFirst(
-        self.search_text, True, True, True, True):
-            self.advise("'%s' %s"% (self.search_text, _("not found")))
+                self.search_text, True, True, True, True):
+            self.advise("'%s' %s" % (self.search_text, _("not found")))
 
     def new_phrasebook(self):
         offer_list = []
@@ -351,7 +355,7 @@ class PhrasebookEditor(QtGui.QMainWindow):
             return
         dl = QtGui.QInputDialog(self)
         choice, result = dl.getItem(self, _("Choose"),
-            _("A phrasebook for which clinician?"), sorted(offer_list))
+                                    _("A phrasebook for which clinician?"), sorted(offer_list))
         if result:
             ix = localsettings.ops_reverse[str(choice.toAscii())]
             PHRASEBOOKS.create_book(ix)
@@ -359,9 +363,9 @@ class PhrasebookEditor(QtGui.QMainWindow):
 
     def apply_changes(self):
         if QtGui.QMessageBox.question(self, _("confirm"),
-        _("commit all local files to database?"),
-        QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel
-        ) == QtGui.QMessageBox.Ok:
+                                      _("commit all local files to database?"),
+                                      QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel
+                                      ) == QtGui.QMessageBox.Ok:
             no_ = 0
             for te in self.text_editors:
                 if not te.is_dirty:
@@ -369,17 +373,17 @@ class PhrasebookEditor(QtGui.QMainWindow):
                 new_xml = te.text()
                 result, message = self.check_xml_validity(new_xml)
                 if not result:
-                    self.advise("%s %s %s"% (
-                    _("Phrasebook"), te.db_index, _("is not valid")), 2)
+                    self.advise("%s %s %s" % (
+                                _("Phrasebook"), te.db_index, _("is not valid")), 2)
                     continue
                 result = PHRASEBOOKS.update_database(new_xml, te.db_index)
                 if result:
                     te.setText(new_xml)
                     no_ += 1
-            self.advise("%s %d %s"% (_("Updated"), no_, _("Books")), 1)
+            self.advise("%s %d %s" % (_("Updated"), no_, _("Books")), 1)
 
     def cursor_position_changed(self, row, col):
-        self.cursor_pos_label.setText("Line %d, Column %d"% (row+1, col))
+        self.cursor_pos_label.setText("Line %d, Column %d" % (row + 1, col))
 
     def text_changed(self):
         new_text = self.text_edit.text()
@@ -391,7 +395,7 @@ class PhrasebookEditor(QtGui.QMainWindow):
         try:
             for te in self.text_editors:
                 if te.is_dirty:
-                    LOGGER.debug("%s is dirty"% te)
+                    LOGGER.debug("%s is dirty" % te)
                     return True
             return False
         except:

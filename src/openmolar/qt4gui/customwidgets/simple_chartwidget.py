@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License
-# for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 has one class, a custom widget which inherits from QWidget
@@ -19,24 +35,26 @@ from PyQt4 import QtGui, QtCore
 from openmolar.qt4gui import colours
 from openmolar.settings import images
 
-GRID =  (
-["ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1',
-'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8'],
-["lr8", "lr7", "lr6", "lr5", 'lr4', 'lr3', 'lr2', 'lr1',
-'ll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8']
+GRID = (
+    ["ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1',
+     'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8'],
+    ["lr8", "lr7", "lr6", "lr5", 'lr4', 'lr3', 'lr2', 'lr1',
+     'll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8']
 )
 
 
 class SimpleChartWidg(QtGui.QWidget):
+
     '''
     a custom widget to show a standard UK dental chart
     - allows for user navigation with mouse and/or keyboard
     '''
+
     def __init__(self, parent=None, auto_ctrl_key=False):
         QtGui.QWidget.__init__(self, parent)
 
         self.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,
-        QtGui.QSizePolicy.Expanding))
+                                             QtGui.QSizePolicy.Expanding))
 
         self.grid = GRID
 
@@ -82,10 +100,10 @@ class SimpleChartWidg(QtGui.QWidget):
         returns a list of selected teeth in form ["ur8", "uld"]
         '''
 
-        #return (self.selected, self.multiSelection)
+        # return (self.selected, self.multiSelection)
         selectedTeeth = []
         for x, y in self.selected:
-            self.prevSelect = (x,y)
+            self.prevSelect = (x, y)
             selectedTeeth.append(self.grid[y][x])
         selectedTeeth.sort(reverse=True)
         return selectedTeeth
@@ -94,11 +112,11 @@ class SimpleChartWidg(QtGui.QWidget):
         '''
         set the tooth which is currently selected
         '''
-        if not (x,y) in self.selected:
-            self.selected.add((x,y))
-            self.prevSelect = (x,y)
+        if not (x, y) in self.selected:
+            self.selected.add((x, y))
+            self.prevSelect = (x, y)
         else:
-            self.selected.remove((x,y))
+            self.selected.remove((x, y))
         self.update()
 
     def mouseMoveEvent(self, event):
@@ -147,19 +165,19 @@ class SimpleChartWidg(QtGui.QWidget):
         if self.grid[y][x] is None:
             return
 
-        if (x,y) not in self.selected and shiftClick and self.prevSelect:
+        if (x, y) not in self.selected and shiftClick and self.prevSelect:
             prevX, prevY = self.prevSelect
-            self.prevSelect = (x,y)
+            self.prevSelect = (x, y)
             if x > prevX:
-                setX = range(prevX, x+1)
+                setX = range(prevX, x + 1)
             else:
-                setX = range(x, prevX+1)
+                setX = range(x, prevX + 1)
             for row in set([prevY, y]):
                 for col in setX:
                     self.selected.add((col, row))
             self.update()
         else:
-            self.setSelected(x,y)
+            self.setSelected(x, y)
 
     def paintEvent(self, event=None):
         '''
@@ -186,7 +204,7 @@ class SimpleChartWidg(QtGui.QWidget):
 
         #--big horizontal dissection of entire widget
         painter.drawLine(leftpad, self.height() / 2, self.width() - rightpad,
-        self.height() / 2)
+                         self.height() / 2)
         #--vertical dissection of entire widget
         painter.drawLine(self.width() / 2, 0, self.width() / 2, self.height())
 
@@ -195,9 +213,9 @@ class SimpleChartWidg(QtGui.QWidget):
         for x in range(16):
             midx = midline if x > 7 else 0
             for y in range(2):
-                ident  =  self.grid[y][x]
-                rect  =  QtCore.QRect(x * xOffset + midx, y *yOffset,
-                xOffset, yOffset)
+                ident = self.grid[y][x]
+                rect = QtCore.QRect(x * xOffset + midx, y * yOffset,
+                                    xOffset, yOffset)
 
                 if ident is not None:
                     self.tooth(painter, rect.adjusted(-2, -2, 2, 2), ident)
@@ -227,11 +245,11 @@ class SimpleChartWidg(QtGui.QWidget):
         if self.showLeftRight:
             #--show left/right (this is done here to avoid being overwritten
             #--during the rest of the paint job
-            painter.drawText(textRect, QtCore.Qt.AlignRight|
-            QtCore.Qt.AlignVCenter, (_("Left")))
+            painter.drawText(textRect, QtCore.Qt.AlignRight |
+                             QtCore.Qt.AlignVCenter, (_("Left")))
 
-            painter.drawText(textRect, QtCore.Qt.AlignLeft|
-            QtCore.Qt.AlignVCenter, (_("Right")))
+            painter.drawText(textRect, QtCore.Qt.AlignLeft |
+                             QtCore.Qt.AlignVCenter, (_("Right")))
 
         #--free the painter's saved state
         painter.restore()
@@ -249,7 +267,7 @@ class SimpleChartWidg(QtGui.QWidget):
         painter.restore()
 
     def set_regex_mask(self, mask):
-        new_grid = ([],[])
+        new_grid = ([], [])
         for i, arch in enumerate(self.grid):
             for tooth in arch:
                 if re.match(mask, tooth):
@@ -269,8 +287,7 @@ if __name__ == "__main__":
     from gettext import gettext as _
     app = QtGui.QApplication(sys.argv)
     form = SimpleChartWidg()
-    #form.disable_lowers()
-    #form.disable_uppers()
+    # form.disable_lowers()
+    # form.disable_uppers()
     form.show()
     sys.exit(app.exec_())
-

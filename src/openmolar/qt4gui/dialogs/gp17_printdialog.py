@@ -1,24 +1,26 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2011-2012,  Neil Wallace <neil@openmolar.com>                  ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from PyQt4 import QtGui, QtCore
 
@@ -28,8 +30,10 @@ from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 from openmolar.qt4gui.printing.gp17.gp17_data import Gp17Data
 from openmolar.qt4gui.printing.gp17 import GP17Front, GP17iFront, GP17iBack
 
+
 class ChooseFormWidget(QtGui.QGroupBox):
     FORMS = (GP17Front, GP17iFront, GP17iBack)
+
     def __init__(self, parent=None):
         QtGui.QGroupBox.__init__(self, _("Form options"), parent)
         layout = QtGui.QVBoxLayout(self)
@@ -49,7 +53,7 @@ class ChooseFormWidget(QtGui.QGroupBox):
         layout.addWidget(self.image_checkbox)
 
     def sizeHint(self):
-        return QtCore.QSize(200,100)
+        return QtCore.QSize(200, 100)
 
     @property
     def chosen_forms(self):
@@ -57,9 +61,11 @@ class ChooseFormWidget(QtGui.QGroupBox):
             if self.checkboxes[i].isChecked():
                 yield form
 
+
 class CourseChoiceWidget(QtGui.QWidget):
     DEFAULT = 0
     PRIOR_APPROVAL = 1
+
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         layout = QtGui.QHBoxLayout(self)
@@ -78,7 +84,9 @@ class CourseChoiceWidget(QtGui.QWidget):
             return self.PRIOR_APPROVAL
         return self.DEFAULT
 
+
 class GP17PrintDialog(ExtendableDialog):
+
     def __init__(self, patient, parent=None):
         ExtendableDialog.__init__(self, parent)
 
@@ -87,7 +95,7 @@ class GP17PrintDialog(ExtendableDialog):
 
         self.setWindowTitle(_("GP17 Dialog"))
 
-        label = QtGui.QLabel("<b>%s</b>"% _("Print a GP17 Form"))
+        label = QtGui.QLabel("<b>%s</b>" % _("Print a GP17 Form"))
         label.setAlignment(QtCore.Qt.AlignCenter)
         self.insertWidget(label)
 
@@ -131,9 +139,9 @@ class GP17PrintDialog(ExtendableDialog):
         adv_widg = QtGui.QFrame()
         layout = QtGui.QGridLayout(adv_widg)
 
-        layout.addWidget(self.charting_gb,0,0)
-        layout.addWidget(self.course_gb,1,0)
-        layout.addWidget(self.choose_form_widget, 0,1,2,1)
+        layout.addWidget(self.charting_gb, 0, 0)
+        layout.addWidget(self.course_gb, 1, 0)
+        layout.addWidget(self.choose_form_widget, 0, 1, 2, 1)
 
         self.set_advanced_but_text(_("Options"))
         self.add_advanced_widget(adv_widg)
@@ -160,9 +168,9 @@ class GP17PrintDialog(ExtendableDialog):
         attempt to set the correct dentist for the form
         '''
         if localsettings.apptix_reverse.get(self.data.dentist) in \
-        localsettings.activedents:
-            pos=localsettings.activedents.index(
-            localsettings.apptix_reverse.get(self.data.dentist))
+                localsettings.activedents:
+            pos = localsettings.activedents.index(
+                localsettings.apptix_reverse.get(self.data.dentist))
             self.dentist_combobox.setCurrentIndex(pos)
         else:
             self.dentist_combobox.setCurrentIndex(-1)
@@ -178,7 +186,7 @@ class GP17PrintDialog(ExtendableDialog):
         self.tx_cb.setChecked(True)
 
     def sizeHint(self):
-        return QtCore.QSize(450,150)
+        return QtCore.QSize(450, 150)
 
     @property
     def chosen_forms(self):
@@ -203,7 +211,7 @@ class GP17PrintDialog(ExtendableDialog):
     @property
     def prior_approval(self):
         return self.course_choice_widget.chosen == \
-        self.course_choice_widget.PRIOR_APPROVAL
+            self.course_choice_widget.PRIOR_APPROVAL
 
     def apply(self):
         '''
@@ -233,7 +241,7 @@ if __name__ == "__main__":
     import os
     from openmolar.dbtools import patient_class
 
-    os.chdir(os.path.expanduser("~")) #for save pdf
+    os.chdir(os.path.expanduser("~"))  # for save pdf
 
     localsettings.initiate()
 
@@ -249,4 +257,3 @@ if __name__ == "__main__":
             form.set_testing_mode(dl.print_boxes)
             form.set_background_mode(dl.print_background)
             form.controlled_print()
-

@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/staff_diary.ui'
@@ -17,6 +18,7 @@ except AttributeError:
 
 
 class Ui_Form(object):
+
     def setupUi(self, Form):
         Form.setObjectName(_fromUtf8("Form"))
         Form.resize(786, 546)
@@ -46,10 +48,13 @@ class Ui_Form(object):
         self.verticalLayout_3.setMargin(0)
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
         self.label_3 = QtGui.QLabel(self.widget)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        sizePolicy = QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Preferred,
+            QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label_3.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.label_3.sizePolicy().hasHeightForWidth())
         self.label_3.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setBold(True)
@@ -61,7 +66,8 @@ class Ui_Form(object):
         self.verticalLayout_3.addWidget(self.label_3)
         self.summary_label = QtGui.QLabel(self.widget)
         self.summary_label.setMinimumSize(QtCore.QSize(300, 0))
-        self.summary_label.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.summary_label.setAlignment(
+            QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
         self.summary_label.setWordWrap(True)
         self.summary_label.setObjectName(_fromUtf8("summary_label"))
         self.verticalLayout_3.addWidget(self.summary_label)
@@ -71,10 +77,13 @@ class Ui_Form(object):
         self.verticalLayout_4.setMargin(0)
         self.verticalLayout_4.setObjectName(_fromUtf8("verticalLayout_4"))
         self.label_2 = QtGui.QLabel(self.widget1)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        sizePolicy = QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Preferred,
+            QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label_2.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.label_2.sizePolicy().hasHeightForWidth())
         self.label_2.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setBold(True)
@@ -86,7 +95,8 @@ class Ui_Form(object):
         self.verticalLayout_4.addWidget(self.label_2)
         self.agenda_label = QtGui.QLabel(self.widget1)
         self.agenda_label.setMinimumSize(QtCore.QSize(300, 0))
-        self.agenda_label.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.agenda_label.setAlignment(
+            QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
         self.agenda_label.setWordWrap(True)
         self.agenda_label.setObjectName(_fromUtf8("agenda_label"))
         self.verticalLayout_4.addWidget(self.agenda_label)
@@ -97,12 +107,16 @@ class Ui_Form(object):
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.tab)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.messages_listWidget = QtGui.QListWidget(self.tab)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+        sizePolicy = QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Expanding,
+            QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.messages_listWidget.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.messages_listWidget.sizePolicy().hasHeightForWidth())
         self.messages_listWidget.setSizePolicy(sizePolicy)
-        self.messages_listWidget.setObjectName(_fromUtf8("messages_listWidget"))
+        self.messages_listWidget.setObjectName(
+            _fromUtf8("messages_listWidget"))
         self.verticalLayout_2.addWidget(self.messages_listWidget)
         self.task_frame = QtGui.QFrame(self.tab)
         self.task_frame.setFrameShape(QtGui.QFrame.StyledPanel)
@@ -143,10 +157,18 @@ class Ui_Form(object):
         self.summary_label.setText(_("TextLabel"))
         self.label_2.setText(_("Agenda"))
         self.agenda_label.setText(_("TextLabel"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _("Summary"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _("Messages and Tasks"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _("My Calendar"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _("Holiday Planner"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_4),
+            _("Summary"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab),
+            _("Messages and Tasks"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_2),
+            _("My Calendar"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_3),
+            _("Holiday Planner"))
 
 
 if __name__ == "__main__":
@@ -159,4 +181,3 @@ if __name__ == "__main__":
     ui.setupUi(Form)
     Form.show()
     sys.exit(app.exec_())
-

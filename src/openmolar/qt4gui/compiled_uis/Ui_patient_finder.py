@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/patient_finder.ui'
@@ -17,11 +18,15 @@ except AttributeError:
 
 
 class Ui_Dialog(object):
+
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
         Dialog.resize(306, 367)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/logo.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(
+            QtGui.QPixmap(_fromUtf8(":/logo.png")),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
         Dialog.setWindowIcon(icon)
         self.gridLayout = QtGui.QGridLayout(Dialog)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
@@ -32,7 +37,10 @@ class Ui_Dialog(object):
         self.gridLayout.addWidget(self.label_3, 0, 0, 1, 3)
         self.repeat_pushButton = QtGui.QPushButton(Dialog)
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/agt_reload.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(
+            QtGui.QPixmap(_fromUtf8(":/agt_reload.png")),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
         self.repeat_pushButton.setIcon(icon1)
         self.repeat_pushButton.setObjectName(_fromUtf8("repeat_pushButton"))
         self.gridLayout.addWidget(self.repeat_pushButton, 1, 0, 1, 3)
@@ -53,9 +61,13 @@ class Ui_Dialog(object):
         self.snameSoundex_checkBox.setMaximumSize(QtCore.QSize(60, 24))
         self.snameSoundex_checkBox.setText(_fromUtf8(""))
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(_fromUtf8(":/speaker.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(
+            QtGui.QPixmap(_fromUtf8(":/speaker.svg")),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
         self.snameSoundex_checkBox.setIcon(icon2)
-        self.snameSoundex_checkBox.setObjectName(_fromUtf8("snameSoundex_checkBox"))
+        self.snameSoundex_checkBox.setObjectName(
+            _fromUtf8("snameSoundex_checkBox"))
         self.gridLayout.addWidget(self.snameSoundex_checkBox, 3, 2, 1, 1)
         self.label_6 = QtGui.QLabel(Dialog)
         self.label_6.setLayoutDirection(QtCore.Qt.RightToLeft)
@@ -69,7 +81,8 @@ class Ui_Dialog(object):
         self.fnameSoundex_checkBox.setMaximumSize(QtCore.QSize(60, 24))
         self.fnameSoundex_checkBox.setText(_fromUtf8(""))
         self.fnameSoundex_checkBox.setIcon(icon2)
-        self.fnameSoundex_checkBox.setObjectName(_fromUtf8("fnameSoundex_checkBox"))
+        self.fnameSoundex_checkBox.setObjectName(
+            _fromUtf8("fnameSoundex_checkBox"))
         self.gridLayout.addWidget(self.fnameSoundex_checkBox, 4, 2, 1, 1)
         self.label_2 = QtGui.QLabel(Dialog)
         self.label_2.setLayoutDirection(QtCore.Qt.RightToLeft)
@@ -99,16 +112,22 @@ class Ui_Dialog(object):
         self.pcde.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.pcde.setObjectName(_fromUtf8("pcde"))
         self.gridLayout.addWidget(self.pcde, 8, 1, 1, 1)
-        spacerItem = QtGui.QSpacerItem(20, 21, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        spacerItem = QtGui.QSpacerItem(
+            20,
+            21,
+            QtGui.QSizePolicy.Minimum,
+            QtGui.QSizePolicy.Expanding)
         self.gridLayout.addItem(spacerItem, 9, 1, 1, 1)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(
+            QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setCenterButtons(True)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
         self.gridLayout.addWidget(self.buttonBox, 10, 0, 1, 3)
         self.dateEdit = QtGui.QDateEdit(Dialog)
-        self.dateEdit.setDateTime(QtCore.QDateTime(QtCore.QDate(1900, 1, 1), QtCore.QTime(0, 0, 0)))
+        self.dateEdit.setDateTime(
+            QtCore.QDateTime(QtCore.QDate(1900, 1, 1), QtCore.QTime(0, 0, 0)))
         self.dateEdit.setCalendarPopup(True)
         self.dateEdit.setObjectName(_fromUtf8("dateEdit"))
         self.gridLayout.addWidget(self.dateEdit, 5, 1, 1, 1)
@@ -119,8 +138,14 @@ class Ui_Dialog(object):
         self.label_9.setBuddy(self.pcde)
 
         self.retranslateUi(Dialog)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Dialog.reject)
+        QtCore.QObject.connect(
+            self.buttonBox,
+            QtCore.SIGNAL(_fromUtf8("accepted()")),
+            Dialog.accept)
+        QtCore.QObject.connect(
+            self.buttonBox,
+            QtCore.SIGNAL(_fromUtf8("rejected()")),
+            Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         Dialog.setTabOrder(self.sname, self.fname)
         Dialog.setTabOrder(self.fname, self.dateEdit)
@@ -130,31 +155,38 @@ class Ui_Dialog(object):
         Dialog.setTabOrder(self.pcde, self.buttonBox)
         Dialog.setTabOrder(self.buttonBox, self.repeat_pushButton)
         Dialog.setTabOrder(self.repeat_pushButton, self.snameSoundex_checkBox)
-        Dialog.setTabOrder(self.snameSoundex_checkBox, self.fnameSoundex_checkBox)
+        Dialog.setTabOrder(
+            self.snameSoundex_checkBox,
+            self.fnameSoundex_checkBox)
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(_("Patient Finder"))
-        self.label_3.setText(_("Fill in a few of the following fields to get a list of possible patients"))
+        self.label_3.setText(
+            _("Fill in a few of the following fields to get a list of possible patients"))
         self.repeat_pushButton.setText(_("Repeat Last Search"))
         self.label_5.setText(_("SNO or Surname"))
         self.sname.setToolTip(_("Enter either the full name or the first few letters of the name.\n"
-"\n"
-"If you are unsure of the spelling, type in the COMPLETE name,\n"
-"and check the adjacent \"sounds like\" box."))
-        self.snameSoundex_checkBox.setToolTip(_("check to search for a similar sounding name"))
+                                "\n"
+                                "If you are unsure of the spelling, type in the COMPLETE name,\n"
+                                "and check the adjacent \"sounds like\" box."))
+        self.snameSoundex_checkBox.setToolTip(
+            _("check to search for a similar sounding name"))
         self.label_6.setText(_("First Name"))
         self.fname.setToolTip(_("Enter either the full name or the first few letters of the name.\n"
-"\n"
-"If you are unsure of the spelling, type in the COMPLETE name,\n"
-"and check the adjacent \"sounds like\" box.\n"
-"Be wary of middle names. \n"
-"eg. \"Neil\" does NOT sound like \"Neil Alexander\"!"))
-        self.fnameSoundex_checkBox.setToolTip(_("check to search for a similar sounding name"))
+                                "\n"
+                                "If you are unsure of the spelling, type in the COMPLETE name,\n"
+                                "and check the adjacent \"sounds like\" box.\n"
+                                "Be wary of middle names. \n"
+                                "eg. \"Neil\" does NOT sound like \"Neil Alexander\"!"))
+        self.fnameSoundex_checkBox.setToolTip(
+            _("check to search for a similar sounding name"))
         self.label_2.setText(_("Date of Birth"))
         self.label_7.setText(_("Address includes"))
-        self.addr1.setToolTip(_("openMolar will search line1 and line2 of the address for this text"))
+        self.addr1.setToolTip(
+            _("openMolar will search line1 and line2 of the address for this text"))
         self.label_8.setText(_("Telephone"))
-        self.tel.setToolTip(_("open molar will search tel1, tel2 and mobile for numbers present here."))
+        self.tel.setToolTip(
+            _("open molar will search tel1, tel2 and mobile for numbers present here."))
         self.label_9.setText(_("Postcode"))
         self.pcde.setToolTip(_("search for a postcode"))
 
@@ -170,4 +202,3 @@ if __name__ == "__main__":
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())
-

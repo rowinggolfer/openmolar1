@@ -1,15 +1,33 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import os
 import mimetypes
 import datetime
 from openmolar import connect
 from openmolar.settings import localsettings
+
 
 def getData(ix):
     '''
@@ -18,7 +36,7 @@ def getData(ix):
     '''
     db = connect.connect()
     cursor = db.cursor()
-    query = '''select filedata from docsimporteddata where masterid=%s'''%ix
+    query = '''select filedata from docsimporteddata where masterid=%s''' % ix
     cursor.execute(query)
     rows = cursor.fetchall()
     cursor.close()
@@ -27,6 +45,7 @@ def getData(ix):
     else:
         return (("no data found",),)
 
+
 def storedDocs(sno):
     '''
     find previously printed docs related to the serialno given as the argument
@@ -34,8 +53,8 @@ def storedDocs(sno):
     db = connect.connect()
     cursor = db.cursor()
     query = '''select DATE_FORMAT(filedate,'%s'), name, size, datatype, ix
-    from docsimported where serialno=%s order by ix DESC '''%(
-    localsettings.OM_DATE_FORMAT, sno)
+    from docsimported where serialno=%s order by ix DESC ''' % (
+        localsettings.OM_DATE_FORMAT, sno)
 
     cursor.execute(query)
     rows = cursor.fetchall()
@@ -45,7 +64,8 @@ def storedDocs(sno):
         docs.append([fdate, fname, sizeof_fmt(fsize), typ, str(ix)])
     return docs
 
-def chunks_from_file(filepath, chunksize = 57344):
+
+def chunks_from_file(filepath, chunksize=57344):
     '''
     a generator to break a file into chunks
     '''
@@ -58,11 +78,13 @@ def chunks_from_file(filepath, chunksize = 57344):
             break
     f.close()
 
+
 def sizeof_fmt(num):
-    for x in ['bytes','KB','MB','GB','TB']:
+    for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
         if num < 1024.0:
             return "%3.1f%s" % (num, x)
         num /= 1024.0
+
 
 def add(sno, filepath):
     '''
@@ -74,10 +96,10 @@ def add(sno, filepath):
     query = '''insert into docsimported
     (serialno, datatype, name, size, filedate) values (%s, %s, %s, %s, %s)'''
     file_type = mimetypes.guess_type(filepath)[0]
-    if file_type == None:
+    if file_type is None:
         file_type = "unknown"
     values = (sno, file_type, os.path.basename(filepath), st.st_size,
-    datetime.datetime.fromtimestamp (st.st_mtime))
+              datetime.datetime.fromtimestamp(st.st_mtime))
 
     cursor.execute(query, values)
     fileid = db.insert_id()

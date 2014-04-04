@@ -1,11 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for
-# more details.
 
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from PyQt4 import QtCore, QtGui
 from openmolar.settings import localsettings
@@ -17,8 +32,10 @@ from openmolar.qt4gui.compiled_uis import Ui_blockSlot
 from openmolar.qt4gui.dialogs.find_patient_dialog import FindPatientDialog
 from openmolar.qt4gui.customwidgets import fiveminutetimeedit
 
+
 class blockDialog(Ui_blockSlot.Ui_Dialog):
-    def __init__(self, Dialog, om_gui = None):
+
+    def __init__(self, Dialog, om_gui=None):
         self.Dialog = Dialog
         self.om_gui = om_gui
         self.setupUi(Dialog)
@@ -44,19 +61,19 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
         self.tabWidget.setCurrentIndex(0)
 
         QtCore.QObject.connect(self.changePt_pushButton,
-        QtCore.SIGNAL("clicked()"), self.changePt)
+                               QtCore.SIGNAL("clicked()"), self.changePt)
 
         QtCore.QObject.connect(self.start_timeEdit,
-        QtCore.SIGNAL("verifiedTime"), self.changedTimes)
+                               QtCore.SIGNAL("verifiedTime"), self.changedTimes)
 
         QtCore.QObject.connect(self.finish_timeEdit,
-        QtCore.SIGNAL("verifiedTime"), self.changedTimes)
+                               QtCore.SIGNAL("verifiedTime"), self.changedTimes)
 
         QtCore.QObject.connect(self.appointment_timeEdit,
-        QtCore.SIGNAL("verifiedTime"), self.changedStart)
+                               QtCore.SIGNAL("verifiedTime"), self.changedStart)
 
         QtCore.QObject.connect(self.length_spinBox,
-        QtCore.SIGNAL("valueChanged (int)"), self.changedLength)
+                               QtCore.SIGNAL("valueChanged (int)"), self.changedLength)
 
         self.earliestStart = None
         self.latestFinish = None
@@ -67,17 +84,17 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
         '''
         user has modded the appointment start time, sync the other start
         '''
-        finish = self.start_timeEdit.time().addSecs(mins*60)
+        finish = self.start_timeEdit.time().addSecs(mins * 60)
         self.finish_timeEdit.setTime(finish)
         self.setLength()
 
-    def changedStart(self,t):
+    def changedStart(self, t):
         '''
         user has modded the appointment start time, sync the other start
         '''
         self.start_timeEdit.setTime(t)
 
-    def changedTimes(self,t):
+    def changedTimes(self, t):
         '''
         user has altered the block start
         '''
@@ -89,16 +106,16 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
                 errors = []
                 if self.start_timeEdit.time() < self.earliestStart:
                     errors.append(
-                    _("Start is outwith slot bounds (too early)"))
+                        _("Start is outwith slot bounds (too early)"))
                 if self.start_timeEdit.time() > self.latestFinish:
                     errors.append(
-                    _("Start is outwith slot bounds (too late)"))
+                        _("Start is outwith slot bounds (too late)"))
                 if self.finish_timeEdit.time() > self.latestFinish:
                     errors.append(
-                    _("Finish is outwith slot bounds (too late"))
+                        _("Finish is outwith slot bounds (too late"))
                 if self.finish_timeEdit.time() > self.latestFinish:
                     errors.append(
-                    _("Finish is outwith slot bounds (too early"))
+                        _("Finish is outwith slot bounds (too early"))
                 if self.length < self.minimumLength:
                     errors.append(_("length of appointment is too short"))
                 if self.tabWidget.currentIndex() == 0:
@@ -110,11 +127,11 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
                 if errors:
                     errorlist = ""
                     for error in errors:
-                        errorlist += "<li>%s</li>"% error
-                    message = "<p>%s...<ul>%s</ul></p>"% (
-                    _("Unable to commit because"), errorlist )
-                    QtGui.QMessageBox.information(self.Dialog,_("error"),
-                    message)
+                        errorlist += "<li>%s</li>" % error
+                    message = "<p>%s...<ul>%s</ul></p>" % (
+                        _("Unable to commit because"), errorlist)
+                    QtGui.QMessageBox.information(self.Dialog, _("error"),
+                                                  message)
 
                 else:
                     self.block = self.tabWidget.currentIndex() == 0
@@ -130,7 +147,7 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
                 self.setPatient(patient_class.patient(serialno))
             except localsettings.PatientNotFoundError:
                 QtGui.QMessageBox.information(self.Dialog,
-                _("Error"), _("patient not found"))
+                                              _("Error"), _("patient not found"))
 
                 self.setPatient(patient_class.patient(0))
 
@@ -140,7 +157,7 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
         '''
         if pt is not None and pt.serialno != 0:
             self.pt_label.setText(
-                _("Chosen Patient is")+"<br />%s"% pt.name_id)
+                _("Chosen Patient is") + "<br />%s" % pt.name_id)
         else:
             self.pt_label.setText(_("no patient chosen"))
 
@@ -157,14 +174,14 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
         self.finish_timeEdit.setTime(finish)
         self.setLength(True)
 
-    def setLength(self, initialise = False):
+    def setLength(self, initialise=False):
         start = self.start_timeEdit.time()
         finish = self.finish_timeEdit.time()
 
-        self.length = (finish.hour() * 60 + finish.minute()) -(
-        start.hour() * 60 + start.minute())
+        self.length = (finish.hour() * 60 + finish.minute()) - (
+            start.hour() * 60 + start.minute())
 
-        self.length_label.setText("%d<br />"% self.length + _("minutes"))
+        self.length_label.setText("%d<br />" % self.length + _("minutes"))
         if initialise:
             self.length_spinBox.setMaximum(self.length)
         self.length_spinBox.setValue(self.length)
@@ -174,10 +191,9 @@ if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
     dialog = QtGui.QDialog()
     dl = blockDialog(dialog)
-    start = QtCore.QTime(14,40)
-    finish = QtCore.QTime(15,15)
+    start = QtCore.QTime(14, 40)
+    finish = QtCore.QTime(15, 15)
     dl.setTimes(start, finish)
     dl.exec_()
 
     app.closeAllWindows()
-

@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/completionDate.ui'
@@ -17,6 +18,7 @@ except AttributeError:
 
 
 class Ui_Dialog(object):
+
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
         Dialog.resize(340, 227)
@@ -31,7 +33,11 @@ class Ui_Dialog(object):
         self.autoComplete_label.setWordWrap(True)
         self.autoComplete_label.setObjectName(_fromUtf8("autoComplete_label"))
         self.verticalLayout.addWidget(self.autoComplete_label)
-        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        spacerItem = QtGui.QSpacerItem(
+            20,
+            40,
+            QtGui.QSizePolicy.Minimum,
+            QtGui.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
@@ -50,28 +56,40 @@ class Ui_Dialog(object):
         self.label.setWordWrap(True)
         self.label.setObjectName(_fromUtf8("label"))
         self.verticalLayout.addWidget(self.label)
-        spacerItem1 = QtGui.QSpacerItem(20, 14, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        spacerItem1 = QtGui.QSpacerItem(
+            20,
+            14,
+            QtGui.QSizePolicy.Minimum,
+            QtGui.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem1)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
         self.buttonBox.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.No|QtGui.QDialogButtonBox.Yes)
+        self.buttonBox.setStandardButtons(
+            QtGui.QDialogButtonBox.No | QtGui.QDialogButtonBox.Yes)
         self.buttonBox.setCenterButtons(True)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
         self.verticalLayout.addWidget(self.buttonBox)
 
         self.retranslateUi(Dialog)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Dialog.reject)
+        QtCore.QObject.connect(
+            self.buttonBox,
+            QtCore.SIGNAL(_fromUtf8("accepted()")),
+            Dialog.accept)
+        QtCore.QObject.connect(
+            self.buttonBox,
+            QtCore.SIGNAL(_fromUtf8("rejected()")),
+            Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(_("Completion Date"))
         self.pt_label.setText(_("UNNAMED PT - (000000)"))
-        self.autoComplete_label.setText(_("You have no further treatment proposed for this patient, yet they are deemed to be \"under treatment\"."))
+        self.autoComplete_label.setText(
+            _("You have no further treatment proposed for this patient, yet they are deemed to be \"under treatment\"."))
         self.label_4.setText(_("Suggested completion Date"))
         self.label.setText(_("Apply this Date Now?\n"
-"(course can be re-opened later if necessary)"))
+                             "(course can be re-opened later if necessary)"))
 
 
 if __name__ == "__main__":
@@ -84,4 +102,3 @@ if __name__ == "__main__":
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())
-

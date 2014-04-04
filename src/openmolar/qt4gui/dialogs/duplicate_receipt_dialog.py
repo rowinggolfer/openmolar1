@@ -1,24 +1,26 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2011-2012,  Neil Wallace <neil@openmolar.com>                  ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import logging
 from PyQt4 import QtGui, QtCore
@@ -34,17 +36,19 @@ from openmolar import connect
 
 LOGGER = logging.getLogger("openmolar")
 
-RECALL_METHODS = ["post","email","sms"]
+RECALL_METHODS = ["post", "email", "sms"]
+
 
 class DuplicateReceiptDialog(BaseDialog):
     duplicate_printed = False
+
     def __init__(self, patient, parent):
         BaseDialog.__init__(self, parent)
         self.pt = patient
 
         self.main_ui = parent
-        patient_label = QtGui.QLabel("%s<br /><b>%s</b>"% (
-        _("Duplicate receipts for Patient"), patient.name_id))
+        patient_label = QtGui.QLabel("%s<br /><b>%s</b>" % (
+                                     _("Duplicate receipts for Patient"), patient.name_id))
 
         patient_label.setAlignment(QtCore.Qt.AlignCenter)
 
@@ -61,7 +65,6 @@ class DuplicateReceiptDialog(BaseDialog):
         new_dup_receipt_groupbox = QtGui.QGroupBox(
             _("Generate a Duplicate receipt"))
 
-
         self.dup_date_edit = QtGui.QDateEdit()
         self.dup_date_edit.setDate(QtCore.QDate.currentDate())
 
@@ -77,7 +80,6 @@ class DuplicateReceiptDialog(BaseDialog):
         layout.addRow(_("Amount"), self.amount_spinbox)
         layout.addRow(print_dup_button)
 
-
         self.insertWidget(patient_label)
         self.insertWidget(self.no_receipts_found_label)
         self.insertWidget(self.prev_receipts_groupbox)
@@ -87,7 +89,6 @@ class DuplicateReceiptDialog(BaseDialog):
         self.prev_receipts = {}
 
         QtCore.QTimer.singleShot(0, self.get_previous_receipts)
-
 
     def sizeHint(self):
         return QtCore.QSize(260, 400)
@@ -121,7 +122,7 @@ class DuplicateReceiptDialog(BaseDialog):
         no_receipts = len(self.prev_receipts)
         if no_receipts > 3:
             widget = QtGui.QWidget(self)
-            label = QtGui.QLabel("%d more receipts"% (no_receipts-3))
+            label = QtGui.QLabel("%d more receipts" % (no_receipts - 3))
             but = QtGui.QPushButton(_("show"))
             but.clicked.connect(self.show_all_prev_receipts)
             layout = QtGui.QHBoxLayout(widget)
@@ -151,7 +152,7 @@ class DuplicateReceiptDialog(BaseDialog):
 
     def print_existing(self):
         ix = self.sender().ix
-        print "reprint document %s"% ix
+        print "reprint document %s" % ix
         try:
             data, version = docsprinted.getData(ix)
             f = open(localsettings.TEMP_PDF, "wb")
@@ -161,7 +162,7 @@ class DuplicateReceiptDialog(BaseDialog):
         except Exception:
             LOGGER.exception("view PDF error")
             QtGui.QMessageBox.warning(self, "error",
-                _("error reviewing PDF file"))
+                                      _("error reviewing PDF file"))
 
     def print_duplicate(self):
         amount = self.amount_spinbox.value()
@@ -169,18 +170,18 @@ class DuplicateReceiptDialog(BaseDialog):
         myreceipt = receiptPrint.Receipt()
 
         myreceipt.setProps(self.pt.title, self.pt.fname, self.pt.sname,
-        self.pt.addr1, self.pt.addr2, self.pt.addr3, self.pt.town,
-        self.pt.county, self.pt.pcde)
+                           self.pt.addr1, self.pt.addr2, self.pt.addr3, self.pt.town,
+                           self.pt.county, self.pt.pcde)
 
-        myreceipt.total = amount*100
+        myreceipt.total = amount * 100
 
-        myreceipt.receivedDict = {_("Professional Services"):amount*100}
+        myreceipt.receivedDict = {_("Professional Services"): amount * 100}
         myreceipt.isDuplicate = True
         myreceipt.dupdate = self.dup_date_edit.date()
 
         if myreceipt.print_():
-            self.pt.addHiddenNote("printed", "%s %.02f"% (
-            _("duplicate receipt for"), amount))
+            self.pt.addHiddenNote("printed", "%s %.02f" % (
+                                  _("duplicate receipt for"), amount))
 
             self.duplicate_printed = True
             self.accept()

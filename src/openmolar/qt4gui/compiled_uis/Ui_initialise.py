@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/initialise.ui'
@@ -17,6 +18,7 @@ except AttributeError:
 
 
 class Ui_MainWindow(object):
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.resize(800, 507)
@@ -35,7 +37,8 @@ class Ui_MainWindow(object):
         self.gridLayout_3.addWidget(self.label_17, 0, 0, 1, 2)
         self.modifydb_radioButton = QtGui.QRadioButton(self.tab_8)
         self.modifydb_radioButton.setEnabled(False)
-        self.modifydb_radioButton.setObjectName(_fromUtf8("modifydb_radioButton"))
+        self.modifydb_radioButton.setObjectName(
+            _fromUtf8("modifydb_radioButton"))
         self.gridLayout_3.addWidget(self.modifydb_radioButton, 4, 0, 1, 1)
         self.comboBox = QtGui.QComboBox(self.tab_8)
         self.comboBox.setEnabled(False)
@@ -46,16 +49,27 @@ class Ui_MainWindow(object):
         self.line.setFrameShadow(QtGui.QFrame.Sunken)
         self.line.setObjectName(_fromUtf8("line"))
         self.gridLayout_3.addWidget(self.line, 5, 0, 1, 3)
-        spacerItem = QtGui.QSpacerItem(20, 407, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        spacerItem = QtGui.QSpacerItem(
+            20,
+            407,
+            QtGui.QSizePolicy.Minimum,
+            QtGui.QSizePolicy.Expanding)
         self.gridLayout_3.addItem(spacerItem, 6, 1, 1, 1)
         self.blankdb_radioButton = QtGui.QRadioButton(self.tab_8)
         self.blankdb_radioButton.setChecked(True)
-        self.blankdb_radioButton.setObjectName(_fromUtf8("blankdb_radioButton"))
+        self.blankdb_radioButton.setObjectName(
+            _fromUtf8("blankdb_radioButton"))
         self.gridLayout_3.addWidget(self.blankdb_radioButton, 2, 0, 1, 1)
         self.newdb_template_radioButton = QtGui.QRadioButton(self.tab_8)
         self.newdb_template_radioButton.setChecked(False)
-        self.newdb_template_radioButton.setObjectName(_fromUtf8("newdb_template_radioButton"))
-        self.gridLayout_3.addWidget(self.newdb_template_radioButton, 3, 0, 1, 1)
+        self.newdb_template_radioButton.setObjectName(
+            _fromUtf8("newdb_template_radioButton"))
+        self.gridLayout_3.addWidget(
+            self.newdb_template_radioButton,
+            3,
+            0,
+            1,
+            1)
         self.tabWidget.addTab(self.tab_8, _fromUtf8(""))
         self.tab = QtGui.QWidget()
         self.tab.setObjectName(_fromUtf8("tab"))
@@ -177,7 +191,11 @@ class Ui_MainWindow(object):
         self.label_20.setObjectName(_fromUtf8("label_20"))
         self.gridLayout.addWidget(self.label_20, 10, 2, 1, 1)
         self.verticalLayout_3.addWidget(self.practice_frame)
-        spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        spacerItem1 = QtGui.QSpacerItem(
+            20,
+            40,
+            QtGui.QSizePolicy.Minimum,
+            QtGui.QSizePolicy.Expanding)
         self.verticalLayout_3.addItem(spacerItem1)
         self.tabWidget.addTab(self.tab, _fromUtf8(""))
         self.tab_2 = QtGui.QWidget()
@@ -189,8 +207,10 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addWidget(self.label_12)
         self.users_tableWidget = QtGui.QTableWidget(self.tab_2)
         self.users_tableWidget.setAlternatingRowColors(True)
-        self.users_tableWidget.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
-        self.users_tableWidget.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+        self.users_tableWidget.setSelectionMode(
+            QtGui.QAbstractItemView.SingleSelection)
+        self.users_tableWidget.setSelectionBehavior(
+            QtGui.QAbstractItemView.SelectRows)
         self.users_tableWidget.setObjectName(_fromUtf8("users_tableWidget"))
         self.users_tableWidget.setColumnCount(6)
         self.users_tableWidget.setRowCount(0)
@@ -216,7 +236,8 @@ class Ui_MainWindow(object):
         self.verticalLayout_11 = QtGui.QVBoxLayout()
         self.verticalLayout_11.setObjectName(_fromUtf8("verticalLayout_11"))
         self.modifyUser_pushButton = QtGui.QPushButton(self.frame_2)
-        self.modifyUser_pushButton.setObjectName(_fromUtf8("modifyUser_pushButton"))
+        self.modifyUser_pushButton.setObjectName(
+            _fromUtf8("modifyUser_pushButton"))
         self.verticalLayout_11.addWidget(self.modifyUser_pushButton)
         self.horizontalLayout.addLayout(self.verticalLayout_11)
         self.user_groupBox = QtGui.QGroupBox(self.frame_2)
@@ -248,7 +269,8 @@ class Ui_MainWindow(object):
         self.userActive_checkBox = QtGui.QCheckBox(self.user_groupBox)
         self.userActive_checkBox.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.userActive_checkBox.setChecked(True)
-        self.userActive_checkBox.setObjectName(_fromUtf8("userActive_checkBox"))
+        self.userActive_checkBox.setObjectName(
+            _fromUtf8("userActive_checkBox"))
         self.gridLayout_8.addWidget(self.userActive_checkBox, 2, 2, 1, 1)
         self.user_date_label = QtGui.QLabel(self.user_groupBox)
         self.user_date_label.setObjectName(_fromUtf8("user_date_label"))
@@ -480,9 +502,11 @@ class Ui_MainWindow(object):
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
         MainWindow.setStatusBar(self.statusbar)
         self.actionLoad_Template = QtGui.QAction(MainWindow)
-        self.actionLoad_Template.setObjectName(_fromUtf8("actionLoad_Template"))
+        self.actionLoad_Template.setObjectName(
+            _fromUtf8("actionLoad_Template"))
         self.action_Save_Template = QtGui.QAction(MainWindow)
-        self.action_Save_Template.setObjectName(_fromUtf8("action_Save_Template"))
+        self.action_Save_Template.setObjectName(
+            _fromUtf8("action_Save_Template"))
         self.menuFile.addAction(self.actionLoad_Template)
         self.menuFile.addAction(self.action_Save_Template)
         self.menubar.addAction(self.menuFile.menuAction())
@@ -494,10 +518,15 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_("OpenMolar - database wizard"))
         self.label_17.setText(_("What do you want to do?"))
-        self.modifydb_radioButton.setText(_("Modify an existing openmolar database"))
-        self.blankdb_radioButton.setText(_("Create a New database from scratch"))
-        self.newdb_template_radioButton.setText(_("Create a New database (from a known template)"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_8), _("Start"))
+        self.modifydb_radioButton.setText(
+            _("Modify an existing openmolar database"))
+        self.blankdb_radioButton.setText(
+            _("Create a New database from scratch"))
+        self.newdb_template_radioButton.setText(
+            _("Create a New database (from a known template)"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_8),
+            _("Start"))
         self.label.setText(_("Practice Name"))
         self.label_18.setText(_("Used in receipts, appointment cards etc."))
         self.label_2.setText(_("Address Line 1"))
@@ -510,8 +539,11 @@ class Ui_MainWindow(object):
         self.label_9.setText(_("Fax"))
         self.label_10.setText(_("Website"))
         self.label_11.setText(_("Email"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _("Practice Details"))
-        self.label_12.setText(_("The Following users can login to the application"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab),
+            _("Practice Details"))
+        self.label_12.setText(
+            _("The Following users can login to the application"))
         item = self.users_tableWidget.horizontalHeaderItem(0)
         item.setText(_("Id"))
         item = self.users_tableWidget.horizontalHeaderItem(1)
@@ -536,9 +568,11 @@ class Ui_MainWindow(object):
         self.userActive_checkBox.setText(_("Active User"))
         self.user_date_label.setText(_("DeActivation Date"))
         self.newUser_pushButton.setText(_("Add a New User"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _("Users"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_2),
+            _("Users"))
         self.label_33.setText(_("The Following dentists have notes in this database\n"
-"(note - dentists should not be removed from the database, as this could create lookup issues for cashbooks and notes) "))
+                                "(note - dentists should not be removed from the database, as this could create lookup issues for cashbooks and notes) "))
         item = self.tableWidget_2.horizontalHeaderItem(0)
         item.setText(_("Initials"))
         item = self.tableWidget_2.horizontalHeaderItem(1)
@@ -552,9 +586,11 @@ class Ui_MainWindow(object):
         self.label_31.setText(_("Name"))
         self.label_45.setText(_("Registration"))
         self.checkBox_2.setText(_("Active Appointment Book"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _("Dentists"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_3),
+            _("Dentists"))
         self.label_38.setText(_("The Following hygienists have notes in this database\n"
-"(note - hygienists should not be removed from the database, as this could create lookup issues for cashbooks and notes) "))
+                                "(note - hygienists should not be removed from the database, as this could create lookup issues for cashbooks and notes) "))
         item = self.tableWidget_3.horizontalHeaderItem(0)
         item.setText(_("Initials"))
         item = self.tableWidget_3.horizontalHeaderItem(1)
@@ -568,7 +604,9 @@ class Ui_MainWindow(object):
         self.label_35.setText(_("Name"))
         self.label_46.setText(_("Registration"))
         self.checkBox_3.setText(_("Active Appointment Book"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _("Hygienists"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_4),
+            _("Hygienists"))
         self.checkBox_7.setText(_("Monday"))
         self.checkBox_8.setText(_("Tuesday"))
         self.checkBox_9.setText(_("Wednesday"))
@@ -576,8 +614,12 @@ class Ui_MainWindow(object):
         self.checkBox_11.setText(_("Friday"))
         self.checkBox_12.setText(_("Saturday"))
         self.checkBox_13.setText(_("Sunday"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _("Practice Hours"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_7), _("View XML"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_5),
+            _("Practice Hours"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_7),
+            _("View XML"))
         self.menuFile.setTitle(_("File"))
         self.actionLoad_Template.setText(_("L&oad Template"))
         self.action_Save_Template.setText(_("&Save Template"))
@@ -593,4 +635,3 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-

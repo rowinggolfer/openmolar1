@@ -1,29 +1,33 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2010-2012, Neil Wallace <neil@openmolar.com>                   ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from functools import partial
 from PyQt4 import QtCore, QtGui
 
+
 class StaticControlPanel(QtGui.QWidget):
+
     '''
     emits such strings as "AT", "TM", "RP" etc.
     '''
@@ -65,7 +69,6 @@ class StaticControlPanel(QtGui.QWidget):
         ue_button.setFocusPolicy(QtCore.Qt.NoFocus)
         ue_button.setToolTip(_("Mark the selected tooth as partially erupted"))
 
-
         dec_button = QtGui.QPushButton("Deciduous")
         dec_button.setFocusPolicy(QtCore.Qt.NoFocus)
         dec_button.setToolTip(_("Toggle selected tooth/teeth as deciduous"))
@@ -100,7 +103,7 @@ class StaticControlPanel(QtGui.QWidget):
         dec_button.clicked.connect(self.deciduous_signal.emit)
 
     def sizeHint(self):
-        return QtCore.QSize(150,150)
+        return QtCore.QSize(150, 150)
 
     def _but_clicked(self, message):
         self.clicked.emit(message)
@@ -123,5 +126,5 @@ if __name__ == "__main__":
     widg = StaticControlPanel()
     widg.clicked.connect(sig_catcher)
     widg.show()
-    widg.setEnabled(1==2)
+    widg.setEnabled(1 == 2)
     app.exec_()

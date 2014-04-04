@@ -1,9 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import datetime
 import re
@@ -13,13 +30,15 @@ from xml.dom import minidom
 from openmolar.settings import localsettings
 from openmolar.qt4gui.compiled_uis import Ui_initialise
 
-PRACTICE_ATTRIBS = ("name","add1","add2","add3", "town", "county",
-"pcde_zip", "tel", "fax", "web", "email")
+PRACTICE_ATTRIBS = ("name", "add1", "add2", "add3", "town", "county",
+                    "pcde_zip", "tel", "fax", "web", "email")
 
 USER_ATTRIBS = ("user_id", "user_inits", "user_name", 'user_group',
-'active', 'deactivation_dt')
+                'active', 'deactivation_dt')
+
 
 class om_user():
+
     def __init__(self, parent_ui):
         self.id = None
         self.inits = ""
@@ -35,7 +54,7 @@ class om_user():
         the USER_ATTRIBS expected
         '''
         return (str(self.id), self.inits.upper(), self.name, self.group,
-        str(self.active), str(self.deactivation_dt))
+                str(self.active), str(self.deactivation_dt))
 
     def fromTuple(self, tup):
         '''
@@ -49,7 +68,7 @@ class om_user():
         if not self.active:
             da = tup[5].split("-")
             self.deactivation_dt = datetime.date(int(da[0]), int(da[1]),
-            int(da[2]))
+                                                 int(da[2]))
 
     def load(self):
         '''
@@ -58,7 +77,7 @@ class om_user():
         self.inits = str(self.parent_ui.userInits_lineEdit.text().toAscii())
         self.name = str(self.parent_ui.userName_lineEdit.text().toAscii())
         self.group = str(
-                self.parent_ui.userGroup_comboBox.currentText().toAscii())
+            self.parent_ui.userGroup_comboBox.currentText().toAscii())
         self.deactivation_dt = self.parent_ui.user_dateEdit.date().toPyDate()
         self.active = self.parent_ui.userActive_checkBox.isChecked()
 
@@ -69,9 +88,9 @@ class om_user():
         '''
         error = ""
         if self.inits == "":
-            error = "<p>%s</p>"% _("Please enter initials for this user")
+            error = "<p>%s</p>" % _("Please enter initials for this user")
         if self.name == "":
-            error += "<p>%s</p>"% _("Please set a name for this user")
+            error += "<p>%s</p>" % _("Please set a name for this user")
 
         return (error == "", error)
 
@@ -109,11 +128,14 @@ class om_user():
 
         self.fromTuple(tuple(tup))
 
+
 class setup_gui(QtGui.QMainWindow):
+
     '''
     a ui for customising the database of openmolar
     set details for a practice, patient categories etc...
     '''
+
     def __init__(self, app):
         QtGui.QMainWindow.__init__(self)
         self.ui = Ui_initialise.Ui_MainWindow()
@@ -138,25 +160,26 @@ class setup_gui(QtGui.QMainWindow):
         warning level 2 critical (and logged)
         '''
         if warning_level == 0:
-            self.ui.statusbar.showMessage(arg, 5000) #5000 milliseconds=5secs
+            self.ui.statusbar.showMessage(arg, 5000)  # 5000 milliseconds=5secs
         elif warning_level == 1:
             QtGui.QMessageBox.information(self, _("Advisory"), arg)
         elif warning_level == 2:
-            now=QtCore.QTime.currentTime()
+            now = QtCore.QTime.currentTime()
             QtGui.QMessageBox.warning(self, _("Error"), arg)
             #--for logging purposes
-            print "%d:%02d ERROR MESSAGE"%(now.hour(), now.minute()), arg
+            print "%d:%02d ERROR MESSAGE" % (now.hour(), now.minute()), arg
 
     def confirmDataOverwrite(self):
         '''
         check that the user is prepared to lose any changes
         '''
         result = QtGui.QMessageBox.question(self, _("confirm"),
-        "<p>%s<br />%s</p>"% (
-        _("this action will overwrite any current data stored"),
-        _("proceed?")),
-        QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
-        QtGui.QMessageBox.Ok )
+                                            "<p>%s<br />%s</p>" % (
+                                                _(
+                                                    "this action will overwrite any current data stored"),
+                                                _("proceed?")),
+                                            QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
+                                            QtGui.QMessageBox.Ok)
         return result == QtGui.QMessageBox.Ok
 
     def save_template(self):
@@ -165,8 +188,9 @@ class setup_gui(QtGui.QMainWindow):
         '''
         try:
             filepath = QtGui.QFileDialog.getSaveFileName(self,
-            _("save template file"),"",
-            _("openmolar template files ")+"(*.om_xml)")
+                                                         _(
+                                                         "save template file"), "",
+                                                         _("openmolar template files ") + "(*.om_xml)")
             if filepath != '':
                 if not re.match(".*\.om_xml$", filepath):
                     filepath += ".om_xml"
@@ -176,8 +200,8 @@ class setup_gui(QtGui.QMainWindow):
                 self.advise(_("Template Saved"), 1)
             else:
                 self.advise(_("operation cancelled"), 1)
-        except Exception, e:
-            self.advise(_("Template not saved")+" - %s"% e, 2)
+        except Exception as e:
+            self.advise(_("Template not saved") + " - %s" % e, 2)
 
     def load_template(self):
         '''
@@ -186,16 +210,17 @@ class setup_gui(QtGui.QMainWindow):
         if not self.confirmDataOverwrite():
             return
         filename = QtGui.QFileDialog.getOpenFileName(self,
-        _("load an existing template file"),"",
-        _("openmolar template files")+" (*.om_xml)")
+                                                     _(
+                                                     "load an existing template file"), "",
+                                                     _("openmolar template files") + " (*.om_xml)")
 
         if filename != '':
             try:
                 self.template = minidom.parse(str(filename))
-                self.advise(_("template loaded sucessfully"),1)
+                self.advise(_("template loaded sucessfully"), 1)
                 self.tab_navigated(self.ui.tabWidget.currentIndex(), False)
-            except Exception, e:
-                self.advise(_("error parsing template file")+" - %s"% e, 2)
+            except Exception as e:
+                self.advise(_("error parsing template file") + " - %s" % e, 2)
         else:
             self.advise(_("operation cancelled"), 1)
 
@@ -206,15 +231,15 @@ class setup_gui(QtGui.QMainWindow):
         previous tab stored in self.previousTabIndex
         '''
         if updateTemplate:
-            #always true unless called following a load from file
+            # always true unless called following a load from file
             if self.previousTabIndex == 1:
                 self.save_addy()
 
-        if i == 1: #practice addy
+        if i == 1:  # practice addy
             self.load_addy()
-        elif i == 2: #users
+        elif i == 2:  # users
             self.load_users()
-        elif i == 9: #XML viewer
+        elif i == 9:  # XML viewer
             self.ui.xml_label.setText(self.template.toprettyxml())
 
         self.previousTabIndex = i
@@ -240,11 +265,11 @@ class setup_gui(QtGui.QMainWindow):
         d = self.template.getElementsByTagName("practice")
         if d:
             d[0].parentNode.removeChild(d[0])
-        foundText = False # a bool to prevent unnecessary nodes
+        foundText = False  # a bool to prevent unnecessary nodes
         d = self.template.createElement("practice")
         i = 0
         for widg in self.ui.practice_frame.children():
-            if type(widg) == QtGui.QLineEdit:
+            if isinstance(widg, QtGui.QLineEdit):
                 attrib = PRACTICE_ATTRIBS[i]
                 value = str(widg.text().toAscii())
                 if value != "":
@@ -252,7 +277,7 @@ class setup_gui(QtGui.QMainWindow):
                     new_element = self.template.createElement(attrib)
                     d.appendChild(new_element)
                     new_element.appendChild(
-                    self.template.createTextNode(value))
+                        self.template.createTextNode(value))
                 i += 1
         if foundText:
             self.template.childNodes[0].appendChild(d)
@@ -264,11 +289,11 @@ class setup_gui(QtGui.QMainWindow):
         d = self.template.getElementsByTagName("practice")
         i = 0
         for widg in self.ui.practice_frame.children():
-            if type(widg) == QtGui.QLineEdit:
+            if isinstance(widg, QtGui.QLineEdit):
                 attrib = PRACTICE_ATTRIBS[i]
                 try:
                     value = \
-                    d[0].getElementsByTagName(attrib)[0].firstChild.data
+                        d[0].getElementsByTagName(attrib)[0].firstChild.data
                 except IndexError:
                     value = ""
                 widg.setText(value)
@@ -292,7 +317,7 @@ class setup_gui(QtGui.QMainWindow):
         user has clicked the button to add a new user
         '''
         if self.ui.newUser_pushButton.text() in (
-        _("Apply Now"), _("Modify Now")) :
+                _("Apply Now"), _("Modify Now")):
             user = om_user(self.ui)
             user.load()
             result, error = user.verifies()
@@ -305,7 +330,7 @@ class setup_gui(QtGui.QMainWindow):
                 if self.ui.newUser_pushButton.text() == _("Modify Now"):
                     selected = self.ui.users_tableWidget.currentItem().row()
                     d.removeChild(d.childNodes[selected])
-                    self.ui.users_tableWidget.setCurrentCell(-1,-1)
+                    self.ui.users_tableWidget.setCurrentCell(-1, -1)
                     self.ui.modifyUser_pushButton.hide()
 
                 d.appendChild(user.toNode())
@@ -317,7 +342,7 @@ class setup_gui(QtGui.QMainWindow):
 
                 self.tab_navigated(self.ui.tabWidget.currentIndex(), False)
             else:
-                self.advise(error,1)
+                self.advise(error, 1)
 
         else:
             self.ui.users_tableWidget.setCurrentCell(-1, -1)
@@ -356,7 +381,6 @@ class setup_gui(QtGui.QMainWindow):
         except TypeError:
             self.ui.user_dateEdit.setDate(QtCore.QDate.currentDate())
 
-
     def handleUserActive(self, arg):
         '''
         hide/show the deactivation date
@@ -386,38 +410,40 @@ class setup_gui(QtGui.QMainWindow):
         set up signals/slots
         '''
         QtCore.QObject.connect(self.ui.action_Save_Template,
-        QtCore.SIGNAL("triggered()"), self.save_template)
+                               QtCore.SIGNAL("triggered()"), self.save_template)
 
         QtCore.QObject.connect(self.ui.actionLoad_Template,
-        QtCore.SIGNAL("triggered()"), self.load_template)
+                               QtCore.SIGNAL("triggered()"), self.load_template)
 
         QtCore.QObject.connect(self.ui.blankdb_radioButton,
-        QtCore.SIGNAL("toggled (bool)"), self.blankdb_radioButton)
+                               QtCore.SIGNAL("toggled (bool)"), self.blankdb_radioButton)
 
         QtCore.QObject.connect(self.ui.newdb_template_radioButton,
-        QtCore.SIGNAL("toggled (bool)"), self.newdb_from_template_radioButton)
+                               QtCore.SIGNAL("toggled (bool)"), self.newdb_from_template_radioButton)
 
         QtCore.QObject.connect(self.ui.tabWidget,
-        QtCore.SIGNAL("currentChanged(int)"), self.tab_navigated)
+                               QtCore.SIGNAL("currentChanged(int)"), self.tab_navigated)
 
         QtCore.QObject.connect(self.ui.userName_lineEdit,
-        QtCore.SIGNAL("textChanged (const QString&)"), self.nameEntered)
+                               QtCore.SIGNAL("textChanged (const QString&)"), self.nameEntered)
 
         QtCore.QObject.connect(self.ui.newUser_pushButton,
-        QtCore.SIGNAL("clicked()"), self.add_modify_User)
+                               QtCore.SIGNAL("clicked()"), self.add_modify_User)
 
         QtCore.QObject.connect(self.ui.users_tableWidget,
-        QtCore.SIGNAL("itemSelectionChanged()"), self.userSelected)
+                               QtCore.SIGNAL("itemSelectionChanged()"), self.userSelected)
 
         QtCore.QObject.connect(self.ui.users_tableWidget,
-        QtCore.SIGNAL("itemDoubleClicked (QTableWidgetItem *)"),
-        self.modifyUser)
+                               QtCore.SIGNAL(
+                               "itemDoubleClicked (QTableWidgetItem *)"),
+                               self.modifyUser)
 
         QtCore.QObject.connect(self.ui.modifyUser_pushButton,
-        QtCore.SIGNAL("clicked()"), self.modifyUser)
+                               QtCore.SIGNAL("clicked()"), self.modifyUser)
 
         QtCore.QObject.connect(self.ui.userActive_checkBox,
-        QtCore.SIGNAL("stateChanged (int)"), self.handleUserActive)
+                               QtCore.SIGNAL("stateChanged (int)"), self.handleUserActive)
+
 
 def main(args):
     app = QtGui.QApplication(args)

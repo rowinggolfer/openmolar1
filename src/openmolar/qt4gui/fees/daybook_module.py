@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# See the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 update perio dates, xray dates, and write items to the daybook
@@ -22,12 +38,14 @@ from openmolar.qt4gui.printing import bookprint
 
 LOGGER = logging.getLogger("openmolar")
 
+
 def perioDates(om_gui, arg):
     '''
     update the patient's "last scale/polish" date
     '''
     if "SP" in arg:
         om_gui.pt.pd10 = localsettings.currentDay()
+
 
 def xrayDates(om_gui, arg):
     '''
@@ -38,24 +56,25 @@ def xrayDates(om_gui, arg):
     if "P" in arg:
         om_gui.pt.pd8 = localsettings.currentDay()
 
+
 def updateDaybook(om_gui):
     '''
     looks for newly completed treatments when a record is closed
     '''
     daybookdict = {
-    "diagn" : "",
-    "perio" : "",
-    "anaes" : "",
-    "misc" : "",
-    "ndu" : "",
-    "ndl" : "",
-    "odu" : "",
-    "odl" : "",
-    "other" : "",
-    "chart" : ""
+        "diagn": "",
+        "perio": "",
+        "anaes": "",
+        "misc": "",
+        "ndu": "",
+        "ndl": "",
+        "odu": "",
+        "odl": "",
+        "other": "",
+        "chart": ""
     }
-    feesa = 0         #fee
-    feesb = 0         #ptfee
+    feesa = 0  # fee
+    feesb = 0  # ptfee
     hashes = []
 
     courseno = om_gui.pt.treatment_course.courseno
@@ -64,8 +83,8 @@ def updateDaybook(om_gui):
     for tx_hash in om_gui.pt.completed_tx_hash_tups:
 
         if not_new_course and tx_hash in om_gui.pt.dbstate.completed_tx_hash_tups:
-            continue #already written to daybook.
-        LOGGER.debug("write to daybook %s %s %s"% tx_hash)
+            continue  # already written to daybook.
+        LOGGER.debug("write to daybook %s %s %s" % tx_hash)
 
         hash_, att, treatment = tx_hash
 
@@ -75,14 +94,14 @@ def updateDaybook(om_gui):
             key = re.sub("cmp$", "", att)
 
         if key in daybookdict.keys():
-            daybookdict[key] += "%s"% treatment
+            daybookdict[key] += "%s" % treatment
         elif key in ("xray", "exam"):
-            daybookdict["diagn"] += "%s"% treatment
+            daybookdict["diagn"] += "%s" % treatment
         elif key == "custom":
-            daybookdict["other"] += "CUSTOM:%s"% treatment
+            daybookdict["other"] += "CUSTOM:%s" % treatment
         else:
             #--tooth include the key ie ul7 etc...
-            daybookdict["chart"] += "%s %s "% (key.upper(), treatment)
+            daybookdict["chart"] += "%s %s " % (key.upper(), treatment)
 
         hashes.append(hash_)
 
@@ -93,7 +112,7 @@ def updateDaybook(om_gui):
             feesb += fees[1]
         else:
             LOGGER.warning(
-            "daybook module - no fees for '%s' '%s' '%s'"% tx_hash)
+                "daybook module - no fees for '%s' '%s' '%s'" % tx_hash)
 
     if hashes != []:
         if om_gui.pt.dnt2 != 0 and om_gui.pt.cset != "I":
@@ -103,23 +122,22 @@ def updateDaybook(om_gui):
         trtid = localsettings.clinicianNo
 
         daybook.add(om_gui.pt.serialno, om_gui.pt.cset, dent, trtid,
-        daybookdict, feesa, feesb, hashes)
+                    daybookdict, feesa, feesb, hashes)
 
         LOGGER.debug("daybook_module - updating pd4")
         om_gui.pt.pd4 = localsettings.currentDay()
 
-def daybookView(om_gui, print_ = False):
+
+def daybookView(om_gui, print_=False):
     dent1 = str(om_gui.ui.daybookDent1ComboBox.currentText())
     dent2 = str(om_gui.ui.daybookDent2ComboBox.currentText())
     sdate = om_gui.ui.daybookStartDateEdit.date()
     edate = om_gui.ui.daybookEndDateEdit.date()
     if sdate > edate:
-        om_gui.advise(_("bad date sequence"),1)
+        om_gui.advise(_("bad date sequence"), 1)
         return False
     html = daybook.details(dent1, dent2, sdate, edate)
     om_gui.ui.daybookTextBrowser.setHtml(html)
     if print_:
         myclass = bookprint.printBook(html)
         myclass.printpage()
-
-

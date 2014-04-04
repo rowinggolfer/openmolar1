@@ -1,24 +1,26 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2013, Neil Wallace <rowinggolfer@googlemail.com>               ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from collections import namedtuple
 from functools import partial
@@ -36,9 +38,9 @@ for shortcut, description in (
     ("CR,IC", _("Implant Crown")),
     ("BR/CR,IC", _("Implant Bridge Retainer")),
     ("BR/P,IC", _("Implant Bridge Pontic")),
-    ):
+):
     implant_chart_button = namedtuple('ImplantType',
-        ("shortcut", "description", "tooltip"))
+                                     ("shortcut", "description", "tooltip"))
     implant_chart_button.description = description
     implant_chart_button.tooltip = ""
     implant_chart_button.shortcut = shortcut
@@ -46,6 +48,7 @@ for shortcut, description in (
 
 
 class ImplantChoiceDialog(ExtendableDialog):
+
     def __init__(self, static, parent=None):
         ExtendableDialog.__init__(self, parent, remove_stretch=True)
         self.setWindowTitle(_("Implant Choice Dialog"))
@@ -77,7 +80,9 @@ class ImplantChoiceDialog(ExtendableDialog):
         for implant_button in implant_chart_buttons:
             but = QtGui.QPushButton(implant_button.description)
             but.setToolTip(implant_button.tooltip)
-            but.clicked.connect(partial(self.but_clicked, implant_button.shortcut))
+            but.clicked.connect(
+                partial(self.but_clicked,
+                        implant_button.shortcut))
             self.but_layout.addWidget(but)
         self.but_layout.addStretch(100)
 

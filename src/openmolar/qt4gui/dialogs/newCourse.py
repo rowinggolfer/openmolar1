@@ -1,39 +1,59 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from PyQt4 import QtGui, QtCore
 from openmolar.qt4gui.compiled_uis import Ui_newCourse
 from openmolar.settings import localsettings
 
+
 class NewCourseDialog(Ui_newCourse.Ui_Dialog):
+
     '''
     a custom dialog to set the variables for a new course of treatment
     '''
+
     def __init__(self, dialog, dnt1, dnt2, csetype, parent=None):
         self.setupUi(dialog)
-        self.dialog=dialog
+        self.dialog = dialog
         self.dateEdit.setDate(QtCore.QDate().currentDate())
         self.dnt1_comboBox.addItems(localsettings.activedents)
         try:
-            pos=localsettings.activedents.index(dnt1)
+            pos = localsettings.activedents.index(dnt1)
         except ValueError:
-            pos=-1
+            pos = -1
         self.dnt1_comboBox.setCurrentIndex(pos)
         self.dnt2_comboBox.addItems(localsettings.activedents)
         try:
-            pos=localsettings.activedents.index(dnt2)
+            pos = localsettings.activedents.index(dnt2)
         except ValueError:
-            pos=-1
+            pos = -1
         self.dnt2_comboBox.setCurrentIndex(pos)
         self.cseType_comboBox.addItems(localsettings.CSETYPES)
         try:
-            pos=localsettings.CSETYPES.index(csetype)
+            pos = localsettings.CSETYPES.index(csetype)
         except ValueError:
-            pos=-1
+            pos = -1
         self.cseType_comboBox.setCurrentIndex(pos)
 
     def getInput(self):
@@ -49,9 +69,9 @@ class NewCourseDialog(Ui_newCourse.Ui_Dialog):
                 retarg = (dnt1, dnt2, cset, self.dateEdit.date())
                 if "" in retarg:
                     QtGui.QMessageBox.information(self.dialog,
-                    _("Error"), _("Some fields are missing, please check"))
+                                                  _("Error"), _("Some fields are missing, please check"))
                 else:
-                    return (True,retarg)
+                    return (True, retarg)
             else:
                 return(False, None)
 
@@ -62,4 +82,3 @@ if __name__ == "__main__":
     dl = QtGui.QDialog()
     ui = NewCourseDialog(dl, "BW", "AH", "")
     print ui.getInput()
-

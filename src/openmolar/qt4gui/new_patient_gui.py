@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# See the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import logging
 from gettext import gettext as _
@@ -16,6 +32,7 @@ from openmolar.dbtools import writeNewPatient
 
 LOGGER = logging.getLogger("openmolar")
 
+
 def enterNewPatient(om_gui):
     '''
     called by the user clicking the new patient button
@@ -24,7 +41,7 @@ def enterNewPatient(om_gui):
     #--check for unsaved changes
     if not om_gui.okToLeaveRecord():
         LOGGER.debug(
-        "not entering new patient - still editing current record")
+            "not entering new patient - still editing current record")
         return
 
     #--disable the newPatient Button
@@ -54,12 +71,13 @@ def enterNewPatient(om_gui):
 
     #--give some help
     om_gui.ui.detailsBrowser.setHtml(
-        '<div align="center"><h2>%s</h2>%s<hr /><em>%s</em></div>'% (
-        _("New Patient Mode"),
-        _("Please enter at least the required fields."),
-        _("Use the Save Changes button to commit to the database, "
-        "or the home button to leave this page")
+        '<div align="center"><h2>%s</h2>%s<hr /><em>%s</em></div>' % (
+            _("New Patient Mode"),
+            _("Please enter at least the required fields."),
+            _("Use the Save Changes button to commit to the database, "
+              "or the home button to leave this page")
         ))
+
 
 def checkNewPatient(om_gui):
     '''
@@ -67,14 +85,14 @@ def checkNewPatient(om_gui):
     before commiting to database
     '''
     LOGGER.debug("check new patient")
-    atts=[]
-    allfields_entered=True
+    atts = []
+    allfields_entered = True
 
     #-- check these widgets for entered text.
     for widg in (om_gui.ui.snameEdit, om_gui.ui.titleEdit, om_gui.ui.fnameEdit,
-    om_gui.ui.addr1Edit, om_gui.ui.pcdeEdit):
+                 om_gui.ui.addr1Edit, om_gui.ui.pcdeEdit):
         if len(widg.text()) == 0:
-            allfields_entered=False
+            allfields_entered = False
 
     if allfields_entered:
         #--update 'pt'
@@ -88,15 +106,16 @@ def checkNewPatient(om_gui):
             #--reset the gui
             finishedNewPatientInput(om_gui)
             #--set that serialno
-            #om_gui.pt.serialno = sno
-            #om_gui.clearRecord()
+            # om_gui.pt.serialno = sno
+            # om_gui.clearRecord()
             om_gui.getrecord(sno, newPatientReload=True)
     else:
         #-- prompt user for more info
         om_gui.advise(_(
-        "insufficient data to create a new record."
-        "please fill in all highlighted fields"
-        ), 2)
+                      "insufficient data to create a new record."
+                      "please fill in all highlighted fields"
+                      ), 2)
+
 
 def finishedNewPatientInput(om_gui):
     '''
@@ -119,6 +138,7 @@ def finishedNewPatientInput(om_gui):
 
     om_gui.restoreSaveButtonAfterNewPatient()
 
+
 def abortNewPatientEntry(om_gui):
     '''
     get user response 'abort new patient entry?'
@@ -126,11 +146,10 @@ def abortNewPatientEntry(om_gui):
     om_gui.ui.main_tabWidget.setCurrentIndex(0)
 
     if QtGui.QMessageBox.question(om_gui, "Confirm",
-    "%s<hr /><em>%s</em>"% (
-    _("New Patient not saved."),
-    _("Abandon Changes?")),
-    QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
-    QtGui.QMessageBox.Cancel ) == QtGui.QMessageBox.Ok:
+                                  "%s<hr /><em>%s</em>" % (
+                                      _("New Patient not saved."),
+                                      _("Abandon Changes?")),
+                                  QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
+                                  QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok:
         finishedNewPatientInput(om_gui)
         return True
-

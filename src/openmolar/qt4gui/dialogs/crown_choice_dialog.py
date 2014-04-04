@@ -1,24 +1,26 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2013, Neil Wallace <rowinggolfer@googlemail.com>               ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from collections import namedtuple
 from functools import partial
@@ -31,19 +33,19 @@ from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 
 STATIC_LIST = []
 for shortcut, description in (
-("CR,PJ", _("Porcelain Jacket")),
-("CR,GO", _("Gold")),
-("CR,V1", _("Porcelain/Metal")),
-("CR,LAVA", _("Lava")),
-("CR,OPAL", _("Opalite")),
-("CR,EMAX", _("Emax")),
-("CR,EVER", _("Everest")),
-("CR,SS", _("Stainless")),
-("CR,SR", _("Resin")),
-("CR,OT", _("Other")),
+    ("CR,PJ", _("Porcelain Jacket")),
+    ("CR,GO", _("Gold")),
+    ("CR,V1", _("Porcelain/Metal")),
+    ("CR,LAVA", _("Lava")),
+    ("CR,OPAL", _("Opalite")),
+    ("CR,EMAX", _("Emax")),
+    ("CR,EVER", _("Everest")),
+    ("CR,SS", _("Stainless")),
+    ("CR,SR", _("Resin")),
+    ("CR,OT", _("Other")),
 ):
     crown_chart_button = namedtuple('CrownType',
-        ("shortcut", "description", "tooltip"))
+                                   ("shortcut", "description", "tooltip"))
     crown_chart_button.description = description
     crown_chart_button.tooltip = ""
     crown_chart_button.shortcut = shortcut
@@ -51,6 +53,7 @@ for shortcut, description in (
 
 
 class CrownChoiceDialog(ExtendableDialog):
+
     def __init__(self, static, parent=None):
         ExtendableDialog.__init__(self, parent, remove_stretch=True)
         self.setWindowTitle(_("Crown Choice Dialog"))
@@ -71,7 +74,7 @@ class CrownChoiceDialog(ExtendableDialog):
             self.add_buttons(STATIC_LIST)
         else:
             all_crowns_but = QtGui.QPushButton(
-            _("Show Crowns types from all feescales"))
+                _("Show Crowns types from all feescales"))
             all_crowns_but.clicked.connect(self._show_all_crowns)
             self.add_advanced_widget(all_crowns_but)
 
@@ -91,8 +94,8 @@ class CrownChoiceDialog(ExtendableDialog):
             but.setToolTip(crown_button.tooltip)
             but.clicked.connect(
                 partial(self.but_clicked, crown_button.shortcut))
-            self.but_layout.addWidget(but, row//2, row%2)
-        self.but_layout.setRowStretch((row+2)//2,100)
+            self.but_layout.addWidget(but, row // 2, row % 2)
+        self.but_layout.setRowStretch((row + 2) // 2, 100)
 
     def _show_all_crowns(self):
         self.add_buttons(localsettings.FEETABLES.ui_crown_chart_buttons)

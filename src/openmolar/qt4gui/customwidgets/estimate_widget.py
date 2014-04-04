@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License
-# for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 this module provides a custom widget "EstimateWidget"
@@ -24,7 +40,9 @@ from openmolar.qt4gui.dialogs.complete_treatment_dialog \
 
 LOGGER = logging.getLogger("openmolar")
 
+
 class EstimateWidget(QtGui.QWidget):
+
     '''
     provides a custom widget to view/edit the patient's estimate
     '''
@@ -42,7 +60,7 @@ class EstimateWidget(QtGui.QWidget):
 
         self.expandAll = False
 
-        #header labels
+        # header labels
         self.number_label = QtGui.QLabel(_("No."))
         self.code_label = QtGui.QLabel(_("Code"))
         self.description_label = QtGui.QLabel(_("Description"))
@@ -66,7 +84,7 @@ class EstimateWidget(QtGui.QWidget):
         self.g_layout.addWidget(self.fee_label, 0, 4)
         self.g_layout.addWidget(self.charge_label, 0, 6)
 
-        self.g_layout.addWidget(self.expand_all_button, 0,7,1,3)
+        self.g_layout.addWidget(self.expand_all_button, 0, 7, 1, 3)
 
         self.planned_fees_total_le = QtGui.QLineEdit()
         self.planned_charges_total_le = QtGui.QLineEdit()
@@ -81,14 +99,14 @@ class EstimateWidget(QtGui.QWidget):
         self.interim_charges_total_le = QtGui.QLineEdit()
 
         for le in (
-        self.planned_fees_total_le,
-        self.completed_fees_total_le,
-        self.fees_total_le,
-        self.charges_total_le,
-        self.planned_charges_total_le,
-        self.completed_charges_total_le,
-        self.interim_fees_total_le,
-        self.interim_charges_total_le):
+            self.planned_fees_total_le,
+            self.completed_fees_total_le,
+            self.fees_total_le,
+            self.charges_total_le,
+            self.planned_charges_total_le,
+            self.completed_charges_total_le,
+            self.interim_fees_total_le,
+                self.interim_charges_total_le):
             le.setFixedWidth(EstimateItemWidget.MONEY_WIDTH)
             le.setAlignment(QtCore.Qt.AlignRight)
 
@@ -97,7 +115,7 @@ class EstimateWidget(QtGui.QWidget):
         self.completed_total_label = QtGui.QLabel(_("Completed Items Total"))
         self.total_label = QtGui.QLabel(_("TOTAL"))
 
-        alignment = QtCore.Qt.AlignRight|QtCore.Qt.AlignVCenter
+        alignment = QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter
         self.planned_total_label.setAlignment(alignment)
         self.interim_total_label.setAlignment(alignment)
         self.completed_total_label.setAlignment(alignment)
@@ -115,29 +133,29 @@ class EstimateWidget(QtGui.QWidget):
     def add_footer(self):
         row = len(self.estItemWidgets)
 
-        self.g_layout.addItem(self.spacer_item, row+1, 0, 1, 9)
-        self.g_layout.setRowStretch(row+1, 2)
+        self.g_layout.addItem(self.spacer_item, row + 1, 0, 1, 9)
+        self.g_layout.setRowStretch(row + 1, 2)
 
         row += 2
         for i, label in enumerate(
             (self.planned_total_label,
-            self.interim_total_label,
-            self.completed_total_label,
-            self.total_label)
-            ):
+             self.interim_total_label,
+             self.completed_total_label,
+             self.total_label)
+        ):
             self.g_layout.addWidget(label, row + 3 + i, 2, 1, 2)
 
-        self.g_layout.addWidget(self.planned_fees_total_le, 3+row,4)
-        self.g_layout.addWidget(self.planned_charges_total_le, 3+row,6)
+        self.g_layout.addWidget(self.planned_fees_total_le, 3 + row, 4)
+        self.g_layout.addWidget(self.planned_charges_total_le, 3 + row, 6)
 
-        self.g_layout.addWidget(self.interim_fees_total_le, 4+row,4)
-        self.g_layout.addWidget(self.interim_charges_total_le, 4+row,6)
+        self.g_layout.addWidget(self.interim_fees_total_le, 4 + row, 4)
+        self.g_layout.addWidget(self.interim_charges_total_le, 4 + row, 6)
 
-        self.g_layout.addWidget(self.completed_fees_total_le, 5+row,4)
-        self.g_layout.addWidget(self.completed_charges_total_le, 5+row,6)
+        self.g_layout.addWidget(self.completed_fees_total_le, 5 + row, 4)
+        self.g_layout.addWidget(self.completed_charges_total_le, 5 + row, 6)
 
-        self.g_layout.addWidget(self.fees_total_le, 6+row,4)
-        self.g_layout.addWidget(self.charges_total_le, 6+row,6)
+        self.g_layout.addWidget(self.fees_total_le, 6 + row, 4)
+        self.g_layout.addWidget(self.charges_total_le, 6 + row, 6)
 
     def minimumSizeHint(self):
         min_height = 120 + len(self.estItemWidgets) * 28
@@ -159,7 +177,7 @@ class EstimateWidget(QtGui.QWidget):
                 pt_interim_total += est.interim_pt_fee
                 plan_total += est.fee - est.interim_fee
                 pt_plan_total += est.ptfee - est.interim_pt_fee
-            else: #est.PLANNED
+            else:  # est.PLANNED
                 plan_total += est.fee
                 pt_plan_total += est.ptfee
             total += est.fee
@@ -181,7 +199,7 @@ class EstimateWidget(QtGui.QWidget):
             LOGGER.debug("est widget using interim fees")
 
         for widg in (self.interim_charges_total_le,
-        self.interim_fees_total_le, self.interim_total_label):
+                     self.interim_fees_total_le, self.interim_total_label):
             widg.setVisible(interim_in_use)
 
         self.updated_fees_signal.emit()
@@ -203,7 +221,7 @@ class EstimateWidget(QtGui.QWidget):
 
         item_is_other = est.itemcode == "-----"
         for widg in self.estItemWidgets:
-            if widg.itemCode == est.itemcode :
+            if widg.itemCode == est.itemcode:
                 if item_is_other:
                     for exist_est in widg.est_items:
                         if est.description == exist_est.description:
@@ -275,7 +293,7 @@ class EstimateWidget(QtGui.QWidget):
         self.updateTotals()
 
     def compress_item(self, item_code):
-        LOGGER.debug("compress %s"% item_code)
+        LOGGER.debug("compress %s" % item_code)
         self.separate_codes.remove(item_code)
         self.expandAll = False
         self.resetEstimate()
@@ -283,13 +301,18 @@ class EstimateWidget(QtGui.QWidget):
     def add_compress_buts(self):
         def add_but():
             if start_row is not None:
-                self.g_layout.addWidget(but, start_row, 9, row+1-start_row, 1)
+                self.g_layout.addWidget(
+                    but,
+                    start_row,
+                    9,
+                    row + 1 - start_row,
+                    1)
                 but.setVisible(True)
 
         row, but, code, start_row = None, None, None, None
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":icons/contract.svg"),
-            QtGui.QIcon.Normal, QtGui.QIcon.Off)
+                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
         for row, est_item_widget in enumerate(self.estItemWidgets):
             if est_item_widget.itemCode == code:
                 self.separate_codes.add(code)
@@ -309,7 +332,7 @@ class EstimateWidget(QtGui.QWidget):
             add_but()
 
     def tx_hash_complete(self, tx_hash):
-        LOGGER.debug("EstimateWidget.tx_hash_complete, %s"% tx_hash)
+        LOGGER.debug("EstimateWidget.tx_hash_complete, %s" % tx_hash)
         if tx_hash.completed:
             manipulate_plan.tx_hash_complete(self.om_gui, tx_hash)
         else:
@@ -333,7 +356,7 @@ class EstimateWidget(QtGui.QWidget):
 
         self.g_layout.removeItem(self.spacer_item)
         self.set_expand_mode(self.expandAll)
-        #self.updateTotals()
+        # self.updateTotals()
 
     def deleteItemWidget(self, item_widget, confirm_first=True):
         '''
@@ -343,16 +366,16 @@ class EstimateWidget(QtGui.QWidget):
         LOGGER.debug("EstimateWidget.deleteItemWidget")
 
         if not confirm_first:
-            message = u"<p>%s %s %s<br />%s?</p>"%(
+            message = u"<p>%s %s %s<br />%s?</p>" % (
                 _("Delete"),
                 item_widget.number_label.text(),
                 item_widget.description_lineEdit.text(),
                 _("from treatment plan and estimate")
-                )
+            )
 
             if QtGui.QMessageBox.question(self, "confirm",
-                message, QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                QtGui.QMessageBox.Yes ) == QtGui.QMessageBox.No:
+                                          message, QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                                          QtGui.QMessageBox.Yes) == QtGui.QMessageBox.No:
                 return False
 
         assert len(item_widget.est_items) == 1, "bad est item passed"
@@ -377,7 +400,7 @@ class EstimateWidget(QtGui.QWidget):
         '''
         separate this item
         '''
-        LOGGER.debug("EstimateWidget.split_item %s"% est_item_widget)
+        LOGGER.debug("EstimateWidget.split_item %s" % est_item_widget)
         self.separate_codes.add(est_item_widget.itemCode)
         self.resetEstimate()
 
@@ -402,15 +425,15 @@ class EstimateWidget(QtGui.QWidget):
         specific allowable order)
         '''
         LOGGER.debug(
-            "EstimateWidget.allow_check called. Completing = %s"% completing)
+            "EstimateWidget.allow_check called. Completing = %s" % completing)
 
         assert len(est_item.tx_hashes) == 1, \
-        "too many tx_hashes passed to EstimateWidget.allow_check"
+            "too many tx_hashes passed to EstimateWidget.allow_check"
 
         check_first = False
         for est in self.ests:
             if (est.itemcode == est_item.itemcode and
-            est.tx_hashes != est_item.tx_hashes):
+               est.tx_hashes != est_item.tx_hashes):
                 check_first = True
                 break
 
@@ -418,17 +441,17 @@ class EstimateWidget(QtGui.QWidget):
             LOGGER.debug("EstimateWidget.allow_check granted")
             return True
 
-        tx_hash = est_item.tx_hashes[0] # will only have one - see assert
+        tx_hash = est_item.tx_hashes[0]  # will only have one - see assert
         check_att, check_tx = self.pt.get_tx_from_hash(tx_hash)
-        LOGGER.debug("Check uniqueness of hash='%s' att='%s' tx='%s'"% (
+        LOGGER.debug("Check uniqueness of hash='%s' att='%s' tx='%s'" % (
             tx_hash, check_att, check_tx))
 
-        #check this treatment off against the other treatments which still
-        #require completing/reversing
+        # check this treatment off against the other treatments which still
+        # require completing/reversing
         for hash_, att_, tx in self.pt.tx_hash_tups:
-            if check_att == att_ and tx == check_tx and  hash_ != tx_hash.hash:
+            if check_att == att_ and tx == check_tx and hash_ != tx_hash.hash:
                 LOGGER.warning(
-                "Special code checked via estimate widget, not allowing check")
+                    "Special code checked via estimate widget, not allowing check")
                 if completing:
                     func_ = manipulate_plan.complete_txs
                 else:
@@ -447,7 +470,7 @@ class EstimateWidget(QtGui.QWidget):
         tx_hashes = []
         for item in est_item_widget.est_items:
             tx_hashes += item.tx_hashes
-        assert len(tx_hashes) >0 , \
+        assert len(tx_hashes) > 0, \
             "no treatments found.. this shouldn't happen"
 
         txs = []
@@ -461,18 +484,18 @@ class EstimateWidget(QtGui.QWidget):
             return
 
         for att, treat in dl.completed_treatments:
-            LOGGER.debug("checking completed %s %s"% (att, treat))
-            found = False #only complete 1 treatment!!
+            LOGGER.debug("checking completed %s %s" % (att, treat))
+            found = False  # only complete 1 treatment!!
             for hash_, att_, tx in self.pt.tx_hash_tups:
                 if found:
                     break
                 if att == att_ and tx == treat:
                     LOGGER.debug("att and treat match... checking hashes")
                     for item in est_item_widget.est_items:
-                        LOGGER.debug("Checking hashes of item %s"% item)
+                        LOGGER.debug("Checking hashes of item %s" % item)
                         for tx_hash in item.tx_hashes:
                             if tx_hash == hash_ and not tx_hash.completed:
-                                LOGGER.debug("%s == %s"% (tx_hash, hash_))
+                                LOGGER.debug("%s == %s" % (tx_hash, hash_))
                                 tx_hash.completed = True
                                 self.tx_hash_complete(tx_hash)
                                 found = True
@@ -481,18 +504,18 @@ class EstimateWidget(QtGui.QWidget):
                             break
 
         for att, treat in dl.uncompleted_treatments:
-            LOGGER.debug("checking completed %s %s"% (att, treat))
-            found = False #only complete 1 treatment!!
+            LOGGER.debug("checking completed %s %s" % (att, treat))
+            found = False  # only complete 1 treatment!!
             for hash_, att_, tx in reversed(list(self.pt.tx_hash_tups)):
                 if found:
                     break
                 if att == att_ and tx == treat:
                     LOGGER.debug("att and treat match... checking hashes")
                     for item in est_item_widget.est_items:
-                        LOGGER.debug("Checking hashes of item %s"% item)
+                        LOGGER.debug("Checking hashes of item %s" % item)
                         for tx_hash in item.tx_hashes:
                             if tx_hash == hash_ and tx_hash.completed:
-                                LOGGER.debug("%s == %s"% (tx_hash, hash_))
+                                LOGGER.debug("%s == %s" % (tx_hash, hash_))
                                 tx_hash.completed = False
                                 self.tx_hash_complete(tx_hash)
                                 found = True
@@ -501,9 +524,9 @@ class EstimateWidget(QtGui.QWidget):
                             break
 
         for att, treat, already_completed in dl.deleted_treatments:
-            LOGGER.debug("checking deleted %s %s"% (att, treat))
+            LOGGER.debug("checking deleted %s %s" % (att, treat))
             manipulate_plan.remove_treatments_from_plan_and_est(
-            self.om_gui, ((att, treat.strip(" ")),), already_completed)
+                self.om_gui, ((att, treat.strip(" ")),), already_completed)
 
         self.resetEstimate()
 

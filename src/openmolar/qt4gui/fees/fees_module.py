@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# See the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 this module contains functions which were originally part of the maingui.py
@@ -36,11 +52,12 @@ from openmolar.qt4gui.dialogs.payment_dialog import PaymentDialog
 
 LOGGER = logging.getLogger("openmolar")
 
+
 def getFeesFromEst(om_gui, hash_):
     '''
     iterate through the ests... find this item
     '''
-    LOGGER.debug("getting a daybook fee for treatment id %s"% hash_)
+    LOGGER.debug("getting a daybook fee for treatment id %s" % hash_)
     for est in om_gui.pt.estimates:
         for tx_hash in est.tx_hashes:
             if hash_ == tx_hash.hash:
@@ -48,13 +65,14 @@ def getFeesFromEst(om_gui, hash_):
     LOGGER.debug("NO MATCH!")
     return None
 
+
 def takePayment(om_gui):
     '''
     raise a dialog, and take some money
     '''
     if om_gui.pt.serialno == 0:
-        om_gui.advise("No patient Selected <br />Monies will be "+ \
-        "allocated to Other Payments, and no receipt offered")
+        om_gui.advise("No patient Selected <br />Monies will be " +
+                      "allocated to Other Payments, and no receipt offered")
     dl = PaymentDialog(om_gui)
     dl.set_treatment_default_amount(om_gui.pt.fees)
     dl.hide_treatment(om_gui.pt.serialno == 0)
@@ -64,33 +82,35 @@ def takePayment(om_gui):
         else:
             paymentPt = om_gui.pt
 
-        name = "%s %s"% (paymentPt.sname, paymentPt.fname[:1])
+        name = "%s %s" % (paymentPt.sname, paymentPt.fname[:1])
         if paymentPt.dnt2 != 0:
             dent = paymentPt.dnt2
         else:
             dent = paymentPt.dnt1
 
-        LOGGER.debug("TAKING PAYMENT for patient %s"% paymentPt.serialno)
+        LOGGER.debug("TAKING PAYMENT for patient %s" % paymentPt.serialno)
 
-        if cashbook.paymenttaken(paymentPt.serialno, name, dent,paymentPt.cset,
-        dl.tx_cash, dl.tx_cheque, dl.tx_card,
-        dl.sundry_cash, dl.sundry_cheque, dl.sundry_card,
-        dl.hdp, dl.other, dl.refund):
+        if cashbook.paymenttaken(
+            paymentPt.serialno, name, dent, paymentPt.cset,
+            dl.tx_cash, dl.tx_cheque, dl.tx_card,
+            dl.sundry_cash, dl.sundry_cheque, dl.sundry_card,
+                dl.hdp, dl.other, dl.refund):
 
             paymentPt.addHiddenNote("payment",
-            " treatment %s sundries %s"% (
-                dl.tx_total_text, dl.sundry_total_text))
+                                    " treatment %s sundries %s" % (
+                                        dl.tx_total_text, dl.sundry_total_text))
 
             om_gui.updateHiddenNotesLabel()
 
             if om_gui.pt.serialno != 0:
                 LOGGER.debug("loaded patient == payment patient")
-                om_printing.printReceipt(om_gui,{
-                "Treatments and Services" : dl.tx_total_text,
-                "Sundry Items" : dl.sundry_total_text,
-                "Unspecified Items" : dl.other_text,
-                "REFUND" : dl.refund_text},
-                total=dl.grand_total_text)
+                om_printing.printReceipt(om_gui, {
+                                         "Treatments and Services":
+                                         dl.tx_total_text,
+                                         "Sundry Items": dl.sundry_total_text,
+                                         "Unspecified Items": dl.other_text,
+                                         "REFUND": dl.refund_text},
+                                         total=dl.grand_total_text)
 
                 #-- always refer to money in terms of pence
                 print "adjusting money"
@@ -102,14 +122,14 @@ def takePayment(om_gui):
 
             else:
                 LOGGER.debug(
-                "Payment patient is not loaded. skipping receipt offer.")
+                    "Payment patient is not loaded. skipping receipt offer.")
 
             patient_write_changes.toNotes(paymentPt.serialno,
                                           paymentPt.HIDDENNOTES)
 
             LOGGER.debug("writing payment notes")
             if patient_write_changes.discreet_changes(paymentPt,
-            ("money2", "money3", "money11")) and om_gui.pt.serialno != 0:
+                                                     ("money2", "money3", "money11")) and om_gui.pt.serialno != 0:
                 LOGGER.debug("updating patient's stored money values")
                 om_gui.pt.dbstate.money2 = om_gui.pt.money2
                 om_gui.pt.dbstate.money3 = om_gui.pt.money3
@@ -121,11 +141,12 @@ def takePayment(om_gui):
             LOGGER.info("PAYMENT ALL DONE!")
         else:
             LOGGER.warning("payment failed to write to database!")
-            message = "%s<br />%s"% (
+            message = "%s<br />%s" % (
                 _("error applying payment.... sorry!"),
                 _("This shouldn't happen - please report as an urgent bug")
-                )
+            )
             om_gui.advise(message, 2)
+
 
 def loadFeesTable(om_gui):
     '''
@@ -140,8 +161,7 @@ def loadFeesTable(om_gui):
     om_gui.feestableLoaded = True
     i = om_gui.ui.chooseFeescale_comboBox.currentIndex()
 
-    tableKeys = localsettings.FEETABLES.tables.keys()
-    tableKeys.sort()
+    tableKeys = sorted(localsettings.FEETABLES.tables.keys())
     om_gui.fee_models = []
     om_gui.ui.chooseFeescale_comboBox.clear()
 
@@ -151,7 +171,7 @@ def loadFeesTable(om_gui):
         om_gui.fee_models.append(model)
         om_gui.ui.chooseFeescale_comboBox.addItem(table.briefName)
 
-    text = u"%d %s"%(len(om_gui.fee_models), _("Fee Scales Available"))
+    text = u"%d %s" % (len(om_gui.fee_models), _("Fee Scales Available"))
     om_gui.ui.feescales_available_label.setText(text)
 
     if i != -1:
@@ -166,7 +186,7 @@ def feetester(om_gui):
         dl = FeescaleTestingDialog()
         dl.lineEdit.setText("MOD")
         QtCore.QObject.connect(om_gui.ui.chooseFeescale_comboBox,
-            QtCore.SIGNAL("currentIndexChanged (int)"), dl.change_table)
+                               QtCore.SIGNAL("currentIndexChanged (int)"), dl.change_table)
 
         i = om_gui.ui.chooseFeescale_comboBox.currentIndex()
         dl.comboBox.setCurrentIndex(i)
@@ -191,6 +211,7 @@ def showTableXML(om_gui):
         om_gui.fee_table_editor.show()
         om_gui.fee_table_editor.closed_signal.connect(editor_closed)
 
+
 def table_clicked(om_gui, index):
     '''
     user has clicked an item on the feetable.
@@ -198,7 +219,7 @@ def table_clicked(om_gui, index):
     loaded for edit, or are in feetable adjust mode etc....
     '''
     fee_item, sub_index = om_gui.ui.feeScales_treeView.model().data(index,
-    QtCore.Qt.UserRole)
+                                                                    QtCore.Qt.UserRole)
 
     if not fee_item:
         # this will be the case if a header item was clicked
@@ -216,14 +237,15 @@ def table_clicked(om_gui, index):
     menu = QtGui.QMenu(om_gui)
     ptno = om_gui.pt.serialno
     if ptno != 0:
-        menu.addAction(_("Add to tx plan of patient")+" %d"% ptno)
-        #menu.addSeparator()
+        menu.addAction(_("Add to tx plan of patient") + " %d" % ptno)
+        # menu.addSeparator()
 
     if not menu.isEmpty():
         menu.setDefaultAction(menu.actions()[0])
         choice = menu.exec_(om_gui.cursor().pos())
         if choice:
             apply(choice)
+
 
 def feeSearch(om_gui):
     '''
@@ -234,18 +256,18 @@ def feeSearch(om_gui):
         ''' expand all parents of a found leaf'''
         parentIndex = model.parent(index)
         om_gui.ui.feeScales_treeView.setExpanded(parentIndex, True)
-        if parentIndex.internalPointer() != None:
+        if parentIndex.internalPointer() is not None:
             ensureVisible(parentIndex)
 
     search_phrase = om_gui.ui.feeSearch_lineEdit.text()
     if search_phrase == "":
         return
     model = om_gui.fee_models[
-    om_gui.ui.chooseFeescale_comboBox.currentIndex()]
+        om_gui.ui.chooseFeescale_comboBox.currentIndex()]
 
     if om_gui.ui.search_itemcodes_radioButton.isChecked():
         columns = [0]
-    else: # om_gui.ui.search_descriptions_radioButton.isChecked():
+    else:  # om_gui.ui.search_descriptions_radioButton.isChecked():
         columns = [2, 3]
 
     om_gui.wait(True)
@@ -254,7 +276,7 @@ def feeSearch(om_gui):
         indexes = model.foundItems
 
         om_gui.ui.feesearch_results_label.setText(
-        "%d %s %s"%(len(indexes), _("Items containing"), search_phrase))
+            "%d %s %s" % (len(indexes), _("Items containing"), search_phrase))
         for index in indexes:
             ensureVisible(index)
         om_gui.wait(False)
@@ -267,6 +289,7 @@ def feeSearch(om_gui):
             message += " " + _("usercodes or descriptions")
         om_gui.advise(message, 1)
 
+
 def chooseFeescale(om_gui, i):
     '''
     receives signals from the choose feescale combobox
@@ -276,13 +299,13 @@ def chooseFeescale(om_gui, i):
     if i == -1:
         return
     table = localsettings.FEETABLES.tables[i]
-    if table.endDate == None:
+    if table.endDate is None:
         end = _("IN CURRENT USE")
     else:
         end = localsettings.formatDate(table.endDate)
-    om_gui.ui.feeScale_label.setText("<b>%s</b> %s - %s"% (
-    table.description,
-    localsettings.formatDate(table.startDate), end))
+    om_gui.ui.feeScale_label.setText("<b>%s</b> %s - %s" % (
+                                     table.description,
+                                     localsettings.formatDate(table.startDate), end))
 
     om_gui.ui.feesearch_results_label.setText("")
 
@@ -290,14 +313,16 @@ def chooseFeescale(om_gui, i):
         om_gui.ui.feeScales_treeView.setModel(om_gui.fee_models[i])
     except IndexError:
         print i, len(om_gui.fee_models)
-        om_gui.advise(_("fee table error"),2)
+        om_gui.advise(_("fee table error"), 2)
+
 
 def adjustTable(om_gui, index):
     tv = om_gui.ui.feeScales_treeView
     for col in range(tv.model().columnCount(index)):
         tv.resizeColumnToContents(col)
-    #usercolumn is unmanageably wide now
+    # usercolumn is unmanageably wide now
     tv.setColumnWidth(1, 80)
+
 
 def expandFees(om_gui):
     '''
@@ -309,14 +334,15 @@ def expandFees(om_gui):
     else:
         om_gui.ui.feeScales_treeView.collapseAll()
 
+
 def makeBadDebt(om_gui):
     '''
     write off the debt (stops cluttering up the accounts table)
     '''
     result = QtGui.QMessageBox.question(om_gui, "Confirm",
-    "Move this patient to Bad Debt Status?",
-    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-    QtGui.QMessageBox.Yes )
+                                        "Move this patient to Bad Debt Status?",
+                                        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                                        QtGui.QMessageBox.Yes)
     if result == QtGui.QMessageBox.Yes:
         #--what is owed
         om_gui.pt.money11 = om_gui.pt.fees
@@ -324,10 +350,11 @@ def makeBadDebt(om_gui):
         om_gui.pt.status = "BAD DEBT"
         om_gui.ui.notesEnter_textEdit.setText(
             _("changed patients status to BAD DEBT")
-            )
+        )
 
         om_gui.updateStatus()
         om_gui.updateDetails()
+
 
 def populateAccountsTable(om_gui):
     rows = accounts.details()
@@ -335,8 +362,8 @@ def populateAccountsTable(om_gui):
     om_gui.ui.accounts_tableWidget.setSortingEnabled(False)
     om_gui.ui.accounts_tableWidget.setRowCount(len(rows))
     headers = ("Dent", "Serialno", "", "First", "Last", "DOB", "Memo",
-    "Last Appt", "Last Bill", "Type", "Number", "T/C", "Fees", "A", "B",
-    "C")
+               "Last Appt", "Last Bill", "Type", "Number", "T/C", "Fees", "A", "B",
+               "C")
 
     om_gui.ui.accounts_tableWidget.setColumnCount(len(headers))
     om_gui.ui.accounts_tableWidget.setHorizontalHeaderLabels(headers)
@@ -346,24 +373,24 @@ def populateAccountsTable(om_gui):
     for row in rows:
         for col in range(len(row)):
             d = row[col]
-            if d != None or col == 11:
+            if d is not None or col == 11:
                 item = QtGui.QTableWidgetItem()
                 if col == 0:
                     item.setText(localsettings.ops.get(d))
                 elif col in (5, 7, 8):
                     item.setData(QtCore.Qt.DisplayRole,
-                    QtCore.QVariant(QtCore.QDate(d)))
+                                 QtCore.QVariant(QtCore.QDate(d)))
                 elif col == 12:
                     total += d
                     #--jump through hoops to make the string sortable!
-                    money = QtCore.QVariant(QtCore.QString("%L1").\
-                    arg(float(d/100), 8, "f", 2))
+                    money = QtCore.QVariant(QtCore.QString("%L1").
+                                            arg(float(d / 100), 8, "f", 2))
 
                     item.setData(QtCore.Qt.DisplayRole, money)
                     item.setTextAlignment(
-                    QtCore.Qt.AlignRight|QtCore.Qt.AlignVCenter)
+                        QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
 
-                    #item.setText(localsettings.formatMoney(d))
+                    # item.setText(localsettings.formatMoney(d))
 
                 elif col == 11:
                     if d > 0:
@@ -380,8 +407,7 @@ def populateAccountsTable(om_gui):
         rowno += 1
     om_gui.ui.accounts_tableWidget.sortItems(7, QtCore.Qt.DescendingOrder)
     om_gui.ui.accounts_tableWidget.setSortingEnabled(True)
-    #om_gui.ui.accounts_tableWidget.update()
+    # om_gui.ui.accounts_tableWidget.update()
     for i in range(om_gui.ui.accounts_tableWidget.columnCount()):
         om_gui.ui.accounts_tableWidget.resizeColumnToContents(i)
     om_gui.ui.accountsTotal_doubleSpinBox.setValue(total / 100)
-

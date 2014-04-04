@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# See the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 provides the main class which is my gui
@@ -20,7 +36,7 @@ import pickle
 import re
 import sys
 import traceback
-import webbrowser #for email
+import webbrowser  # for email
 
 from functools import partial
 
@@ -87,7 +103,7 @@ from openmolar.qt4gui.dialogs.advanced_tx_planning_dialog \
     import AdvancedTxPlanningDialog
 from openmolar.qt4gui.dialogs.document_dialog import DocumentDialog
 
-#secondary applications
+# secondary applications
 from openmolar.qt4gui.tools import new_setup
 from openmolar.qt4gui.tools import recordtools
 
@@ -140,10 +156,12 @@ from openmolar.qt4gui.customwidgets.static_control_panel \
 LOGGER = logging.getLogger("openmolar")
 LOGGER.setLevel(logging.INFO)
 
+
 class OpenmolarGui(QtGui.QMainWindow):
     fee_table_editor = None
     fee_table_tester = None
     phrasebook_editor = None
+
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
         self.ui = Ui_main.Ui_MainWindow()
@@ -154,13 +172,13 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.pt_diary_widget = PtDiaryWidget(self)
         self.ui.pt_diary_groupBox.layout().addWidget(self.pt_diary_widget)
 
-        self.ui.splitter_patient.setSizes([80,20])
+        self.ui.splitter_patient.setSizes([80, 20])
         #--initiate a blank version of the patient class this
         #--is used to check for state.
         #--make a deep copy to check for changes
         self.pt = patient_class.patient(0)
 
-        self.selectedChartWidget = "st" #other values are "pl" or "cmp"
+        self.selectedChartWidget = "st"  # other values are "pl" or "cmp"
         self.editPageVisited = False
         self.forum_notified = False
         self.fee_models = []
@@ -186,7 +204,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.completed_listView.setContextMenuPolicy(
             QtCore.Qt.CustomContextMenu)
 
-        self.setWindowTitle("OpenMolar - %s '%s'"% (
+        self.setWindowTitle("OpenMolar - %s '%s'" % (
             _("connected to"), database_name()))
 
         QtCore.QTimer.singleShot(500, self.set_operator_label)
@@ -207,22 +225,22 @@ class OpenmolarGui(QtGui.QMainWindow):
             m.setStandardButtons(QtGui.QMessageBox.NoButton)
             m.setWindowTitle(_("advisory"))
             m.setModal(False)
-            QtCore.QTimer.singleShot(3*1000, m.accept)
+            QtCore.QTimer.singleShot(3 * 1000, m.accept)
             m.show()
-            self.ui.statusbar.showMessage(arg, 5000) #5000 milliseconds=5secs
+            self.ui.statusbar.showMessage(arg, 5000)  # 5000 milliseconds=5secs
         elif warning_level == 1:
             QtGui.QMessageBox.information(self, _("Advisory"), arg)
         elif warning_level == 2:
-            now=QtCore.QTime.currentTime()
+            now = QtCore.QTime.currentTime()
             QtGui.QMessageBox.warning(self, _("Error"), arg)
             #--for logging purposes
-            print "%d:%02d ERROR MESSAGE"%(now.hour(), now.minute())
+            print "%d:%02d ERROR MESSAGE" % (now.hour(), now.minute())
             print arg
 
     def wait(self, waiting=True):
         if waiting:
             QtGui.QApplication.instance().setOverrideCursor(
-            QtCore.Qt.WaitCursor)
+                QtCore.Qt.WaitCursor)
         else:
             QtGui.QApplication.instance().restoreOverrideCursor()
 
@@ -270,8 +288,8 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         called by menu - help - about openmolar
         '''
-        self.advise('''<p>%s</p><p>%s</p>'''%(localsettings.about(),
-            localsettings.license), 1)
+        self.advise('''<p>%s</p><p>%s</p>''' % (localsettings.about(),
+                                                localsettings.license), 1)
 
     def addCustomWidgets(self):
         '''
@@ -283,7 +301,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.operator_label = QtGui.QLabel()
         self.loadedPatient_label = QtGui.QLabel()
         self.loadedPatient_label.setMinimumWidth(450)
-        #self.loadedPatient_label.setAlignment(QtCore.Qt.AlignCenter)
+        # self.loadedPatient_label.setAlignment(QtCore.Qt.AlignCenter)
         self.sepline = QtGui.QFrame(self.statusbar_frame)
         self.sepline.setFrameShape(QtGui.QFrame.VLine)
         self.sepline.setFrameShadow(QtGui.QFrame.Sunken)
@@ -298,12 +316,12 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.summaryChartWidget = chartwidget.chartWidget()
         self.ui.summaryChartWidget.setShowSelected(False)
         self.ui.summaryChartWidget.setFocusPolicy(QtCore.Qt.StrongFocus)
-        hlayout=QtGui.QHBoxLayout(self.ui.staticSummaryPanel)
+        hlayout = QtGui.QHBoxLayout(self.ui.staticSummaryPanel)
         hlayout.addWidget(self.ui.summaryChartWidget)
 
         #-perio chart
         self.ui.perioChartWidget = chartwidget.chartWidget()
-        hlayout=QtGui.QHBoxLayout(self.ui.perioChart_frame)
+        hlayout = QtGui.QHBoxLayout(self.ui.perioChart_frame)
         hlayout.addWidget(self.ui.perioChartWidget)
 
         #-static chart
@@ -329,7 +347,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         hlayout.addWidget(self.ui.completedChartWidget)
         self.ui.completed_groupBox.setStyleSheet("border: 1px solid gray;")
 
-        #static control panel
+        # static control panel
         self.ui.static_control_panel = StaticControlPanel()
         hlayout = QtGui.QHBoxLayout(self.ui.static_frame)
         hlayout.setMargin(0)
@@ -352,12 +370,13 @@ class OpenmolarGui(QtGui.QMainWindow):
         hlayout.setMargin(2)
         for i in range(8):
             gbtitle = (_("Recession"), _("Pocketing"), _("Plaque"),
-            _("Bleeding"), _("Other"), _("Suppuration"), _("Furcation"),
-            _("Mobility"))[i]
+                       _("Bleeding"), _("Other"), _(
+                           "Suppuration"), _("Furcation"),
+                       _("Mobility"))[i]
             periogb = QtGui.QGroupBox(gbtitle)
             periogb.setCheckable(True)
             periogb.setChecked(True)
-            #periogb.setMinimumSize(0, 120)
+            # periogb.setMinimumSize(0, 120)
             pchart = perioChartWidget.chartWidget()
             pchart.type = gbtitle
             gblayout = QtGui.QVBoxLayout(periogb)
@@ -365,21 +384,20 @@ class OpenmolarGui(QtGui.QMainWindow):
             gblayout.addWidget(pchart)
             hlayout.addWidget(periogb)
 
-            #make these widgets accessible
+            # make these widgets accessible
             self.ui.perioGroupBoxes.append(periogb)
             self.ui.perioChartWidgets.append(pchart)
-
 
         #--updates the current time in appointment books
         self.ui.referralLettersComboBox.clear()
 
         self.forum_timer = QtCore.QTimer()
-        self.forum_timer.start(60000) #fire every minute
+        self.forum_timer.start(60000)  # fire every minute
         self.forum_timer.timeout.connect(self.checkForNewForumPosts)
 
         self.enableEdit(False)
         for desc in referral.getDescriptions():
-            s=QtCore.QString(desc)
+            s = QtCore.QString(desc)
             self.ui.referralLettersComboBox.addItem(s)
 
         #-- add a header to the estimates page
@@ -392,11 +410,11 @@ class OpenmolarGui(QtGui.QMainWindow):
 
         #--notification widget
         self.ui.notificationWidget = \
-        notification_widget.notificationWidget(self)
+            notification_widget.notificationWidget(self)
 
         self.ui.details_frame.layout().addWidget(self.ui.notificationWidget)
 
-        #cashbook browser
+        # cashbook browser
 
         self.ui.cashbookTextBrowser = cashbook_module.CashBookBrowser(self)
         layout = QtGui.QVBoxLayout(self.ui.cashbook_placeholder_widget)
@@ -417,7 +435,7 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.set_operator_label()
 
     def saveButtonClicked(self):
-        self.okToLeaveRecord(cont = True)
+        self.okToLeaveRecord(cont=True)
 
     def bpe_table(self, arg):
         '''
@@ -455,7 +473,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         called by the static or summary chartwidget
         '''
         charts_gui.checkPreviousEntry(self)
-        self.selectedChartWidget="st"
+        self.selectedChartWidget = "st"
         charts_gui.chartNavigation(self, signal)
 
     def plan_chartNavigation(self, signal):
@@ -463,7 +481,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         called by the plan chartwidget
         '''
         charts_gui.checkPreviousEntry(self)
-        self.selectedChartWidget="pl"
+        self.selectedChartWidget = "pl"
         charts_gui.chartNavigation(self, signal)
 
     def comp_chartNavigation(self, signal):
@@ -471,7 +489,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         called by the completed chartwidget
         '''
         charts_gui.checkPreviousEntry(self)
-        self.selectedChartWidget="cmp"
+        self.selectedChartWidget = "cmp"
         charts_gui.chartNavigation(self, signal)
 
     def flipDeciduous(self):
@@ -485,7 +503,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         show history of the tooth
         '''
         history = tooth_history.getHistory(self.pt, tooth)
-        self.advise(history,1)
+        self.advise(history, 1)
 
     def tooth_delete_all(self):
         '''
@@ -506,7 +524,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         user has clicked on the delete all option from a tooth's right click
         menu
         '''
-        self.advise("add comments for tooth %s not working yet"% tooth)
+        self.advise("add comments for tooth %s not working yet" % tooth)
 
     def chooseTooth(self):
         '''
@@ -524,7 +542,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         #--a debug print statement
         if not cont:
             LOGGER.debug(
-            "leaving record checking to see if save is required...")
+                "leaving record checking to see if save is required...")
             course_module.prompt_close_course(self)
 
         #--apply changes to patient details
@@ -541,8 +559,8 @@ class OpenmolarGui(QtGui.QMainWindow):
             #--raise a custom dialog to get user input
             Dialog = QtGui.QDialog(self)
             dl = saveDiscardCancel.sdcDialog(Dialog)
-            dl.setPatient("%s %s (%s)"% (
-            self.pt.fname, self.pt.sname, self.pt.serialno))
+            dl.setPatient("%s %s (%s)" % (
+                          self.pt.fname, self.pt.sname, self.pt.serialno))
             dl.setChanges(uc)
             dl.allowDiscard(not cont)
             if Dialog.exec_():
@@ -565,13 +583,13 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.wait()
         ci = self.ui.main_tabWidget.currentIndex()
 
-        if ci ==1 :     #--user is viewing appointment book
+        if ci == 1:  # --user is viewing appointment book
             self.diary_widget.reset_and_view(self.patient)
         if ci == 6:
             #--user is viewing the feetable
             if not self.feestableLoaded:
                 fees_module.loadFeesTable(self)
-            if self.pt.serialno !=0:
+            if self.pt.serialno != 0:
                 self.ui.chooseFeescale_comboBox.setCurrentIndex(
                     self.pt.fee_table.index)
 
@@ -591,11 +609,11 @@ class OpenmolarGui(QtGui.QMainWindow):
         handles navigation of patient record
         '''
         self.wait()
-        ci=self.ui.tabWidget.currentIndex()
+        ci = self.ui.tabWidget.currentIndex()
 
         if ci != 6:
             if self.ui.tabWidget.isTabEnabled(6) and \
-            not charts_gui.checkPreviousEntry(self):
+                    not charts_gui.checkPreviousEntry(self):
                 self.ui.tabWidget.setCurrentIndex(6)
 
         if self.editPageVisited:
@@ -603,16 +621,16 @@ class OpenmolarGui(QtGui.QMainWindow):
 
         if ci == 0:
             self.ui.patientEdit_groupBox.setTitle(
-            "Edit Patient %d"% self.pt.serialno)
+                "Edit Patient %d" % self.pt.serialno)
             if self.load_editpage():
                 self.editPageVisited = True
 
         elif ci == 1:
             self.updateStatus()
-            self.ui.badDebt_pushButton.setEnabled(self.pt.fees>0)
+            self.ui.badDebt_pushButton.setEnabled(self.pt.fees > 0)
             contract_gui_module.handle_ContractTab(self)
 
-        elif ci == 2: #-correspondence
+        elif ci == 2:  # -correspondence
             self.docsPrintedInit()
             self.docsImportedInit()
 
@@ -622,27 +640,26 @@ class OpenmolarGui(QtGui.QMainWindow):
         elif ci == 4:
             self.load_clinicalSummaryPage()
 
-        elif ci == 5: #-- full notes
+        elif ci == 5:  # -- full notes
             self.updateNotesPage()
 
-        elif ci in (6, 7): #-- charts/plan or estimate
+        elif ci in (6, 7):  # -- charts/plan or estimate
             self.update_plan_est()
 
-        elif ci == 8: #-- perio tab
+        elif ci == 8:  # -- perio tab
             charts_gui.periochart_dates(self)
-            #load the periocharts (if the patient has data)
+            # load the periocharts (if the patient has data)
             charts_gui.layoutPerioCharts(self)
 
         self.wait(False)
 
     def update_plan_est(self):
         ci = self.ui.tabWidget.currentIndex()
-        if  ci == 7:
+        if ci == 7:
             self.load_newEstPage()
         elif ci == 6:
             self.ui.plan_listView.model().reset()
             self.ui.completed_listView.model().reset()
-
 
     def home(self):
         '''
@@ -652,7 +669,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         if self.enteringNewPatient():
             return
         if not self.okToLeaveRecord():
-            #print "not clearing record"
+            # print "not clearing record"
             return
         self.clearRecord()
         #--disable much of the UI
@@ -669,13 +686,13 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         if self.pt.serialno != 0:
             LOGGER.debug("updating last_address_details")
-            localsettings.LAST_ADDRESS=(
+            localsettings.LAST_ADDRESS = (
                 self.pt.sname, self.pt.addr1, self.pt.addr2,
                 self.pt.addr3, self.pt.town, self.pt.county,
                 self.pt.pcde, self.pt.tel1)
-            LOGGER.debug("details are %s"% str(localsettings.LAST_ADDRESS))
+            LOGGER.debug("details are %s" % str(localsettings.LAST_ADDRESS))
 
-            #print "clearing record"
+            # print "clearing record"
             self.ui.dobEdit.setDate(QtCore.QDate(1900, 1, 1))
             self.ui.detailsBrowser.setText("")
             self.ui.notes_webView.setHtml("")
@@ -687,15 +704,15 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.pt_diary_widget.clear()
             #--restore the charts to full dentition
             for chart in (self.ui.staticChartWidget, self.ui.planChartWidget,
-            self.ui.completedChartWidget, self.ui.perioChartWidget,
-            self.ui.summaryChartWidget):
+                          self.ui.completedChartWidget, self.ui.perioChartWidget,
+                          self.ui.summaryChartWidget):
                 chart.clear()
                 chart.update()
             self.ui.notesSummary_webView.setHtml(localsettings.message)
             self.ui.reception_textBrowser.setHtml(localsettings.message)
             self.ui.recNotes_webView.setHtml("")
             self.ui.chartsTableWidget.clear()
-            #self.diary_widget.schedule_controller.clear()
+            # self.diary_widget.schedule_controller.clear()
             self.ui.notesEnter_textEdit.setHtml("")
 
             self.ui.medNotes_pushButton.setStyleSheet("")
@@ -705,11 +722,10 @@ class OpenmolarGui(QtGui.QMainWindow):
 
             self.loadedPatient_label.setText("No Patient Loaded")
             if self.editPageVisited:
-                #print "blanking edit page fields"
+                # print "blanking edit page fields"
                 self.load_editpage()
                 self.editPageVisited = False
             self.update_family_label()
-
 
     def gotoDefaultTab(self):
         '''
@@ -734,7 +750,7 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.ui.reception_textBrowser.setText(html_)
             self.pt_diary_widget.layout_ptDiary()
             note = formatted_notes.rec_notes(self.pt.notes_dict,
-                self.pt.treatment_course.accd)
+                                             self.pt.treatment_course.accd)
             self.ui.recNotes_webView.setHtml(note)
 
     def webviewloaded(self):
@@ -763,7 +779,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         if self.pt.dob:
             self.ui.dobEdit.setDate(self.pt.dob)
         else:
-            self.ui.dobEdit.setDate(datetime.date(2000,1,1))
+            self.ui.dobEdit.setDate(datetime.date(2000, 1, 1))
         self.ui.addr1Edit.setText(self.pt.addr1)
         self.ui.addr2Edit.setText(self.pt.addr2)
         self.ui.addr3Edit.setText(self.pt.addr3)
@@ -784,38 +800,38 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.occupationEdit.setText(self.pt.occup)
         return True
 
-    def load_dentComboBoxes(self, newpatient = False):
-        #print "loading dnt comboboxes."
+    def load_dentComboBoxes(self, newpatient=False):
+        # print "loading dnt comboboxes."
         inits = localsettings.ops.get(self.pt.dnt1, "")
         if inits in localsettings.activedents:
             self.ui.dnt1comboBox.setCurrentIndex(
-            localsettings.activedents.index(inits))
+                localsettings.activedents.index(inits))
         else:
             self.ui.dnt1comboBox.setCurrentIndex(-1)
             if not newpatient:
-                print "dnt1 error - record %d"% self.pt.serialno
+                print "dnt1 error - record %d" % self.pt.serialno
                 if not inits in ("", "NONE"):
-                    message = "%s "% inits + _(
-                    "is no longer an active dentist in this practice")
+                    message = "%s " % inits + _(
+                        "is no longer an active dentist in this practice")
                 else:
                     print "unknown dentist number", self.pt.dnt1
                     message = _(
-                    "unknown contract dentist - please correct this")
+                        "unknown contract dentist - please correct this")
                 self.advise(message, 2)
 
         inits = localsettings.ops.get(self.pt.dnt2, "")
         if inits in localsettings.activedents:
             self.ui.dnt2comboBox.setCurrentIndex(
-            localsettings.activedents.index(inits))
+                localsettings.activedents.index(inits))
         else:
             self.ui.dnt2comboBox.setCurrentIndex(-1)
             if self.pt.dnt1 == self.pt.dnt2:
                 pass
             elif not inits in ("", "NONE"):
-                message = "%s "% inits + _(
-                "is no longer an active dentist in this practice")
+                message = "%s " % inits + _(
+                    "is no longer an active dentist in this practice")
                 self.advise(message, 2)
-            elif inits ==  "":
+            elif inits == "":
                 print "unknown dentist number", self.pt.dnt2
                 message = _("unknown course dentist - please correct this")
                 self.advise(message, 2)
@@ -850,10 +866,10 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         #--change the function of the save button
         QtCore.QObject.disconnect(self.ui.saveButton,
-        QtCore.SIGNAL("clicked()"), self.save_changes)
+                                  QtCore.SIGNAL("clicked()"), self.save_changes)
 
         QtCore.QObject.connect(self.ui.saveButton,
-        QtCore.SIGNAL("clicked()"), self.checkNewPatient)
+                               QtCore.SIGNAL("clicked()"), self.checkNewPatient)
 
         self.ui.saveButton.setEnabled(True)
         self.ui.saveButton.setText(_("SAVE NEW PATIENT"))
@@ -864,10 +880,10 @@ class OpenmolarGui(QtGui.QMainWindow):
         the save button is returned to normal after a new patient entry
         '''
         QtCore.QObject.disconnect(self.ui.saveButton,
-        QtCore.SIGNAL("clicked()"), self.checkNewPatient)
+                                  QtCore.SIGNAL("clicked()"), self.checkNewPatient)
 
         QtCore.QObject.connect(self.ui.saveButton,
-        QtCore.SIGNAL("clicked()"), self.save_changes)
+                               QtCore.SIGNAL("clicked()"), self.save_changes)
 
         self.ui.saveButton.setText(_("SAVE CHANGES"))
         self.ui.saveButton.setStyleSheet("")
@@ -886,13 +902,13 @@ class OpenmolarGui(QtGui.QMainWindow):
         print "(re)loading docs printed"
         self.ui.prevCorres_treeWidget.clear()
         self.ui.prevCorres_treeWidget.setHeaderLabels(
-        ["Date", "Type", "Version", "Index"])
+            ["Date", "Type", "Version", "Index"])
 
-        docs=docsprinted.previousDocs(self.pt.serialno)
+        docs = docsprinted.previousDocs(self.pt.serialno)
         for d in docs:
-            doc=[str(d[0]), str(d[1]), str(d[2]), str(d[3])]
-            i=QtGui.QTreeWidgetItem(
-            self.ui.prevCorres_treeWidget, doc)
+            doc = [str(d[0]), str(d[1]), str(d[2]), str(d[3])]
+            i = QtGui.QTreeWidgetItem(
+                self.ui.prevCorres_treeWidget, doc)
         self.ui.prevCorres_treeWidget.expandAll()
         for i in range(self.ui.prevCorres_treeWidget.columnCount()):
             self.ui.prevCorres_treeWidget.resizeColumnToContents(i)
@@ -906,20 +922,22 @@ class OpenmolarGui(QtGui.QMainWindow):
         ix = int(item.text(3))
         if "(html)" in item.text(1):
             result = QtGui.QMessageBox.question(self, _("Re-open"),
-            _("Do you want to review and/or reprint this item?"),
-            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-            QtGui.QMessageBox.Yes )
+                                                _(
+                                                "Do you want to review and/or reprint this item?"),
+                                                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                                                QtGui.QMessageBox.Yes)
             if result == QtGui.QMessageBox.Yes:
-                html, version=docsprinted.getData(ix)
-                type = item.text(1).replace("(html)","")
+                html, version = docsprinted.getData(ix)
+                type = item.text(1).replace("(html)", "")
                 if om_printing.htmlEditor(self, type, html, version):
                     self.docsPrintedInit()
 
         elif "pdf" in item.text(1):
             result = QtGui.QMessageBox.question(self, _("Re-open"),
-            _("Do you want to review and/or reprint this item?"),
-            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-            QtGui.QMessageBox.Yes )
+                                                _(
+                                                "Do you want to review and/or reprint this item?"),
+                                                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                                                QtGui.QMessageBox.Yes)
             if result == QtGui.QMessageBox.Yes:
                 try:
                     data, version = docsprinted.getData(ix)
@@ -927,16 +945,16 @@ class OpenmolarGui(QtGui.QMainWindow):
                     f.write(data)
                     f.close()
                     localsettings.openPDF()
-                except Exception, e:
+                except Exception as e:
                     print "view PDF error"
                     print Exception, e
                     self.advise(_("error reviewing PDF file"), 1)
-        else: #unknown data type... probably plain text.
+        else:  # unknown data type... probably plain text.
             print "other type of doc"
             data = docsprinted.getData(ix)[0]
-            if data == None:
+            if data is None:
                 data = _(
-                "No information available about this document, sorry")
+                    "No information available about this document, sorry")
             self.advise(data, 1)
 
     def docsImportedInit(self):
@@ -945,7 +963,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         self.ui.importDoc_treeWidget.clear()
         self.ui.importDoc_treeWidget.setHeaderLabels([_("Date imported"),
-        _("Description"), _("Size"), _("Type"), "Index"])
+                                                      _("Description"), _("Size"), _("Type"), "Index"])
 
         docs = docsimported.storedDocs(self.pt.serialno)
         for doc in docs:
@@ -962,11 +980,11 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         filename = QtGui.QFileDialog.getOpenFileName()
         if filename != '':
-            self.advise(_("opening")+" %s"% filename)
+            self.advise(_("opening") + " %s" % filename)
             try:
                 docsimported.add(self.pt.serialno, str(filename))
-            except Exception, e:
-                self.advise(_("error importing file") + "<br /> - %s"% e, 2)
+            except Exception as e:
+                self.advise(_("error importing file") + "<br /> - %s" % e, 2)
         else:
             self.advise(_("no file chosen"), 1)
         self.docsImportedInit()
@@ -976,21 +994,22 @@ class OpenmolarGui(QtGui.QMainWindow):
         called by a double click on the imported documents listview
         '''
         ix = int(item.text(4))
-        print "opening file index ",ix
+        print "opening file index ", ix
         result = QtGui.QMessageBox.question(self, _("Re-open"),
-        _("Do you want to open a copy of this document?"),
-        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-        QtGui.QMessageBox.Yes )
+                                            _(
+                                            "Do you want to open a copy of this document?"),
+                                            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                                            QtGui.QMessageBox.Yes)
         if result == QtGui.QMessageBox.Yes:
             try:
                 fpath = os.path.join(localsettings.localFileDirectory,
-                "import_temp")
+                                     "import_temp")
                 f = open(fpath, "wb")
                 for data in docsimported.getData(ix):
                     f.write(data[0])
                 f.close()
-                localsettings.openFile( fpath )
-            except Exception, e:
+                localsettings.openFile(fpath)
+            except Exception as e:
                 print "unable to open stored document"
                 print Exception, e
                 self.advise(_("error opening document"), 1)
@@ -1004,10 +1023,10 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.dayList_comboBox.clear()
 
         if localsettings.clinicianNo != 0:
-            header = _("Today's Patients")+ \
-            " (%s)"%localsettings.clinicianInits
+            header = _("Today's Patients") + \
+                " (%s)" % localsettings.clinicianInits
         else:
-            header  =_("Today's Patients (ALL)")
+            header = _("Today's Patients (ALL)")
 
         dents = (localsettings.clinicianNo, )
         ptList = appointments.todays_patients(dents)
@@ -1017,7 +1036,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.dayList_comboBox.addItem(header)
 
         for pt in ptList:
-            val = "%s -- %s"%(pt[1],pt[0])
+            val = "%s -- %s" % (pt[1], pt[0])
             #--be wary of changing this -- is used as a marker some
             #--pt's have hyphonated names!
             self.ui.dayList_comboBox.addItem(val)
@@ -1026,7 +1045,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         arg = str(self.ui.dayList_comboBox.currentText())
         if "--" in arg:
             self.ui.dayList_comboBox.setCurrentIndex(0)
-            serialno = int(arg[arg.index("--")+2:])
+            serialno = int(arg[arg.index("--") + 2:])
             #--see above comment
             self.getrecord(serialno)
 
@@ -1034,7 +1053,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         populate several comboboxes with the activedentists
         '''
-        s=["*ALL*"] + localsettings.ops.values()
+        s = ["*ALL*"] + localsettings.ops.values()
         self.ui.daybookDent1ComboBox.addItems(s)
         self.ui.daybookDent2ComboBox.addItems(s)
         self.ui.cashbookDentComboBox.addItems(s)
@@ -1060,7 +1079,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         desiredPos = localsettings.recent_sno_index + 1
         if len(localsettings.recent_snos) > desiredPos:
             self.getrecord(localsettings.recent_snos[desiredPos],
-            addToRecentSnos=False)
+                           addToRecentSnos=False)
             localsettings.recent_sno_index = desiredPos
         else:
             self.advise(_("Reached end of the List"))
@@ -1075,7 +1094,7 @@ class OpenmolarGui(QtGui.QMainWindow):
             desiredPos = localsettings.recent_sno_index - 1
         if len(localsettings.recent_snos) > desiredPos >= 0:
             self.getrecord(localsettings.recent_snos[desiredPos],
-            addToRecentSnos=False)
+                           addToRecentSnos=False)
             localsettings.recent_sno_index = desiredPos
         else:
             self.advise(_("Reached Start of the List"))
@@ -1085,7 +1104,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         apply any changes made on the edit patient page
         '''
         if self.pt.serialno == 0 and \
-        self.ui.newPatientPushButton.isEnabled():
+                self.ui.newPatientPushButton.isEnabled():
             #- firstly.. don't apply edit page changes if there
             #- iss no patient loaded,
             #- and no new patient to apply
@@ -1123,10 +1142,10 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.getrecord(int(sno))
 
     def getrecord(self, serialno,
-                    checkedNeedToLeaveAlready=False,
-                    addToRecentSnos=True,
-                    newPatientReload=False
-                ):
+                  checkedNeedToLeaveAlready=False,
+                  addToRecentSnos=True,
+                  newPatientReload=False
+                  ):
         '''
         a record has been called by one of several means
         '''
@@ -1149,20 +1168,20 @@ class OpenmolarGui(QtGui.QMainWindow):
                 self.pt_diary_widget.set_patient(self.pt)
 
                 try:
-                    self.loadpatient(newPatientReload = newPatientReload)
+                    self.loadpatient(newPatientReload=newPatientReload)
                 except Exception as e:
                     message = _("Error populating interface")
                     LOGGER.exception(message)
-                    self.advise(u"<b>%s</b><hr /><pre>%s"% (message, e), 2)
+                    self.advise(u"<b>%s</b><hr /><pre>%s" % (message, e), 2)
 
             except localsettings.PatientNotFoundError:
                 print "NOT FOUND ERROR"
-                self.advise (_("error getting serialno")+ " %d - " % serialno +
-                              _("please check this number is correct?"), 1)
+                self.advise(_("error getting serialno") + " %d - " % serialno +
+                            _("please check this number is correct?"), 1)
             except Exception as exc:
                 LOGGER.exception(
-                "Unknown ERROR loading patient - serialno %d"% serialno)
-                self.advise ("Unknown Error - Tell Neil<br />%s"% exc, 2)
+                    "Unknown ERROR loading patient - serialno %d" % serialno)
+                self.advise("Unknown Error - Tell Neil<br />%s" % exc, 2)
 
     def reload_patient(self):
         '''
@@ -1170,7 +1189,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         if self.okToLeaveRecord():
             sno = self.pt.serialno
-            self.advise("%s %s"%(_("Reloading record"), sno))
+            self.advise("%s %s" % (_("Reloading record"), sno))
             self.clearRecord()
             self.getrecord(sno)
 
@@ -1227,16 +1246,16 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.notes_webView.setHtml("")
         self.ui.notesEnter_textEdit.setText("")
         for chart in (self.ui.staticChartWidget, self.ui.planChartWidget,
-        self.ui.completedChartWidget, self.ui.perioChartWidget,
-        self.ui.summaryChartWidget):
+                      self.ui.completedChartWidget, self.ui.perioChartWidget,
+                      self.ui.summaryChartWidget):
             chart.clear()
             #--necessary to restore the chart to full dentition
         self.selectedChartWidget = "st"
-        self.ui.staticChartWidget.setSelected(0, 0, True)  #select the UR8
-        self.ui.planChartWidget.setSelected(0, 0, False)  #select the UR8
-        self.ui.completedChartWidget.setSelected(0, 0, False)  #select the UR8
+        self.ui.staticChartWidget.setSelected(0, 0, True)  # select the UR8
+        self.ui.planChartWidget.setSelected(0, 0, False)  # select the UR8
+        self.ui.completedChartWidget.setSelected(0, 0, False)  # select the UR8
 
-        self.ui.toothPropsWidget.setTooth("ur8","st")
+        self.ui.toothPropsWidget.setTooth("ur8", "st")
         charts_gui.chartsTable(self)
         charts_gui.bpe_dates(self)
 
@@ -1245,18 +1264,18 @@ class OpenmolarGui(QtGui.QMainWindow):
         except ValueError:
             if not newPatientReload:
                 QtGui.QMessageBox.information(self, "Advisory",
-                "Please set a Valid Course Type for this patient")
+                                              "Please set a Valid Course Type for this patient")
             pos = -1
         self.ui.cseType_comboBox.setCurrentIndex(pos)
         self.ui.contract_tabWidget.setCurrentIndex(pos)
         #--update bpe
 
-        labeltext = "currently editing  %s %s %s - (%s)"% (
+        labeltext = "currently editing  %s %s %s - (%s)" % (
             self.pt.title, self.pt.fname, self.pt.sname, self.pt.serialno)
         self.loadedPatient_label.setText(labeltext)
         self.ui.hiddenNotes_label.setText("")
 
-        if self.ui.tabWidget.currentIndex() == 4:  #clinical summary
+        if self.ui.tabWidget.currentIndex() == 4:  # clinical summary
             self.ui.summaryChartWidget.update()
         self.ui.debugBrowser.setText("")
 
@@ -1290,7 +1309,7 @@ class OpenmolarGui(QtGui.QMainWindow):
 
             Dialog.exec_()
             if dl.checkBox.checkState():
-                LOGGER.debug("deleting Memo %s"% umemo.ix)
+                LOGGER.debug("deleting Memo %s" % umemo.ix)
                 memos.deleteMemo(umemo.ix)
 
     def newCustomMemo(self):
@@ -1302,17 +1321,17 @@ class OpenmolarGui(QtGui.QMainWindow):
     def medalert(self):
         if self.pt.MEDALERT:
             self.ui.medNotes_pushButton.setStyleSheet(
-            "background-color: %s"% colours.med_warning )
+                "background-color: %s" % colours.med_warning)
         else:
             self.ui.medNotes_pushButton.setStyleSheet("")
 
-        if self.pt.MH != None:
-            mhdate=self.pt.MH[13]
-            if mhdate == None:
+        if self.pt.MH is not None:
+            mhdate = self.pt.MH[13]
+            if mhdate is None:
                 chkdate = ""
             else:
-                chkdate = " - %s"% localsettings.formatDate(mhdate)
-            self.ui.medNotes_pushButton.setText("MedNotes%s"% chkdate)
+                chkdate = " - %s" % localsettings.formatDate(mhdate)
+            self.ui.medNotes_pushButton.setText("MedNotes%s" % chkdate)
 
         self.enableEdit(True)
 
@@ -1341,7 +1360,7 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.updateStatus()
             return
         self.pt.status = unicode(
-        self.ui.status_comboBox.currentText().toUtf8())
+            self.ui.status_comboBox.currentText().toUtf8())
         self.updateDetails()
 
     def updateDetails(self):
@@ -1370,7 +1389,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.completed_listView.setEnabled(self.pt.underTreatment)
 
         if self.pt.underTreatment:
-            self.ui.estimate_label.setText(u"<b>%s</b><br />%s %s"% (
+            self.ui.estimate_label.setText(u"<b>%s</b><br />%s %s" % (
                 _("Active Course"),
                 _("started"),
                 localsettings.formatDate(self.pt.treatment_course.accd)))
@@ -1378,12 +1397,12 @@ class OpenmolarGui(QtGui.QMainWindow):
 
         else:
             self.ui.estimate_label.setText(
-                u"<b>%s</b><br />%s %s<br />%s %s"% (
-                _("Previous Course"),
-                _("started"),
-                localsettings.formatDate(self.pt.treatment_course.accd),
-                _("completed"),
-                localsettings.formatDate(self.pt.treatment_course.cmpd)))
+                u"<b>%s</b><br />%s %s<br />%s %s" % (
+                    _("Previous Course"),
+                    _("started"),
+                    localsettings.formatDate(self.pt.treatment_course.accd),
+                    _("completed"),
+                    localsettings.formatDate(self.pt.treatment_course.cmpd)))
             self.ui.plan_buttons_stacked_widget.setCurrentIndex(1)
             if not self.pt.treatment_course.accd in ("", None):
                 self.ui.closeTx_pushButton.setText(_("Resume Existing Course"))
@@ -1411,17 +1430,19 @@ class OpenmolarGui(QtGui.QMainWindow):
         if localsettings.clinicianNo == 0:
             if localsettings.station == "surgery":
                 op_text = " <b>" + _("NO CLINICIAN SET") + "</b> - "
-                self.advise(_("you are in surgery mode without a clinician"),1)
+                self.advise(
+                    _("you are in surgery mode without a clinician"),
+                    1)
             else:
                 op_text = ""
         else:
             op_text = (" <b>" + _("CLINICIAN") + "(" +
-            localsettings.clinicianInits + ")</b> - ")
+                       localsettings.clinicianInits + ")</b> - ")
 
         if "/" in localsettings.operator:
             op_text += " " + _("team") + " "
         op_text += (" " + localsettings.operator + " " + _("using") + " " +
-        localsettings.station + " " + _("mode"))
+                    localsettings.station + " " + _("mode"))
 
         self.operator_label.setText(op_text)
 
@@ -1433,7 +1454,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.tabWidget.setCurrentIndex(0)
         self.diary_widget.reset()
         c_list = QtGui.QCompleter([_("Mr"), _("Mrs"), _("Ms"), _("Miss"),
-        _("Master"), _("Dr"), _("Professor")])
+                                   _("Master"), _("Dr"), _("Professor")])
         self.ui.titleEdit.setCompleter(c_list)
 
         if localsettings.station == "surgery":
@@ -1457,8 +1478,8 @@ class OpenmolarGui(QtGui.QMainWindow):
         palette.setBrush(QtGui.QPalette.Base, brush)
 
         for widg in (self.ui.snameEdit, self.ui.titleEdit,
-        self.ui.fnameEdit, self.ui.addr1Edit, self.ui.dobEdit,
-        self.ui.pcdeEdit, self.ui.sexEdit):
+                     self.ui.fnameEdit, self.ui.addr1Edit, self.ui.dobEdit,
+                     self.ui.pcdeEdit, self.ui.sexEdit):
             widg.setPalette(palette)
 
         self.ui.forumViewFilter_comboBox.addItems(
@@ -1473,7 +1494,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         for old data about the patient
         '''
 
-        self.debugMenu=QtGui.QMenu()
+        self.debugMenu = QtGui.QMenu()
         self.debugMenu.addAction("Patient table data")
         self.debugMenu.addAction("Treatment table data")
         self.debugMenu.addAction("HDP table data")
@@ -1484,7 +1505,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.debug_toolButton.setMenu(self.debugMenu)
 
     def showForumActivity(self, newItems=True):
-        tb=self.ui.main_tabWidget.tabBar()
+        tb = self.ui.main_tabWidget.tabBar()
         if newItems:
             tb.setTabText(7, _("NEW FORUM POSTS"))
             tb.setTabTextColor(7, QtGui.QColor("red"))
@@ -1505,12 +1526,12 @@ class OpenmolarGui(QtGui.QMainWindow):
         try:
             filepath = QtGui.QFileDialog.getSaveFileName()
             if filepath != '':
-                f=open(filepath, "w")
+                f = open(filepath, "w")
                 f.write(pickle.dumps(self.pt))
                 f.close()
                 self.advise("Patient File Saved", 1)
-        except Exception, e:
-            self.advise("Patient File not saved - %s"% e, 2)
+        except Exception as e:
+            self.advise("Patient File not saved - %s" % e, 2)
 
     def open_patient_fromfile(self):
         '''
@@ -1533,8 +1554,8 @@ class OpenmolarGui(QtGui.QMainWindow):
                     self.pt.take_snapshot()
                 self.pt = loadedpt
                 f.close()
-            except Exception, e:
-                self.advise("error loading patient file - %s"% e, 2)
+            except Exception as e:
+                self.advise("error loading patient file - %s" % e, 2)
         else:
             self.advise(_("no file chosen"), 1)
         self.loadpatient()
@@ -1593,7 +1614,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         newNotes = ""
         if dl.exec_():
             for phrase in dl.selectedPhrases:
-                newNotes +=  phrase + "\n"
+                newNotes += phrase + "\n"
             if newNotes != "":
                 self.addNewNote(newNotes)
 
@@ -1608,10 +1629,9 @@ class OpenmolarGui(QtGui.QMainWindow):
         newNotes = ""
         if dl.exec_():
             for phrase in dl.selectedPhrases:
-                newNotes +=  phrase + "\n"
+                newNotes += phrase + "\n"
             if newNotes != "":
                 self.addNewNote(newNotes)
-
 
     def addNewNote(self, arg):
         '''
@@ -1651,12 +1671,12 @@ class OpenmolarGui(QtGui.QMainWindow):
             return
         Dialog = QtGui.QDialog(self)
         dl = newBPE.Ui_Dialog(Dialog)
-        result=dl.getInput()
+        result = dl.getInput()
         if result[0]:
             self.pt.bpe.append((localsettings.currentDay(), result[1]), )
             #--add a bpe
-            newnotes=str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
-            newnotes+=" bpe of %s recorded \n"%result[1]
+            newnotes = str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
+            newnotes += " bpe of %s recorded \n" % result[1]
             self.ui.notesEnter_textEdit.setText(newnotes)
             self.ui.bpe_textBrowser
         else:
@@ -1676,16 +1696,16 @@ class OpenmolarGui(QtGui.QMainWindow):
         important function, checks for changes since the patient was loaded
         '''
         if self.pt.serialno != self.pt.dbstate.serialno:
-            #this should NEVER happen!!!
+            # this should NEVER happen!!!
             self.advise(
-            _('''POTENTIALLY SERIOUS CONFUSION PROBLEM WITH PT RECORDS''') +
-            ' %d and %d'% (self.pt.serialno, self.pt.dbstate.serialno), 2)
+                _('''POTENTIALLY SERIOUS CONFUSION PROBLEM WITH PT RECORDS''') +
+                ' %d and %d' % (self.pt.serialno, self.pt.dbstate.serialno), 2)
             return []
 
         changes = self.pt.changes
 
         if (len(self.ui.notesEnter_textEdit.toPlainText()) != 0 or
-        len(self.pt.HIDDENNOTES) != 0):
+           len(self.pt.HIDDENNOTES) != 0):
             changes.append("New Notes")
 
         if "treatment_course" in changes:
@@ -1717,7 +1737,7 @@ class OpenmolarGui(QtGui.QMainWindow):
                 self.pt.est_logger.add_row(
                     self.pt.courseno0, self.pt.est_logger_text)
 
-            if result: #True if sucessful
+            if result:  # True if sucessful
                 if not leavingRecord and "estimates" in uc:
                     #-- necessary to get index numbers for estimate data types
                     self.pt.getEsts()
@@ -1728,12 +1748,11 @@ class OpenmolarGui(QtGui.QMainWindow):
 
             else:
                 self.advise("Error applying changes... please retry", 2)
-                print "error saving changes to record %s"%self.pt.serialno,
+                print "error saving changes to record %s" % self.pt.serialno,
                 print result, str(uc)
 
-
         if "New Notes" in uc:
-            newnote=str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
+            newnote = str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
 
             notetuplets = []
             for noteline in newnote.split("\n"):
@@ -1772,24 +1791,24 @@ class OpenmolarGui(QtGui.QMainWindow):
             arg and PHRASEBOOKS.has_phrasebook(localsettings.clinicianNo))
 
         for widg in (
-        self.ui.summaryChartWidget,
-        self.ui.printEst_pushButton,
-        self.ui.printAccount_pushButton,
-        self.ui.relatedpts_pushButton,
-        self.ui.saveButton,
-        self.ui.phraseBook_pushButton,
-        self.ui.clinician_phrasebook_pushButton,
-        self.ui.exampushButton,
-        self.ui.xray_pushButton,
-        self.ui.medNotes_pushButton,
-        self.ui.printGP17_pushButton,
-        self.ui.newBPE_pushButton,
-        self.ui.hygWizard_pushButton,
-        self.ui.notesEnter_textEdit,
-        self.ui.synopsis_lineEdit,
-        self.ui.memos_pushButton,
-        self.pt_diary_widget,
-        self.ui.childsmile_button,
+            self.ui.summaryChartWidget,
+            self.ui.printEst_pushButton,
+            self.ui.printAccount_pushButton,
+            self.ui.relatedpts_pushButton,
+            self.ui.saveButton,
+            self.ui.phraseBook_pushButton,
+            self.ui.clinician_phrasebook_pushButton,
+            self.ui.exampushButton,
+            self.ui.xray_pushButton,
+            self.ui.medNotes_pushButton,
+            self.ui.printGP17_pushButton,
+            self.ui.newBPE_pushButton,
+            self.ui.hygWizard_pushButton,
+            self.ui.notesEnter_textEdit,
+            self.ui.synopsis_lineEdit,
+            self.ui.memos_pushButton,
+            self.pt_diary_widget,
+            self.ui.childsmile_button,
         ):
 
             widg.setEnabled(arg)
@@ -1832,7 +1851,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         menu option which allows adanced record changes
         '''
         if self.pt.serialno == 0:
-            self.advise(_("no record selected"),1)
+            self.advise(_("no record selected"), 1)
         else:
             if permissions.granted(self):
                 dl = recordtools.recordTools(self)
@@ -1843,7 +1862,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         user is asking for a different font on the appointment book
         '''
         i, result = QtGui.QInputDialog.getInteger(self, _("FontSize"),
-        _("Enter your preferred font size for appointment book") , 8,6,16)
+                                                  _("Enter your preferred font size for appointment book"), 8, 6, 16)
         if result:
             self.diary_widget.aptFontSize(i)
 
@@ -1894,7 +1913,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         receives signals from the choose feescale combobox
         '''
-        fees_module.chooseFeescale(self,arg)
+        fees_module.chooseFeescale(self, arg)
 
     def feeExpand_radiobuttons_clicked(self):
         '''
@@ -1904,7 +1923,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         fees_module.expandFees(self)
 
     def plan_page_course_but_clicked(self):
-        if self.pt.underTreatment: # shouldn't happen
+        if self.pt.underTreatment:  # shouldn't happen
             return
         course_module.setupNewCourse(self)
 
@@ -1914,7 +1933,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         if self.pt.underTreatment:
             course_module.closeCourse(self)
-            #static items may have changed
+            # static items may have changed
             charts_gui.chartsTable(self)
             self.load_clinicalSummaryPage()
             self.ui.summaryChartWidget.update()
@@ -1995,7 +2014,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         fees_module.showTableXML(self)
 
     def handle_chart_treatment_input(self, tooth, prop, completed):
-        LOGGER.debug("%s %s completed=%s"% (tooth, prop, completed))
+        LOGGER.debug("%s %s completed=%s" % (tooth, prop, completed))
         if course_module.newCourseNeeded(self):
             return
 
@@ -2025,17 +2044,17 @@ class OpenmolarGui(QtGui.QMainWindow):
             courseno = self.pt.treatment_course.courseno
             if (completed and tx in existing_pl_items):
                 hash_ = localsettings.hash_func(
-                    "%s%s%s%s"% (courseno, tooth, n_txs+1, tx))
+                    "%s%s%s%s" % (courseno, tooth, n_txs + 1, tx))
                 tx_hash = estimates.TXHash(hash_)
                 manipulate_plan.tx_hash_complete(self, tx_hash)
             elif not completed and n_txs:
                 hash_ = localsettings.hash_func(
-                    "%s%s%s%s"% (courseno, tooth, n_txs, tx))
+                    "%s%s%s%s" % (courseno, tooth, n_txs, tx))
                 tx_hash = estimates.TXHash(hash_)
                 manipulate_plan.tx_hash_reverse(self, tx_hash)
             else:
                 manipulate_plan.add_treatments_to_plan(self,
-                ((tooth, tx),), completed)
+                                                      ((tooth, tx),), completed)
 
         if removals:
             manipulate_plan.remove_treatments_from_plan_and_est(
@@ -2157,7 +2176,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         forum_gui_module.loadForum(self)
 
-    def contractTab_navigated(self,i):
+    def contractTab_navigated(self, i):
         '''
         the contract tab is changing
         '''
@@ -2167,19 +2186,19 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         user is changing dnt1
         '''
-        contract_gui_module.changeContractedDentist(self,qstring)
+        contract_gui_module.changeContractedDentist(self, qstring)
 
     def dnt2comboBox_clicked(self, qstring):
         '''
         user is changing dnt1
         '''
-        contract_gui_module.changeCourseDentist(self,qstring)
+        contract_gui_module.changeCourseDentist(self, qstring)
 
     def cseType_comboBox_clicked(self, qstring):
         '''
         user is changing the course type
         '''
-        contract_gui_module.changeCourseType(self,qstring)
+        contract_gui_module.changeCourseType(self, qstring)
 
     def editNHS_pushButton_clicked(self):
         '''
@@ -2296,12 +2315,12 @@ class OpenmolarGui(QtGui.QMainWindow):
         I can view attributes in memory, and compare to the original db values
         '''
         #--load a table of self.pt.attributes
-        if arg != None:
+        if arg is not None:
             txtype = str(arg.text()).split(" ")[0]
         else:
             txtype = None
 
-        changesOnly=self.ui.ptAtts_checkBox.isChecked()
+        changesOnly = self.ui.ptAtts_checkBox.isChecked()
         html = debug_html.toHtml(self.pt, txtype, changesOnly)
         self.ui.debugBrowser.setText(html)
 
@@ -2400,22 +2419,22 @@ class OpenmolarGui(QtGui.QMainWindow):
         user has requested an account printing
         '''
         if self.ui.accountB_radioButton.isChecked():
-            om_printing.printaccount(self, "B")  #print a medium letter
+            om_printing.printaccount(self, "B")  # print a medium letter
         elif self.ui.accountC_radioButton.isChecked():
-            om_printing.printaccount(self, "C")  #print "harsh letter"
+            om_printing.printaccount(self, "C")  # print "harsh letter"
         else:
-            om_printing.printaccount(self)       #print default account
+            om_printing.printaccount(self)  # print default account
 
     def printmultiDayList(self, args):
         '''prints the multiday pages'''
         #-- args= ((dent, date), (dent, date)...)
-        dlist=multiDayListPrint.printDaylist()
-        something_to_print=False
+        dlist = multiDayListPrint.printDaylist()
+        something_to_print = False
         for arg in args:
-            data=appointments.printableDaylistData(arg[1].toPyDate(), arg[0])
-            #note arg[1]=Qdate
+            data = appointments.printableDaylistData(arg[1].toPyDate(), arg[0])
+            # note arg[1]=Qdate
             if data != []:
-                something_to_print=True
+                something_to_print = True
                 dlist.addDaylist(arg[1], arg[0], data)
         if something_to_print:
             dlist.print_()
@@ -2437,8 +2456,9 @@ class OpenmolarGui(QtGui.QMainWindow):
         normal notes print
         '''
         self.advise(
-        _("use the checkboxes on the notes tab to control what is printed."),
-        1)
+            _(
+                "use the checkboxes on the notes tab to control what is printed."),
+            1)
         om_printing.printNotes(self)
 
     def printMH(self):
@@ -2523,25 +2543,25 @@ class OpenmolarGui(QtGui.QMainWindow):
         belong to any other function
         '''
         QtCore.QObject.connect(self.ui.closeCourse_pushButton,
-        QtCore.SIGNAL("clicked()"), self.closeTx_pushButton_clicked)
+                               QtCore.SIGNAL("clicked()"), self.closeTx_pushButton_clicked)
 
         QtCore.QObject.connect(self.ui.saveButton,
-        QtCore.SIGNAL("clicked()"), self.saveButtonClicked)
+                               QtCore.SIGNAL("clicked()"), self.saveButtonClicked)
 
         QtCore.QObject.connect(self.ui.exampushButton,
-        QtCore.SIGNAL("clicked()"), self.showExamDialog)
+                               QtCore.SIGNAL("clicked()"), self.showExamDialog)
 
         QtCore.QObject.connect(self.ui.hygWizard_pushButton,
-        QtCore.SIGNAL("clicked()"), self.showHygDialog)
+                               QtCore.SIGNAL("clicked()"), self.showHygDialog)
 
         QtCore.QObject.connect(self.ui.xray_pushButton,
-        QtCore.SIGNAL("clicked()"), self.addXrays)
+                               QtCore.SIGNAL("clicked()"), self.addXrays)
 
         QtCore.QObject.connect(self.ui.newBPE_pushButton,
-        QtCore.SIGNAL("clicked()"), self.newBPE_Dialog)
+                               QtCore.SIGNAL("clicked()"), self.newBPE_Dialog)
 
         QtCore.QObject.connect(self.ui.medNotes_pushButton,
-        QtCore.SIGNAL("clicked()"), self.showMedNotes)
+                               QtCore.SIGNAL("clicked()"), self.showMedNotes)
 
         self.ui.phraseBook_pushButton.clicked.connect(
             self.show_phrase_book_dialog)
@@ -2549,40 +2569,40 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.show_clinician_phrase_book_dialog)
 
         QtCore.QObject.connect(self.ui.memos_pushButton,
-        QtCore.SIGNAL("clicked()"), self.newCustomMemo)
+                               QtCore.SIGNAL("clicked()"), self.newCustomMemo)
 
         QtCore.QObject.connect(self.ui.childsmile_button,
-        QtCore.SIGNAL("clicked()"), self.childsmile_button_clicked)
+                               QtCore.SIGNAL("clicked()"), self.childsmile_button_clicked)
 
         self.ui.actionSurgery_Mode.toggled.connect(self.set_surgery_mode)
         self.ui.actionDocuments_Dialog.triggered.connect(
             self.documents_pushButton_clicked)
 
     def signals_admin(self):
-        #admin frame
+        # admin frame
         QtCore.QObject.connect(self.ui.home_pushButton,
-        QtCore.SIGNAL("clicked()"), self.home)
+                               QtCore.SIGNAL("clicked()"), self.home)
 
         QtCore.QObject.connect(self.ui.newPatientPushButton,
-        QtCore.SIGNAL("clicked()"), self.enterNewPatient)
+                               QtCore.SIGNAL("clicked()"), self.enterNewPatient)
 
         QtCore.QObject.connect(self.ui.findButton,
-        QtCore.SIGNAL("clicked()"), self.find_patient)
+                               QtCore.SIGNAL("clicked()"), self.find_patient)
 
         QtCore.QObject.connect(self.ui.reloadButton,
-        QtCore.SIGNAL("clicked()"), self.reload_patient)
+                               QtCore.SIGNAL("clicked()"), self.reload_patient)
 
         QtCore.QObject.connect(self.ui.backButton,
-        QtCore.SIGNAL("clicked()"), self.last_patient)
+                               QtCore.SIGNAL("clicked()"), self.last_patient)
 
         QtCore.QObject.connect(self.ui.nextButton,
-        QtCore.SIGNAL("clicked()"), self.next_patient)
+                               QtCore.SIGNAL("clicked()"), self.next_patient)
 
         QtCore.QObject.connect(self.ui.relatedpts_pushButton,
-        QtCore.SIGNAL("clicked()"), self.find_related)
+                               QtCore.SIGNAL("clicked()"), self.find_related)
 
         QtCore.QObject.connect(self.ui.dayList_comboBox,
-        QtCore.SIGNAL("currentIndexChanged(int)"),self.todays_pts)
+                               QtCore.SIGNAL("currentIndexChanged(int)"), self.todays_pts)
 
     def signals_reception(self):
         '''
@@ -2590,19 +2610,19 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
 
         QtCore.QObject.connect(self.ui.printAccount_pushButton,
-        QtCore.SIGNAL("clicked()"), self.printaccount)
+                               QtCore.SIGNAL("clicked()"), self.printaccount)
 
         QtCore.QObject.connect(self.ui.printEst_pushButton,
-        QtCore.SIGNAL("clicked()"), self.printEstimate)
+                               QtCore.SIGNAL("clicked()"), self.printEstimate)
 
         QtCore.QObject.connect(self.ui.printRecall_pushButton,
-        QtCore.SIGNAL("clicked()"), self.printrecall)
+                               QtCore.SIGNAL("clicked()"), self.printrecall)
 
         QtCore.QObject.connect(self.ui.takePayment_pushButton,
-        QtCore.SIGNAL("clicked()"), self.takePayment_pushButton_clicked)
+                               QtCore.SIGNAL("clicked()"), self.takePayment_pushButton_clicked)
 
         QtCore.QObject.connect(self.ui.printGP17_pushButton,
-        QtCore.SIGNAL("clicked()"), self.printGP17_clicked)
+                               QtCore.SIGNAL("clicked()"), self.printGP17_clicked)
 
     def signals_notes(self):
         '''
@@ -2610,87 +2630,88 @@ class OpenmolarGui(QtGui.QMainWindow):
         so that they can be scrolled to the end
         '''
         for wv in (self.ui.recNotes_webView, self.ui.notes_webView,
-        self.ui.notesSummary_webView):
+                   self.ui.notesSummary_webView):
             QtCore.QObject.connect(wv,
-            QtCore.SIGNAL("loadFinished(bool)"), self.webviewloaded)
+                                   QtCore.SIGNAL("loadFinished(bool)"), self.webviewloaded)
 
         for wv in (self.ui.notes_webView, self.ui.notesSummary_webView,
-        self.diary_widget.ui.appt_notes_webView):
+                   self.diary_widget.ui.appt_notes_webView):
             wv.linkClicked.connect(self.notes_link_clicked)
-
 
     def signals_printing(self):
         '''
         connect buttons which print stuff
         '''
         QtCore.QObject.connect(self.ui.receiptPrintButton,
-        QtCore.SIGNAL("clicked()"), self.printDupReceipt)
+                               QtCore.SIGNAL("clicked()"), self.printDupReceipt)
 
         QtCore.QObject.connect(self.ui.notesPrintButton,
-        QtCore.SIGNAL("clicked()"), self.printNotes)
+                               QtCore.SIGNAL("clicked()"), self.printNotes)
 
         QtCore.QObject.connect(self.ui.referralLettersPrintButton,
-        QtCore.SIGNAL("clicked()"), self.printReferral)
+                               QtCore.SIGNAL("clicked()"), self.printReferral)
 
         QtCore.QObject.connect(self.ui.standardLetterPushButton,
-        QtCore.SIGNAL("clicked()"), self.printLetter)
+                               QtCore.SIGNAL("clicked()"), self.printLetter)
 
         QtCore.QObject.connect(self.ui.recallLoad_pushButton,
-        QtCore.SIGNAL("clicked()"), self.exportRecalls)
+                               QtCore.SIGNAL("clicked()"), self.exportRecalls)
 
         QtCore.QObject.connect(self.ui.bulkMail_options_pushButton,
-        QtCore.SIGNAL("clicked()"), self.bulkMailLetterOptions)
+                               QtCore.SIGNAL("clicked()"), self.bulkMailLetterOptions)
 
         QtCore.QObject.connect(self.ui.bulkMailPrint_pushButton,
-        QtCore.SIGNAL("clicked()"), self.bulkMailPrint)
+                               QtCore.SIGNAL("clicked()"), self.bulkMailPrint)
 
         QtCore.QObject.connect(self.ui.bulk_mail_expand_pushButton,
-        QtCore.SIGNAL("clicked()"), self.bulkMailExpand)
+                               QtCore.SIGNAL("clicked()"), self.bulkMailExpand)
 
         QtCore.QObject.connect(self.ui.importDoc_pushButton,
-        QtCore.SIGNAL("clicked()"), self.importDoc)
+                               QtCore.SIGNAL("clicked()"), self.importDoc)
 
         QtCore.QObject.connect(self.ui.account2_pushButton,
-        QtCore.SIGNAL("clicked()"), self.accountButton2Clicked)
+                               QtCore.SIGNAL("clicked()"), self.accountButton2Clicked)
 
         QtCore.QObject.connect(self.ui.prevCorres_treeWidget,
-        QtCore.SIGNAL("itemDoubleClicked (QTreeWidgetItem *,int)"),
-        self.showPrevPrintedDoc)
+                               QtCore.SIGNAL(
+                                   "itemDoubleClicked (QTreeWidgetItem *,int)"),
+                               self.showPrevPrintedDoc)
 
         QtCore.QObject.connect(self.ui.importDoc_treeWidget,
-        QtCore.SIGNAL("itemDoubleClicked (QTreeWidgetItem *,int)"),
-        self.showImportedDoc)
+                               QtCore.SIGNAL(
+                                   "itemDoubleClicked (QTreeWidgetItem *,int)"),
+                               self.showImportedDoc)
 
         self.ui.medicalPrintButton.clicked.connect(self.printMH)
 
     def signals_menu(self):
-        #menu
+        # menu
         QtCore.QObject.connect(self.ui.action_save_patient,
-        QtCore.SIGNAL("triggered()"), self.save_patient_tofile)
+                               QtCore.SIGNAL("triggered()"), self.save_patient_tofile)
 
         QtCore.QObject.connect(self.ui.action_Open_Patient,
-        QtCore.SIGNAL("triggered()"), self.open_patient_fromfile)
+                               QtCore.SIGNAL("triggered()"), self.open_patient_fromfile)
 
         QtCore.QObject.connect(self.ui.actionSet_Clinician,
-        QtCore.SIGNAL("triggered()"), self.setClinician)
+                               QtCore.SIGNAL("triggered()"), self.setClinician)
 
         QtCore.QObject.connect(self.ui.actionSet_Assistant,
-        QtCore.SIGNAL("triggered()"), self.setAssistant)
+                               QtCore.SIGNAL("triggered()"), self.setAssistant)
 
         QtCore.QObject.connect(self.ui.actionChange_Language,
-        QtCore.SIGNAL("triggered()"), self.changeLanguage)
+                               QtCore.SIGNAL("triggered()"), self.changeLanguage)
 
         QtCore.QObject.connect(self.ui.action_About,
-        QtCore.SIGNAL("triggered()"), self.aboutOM)
+                               QtCore.SIGNAL("triggered()"), self.aboutOM)
 
         QtCore.QObject.connect(self.ui.action_About_QT,
-        QtCore.SIGNAL("triggered()"), QtGui.qApp, QtCore.SLOT("aboutQt()"))
+                               QtCore.SIGNAL("triggered()"), QtGui.qApp, QtCore.SLOT("aboutQt()"))
 
         QtCore.QObject.connect(self.ui.action_Quit,
-        QtCore.SIGNAL("triggered()"), self.quit)
+                               QtCore.SIGNAL("triggered()"), self.quit)
 
         QtCore.QObject.connect(self.ui.actionFull_Screen_Mode_Ctrl_Alt_F,
-        QtCore.SIGNAL("triggered()"), self.fullscreen)
+                               QtCore.SIGNAL("triggered()"), self.fullscreen)
 
         self.ui.actionTable_View_For_Charting.toggled.connect(
             self.showChartTable)
@@ -2699,19 +2720,19 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.diary_widget.clearTodaysEmergencyTime)
 
         QtCore.QObject.connect(self.ui.actionTest_Print_a_GP17,
-        QtCore.SIGNAL("triggered()"), self.testGP17)
+                               QtCore.SIGNAL("triggered()"), self.testGP17)
 
         QtCore.QObject.connect(self.ui.actionNHS_Form_Settings,
-        QtCore.SIGNAL("triggered()"), self.nhsformOptionsDialog)
+                               QtCore.SIGNAL("triggered()"), self.nhsformOptionsDialog)
 
         QtCore.QObject.connect(self.ui.actionAppointment_Tools,
-        QtCore.SIGNAL("triggered()"), self.diary_widget.appointmentTools)
+                               QtCore.SIGNAL("triggered()"), self.diary_widget.appointmentTools)
 
         QtCore.QObject.connect(self.ui.actionPrint_Daylists,
-        QtCore.SIGNAL("triggered()"), self.daylistPrintWizard)
+                               QtCore.SIGNAL("triggered()"), self.daylistPrintWizard)
 
         QtCore.QObject.connect(self.ui.actionAdvanced_Record_Management,
-        QtCore.SIGNAL("triggered()"), self.advancedRecordTools)
+                               QtCore.SIGNAL("triggered()"), self.advancedRecordTools)
 
         self.ui.actionFix_Locked_New_Course_of_Treatment.triggered.connect(
             self.fix_zombied_course)
@@ -2725,21 +2746,21 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.edit_phrasebooks)
 
     def signals_estimates(self):
-        #Estimates and course ManageMent
+        # Estimates and course ManageMent
         QtCore.QObject.connect(self.ui.closeTx_pushButton,
-        QtCore.SIGNAL("clicked()"), self.closeTx_pushButton_clicked)
+                               QtCore.SIGNAL("clicked()"), self.closeTx_pushButton_clicked)
 
         QtCore.QObject.connect(self.ui.estLetter_pushButton,
-        QtCore.SIGNAL("clicked()"), self.customEstimate)
+                               QtCore.SIGNAL("clicked()"), self.customEstimate)
 
         QtCore.QObject.connect(self.ui.recalcEst_pushButton,
-        QtCore.SIGNAL("clicked()"), self.recalculateEstimate)
+                               QtCore.SIGNAL("clicked()"), self.recalculateEstimate)
 
         QtCore.QObject.connect(self.ui.apply_exemption_pushButton,
-        QtCore.SIGNAL("clicked()"), self.apply_exemption)
+                               QtCore.SIGNAL("clicked()"), self.apply_exemption)
 
         QtCore.QObject.connect(self.ui.rec_apply_exemption_pushButton,
-        QtCore.SIGNAL("clicked()"), self.apply_exemption)
+                               QtCore.SIGNAL("clicked()"), self.apply_exemption)
 
         self.ui.xrayTxpushButton.clicked.connect(self.addXrayItems)
         self.ui.perioTxpushButton.clicked.connect(self.addPerioItems)
@@ -2750,7 +2771,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.estWidget.updated_fees_signal.connect(self.updateDetails)
 
         QtCore.QObject.connect(self.ui.estWidget,
-        QtCore.SIGNAL("deleteItem"), self.estwidget_deleteTxItem)
+                               QtCore.SIGNAL("deleteItem"), self.estwidget_deleteTxItem)
 
     def signals_plan(self):
         self.ui.advanced_tx_planning_button.clicked.connect(
@@ -2776,78 +2797,80 @@ class OpenmolarGui(QtGui.QMainWindow):
 
     def signals_bulk_mail(self):
         QtCore.QObject.connect(self.ui.bulk_mailings_treeView,
-        QtCore.SIGNAL("doubleClicked (const QModelIndex&)"),
-        self.bulk_mail_doubleclicked)
+                               QtCore.SIGNAL(
+                               "doubleClicked (const QModelIndex&)"),
+                               self.bulk_mail_doubleclicked)
 
     def signals_forum(self):
         QtCore.QObject.connect(self.ui.forum_treeWidget,
-        QtCore.SIGNAL("itemSelectionChanged ()"),
-        self.forum_treeWidget_selectionChanged)
+                               QtCore.SIGNAL("itemSelectionChanged ()"),
+                               self.forum_treeWidget_selectionChanged)
 
         self.ui.action_forum_show_advanced_options.triggered.connect(
-        self.forum_mode)
+            self.forum_mode)
 
         QtCore.QObject.connect(self.ui.forumDelete_pushButton,
-        QtCore.SIGNAL("clicked()"), self.forumDeleteItem_clicked)
+                               QtCore.SIGNAL("clicked()"), self.forumDeleteItem_clicked)
 
         QtCore.QObject.connect(self.ui.forumReply_pushButton,
-        QtCore.SIGNAL("clicked()"), self.forumReply_clicked)
+                               QtCore.SIGNAL("clicked()"), self.forumReply_clicked)
 
         QtCore.QObject.connect(self.ui.forumNewTopic_pushButton,
-        QtCore.SIGNAL("clicked()"), self.forumNewTopic_clicked)
+                               QtCore.SIGNAL("clicked()"), self.forumNewTopic_clicked)
 
         QtCore.QObject.connect(self.ui.forumParent_pushButton,
-        QtCore.SIGNAL("clicked()"), self.forumParent_clicked)
+                               QtCore.SIGNAL("clicked()"), self.forumParent_clicked)
 
         QtCore.QObject.connect(self.ui.forumViewFilter_comboBox,
-        QtCore.SIGNAL("currentIndexChanged (const QString&)"),
-        self.forumViewFilterChanged)
+                               QtCore.SIGNAL(
+                                   "currentIndexChanged (const QString&)"),
+                               self.forumViewFilterChanged)
 
         QtCore.QObject.connect(self.ui.forumCollapse_pushButton,
-        QtCore.SIGNAL("clicked()"), self.forumCollapse)
+                               QtCore.SIGNAL("clicked()"), self.forumCollapse)
 
         QtCore.QObject.connect(self.ui.forumExpand_pushButton,
-        QtCore.SIGNAL("clicked()"), self.forumExpand)
+                               QtCore.SIGNAL("clicked()"), self.forumExpand)
 
         for widg in (self.ui.group_replies_radioButton,
-        self.ui.forum_deletedposts_checkBox):
+                     self.ui.forum_deletedposts_checkBox):
             QtCore.QObject.connect(widg,
-            QtCore.SIGNAL("toggled (bool)"), self.forum_radioButtons)
+                                   QtCore.SIGNAL("toggled (bool)"), self.forum_radioButtons)
 
     def signals_history(self):
         QtCore.QObject.connect(self.debugMenu,
-        QtCore.SIGNAL("triggered (QAction *)"), self.showPtAttributes)
+                               QtCore.SIGNAL("triggered (QAction *)"), self.showPtAttributes)
 
         QtCore.QObject.connect(self.ui.ptAtts_checkBox,
-        QtCore.SIGNAL("stateChanged (int)"), self.updateAttributes)
+                               QtCore.SIGNAL("stateChanged (int)"), self.updateAttributes)
 
         QtCore.QObject.connect(self.ui.historyPrint_pushButton,
-        QtCore.SIGNAL("clicked()"), self.historyPrint)
+                               QtCore.SIGNAL("clicked()"), self.historyPrint)
 
         QtCore.QObject.connect(self.ui.pastPayments_pushButton,
-        QtCore.SIGNAL("clicked()"), self.pastPayments_clicked)
+                               QtCore.SIGNAL("clicked()"), self.pastPayments_clicked)
 
         QtCore.QObject.connect(self.ui.pastTreatment_pushButton,
-        QtCore.SIGNAL("clicked()"), self.pastTreatment_clicked)
+                               QtCore.SIGNAL("clicked()"), self.pastTreatment_clicked)
 
         QtCore.QObject.connect(self.ui.pastCourses_pushButton,
-        QtCore.SIGNAL("clicked()"), self.pastCourses_clicked)
+                               QtCore.SIGNAL("clicked()"), self.pastCourses_clicked)
 
         QtCore.QObject.connect(self.ui.pastEstimates_pushButton,
-        QtCore.SIGNAL("clicked()"), self.pastEstimates_clicked)
+                               QtCore.SIGNAL("clicked()"), self.pastEstimates_clicked)
 
         QtCore.QObject.connect(self.ui.past_course_estimates_pushButton,
-        QtCore.SIGNAL("clicked()"), self.past_course_estimates_clicked)
+                               QtCore.SIGNAL("clicked()"), self.past_course_estimates_clicked)
 
         QtCore.QObject.connect(self.ui.NHSClaims_pushButton,
-        QtCore.SIGNAL("clicked()"), self.NHSClaims_clicked)
+                               QtCore.SIGNAL("clicked()"), self.NHSClaims_clicked)
 
         self.ui.memo_history_pushButton.clicked.connect(self.show_memo_history)
         self.ui.current_est_versioning_pushButton.clicked.connect(
             self.show_estimate_versioning)
 
     def signals_daybook(self):
-        #daybook - cashbook
+        # daybook - cashbook
 
         self.ui.daybookGoPushButton.clicked.connect(self.daybookView)
         self.ui.daybookPrintButton.clicked.connect(self.daybookPrint)
@@ -2858,91 +2881,90 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.treatment_only_radioButton.clicked.connect(self.cashbookView)
         self.ui.all_payments_radioButton.clicked.connect(self.cashbookView)
 
-
     def signals_accounts(self):
-        #accounts
+        # accounts
         QtCore.QObject.connect(self.ui.loadAccountsTable_pushButton,
-        QtCore.SIGNAL("clicked()"), self.loadAccountsTable_clicked)
+                               QtCore.SIGNAL("clicked()"), self.loadAccountsTable_clicked)
 
         QtCore.QObject.connect(self.ui.printSelectedAccounts_pushButton,
-        QtCore.SIGNAL("clicked()"), self.printSelectedAccounts)
+                               QtCore.SIGNAL("clicked()"), self.printSelectedAccounts)
 
         QtCore.QObject.connect(self.ui.printAccountsTable_pushButton,
-        QtCore.SIGNAL("clicked()"), self.printAccountsTable)
+                               QtCore.SIGNAL("clicked()"), self.printAccountsTable)
 
         QtCore.QObject.connect(self.ui.accounts_tableWidget,
-        QtCore.SIGNAL("cellDoubleClicked (int,int)"),
-        self.accountsTableClicked)
+                               QtCore.SIGNAL("cellDoubleClicked (int,int)"),
+                               self.accountsTableClicked)
 
     def signals_contract(self):
-        #contract
+        # contract
         self.ui.status_comboBox.currentIndexChanged.connect(
             self.change_pt_status)
 
         QtCore.QObject.connect(self.ui.badDebt_pushButton,
-        QtCore.SIGNAL("clicked()"), self.makeBadDebt_clicked)
+                               QtCore.SIGNAL("clicked()"), self.makeBadDebt_clicked)
 
         QtCore.QObject.connect(self.ui.contract_tabWidget,
-        QtCore.SIGNAL("currentChanged(int)"), self.contractTab_navigated)
+                               QtCore.SIGNAL("currentChanged(int)"), self.contractTab_navigated)
 
         QtCore.QObject.connect(self.ui.dnt1comboBox, QtCore.
-        SIGNAL("activated(const QString&)"), self.dnt1comboBox_clicked)
+                               SIGNAL("activated(const QString&)"), self.dnt1comboBox_clicked)
 
         QtCore.QObject.connect(self.ui.dnt2comboBox, QtCore.
-        SIGNAL("activated(const QString&)"), self.dnt2comboBox_clicked)
+                               SIGNAL("activated(const QString&)"), self.dnt2comboBox_clicked)
 
         QtCore.QObject.connect(self.ui.cseType_comboBox,
-        QtCore.SIGNAL("activated(const QString&)"),
-        self.cseType_comboBox_clicked)
+                               QtCore.SIGNAL("activated(const QString&)"),
+                               self.cseType_comboBox_clicked)
 
         QtCore.QObject.connect(self.ui.editNHS_pushButton,
-        QtCore.SIGNAL("clicked()"), self.editNHS_pushButton_clicked)
+                               QtCore.SIGNAL("clicked()"), self.editNHS_pushButton_clicked)
 
         for le in (self.ui.exemption_lineEdit, self.ui.exempttext_lineEdit):
-            QtCore.QObject.connect(le,QtCore.SIGNAL("editingFinished ()"),
-            self.exemption_edited)
+            QtCore.QObject.connect(le, QtCore.SIGNAL("editingFinished ()"),
+                                   self.exemption_edited)
 
         QtCore.QObject.connect(self.ui.editPriv_pushButton,
-        QtCore.SIGNAL("clicked()"), self.editPriv_pushButton_clicked)
+                               QtCore.SIGNAL("clicked()"), self.editPriv_pushButton_clicked)
 
         QtCore.QObject.connect(self.ui.nhsclaims_pushButton,
-        QtCore.SIGNAL("clicked()"), self.nhsclaims_pushButton_clicked)
+                               QtCore.SIGNAL("clicked()"), self.nhsclaims_pushButton_clicked)
 
         QtCore.QObject.connect(self.ui.editHDP_pushButton,
-        QtCore.SIGNAL("clicked()"), self.editHDP_pushButton_clicked)
+                               QtCore.SIGNAL("clicked()"), self.editHDP_pushButton_clicked)
 
         QtCore.QObject.connect(self.ui.editRegDent_pushButton,
-        QtCore.SIGNAL("clicked()"), self.editRegDent_pushButton_clicked)
+                               QtCore.SIGNAL("clicked()"), self.editRegDent_pushButton_clicked)
 
     def signals_feesTable(self):
-        #feesTable
-        ##TODO bring this functionality back
-        #QtCore.QObject.connect(self.ui.printFeescale_pushButton,
-        #QtCore.SIGNAL("clicked()"), self.printFeesTable)
+        # feesTable
+        # TODO bring this functionality back
+        # QtCore.QObject.connect(self.ui.printFeescale_pushButton,
+        # QtCore.SIGNAL("clicked()"), self.printFeesTable)
 
         QtCore.QObject.connect(self.ui.feeScales_treeView,
-        QtCore.SIGNAL("clicked (QModelIndex)"),
-        self.feeScale_clicked)
+                               QtCore.SIGNAL("clicked (QModelIndex)"),
+                               self.feeScale_clicked)
 
         QtCore.QObject.connect(self.ui.feeScales_treeView,
-        QtCore.SIGNAL("expanded (QModelIndex)"),
-        self.feeScale_expanded)
+                               QtCore.SIGNAL("expanded (QModelIndex)"),
+                               self.feeScale_expanded)
 
         QtCore.QObject.connect(self.ui.chooseFeescale_comboBox,
-        QtCore.SIGNAL("currentIndexChanged(int)"),
-        self.chooseFeescale_comboBox_changed)
+                               QtCore.SIGNAL("currentIndexChanged(int)"),
+                               self.chooseFeescale_comboBox_changed)
 
         QtCore.QObject.connect(self.ui.feeExpand_radioButton,
-        QtCore.SIGNAL("clicked()"), self.feeExpand_radiobuttons_clicked)
+                               QtCore.SIGNAL("clicked()"), self.feeExpand_radiobuttons_clicked)
 
         QtCore.QObject.connect(self.ui.feeCompress_radioButton,
-        QtCore.SIGNAL("clicked()"), self.feeExpand_radiobuttons_clicked)
+                               QtCore.SIGNAL("clicked()"), self.feeExpand_radiobuttons_clicked)
 
         self.ui.documents_pushButton.clicked.connect(
             self.documents_pushButton_clicked)
 
         QtCore.QObject.connect(self.ui.feeSearch_lineEdit,
-        QtCore.SIGNAL("returnPressed()"), self.feeSearch_lineEdit_edited)
+                               QtCore.SIGNAL("returnPressed()"), self.feeSearch_lineEdit_edited)
 
         self.ui.search_descriptions_radioButton.toggled.connect(
             self.feeSearch_pushButton_clicked)
@@ -2951,10 +2973,10 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.feeSearch_pushButton_clicked)
 
         QtCore.QObject.connect(self.ui.feescale_tester_pushButton,
-        QtCore.SIGNAL("clicked()"), self.feescale_tester_pushButton_clicked)
+                               QtCore.SIGNAL("clicked()"), self.feescale_tester_pushButton_clicked)
 
         QtCore.QObject.connect(self.ui.feetable_xml_pushButton,
-        QtCore.SIGNAL("clicked()"), self.feetable_xml)
+                               QtCore.SIGNAL("clicked()"), self.feetable_xml)
 
         self.ui.hide_rare_feescale_codes_checkBox.toggled.connect(
             self.hide_rare_feescale_items)
@@ -2985,17 +3007,17 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.reverse_completed_chart_treatments)
 
         QtCore.QObject.connect(self.ui.toothPropsWidget,
-        QtCore.SIGNAL("NextTooth"), self.navigateCharts)
+                               QtCore.SIGNAL("NextTooth"), self.navigateCharts)
 
         self.ui.static_control_panel.clicked.connect(
             self.ui.toothPropsWidget.static_input)
 
         #--fillings have changed!!
         QtCore.QObject.connect(self.ui.toothPropsWidget.lineEdit,
-        QtCore.SIGNAL("Changed_Properties"), self.updateCharts)
+                               QtCore.SIGNAL("Changed_Properties"), self.updateCharts)
 
         QtCore.QObject.connect(self.ui.toothPropsWidget.lineEdit,
-        QtCore.SIGNAL("DeletedComments"), self.deleteComments)
+                               QtCore.SIGNAL("DeletedComments"), self.deleteComments)
 
         self.ui.static_control_panel.deciduous_signal.connect(
             self.flipDeciduous)
@@ -3004,7 +3026,7 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.ui.static_control_panel.setEnabled)
 
     def signals_editPatient(self):
-        #edit page
+        # edit page
         self.ui.email1_button.clicked.connect(self.send_email)
         self.ui.email2_button.clicked.connect(self.send_email)
         self.ui.auto_address_button.clicked.connect(self.raise_address_dialog)
@@ -3012,25 +3034,25 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.family_button.clicked.connect(self.raise_family_dialog)
 
     def signals_notesPage(self):
-        #notes page
+        # notes page
         for rb in (self.ui.notes_includePrinting_checkBox,
-        self.ui.notes_includePayments_checkBox,
-        self.ui.notes_includeTimestamps_checkBox,
-        self.ui.notes_includeMetadata_checkBox,
-        self.ui.summary_notes_checkBox):
+                   self.ui.notes_includePayments_checkBox,
+                   self.ui.notes_includeTimestamps_checkBox,
+                   self.ui.notes_includeMetadata_checkBox,
+                   self.ui.summary_notes_checkBox):
             rb.toggled.connect(self.updateNotesPage)
             rb.toggled.connect(self.load_notes_summary)
 
     def signals_periochart(self):
 
-        #periochart
-        ## defunct  QtCore.QObject.connect(self.ui.perioChartWidget,
-        ##QtCore.SIGNAL("toothSelected"), self.periocharts)
+        # periochart
+        # defunct  QtCore.QObject.connect(self.ui.perioChartWidget,
+        # QtCore.SIGNAL("toothSelected"), self.periocharts)
 
         QtCore.QObject.connect(self.ui.perioChartDateComboBox,
-        QtCore.SIGNAL("currentIndexChanged(int)"), self.layoutPerioCharts)
+                               QtCore.SIGNAL("currentIndexChanged(int)"), self.layoutPerioCharts)
         QtCore.QObject.connect(self.ui.bpeDateComboBox,
-        QtCore.SIGNAL("currentIndexChanged(int)"), self.bpe_table)
+                               QtCore.SIGNAL("currentIndexChanged(int)"), self.bpe_table)
 
     def signals_tabs(self, connect=True):
         '''
@@ -3039,21 +3061,21 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         if connect:
             QtCore.QObject.connect(self.ui.main_tabWidget,
-            QtCore.SIGNAL("currentChanged(int)"), self.handle_mainTab)
+                                   QtCore.SIGNAL("currentChanged(int)"), self.handle_mainTab)
 
             QtCore.QObject.connect(self.ui.tabWidget,
-            QtCore.SIGNAL("currentChanged(int)"), self.handle_patientTab)
+                                   QtCore.SIGNAL("currentChanged(int)"), self.handle_patientTab)
         else:
             QtCore.QObject.disconnect(self.ui.main_tabWidget,
-            QtCore.SIGNAL("currentChanged(int)"), self.handle_mainTab)
+                                      QtCore.SIGNAL("currentChanged(int)"), self.handle_mainTab)
 
             QtCore.QObject.disconnect(self.ui.tabWidget,
-            QtCore.SIGNAL("currentChanged(int)"), self.handle_patientTab)
+                                      QtCore.SIGNAL("currentChanged(int)"), self.handle_patientTab)
 
     def signals_appointments(self):
-        #signals raised on the main appointment tab
+        # signals raised on the main appointment tab
         QtCore.QObject.connect(self.ui.actionSet_Font_Size,
-        QtCore.SIGNAL("triggered ()"), self.apptBook_fontSize)
+                               QtCore.SIGNAL("triggered ()"), self.apptBook_fontSize)
 
         self.diary_widget.bring_to_front.connect(self.show_diary)
 
@@ -3079,7 +3101,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.diary_widget.schedule_controller.set_patient(self.pt)
         self.pt_diary_widget.layout_ptDiary()
         self.signals_tabs(False)
-        self.ui.main_tabWidget.setCurrentIndex(1) #appointmenttab
+        self.ui.main_tabWidget.setCurrentIndex(1)  # appointmenttab
         self.signals_tabs()
         self.diary_widget.start_scheduling(self.pt)
 
@@ -3093,15 +3115,17 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         if not self.pt.underTreatment:
             self.advise(
-            _("Recalculate Estimate is for active courses only"), 1)
+                _("Recalculate Estimate is for active courses only"), 1)
             return
-        result=QtGui.QMessageBox.question(self, "Confirm",
-        u"%s<hr /><i>(%s)</i>"% (
-        _("Scrap the estimate and re-price everything?"),
-    _("Custom items and items added using feescale method will be unaffected")
-        ),
-        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-        QtGui.QMessageBox.No )
+        result = QtGui.QMessageBox.question(self, "Confirm",
+                                            u"%s<hr /><i>(%s)</i>" % (
+                                                _(
+                                                    "Scrap the estimate and re-price everything?"),
+                                                _(
+                                                    "Custom items and items added using feescale method will be unaffected")
+                                            ),
+                                            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                                            QtGui.QMessageBox.No)
         if result == QtGui.QMessageBox.No:
             return
 
@@ -3113,15 +3137,16 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         applies a max fee chargeable
         '''
-        result=QtGui.QMessageBox.question(self, _("Confirm"),
-        _("apply an exemption to the NHS items on this estimate?"),
-        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-        QtGui.QMessageBox.No )
+        result = QtGui.QMessageBox.question(self, _("Confirm"),
+                                            _(
+                                            "apply an exemption to the NHS items on this estimate?"),
+                                            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                                            QtGui.QMessageBox.No)
         if result == QtGui.QMessageBox.No:
             return
         max, result = QtGui.QInputDialog.getInteger(self, _("input needed"),
-        _("maximum charge for the patient")+"<br />"+_(
-        "please enter the amount in pence, or leave as 0 for full exemption"))
+                                                    _("maximum charge for the patient") + "<br />" + _(
+                                                    "please enter the amount in pence, or leave as 0 for full exemption"))
 
         if result and estimates.apply_exemption(self.pt, max):
             self.handle_patientTab()
@@ -3162,15 +3187,15 @@ class OpenmolarGui(QtGui.QMainWindow):
             dl.apply()
 
     def update_family_label(self):
-        message_2 = u"&%s"% _("Relatives")
+        message_2 = u"&%s" % _("Relatives")
         if self.pt.familyno:
-            message = u"%s %s - <b>%d %s</b>"% (
+            message = u"%s %s - <b>%d %s</b>" % (
                 _("Family ID"),
                 self.pt.familyno,
                 self.pt.n_family_members,
                 _("Member(s)")
-                )
-            message_2 += " (%d)"% (self.pt.n_family_members-1)
+            )
+            message_2 += " (%d)" % (self.pt.n_family_members - 1)
 
         else:
             message = _("Not a member of a known family")
@@ -3184,7 +3209,7 @@ class OpenmolarGui(QtGui.QMainWindow):
             email = self.ui.email2Edit.text()
         else:
             email = self.ui.email1Edit.text()
-        webbrowser.open("mailto:%s"% email)
+        webbrowser.open("mailto:%s" % email)
 
     def load_pt_statuses(self):
         ds = DistinctStatuses()
@@ -3193,13 +3218,12 @@ class OpenmolarGui(QtGui.QMainWindow):
     def load_fee_tables(self):
         localsettings.loadFeeTables()
         for warning in localsettings.FEETABLES.warnings:
-            self.advise(u"<b>%s</b><hr />%s"% (
-            _("error loading feetable"), warning)
-            ,2)
+            self.advise(u"<b>%s</b><hr />%s" % (
+                        _("error loading feetable"), warning), 2)
         self.ui.cseType_comboBox.addItems(localsettings.CSETYPES)
 
     def hide_rare_feescale_items(self, bool):
-        #TODO - this could actually have 3 levels.
+        # TODO - this could actually have 3 levels.
         if bool:
             level = 1
         else:
@@ -3233,7 +3257,10 @@ class OpenmolarGui(QtGui.QMainWindow):
 
         dl = AdvancedTxPlanningDialog(self)
         if dl.exec_():
-            manipulate_plan.complete_txs(self, tuple(dl.completed_items), False)
+            manipulate_plan.complete_txs(
+                self,
+                tuple(dl.completed_items),
+                False)
             manipulate_plan.reverse_txs(self, tuple(dl.reversed_items), False)
             if dl.new_plan_items:
                 _add_txs(dl.new_plan_items)
@@ -3241,41 +3268,41 @@ class OpenmolarGui(QtGui.QMainWindow):
                 _add_txs(dl.new_cmp_items, completed=True)
             if dl.deleted_plan_items:
                 manipulate_plan.remove_treatments_from_plan_and_est(
-                self, dl.deleted_plan_items)
+                    self, dl.deleted_plan_items)
             if dl.deleted_cmp_items:
                 manipulate_plan.remove_treatments_from_plan_and_est(
-                self, dl.deleted_cmp_items, completed=True)
+                    self, dl.deleted_cmp_items, completed=True)
             self.update_plan_est()
             self.updateDetails()
 
     def show_plan_chart_context_menu(self, att, values, point):
         QtCore.QTimer.singleShot(100, partial(
-        manipulate_plan.plan_viewer_context_menu, self, att, values, point))
+                                 manipulate_plan.plan_viewer_context_menu, self, att, values, point))
 
     def show_cmp_chart_context_menu(self, att, values, point):
         # use singleShot to slow this down fractionally
         #(was occasionaly firing the Qmenu)
         QtCore.QTimer.singleShot(100, partial(
-        manipulate_plan.cmp_viewer_context_menu, self, att, values, point))
+                                 manipulate_plan.cmp_viewer_context_menu, self, att, values, point))
 
     def show_plan_listview_context_menu(self, point):
-        LOGGER.debug("plan listview pressed %s"% point)
+        LOGGER.debug("plan listview pressed %s" % point)
         QtCore.QTimer.singleShot(100,
-            partial(manipulate_plan.plan_list_right_click, self, point))
+                                 partial(manipulate_plan.plan_list_right_click, self, point))
 
     def handle_plan_listview_2xclick(self, index):
-        LOGGER.debug("plan listview 2xclick %s"% index)
+        LOGGER.debug("plan listview 2xclick %s" % index)
         manipulate_plan.plan_listview_2xclick(self, index)
 
     def show_cmp_listview_context_menu(self, point):
-        LOGGER.debug("completed listview pressed %s"% point)
+        LOGGER.debug("completed listview pressed %s" % point)
         # use singleShot to slow this down fractionally
         #(was occasionaly firing the Qmenu)
         QtCore.QTimer.singleShot(100,
-            partial(manipulate_plan.cmp_list_right_click, self, point))
+                                 partial(manipulate_plan.cmp_list_right_click, self, point))
 
     def handle_completed_listview_2xclick(self, index):
-        LOGGER.debug("completed listview 2xclick %s"% index)
+        LOGGER.debug("completed listview 2xclick %s" % index)
         manipulate_plan.completed_listview_2xclick(self, index)
 
     def set_surgery_number(self):
@@ -3286,7 +3313,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         if dialog.exec_():
             localsettings.surgeryno = dl.comboBox.currentIndex()
             localsettings.updateLocalSettings(
-            "surgeryno", str(localsettings.surgeryno))
+                "surgeryno", str(localsettings.surgeryno))
             return True
         return False
 
@@ -3312,7 +3339,8 @@ class OpenmolarGui(QtGui.QMainWindow):
         message = ""
         for l in traceback.format_exception(exc_type, exc_val, tracebackobj):
             message += l
-        self.advise('UNHANDLED EXCEPTION!<hr /><pre>%s'% message, 2)
+        self.advise('UNHANDLED EXCEPTION!<hr /><pre>%s' % message, 2)
+
 
 def main(app):
     '''
@@ -3326,7 +3354,7 @@ def main(app):
             data = f.read().strip("\n")
             f.close()
             if localsettings.hash_func(data) != \
-            '1fd0c27f4d65caaa10ef5ef6a714faf96ed44fdd':
+                    '1fd0c27f4d65caaa10ef5ef6a714faf96ed44fdd':
                 raise IOError("bad checksum")
             LOGGER.warning("allowing developer login")
         except:
@@ -3344,9 +3372,9 @@ if __name__ == "__main__":
     LOGGER.warning("dev mode in use - verbose logging")
     os.chdir(os.path.expanduser("~"))
 
-    LOGGER.debug("Qt Version: %s"% QtCore.QT_VERSION_STR)
-    LOGGER.debug("PyQt Version: %s"% QtCore.PYQT_VERSION_STR)
+    LOGGER.debug("Qt Version: %s" % QtCore.QT_VERSION_STR)
+    LOGGER.debug("PyQt Version: %s" % QtCore.PYQT_VERSION_STR)
     newapp = QtGui.QApplication(sys.argv)
     localsettings.operator = "NW"
-    #localsettings.station = "reception"
+    # localsettings.station = "reception"
     main(newapp)

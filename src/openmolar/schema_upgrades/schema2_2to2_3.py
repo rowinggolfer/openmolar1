@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2012 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# See the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 This module provides a function 'run' which will move data
@@ -24,9 +40,9 @@ from PyQt4 import QtGui, QtCore
 logging.basicConfig()
 
 SQLSTRINGS = [
-'drop table if exists est_link2',
+    'drop table if exists est_link2',
 
-'''
+    '''
 create table est_link2 (
   ix         int(11) unsigned not null auto_increment ,
   est_id     int(11),
@@ -37,24 +53,24 @@ PRIMARY KEY (ix),
 INDEX (est_id)
 )''',
 
-'create index est_link2_hash_index on est_link2(tx_hash)',
+    'create index est_link2_hash_index on est_link2(tx_hash)',
 ]
 
 SOURCE_QUERY = ('SELECT courseno, ix, category, type, completed '
-'FROM newestimates where type is not null '
-'ORDER BY serialno, courseno, category, type, completed DESC')
+                'FROM newestimates where type is not null '
+                'ORDER BY serialno, courseno, category, type, completed DESC')
 
 DEST_QUERY = ('insert into est_link2 (est_id, tx_hash, completed) '
-'values (%s, %s, %s)')
+              'values (%s, %s, %s)')
 
 CLEANUPSTRINGS = [
-'''
+    '''
 update est_link join est_link2
 on est_link.est_id = est_link2.est_id
 set est_link2.completed = est_link.completed,
 est_link2.daybook_id = est_link.daybook_id
 ''',
-'''
+    '''
 insert into est_link2 (est_id, daybook_id, tx_hash, completed)
 select est_link.est_id, est_link.daybook_id, "BAD_HASH",
 est_link.completed from est_link left join est_link2
@@ -63,14 +79,16 @@ on est_link.est_id=est_link2.est_id where est_link2.tx_hash is NULL
 ]
 
 
-
 class UpdateException(Exception):
+
     '''
     A custom exception. If this is thrown the db will be rolled back
     '''
     pass
 
+
 class dbUpdater(QtCore.QThread):
+
     def __init__(self, parent=None):
         super(dbUpdater, self).__init__(parent)
         self.stopped = False
@@ -102,15 +120,17 @@ class dbUpdater(QtCore.QThread):
             for sql_string in sql_strings:
                 try:
                     cursor.execute(sql_string)
-                except connect.GeneralError, e:
-                    print "FAILURE in executing sql statement",  e
-                    print "erroneous statement was ",sql_string
+                except connect.GeneralError as e:
+                    print "FAILURE in executing sql statement", e
+                    print "erroneous statement was ", sql_string
                     if 1060 in e.args:
                         print "continuing, as column already exists issue"
-                self.progressSig(2+70*i/commandNo,sql_string[:40]+"...")
+                self.progressSig(
+                    2 + 70 * i / commandNo,
+                    sql_string[:40] + "...")
             sucess = True
-        except Exception, e:
-            print "FAILURE in executing sql statements",  e
+        except Exception as e:
+            print "FAILURE in executing sql statements", e
             db.rollback()
         if sucess:
             db.commit()
@@ -142,14 +162,14 @@ class dbUpdater(QtCore.QThread):
             self.progressSig(100, _("updating stored schema version"))
             self.completed = True
             self.completeSig(_("ALL DONE - sucessfully moved db to")
-            + " 2.3")
+                             + " 2.3")
 
-        except UpdateException, e:
+        except UpdateException as e:
             localsettings.CLIENT_SCHEMA_VERSION = "2.2"
             self.completeSig(_("rolled back to") + " 2.2")
 
         except Exception as exc:
-            logging.exception ("Exception caught")
+            logging.exception("Exception caught")
             self.completeSig(str(exc))
 
         return self.completed
@@ -171,7 +191,7 @@ class dbUpdater(QtCore.QThread):
             prev_hash = None
             for i, row in enumerate(rows):
                 courseno, ix, category, type_, completed = row
-                cat_type = "%s%s"% (category, type_)
+                cat_type = "%s%s" % (category, type_)
                 if courseno != prev_courseno:
                     count = 1
                 elif cat_type != prev_cat_type:
@@ -182,16 +202,16 @@ class dbUpdater(QtCore.QThread):
                 prev_courseno = courseno
                 prev_cat_type = cat_type
 
-                tx_hash= localsettings.hash_func(
-                    "%s%s%s%s"% (courseno, category, count, type_))
+                tx_hash = localsettings.hash_func(
+                    "%s%s%s%s" % (courseno, category, count, type_))
 
                 if completed is None:
                     completed = False
                 values = (ix, tx_hash, completed)
                 cursor.execute(DEST_QUERY, values)
                 if i % 1000 == 0:
-                    self.progressSig(85 * i/len(rows) + 10,
-                    _("transfering data"))
+                    self.progressSig(85 * i / len(rows) + 10,
+                                     _("transfering data"))
             db.commit()
             db.close()
         except Exception as exc:

@@ -1,9 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009-2013 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from openmolar.connect import connect
 from openmolar.settings import localsettings
@@ -24,6 +41,7 @@ DELETE_QUERY = "update ptmemos set open = 0 where ix=%s"
 
 
 class Memo(object):
+
     def __init__(self):
         self.ix = None
         self.serialno = 0
@@ -36,6 +54,7 @@ class Memo(object):
 
     def setMessage(self, arg):
         self.message = arg
+
 
 def get_memos(serialno):
 
@@ -65,12 +84,14 @@ def get_memos(serialno):
 
         yield memo
 
+
 def deleteMemo(ix):
     db = connect()
     cursor = db.cursor()
     cursor.execute(DELETE_QUERY, (ix,))
     cursor.close()
     db.commit()
+
 
 def saveMemo(serialno, author, type, expire, message, open):
     '''
@@ -87,6 +108,7 @@ def saveMemo(serialno, author, type, expire, message, open):
 
     return result
 
+
 def html_history(serialno):
     db = connect()
     cursor = db.cursor()
@@ -100,13 +122,13 @@ def html_history(serialno):
             <body>
                 <h1>%s</h1>
             </body>
-        </html>'''% _("No memo history found")
+        </html>''' % _("No memo history found")
 
     html = u'''<html>
         <body>
             <h1>%s</h1>
             <table width = '100%%' border="1">
-    '''% _("Memo History")
+    ''' % _("Memo History")
 
     html += u'''<tr>
             <th>%s</th>

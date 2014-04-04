@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# See the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 This module provides a function 'run' which will move data
@@ -18,24 +34,24 @@ from openmolar import connect
 from PyQt4 import QtGui, QtCore
 
 SQLSTRINGS = [
-'''
+    '''
 alter table aslot
 add column timestamp timestamp not null default CURRENT_TIMESTAMP
 ''',
-'DROP TABLE if exists phrasebook',
-'''
+    'DROP TABLE if exists phrasebook',
+    '''
 CREATE TABLE if not exists phrasebook (
 clinician_id int unsigned NOT NULL,
 phrases text,
 PRIMARY KEY (clinician_id) )
 ''',
-'drop table if exists feetable_HDP',
-'drop table if exists feetable_Private_2009',
-'drop table if exists feetable_Private_2010',
-'drop table if exists feetable_scotNHS_08_Adult',
-'drop table if exists feetable_scotNHS_08_Child',
-'drop table if exists feetable_scotNHS_09_Adult',
-'drop table if exists feetable_scotNHS_09_Child',
+    'drop table if exists feetable_HDP',
+    'drop table if exists feetable_Private_2009',
+    'drop table if exists feetable_Private_2010',
+    'drop table if exists feetable_scotNHS_08_Adult',
+    'drop table if exists feetable_scotNHS_08_Child',
+    'drop table if exists feetable_scotNHS_09_Adult',
+    'drop table if exists feetable_scotNHS_09_Child',
 ]
 
 EXAMPLE_PHRASEBOOK = '''<?xml version="1.0" ?>
@@ -79,12 +95,15 @@ EXAMPLE_PHRASEBOOK = '''<?xml version="1.0" ?>
 
 
 class UpdateException(Exception):
+
     '''
     A custom exception. If this is thrown the db will be rolled back
     '''
     pass
 
+
 class dbUpdater(QtCore.QThread):
+
     def __init__(self, parent=None):
         super(dbUpdater, self).__init__(parent)
         self.stopped = False
@@ -116,15 +135,17 @@ class dbUpdater(QtCore.QThread):
             for sql_string in SQLSTRINGS:
                 try:
                     cursor.execute(sql_string)
-                except connect.GeneralError, e:
-                    print "FAILURE in executing sql statement",  e
-                    print "erroneous statement was ",sql_string
+                except connect.GeneralError as e:
+                    print "FAILURE in executing sql statement", e
+                    print "erroneous statement was ", sql_string
                     if 1060 in e.args:
                         print "continuing, as column already exists issue"
-                self.progressSig(10+70*i/commandNo,sql_string[:20]+"...")
+                self.progressSig(
+                    10 + 70 * i / commandNo,
+                    sql_string[:20] + "...")
             sucess = True
-        except Exception, e:
-            print "FAILURE in executing sql statements",  e
+        except Exception as e:
+            print "FAILURE in executing sql statements", e
             db.rollback()
         if sucess:
             db.commit()
@@ -138,7 +159,7 @@ class dbUpdater(QtCore.QThread):
         '''
 
         db = connect.connect()
-        cursor=db.cursor()
+        cursor = db.cursor()
 
         query = "insert into phrasebook values (%s, %s)"
         values = (0, EXAMPLE_PHRASEBOOK)
@@ -174,14 +195,14 @@ class dbUpdater(QtCore.QThread):
             self.progressSig(100, _("updating stored schema version"))
             self.completed = True
             self.completeSig(_("ALL DONE - sucessfully moved db to")
-            + " 1.8")
+                             + " 1.8")
 
-        except UpdateException, e:
+        except UpdateException as e:
             localsettings.CLIENT_SCHEMA_VERSION = "1.7"
             self.completeSig(_("rolled back to") + " 1.7")
 
-        except Exception, e:
-            print "Exception caught",e
+        except Exception as e:
+            print "Exception caught", e
             self.completeSig(str(e))
 
         return self.completed

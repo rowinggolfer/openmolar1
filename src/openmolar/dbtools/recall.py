@@ -1,9 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import sys
 import types
@@ -12,15 +29,18 @@ from openmolar.connect import connect
 from datetime import date
 
 HEADERS = (
-_("Letter No"), _("Serial No"), _("Title"), _("First Name"), _("Surname"),
-_("Age"),
-_("Address") + " 1",_("Address")+" 2",_("Address")+" 3", _("Town"),
-_("County"), _("PostCode"), _("Dentist"), _("Family No"),_("Recall Date"))
+    _("Letter No"), _("Serial No"), _("Title"), _("First Name"), _("Surname"),
+    _("Age"),
+    _("Address") + " 1", _("Address") + " 2", _("Address") + " 3", _("Town"),
+    _("County"), _("PostCode"), _("Dentist"), _("Family No"), _("Recall Date"))
+
 
 class RecalledPatient(object):
+
     '''
     a data object to store a recalled patient's details
     '''
+
     def __init__(self, letterno, row):
         self.letterno = letterno
         self.grouped = False
@@ -28,7 +48,7 @@ class RecalledPatient(object):
         self.title = row[1].title()
         self.fname = row[2].title()
         self.sname = row[3].title()
-        self.dnt1 = localsettings.ops.get(row[4],"??")
+        self.dnt1 = localsettings.ops.get(row[4], "??")
         if row[5] == 0:
             self.familyno = None
         else:
@@ -36,11 +56,11 @@ class RecalledPatient(object):
         self._dob = row[6]
         self.addr1 = row[7].strip()
 
-        self.addr2 = row[8] if row[8] != None else ""
-        self.addr3 = row[9] if row[9] != None else ""
-        self.town = row[10] if row[10] != None else ""
-        self.county = row[11] if row[11] != None else ""
-        self.pcde = row[12] if row[12] != None else ""
+        self.addr2 = row[8] if row[8] is not None else ""
+        self.addr3 = row[9] if row[9] is not None else ""
+        self.town = row[10] if row[10] is not None else ""
+        self.county = row[11] if row[11] is not None else ""
+        self.pcde = row[12] if row[12] is not None else ""
         self.recd = row[13]
 
     def __getitem__(self, pos):
@@ -87,8 +107,8 @@ class RecalledPatient(object):
         today = localsettings.currentDay()
         try:
             nextbirthday = date(today.year, self._dob.month, self._dob.day)
-        except ValueError:#leap year!
-            nextbirthday = date(today.year, self._dob.month, self._dob.day-1)
+        except ValueError:  # leap year!
+            nextbirthday = date(today.year, self._dob.month, self._dob.day - 1)
         ageYears = today.year - self._dob.year
         if nextbirthday > today:
             ageYears -= 1
@@ -101,26 +121,27 @@ class RecalledPatient(object):
         '''
         allow comparison based on family number and address line 1
         '''
-        if type(self) != type(other) or self.familyno in (None, 0):
+        if not isinstance(self, type(other)) or self.familyno in (None, 0):
             return cmp(0, 1)
         else:
             return cmp(
-            (self.familyno, self.addr1),
-            (other.familyno, other.addr1)
+                (self.familyno, self.addr1),
+                (other.familyno, other.addr1)
             )
 
     def __repr__(self):
         '''
         represent the object
         '''
-        return "%s %s %s"% (self.serialno, self.sname, self.fname)
+        return "%s %s %s" % (self.serialno, self.sname, self.fname)
+
 
 def getpatients(conditions="", values=()):
     '''
     returns patients with a recall between the two dates
     '''
-    assert type(conditions) == types.StringType, "conditions must be a string"
-    assert type(values) == types.TupleType, "values must be a tuple"
+    assert isinstance(conditions, bytes), "conditions must be a string"
+    assert isinstance(values, tuple), "values must be a tuple"
     query = '''
     select patients.serialno, title, fname, sname, dnt1, familyno, dob,
     addr1, addr2, addr3, town, county, pcde, recdent
@@ -156,6 +177,6 @@ def getpatients(conditions="", values=()):
 if __name__ == "__main__":
     localsettings.initiate()
     conditions = "recd>=%s and recd<=%s and dnt1=%s"
-    values = date(2012,7,1), date(2012,7,31), 6
+    values = date(2012, 7, 1), date(2012, 7, 31), 6
     patients = getpatients(conditions, values)
     print patients

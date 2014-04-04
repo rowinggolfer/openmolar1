@@ -1,11 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for
-# more details.
 
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from PyQt4 import QtGui, QtCore
 from openmolar.qt4gui.compiled_uis import Ui_activeDentStartFinish
@@ -14,29 +29,32 @@ from openmolar.qt4gui.customwidgets import fiveminutetimeedit
 from openmolar.settings import localsettings
 from openmolar.dbtools import appointments
 
+
 class adayData():
+
     '''
     a custom data structure to stor data
     '''
-    def __init__(self,dent):
+
+    def __init__(self, dent):
         self.apptix = localsettings.apptix.get(dent)
         self.dent = dent
         self.active = False
-        self.start = QtCore.QTime(8,30)
-        self.finish = QtCore.QTime(18,0)
+        self.start = QtCore.QTime(8, 30)
+        self.finish = QtCore.QTime(18, 0)
         self.memo = ""
 
-    def setStart(self,arg):
+    def setStart(self, arg):
         '''
         takes a time in form 800 (==8:00)
         '''
-        self.start = QtCore.QTime(arg/100,arg%100)
+        self.start = QtCore.QTime(arg / 100, arg % 100)
 
-    def setFinish(self,arg):
+    def setFinish(self, arg):
         '''
         takes a time in form 800 (==8:00)
         '''
-        self.finish = QtCore.QTime(arg/100,arg%100)
+        self.finish = QtCore.QTime(arg / 100, arg % 100)
 
     def sqlStart(self):
         '''
@@ -50,43 +68,45 @@ class adayData():
         '''
         return int(self.finish.toString("hmm"))
 
-    def setMemo(self,arg):
-        if arg != None:
+    def setMemo(self, arg):
+        if arg is not None:
             self.memo = arg
 
     def __repr__(self):
-        return"%s %s %s %s %s %s"%(
-        self.apptix,self.dent,self.active,self.start,self.finish,self.memo)
+        return"%s %s %s %s %s %s" % (
+            self.apptix, self.dent, self.active, self.start, self.finish, self.memo)
 
     def __cmp__(self, other):
         eq = 0
         if (self.active != other.active or self.start != other.start or
-        self.finish != other.finish or self.memo != other.memo):
+           self.finish != other.finish or self.memo != other.memo):
             eq = 1
         return eq
 
 
 class dentWidget(Ui_activeDentStartFinish.Ui_Form):
+
     '''
     a custom widget collection to get user input
     '''
-    def __init__(self,widget):
+
+    def __init__(self, widget):
         self.setupUi(widget)
 
         QtCore.QObject.connect(self.checkBox,
-        QtCore.SIGNAL("stateChanged(int)"),self.toggle)
+                               QtCore.SIGNAL("stateChanged(int)"), self.toggle)
 
         self.addTimeEdits()
 
     def addTimeEdits(self):
         self.start_timeEdit = \
-        fiveminutetimeedit.FiveMinuteTimeEdit(self.widget)
+            fiveminutetimeedit.FiveMinuteTimeEdit(self.widget)
 
         l = QtGui.QVBoxLayout(self.widget)
         l.addWidget(self.start_timeEdit)
 
         self.finish_timeEdit = \
-        fiveminutetimeedit.FiveMinuteTimeEdit(self.widget_2)
+            fiveminutetimeedit.FiveMinuteTimeEdit(self.widget_2)
 
         l = QtGui.QVBoxLayout(self.widget_2)
         l.addWidget(self.finish_timeEdit)
@@ -95,11 +115,11 @@ class dentWidget(Ui_activeDentStartFinish.Ui_Form):
 
         self.finish_timeEdit.setMaximumTime(localsettings.latestFinish)
 
-    def toggle(self,arg):
+    def toggle(self, arg):
         self.start_timeEdit.setEnabled(arg)
         self.finish_timeEdit.setEnabled(arg)
 
-    def setData(self,arg):
+    def setData(self, arg):
         '''
         set the data with an instance of adayData
         '''
@@ -112,25 +132,28 @@ class dentWidget(Ui_activeDentStartFinish.Ui_Form):
         self.finish_timeEdit.setTime(arg.finish)
         self.lineEdit.setText(arg.memo)
 
+
 class alterDayDialog(Ui_aslotEdit.Ui_Dialog):
+
     '''
     a custom dialog to enter the start dates, end dates and availability
     of a clinician
     '''
+
     def __init__(self, diary_widget, date):
-        #date passed in is a QDate
+        # date passed in is a QDate
         self.dialog = QtGui.QDialog(diary_widget)
         self.diary_widget = diary_widget
         self.setupUi(self.dialog)
         self.data_list = []
         self.date = date
         self.dialog.setWindowTitle(_("Clinician Times") +
-            " - %s"%date.toString())
+                                   " - %s" % date.toString())
         self.loadData()
         self.showItems()
 
         QtCore.QObject.connect(self.copy_pushButton,
-        QtCore.SIGNAL("clicked()"), self.copy_to_clipboard)
+                               QtCore.SIGNAL("clicked()"), self.copy_to_clipboard)
 
         self.pastebutton_orig_text = self.paste_pushButton.text()
         if diary_widget.alterAday_clipboard_date:
@@ -139,13 +162,13 @@ class alterDayDialog(Ui_aslotEdit.Ui_Dialog):
             self.paste_pushButton.setEnabled(False)
 
         QtCore.QObject.connect(self.paste_pushButton,
-        QtCore.SIGNAL("clicked()"), self.paste)
+                               QtCore.SIGNAL("clicked()"), self.paste)
 
     def setPasteButtonText(self):
         text = self.pastebutton_orig_text
 
         self.paste_pushButton.setText(text + " " + _("values from") +
-        " " + self.diary_widget.alterAday_clipboard_date.toString())
+                                      " " + self.diary_widget.alterAday_clipboard_date.toString())
 
     def copy_to_clipboard(self):
         self.diary_widget.alterAday_clipboard_date = self.date
@@ -154,7 +177,7 @@ class alterDayDialog(Ui_aslotEdit.Ui_Dialog):
         self.setPasteButtonText()
 
     def paste(self):
-        i=0
+        i = 0
         for clinician in self.diary_widget.alterAday_clipboard:
             dw = self.dentWidgets[i]
             dw.checkBox.setChecked(clinician.active)
@@ -215,15 +238,15 @@ class alterDayDialog(Ui_aslotEdit.Ui_Dialog):
             alteredClinician = updated_vals[i]
             if alteredClinician != clinician:
                 retarg.append(alteredClinician)
-            i+=1
+            i += 1
         return retarg
 
-    def applyChanges(self,changes):
+    def applyChanges(self, changes):
         d = self.date.toPyDate()
         changed = False
         for change in changes:
             changed = True
-            appointments.updateAday(d,change)
+            appointments.updateAday(d, change)
         return changed
 
     def getInput(self):
@@ -241,4 +264,3 @@ if __name__ == "__main__":
     dl = alterDayDialog(d_widg, date)
 
     print dl.getInput()
-

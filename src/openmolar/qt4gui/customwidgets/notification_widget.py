@@ -1,14 +1,32 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
 
-from PyQt4 import QtGui,QtCore
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
+
+from PyQt4 import QtGui, QtCore
 
 
 class notificationGB(QtGui.QWidget):
+
     '''
     a customised groupBox
     '''
@@ -28,8 +46,7 @@ class notificationGB(QtGui.QWidget):
         self.label = QtGui.QLabel()
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setStyleSheet("color: red")
-        #self.label.setWordWrap(True)
-
+        # self.label.setWordWrap(True)
 
         icon = QtGui.QIcon.fromTheme(
             "window-close", QtGui.QIcon(":/quit.png"))
@@ -40,10 +57,10 @@ class notificationGB(QtGui.QWidget):
         self.line.setFrameShape(QtGui.QFrame.HLine)
         self.line.setFrameShadow(QtGui.QFrame.Sunken)
 
-        self.layout.addWidget(self.t_label,0,0)
-        self.layout.addWidget(self.label,1,0)
-        self.layout.addWidget(self.but,0,1,2,1)
-        self.layout.addWidget(self.line,2,0,1,2)
+        self.layout.addWidget(self.t_label, 0, 0)
+        self.layout.addWidget(self.label, 1, 0)
+        self.layout.addWidget(self.but, 0, 1, 2, 1)
+        self.layout.addWidget(self.line, 2, 0, 1, 2)
 
         self.line.hide()
 
@@ -60,9 +77,8 @@ class notificationGB(QtGui.QWidget):
         set the label's text
         '''
         t = QtCore.QTime.currentTime()
-        self.t_label.setText("<b>%s:%02d</b>"% (t.hour(), t.minute()))
+        self.t_label.setText("<b>%s:%02d</b>" % (t.hour(), t.minute()))
         self.label.setText(message)
-
 
     def set_minimised(self, bool_):
         for widg in (self.but, self.t_label, self.label):
@@ -75,12 +91,15 @@ class notificationGB(QtGui.QWidget):
         '''
         self.acknowledged.emit()
 
+
 class notificationWidget(QtGui.QWidget):
+
     '''
     a custom widget which contains children which come and go
     '''
+
     def __init__(self, parent=None):
-        super(notificationWidget,self).__init__(parent)
+        super(notificationWidget, self).__init__(parent)
         self.layout = QtGui.QVBoxLayout(self)
         self.layout.setMargin(0)
         self.widgets = []
@@ -122,22 +141,23 @@ if __name__ == "__main__":
     from functools import partial
 
     def test(arg=None):
-        print "clicked = ",arg
+        print "clicked = ", arg
 
     app = QtGui.QApplication([])
     form = QtGui.QMainWindow()
     form.setMinimumWidth(300)
 
     nw = notificationWidget(form)
-    QtCore.QObject.connect(nw,QtCore.SIGNAL("clicked()"), test)
+    QtCore.QObject.connect(nw, QtCore.SIGNAL("clicked()"), test)
 
     for i in range(5):
-        QtCore.QTimer.singleShot(i*3000,
-            partial(nw.addMessage, "This is test message %d"% (i+1))
-            )
+        QtCore.QTimer.singleShot(i * 3000,
+                                 partial(
+                                 nw.addMessage, "This is test message %d" %
+                                 (i + 1))
+                                 )
 
     form.setCentralWidget(nw)
     form.show()
 
     app.exec_()
-

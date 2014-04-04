@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License
-# for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import logging
 
@@ -18,7 +34,9 @@ LOGGER = logging.getLogger("openmolar")
 QUERY = '''SELECT title, fname, sname, dob, cset, dnt1, dnt2
 from patients where serialno = %s'''
 
+
 class BriefPatient(object):
+
     '''
     has a tiny percentage of the footprint (and loading time) of the
     main patient class
@@ -50,11 +68,11 @@ class BriefPatient(object):
             raise localsettings.PatientNotFoundError
 
         self.title, self.fname, self.sname, \
-        self.dob, self.cset, self.dnt1, self.dnt2 = row
+            self.dob, self.cset, self.dnt1, self.dnt2 = row
 
     @property
     def name_id(self):
-        return u"%s %s %s - %s"% (
+        return u"%s %s %s - %s" % (
             self.title, self.fname, self.sname, self.serialno)
 
     @property
@@ -72,7 +90,7 @@ class BriefPatient(object):
         return self._appt_memo
 
     def set_appt_memo(self, memo):
-        LOGGER.debug("BriefPatient.set_appt_memo(%s"% memo)
+        LOGGER.debug("BriefPatient.set_appt_memo(%s" % memo)
         db = connect.connect()
         cursor = db.cursor()
         query = 'replace into appt_prefs (serialno, note) values (%s, %s)'
@@ -86,12 +104,11 @@ class BriefPatient(object):
         return self._appt_prefs
 
 
-
-if __name__ =="__main__":
+if __name__ == "__main__":
     try:
-        serialno=int(sys.argv[len(sys.argv)-1])
+        serialno = int(sys.argv[len(sys.argv) - 1])
     except:
-        serialno=11956
+        serialno = 11956
 
     pt = BriefPatient(serialno)
     for att in pt.__dict__.keys():

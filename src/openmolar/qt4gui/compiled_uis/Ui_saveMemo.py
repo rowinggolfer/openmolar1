@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/saveMemo.ui'
@@ -17,6 +18,7 @@ except AttributeError:
 
 
 class Ui_Dialog(object):
+
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
         Dialog.resize(584, 236)
@@ -32,10 +34,12 @@ class Ui_Dialog(object):
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.noExpire_radioButton = QtGui.QRadioButton(self.groupBox_2)
         self.noExpire_radioButton.setChecked(True)
-        self.noExpire_radioButton.setObjectName(_fromUtf8("noExpire_radioButton"))
+        self.noExpire_radioButton.setObjectName(
+            _fromUtf8("noExpire_radioButton"))
         self.gridLayout.addWidget(self.noExpire_radioButton, 0, 0, 1, 1)
         self.dateExpire_radioButton = QtGui.QRadioButton(self.groupBox_2)
-        self.dateExpire_radioButton.setObjectName(_fromUtf8("dateExpire_radioButton"))
+        self.dateExpire_radioButton.setObjectName(
+            _fromUtf8("dateExpire_radioButton"))
         self.gridLayout.addWidget(self.dateExpire_radioButton, 1, 0, 1, 1)
         self.dateEdit = QtGui.QDateEdit(self.groupBox_2)
         self.dateEdit.setObjectName(_fromUtf8("dateEdit"))
@@ -47,13 +51,16 @@ class Ui_Dialog(object):
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.viewAll_radioButton = QtGui.QRadioButton(self.groupBox_3)
         self.viewAll_radioButton.setChecked(True)
-        self.viewAll_radioButton.setObjectName(_fromUtf8("viewAll_radioButton"))
+        self.viewAll_radioButton.setObjectName(
+            _fromUtf8("viewAll_radioButton"))
         self.verticalLayout.addWidget(self.viewAll_radioButton)
         self.viewSurgery_radioButton = QtGui.QRadioButton(self.groupBox_3)
-        self.viewSurgery_radioButton.setObjectName(_fromUtf8("viewSurgery_radioButton"))
+        self.viewSurgery_radioButton.setObjectName(
+            _fromUtf8("viewSurgery_radioButton"))
         self.verticalLayout.addWidget(self.viewSurgery_radioButton)
         self.viewReception_radioButton = QtGui.QRadioButton(self.groupBox_3)
-        self.viewReception_radioButton.setObjectName(_fromUtf8("viewReception_radioButton"))
+        self.viewReception_radioButton.setObjectName(
+            _fromUtf8("viewReception_radioButton"))
         self.verticalLayout.addWidget(self.viewReception_radioButton)
         self.gridLayout_2.addWidget(self.groupBox_3, 1, 1, 2, 1)
         self.groupBox = QtGui.QGroupBox(Dialog)
@@ -65,17 +72,25 @@ class Ui_Dialog(object):
         self.verticalLayout_2.addWidget(self.author_comboBox)
         self.gridLayout_2.addWidget(self.groupBox, 1, 2, 1, 1)
         self.phraseBook_pushButton = QtGui.QPushButton(Dialog)
-        self.phraseBook_pushButton.setObjectName(_fromUtf8("phraseBook_pushButton"))
+        self.phraseBook_pushButton.setObjectName(
+            _fromUtf8("phraseBook_pushButton"))
         self.gridLayout_2.addWidget(self.phraseBook_pushButton, 1, 3, 1, 1)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Save)
+        self.buttonBox.setStandardButtons(
+            QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Save)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
         self.gridLayout_2.addWidget(self.buttonBox, 2, 2, 1, 2)
 
         self.retranslateUi(Dialog)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Dialog.reject)
+        QtCore.QObject.connect(
+            self.buttonBox,
+            QtCore.SIGNAL(_fromUtf8("accepted()")),
+            Dialog.accept)
+        QtCore.QObject.connect(
+            self.buttonBox,
+            QtCore.SIGNAL(_fromUtf8("rejected()")),
+            Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -101,4 +116,3 @@ if __name__ == "__main__":
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())
-

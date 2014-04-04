@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/payments.ui'
@@ -17,6 +18,7 @@ except AttributeError:
 
 
 class Ui_Dialog(object):
+
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
         Dialog.setWindowModality(QtCore.Qt.ApplicationModal)
@@ -28,7 +30,8 @@ class Ui_Dialog(object):
         self.gridLayout_2 = QtGui.QGridLayout(self.groupBox_2)
         self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
         self.label = QtGui.QLabel(self.groupBox_2)
-        self.label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label.setObjectName(_fromUtf8("label"))
         self.gridLayout_2.addWidget(self.label, 0, 0, 1, 1)
         self.cash_pushButton = QtGui.QPushButton(self.groupBox_2)
@@ -36,7 +39,8 @@ class Ui_Dialog(object):
         self.cash_pushButton.setObjectName(_fromUtf8("cash_pushButton"))
         self.gridLayout_2.addWidget(self.cash_pushButton, 0, 2, 1, 1)
         self.label_2 = QtGui.QLabel(self.groupBox_2)
-        self.label_2.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_2.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.gridLayout_2.addWidget(self.label_2, 1, 0, 1, 1)
         self.cheque_pushButton = QtGui.QPushButton(self.groupBox_2)
@@ -44,7 +48,8 @@ class Ui_Dialog(object):
         self.cheque_pushButton.setObjectName(_fromUtf8("cheque_pushButton"))
         self.gridLayout_2.addWidget(self.cheque_pushButton, 1, 2, 1, 1)
         self.label_3 = QtGui.QLabel(self.groupBox_2)
-        self.label_3.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_3.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.gridLayout_2.addWidget(self.label_3, 2, 0, 1, 1)
         self.debit_pushButton = QtGui.QPushButton(self.groupBox_2)
@@ -52,7 +57,8 @@ class Ui_Dialog(object):
         self.debit_pushButton.setObjectName(_fromUtf8("debit_pushButton"))
         self.gridLayout_2.addWidget(self.debit_pushButton, 2, 2, 1, 1)
         self.label_4 = QtGui.QLabel(self.groupBox_2)
-        self.label_4.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_4.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_4.setObjectName(_fromUtf8("label_4"))
         self.gridLayout_2.addWidget(self.label_4, 3, 0, 1, 1)
         self.credit_pushButton = QtGui.QPushButton(self.groupBox_2)
@@ -63,29 +69,34 @@ class Ui_Dialog(object):
         self.cash_lineEdit.setMinimumSize(QtCore.QSize(70, 0))
         self.cash_lineEdit.setMaximumSize(QtCore.QSize(70, 16777215))
         self.cash_lineEdit.setMaxLength(10)
-        self.cash_lineEdit.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.cash_lineEdit.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.cash_lineEdit.setObjectName(_fromUtf8("cash_lineEdit"))
         self.gridLayout_2.addWidget(self.cash_lineEdit, 0, 1, 1, 1)
         self.cheque_lineEdit = QtGui.QLineEdit(self.groupBox_2)
         self.cheque_lineEdit.setMinimumSize(QtCore.QSize(70, 0))
         self.cheque_lineEdit.setMaximumSize(QtCore.QSize(70, 16777215))
         self.cheque_lineEdit.setMaxLength(10)
-        self.cheque_lineEdit.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.cheque_lineEdit.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.cheque_lineEdit.setObjectName(_fromUtf8("cheque_lineEdit"))
         self.gridLayout_2.addWidget(self.cheque_lineEdit, 1, 1, 1, 1)
         self.debitCard_lineEdit = QtGui.QLineEdit(self.groupBox_2)
         self.debitCard_lineEdit.setMinimumSize(QtCore.QSize(70, 0))
         self.debitCard_lineEdit.setMaximumSize(QtCore.QSize(70, 16777215))
         self.debitCard_lineEdit.setMaxLength(10)
-        self.debitCard_lineEdit.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.debitCard_lineEdit.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.debitCard_lineEdit.setObjectName(_fromUtf8("debitCard_lineEdit"))
         self.gridLayout_2.addWidget(self.debitCard_lineEdit, 2, 1, 1, 1)
         self.creditCard_lineEdit = QtGui.QLineEdit(self.groupBox_2)
         self.creditCard_lineEdit.setMinimumSize(QtCore.QSize(70, 0))
         self.creditCard_lineEdit.setMaximumSize(QtCore.QSize(70, 16777215))
         self.creditCard_lineEdit.setMaxLength(10)
-        self.creditCard_lineEdit.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.creditCard_lineEdit.setObjectName(_fromUtf8("creditCard_lineEdit"))
+        self.creditCard_lineEdit.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
+        self.creditCard_lineEdit.setObjectName(
+            _fromUtf8("creditCard_lineEdit"))
         self.gridLayout_2.addWidget(self.creditCard_lineEdit, 3, 1, 1, 1)
         self.verticalLayout.addWidget(self.groupBox_2)
         self.groupBox = QtGui.QGroupBox(Dialog)
@@ -94,36 +105,42 @@ class Ui_Dialog(object):
         self.gridLayout = QtGui.QGridLayout(self.groupBox)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.label_8 = QtGui.QLabel(self.groupBox)
-        self.label_8.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_8.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_8.setObjectName(_fromUtf8("label_8"))
         self.gridLayout.addWidget(self.label_8, 0, 0, 1, 1)
         self.sundries_lineEdit = QtGui.QLineEdit(self.groupBox)
         self.sundries_lineEdit.setMinimumSize(QtCore.QSize(70, 0))
         self.sundries_lineEdit.setMaximumSize(QtCore.QSize(70, 16777215))
         self.sundries_lineEdit.setMaxLength(10)
-        self.sundries_lineEdit.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.sundries_lineEdit.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.sundries_lineEdit.setObjectName(_fromUtf8("sundries_lineEdit"))
         self.gridLayout.addWidget(self.sundries_lineEdit, 0, 1, 1, 1)
         self.label_7 = QtGui.QLabel(self.groupBox)
-        self.label_7.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_7.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_7.setObjectName(_fromUtf8("label_7"))
         self.gridLayout.addWidget(self.label_7, 1, 0, 1, 1)
         self.annualHDP_lineEdit = QtGui.QLineEdit(self.groupBox)
         self.annualHDP_lineEdit.setMinimumSize(QtCore.QSize(70, 0))
         self.annualHDP_lineEdit.setMaximumSize(QtCore.QSize(70, 16777215))
         self.annualHDP_lineEdit.setMaxLength(10)
-        self.annualHDP_lineEdit.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.annualHDP_lineEdit.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.annualHDP_lineEdit.setObjectName(_fromUtf8("annualHDP_lineEdit"))
         self.gridLayout.addWidget(self.annualHDP_lineEdit, 1, 1, 1, 1)
         self.label_9 = QtGui.QLabel(self.groupBox)
-        self.label_9.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_9.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_9.setObjectName(_fromUtf8("label_9"))
         self.gridLayout.addWidget(self.label_9, 2, 0, 1, 1)
         self.misc_lineEdit = QtGui.QLineEdit(self.groupBox)
         self.misc_lineEdit.setMinimumSize(QtCore.QSize(70, 0))
         self.misc_lineEdit.setMaximumSize(QtCore.QSize(70, 16777215))
         self.misc_lineEdit.setMaxLength(10)
-        self.misc_lineEdit.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.misc_lineEdit.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.misc_lineEdit.setObjectName(_fromUtf8("misc_lineEdit"))
         self.gridLayout.addWidget(self.misc_lineEdit, 2, 1, 1, 1)
         self.verticalLayout.addWidget(self.groupBox)
@@ -134,19 +151,24 @@ class Ui_Dialog(object):
         self.label_6.setObjectName(_fromUtf8("label_6"))
         self.horizontalLayout.addWidget(self.label_6)
         self.total_doubleSpinBox = QtGui.QDoubleSpinBox(Dialog)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        sizePolicy = QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Preferred,
+            QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.total_doubleSpinBox.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.total_doubleSpinBox.sizePolicy().hasHeightForWidth())
         self.total_doubleSpinBox.setSizePolicy(sizePolicy)
         self.total_doubleSpinBox.setMinimumSize(QtCore.QSize(80, 0))
         self.total_doubleSpinBox.setReadOnly(True)
         self.total_doubleSpinBox.setMaximum(20000.0)
-        self.total_doubleSpinBox.setObjectName(_fromUtf8("total_doubleSpinBox"))
+        self.total_doubleSpinBox.setObjectName(
+            _fromUtf8("total_doubleSpinBox"))
         self.horizontalLayout.addWidget(self.total_doubleSpinBox)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Apply|QtGui.QDialogButtonBox.Cancel)
+        self.buttonBox.setStandardButtons(
+            QtGui.QDialogButtonBox.Apply | QtGui.QDialogButtonBox.Cancel)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
         self.verticalLayout.addWidget(self.buttonBox)
         self.label.setBuddy(self.cash_lineEdit)
@@ -159,7 +181,10 @@ class Ui_Dialog(object):
         self.label_6.setBuddy(self.total_doubleSpinBox)
 
         self.retranslateUi(Dialog)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Dialog.reject)
+        QtCore.QObject.connect(
+            self.buttonBox,
+            QtCore.SIGNAL(_fromUtf8("rejected()")),
+            Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         Dialog.setTabOrder(self.cash_lineEdit, self.cheque_lineEdit)
         Dialog.setTabOrder(self.cheque_lineEdit, self.debitCard_lineEdit)
@@ -189,7 +214,8 @@ class Ui_Dialog(object):
         self.label_8.setText(_("Sundries"))
         self.label_7.setText(_("Annual HDP"))
         self.label_9.setText(_("Miscellaneous"))
-        self.label_6.setText(_("Amount which will appear on receipt  (read only)"))
+        self.label_6.setText(
+            _("Amount which will appear on receipt  (read only)"))
 
 
 if __name__ == "__main__":
@@ -202,4 +228,3 @@ if __name__ == "__main__":
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())
-

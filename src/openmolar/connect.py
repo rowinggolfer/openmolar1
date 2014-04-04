@@ -1,11 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009-2013 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# See the GNU General Public License for more details.
 
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''this module has one purpose... provide a connection to the mysqldatabase
 using 3rd party MySQLdb module'''
@@ -43,7 +58,7 @@ for command_node in command_nodes:
     for command in commands:
         command_list.append(command.firstChild.data)
     if command_list:
-        LOGGER.info("executing"% str(command_list))
+        LOGGER.info("executing" % str(command_list))
         subprocess.Popen(command_list)
 
 myHost = xmlnode.getElementsByTagName("location")[0].firstChild.data
@@ -58,20 +73,21 @@ if settingsversion == "1.1":
 
 myDb = xmlnode.getElementsByTagName("dbname")[0].firstChild.data
 
+
 def database_name():
-    return "%s %s:%s"% (myDb, myHost, myPort)
+    return "%s %s:%s" % (myDb, myHost, myPort)
 
 kwargs = {
-    "host":myHost,
-    "port":myPort,
-    "user":myUser,
-    "passwd":myPassword,
-    "db":myDb,
-    "use_unicode":True,
-    "charset":"utf8"
-    }
+    "host": myHost,
+    "port": myPort,
+    "user": myUser,
+    "passwd": myPassword,
+    "db": myDb,
+    "use_unicode": True,
+    "charset": "utf8"
+}
 
-if sslnode and sslnode[0].firstChild.data=="True":
+if sslnode and sslnode[0].firstChild.data == "True":
     #-- to enable ssl... add <ssl>True</ssl> to the conf file
     LOGGER.debug("using ssl")
     #-- note, dictionary could have up to 5 params.
@@ -88,10 +104,13 @@ ProgrammingError = MySQLdb.ProgrammingError
 IntegrityError = MySQLdb.IntegrityError
 OperationalError = MySQLdb.OperationalError
 
+
 class omSQLresult(object):
+
     '''
     a class used in returning the result of sql queries
     '''
+
     def __init__(self):
         self.message = ""
         self.number = 0
@@ -128,6 +147,7 @@ class omSQLresult(object):
         '''
         return self.number
 
+
 def connect():
     '''
     returns a MySQLdb object, connected to the database specified in the
@@ -140,7 +160,7 @@ def connect():
             if not (mainconnection and mainconnection.open):
                 LOGGER.info("New database connection needed")
                 LOGGER.debug(
-                    "connecting to %s on %s port %s"% (myDb, myHost, myPort))
+                    "connecting to %s on %s port %s" % (myDb, myHost, myPort))
 
                 mainconnection = MySQLdb.connect(**kwargs)
                 mainconnection.autocommit(True)
@@ -164,19 +184,19 @@ if __name__ == "__main__":
 
     LOGGER.setLevel(logging.DEBUG)
 
-    LOGGER.debug("using conffile -  %s"% localsettings.cflocation)
+    LOGGER.debug("using conffile -  %s" % localsettings.cflocation)
     for i in range(1, 11):
         try:
             LOGGER.debug("connecting....")
             dbc = connect()
             LOGGER.info(dbc.info())
             LOGGER.debug('ok... we can make Mysql connections!!')
-            LOGGER.debug("    loop no %d "% i)
+            LOGGER.debug("    loop no %d " % i)
             if i == 2:
-                #close the db... let's check it reconnects
+                # close the db... let's check it reconnects
                 dbc.close()
             if i == 4:
-                #make a slightly bad query... let's check we get a warning
+                # make a slightly bad query... let's check we get a warning
                 c = dbc.cursor()
                 c.execute(
                     'update patients set dob="196912091" where serialno=4')

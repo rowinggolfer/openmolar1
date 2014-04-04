@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# See the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 functions to open a course, close a course, or check if one is needed.
@@ -24,6 +40,7 @@ from openmolar.qt4gui.printing.gp17.gp17_printer import GP17Printer
 
 LOGGER = logging.getLogger("openmolar")
 
+
 def newCourseNeeded(om_gui):
     '''
     checks to see if the patient is under treatment.
@@ -33,33 +50,34 @@ def newCourseNeeded(om_gui):
         return False
     if om_gui.pt.treatment_course.cmpd != om_gui.pt.dbstate.treatment_course.cmpd:
         om_gui.advise(
-        _("Please save the old course changes before continuing"), 1)
+            _("Please save the old course changes before continuing"), 1)
         return True
 
-    ## before starting a new course.. check to see if one has been started
-    ## by another client.
+    # before starting a new course.. check to see if one has been started
+    # by another client.
 
     if om_gui.pt.newer_course_found:
         om_gui.ui.actionFix_Locked_New_Course_of_Treatment.setEnabled(True)
-        om_gui.advise(u"<p>%s<br />%s</p><hr /><em>%s</em>"%(
-        _("It looks as if another user is starting a course of treatment"),
-        _("Please allow this other user to commit their changes"
-        " then reload this record before continuing."),
-        _("If you are seeing this message and are sure no other user is"
-        " using this record, use menu-&gt;tools-&gt;"
-        "Fix Locked New Course of Treatment"))
-        , 1)
+        om_gui.advise(u"<p>%s<br />%s</p><hr /><em>%s</em>" % (
+                      _(
+                      "It looks as if another user is starting a course of treatment"),
+                      _("Please allow this other user to commit their changes"
+                        " then reload this record before continuing."),
+                      _("If you are seeing this message and are sure no other user is"
+                        " using this record, use menu-&gt;tools-&gt;"
+                        "Fix Locked New Course of Treatment")), 1)
 
     elif setupNewCourse(om_gui):
-        LOGGER.info("new course started with accd of '%s'"%
-            om_gui.pt.treatment_course.accd)
+        LOGGER.info("new course started with accd of '%s'" %
+                    om_gui.pt.treatment_course.accd)
         return False
     else:
-        om_gui.advise(u"<p>%s</p>"% _(
-        "unable to plan or perform treatment if"
-        " the patient does not have an active course"), 1)
+        om_gui.advise(u"<p>%s</p>" % _(
+                      "unable to plan or perform treatment if"
+                      " the patient does not have an active course"), 1)
 
     return True
+
 
 def setupNewCourse(om_gui):
     '''
@@ -67,7 +85,7 @@ def setupNewCourse(om_gui):
     '''
 
     if localsettings.clinicianNo != 0 and \
-    localsettings.clinicianInits in localsettings.activedents:
+            localsettings.clinicianInits in localsettings.activedents:
         #-- clinician could be a hygenist!
         cdnt = localsettings.clinicianNo
     elif om_gui.pt.dnt2 == 0:
@@ -78,9 +96,9 @@ def setupNewCourse(om_gui):
     dialog = QtGui.QDialog(om_gui)
 
     dl = newCourse.NewCourseDialog(dialog,
-        localsettings.ops.get(om_gui.pt.dnt1),
-        localsettings.ops.get(cdnt),
-        om_gui.pt.cset)
+                                   localsettings.ops.get(om_gui.pt.dnt1),
+                                   localsettings.ops.get(cdnt),
+                                   om_gui.pt.cset)
 
     result, atts = dl.getInput()
 
@@ -101,9 +119,10 @@ def setupNewCourse(om_gui):
         new_courseno = writeNewCourse.write(om_gui.pt.serialno, accd)
         return apply_new_courseno(om_gui, new_courseno, accd)
 
+
 def apply_new_courseno(om_gui, new_courseno, accd=None):
         new_course = om_gui.pt.new_tx_course(new_courseno)
-        #om_gui.pt.dbstate.treatment_course = new_course
+        # om_gui.pt.dbstate.treatment_course = new_course
         om_gui.pt.treatment_course.setAccd(accd)
         # force a recheck for the new course date
         om_gui.pt.forget_fee_table()
@@ -116,13 +135,14 @@ def apply_new_courseno(om_gui, new_courseno, accd=None):
         om_gui.load_receptionSummaryPage()
         om_gui.pt.addHiddenNote("open_course")
         om_gui.updateHiddenNotesLabel()
-        message = "%s<hr />%s <em>%s</em>"%(
+        message = "%s<hr />%s <em>%s</em>" % (
             _("Sucessfully started new course of treatment"),
             _("Using Feescale"),
             om_gui.pt.fee_table.briefName
-            )
+        )
         om_gui.advise(message, 1)
         return True
+
 
 def prompt_close_course(om_gui):
     '''
@@ -132,6 +152,7 @@ def prompt_close_course(om_gui):
     if "surgery" in localsettings.station and om_gui.pt.underTreatment:
         if not om_gui.pt.treatmentOutstanding():
             closeCourse(om_gui, True)
+
 
 def delete_new_course(om_gui):
     '''
@@ -143,6 +164,7 @@ def delete_new_course(om_gui):
         writeNewCourse.delete(
             om_gui.pt.serialno, om_gui.pt.treatment_course.courseno)
 
+
 def closeCourse(om_gui, leaving=False):
     '''
     allow the user to add a completion Date to a course of treatment
@@ -150,22 +172,23 @@ def closeCourse(om_gui, leaving=False):
     Dialog = QtGui.QDialog(om_gui)
     my_dialog = Ui_completionDate.Ui_Dialog()
     my_dialog.setupUi(Dialog)
-    my_dialog.pt_label.setText("%s %s - (%s)"% (om_gui.pt.fname,
-    om_gui.pt.sname, om_gui.pt.serialno))
+    my_dialog.pt_label.setText("%s %s - (%s)" % (om_gui.pt.fname,
+                                                 om_gui.pt.sname, om_gui.pt.serialno))
 
     if not leaving:
         my_dialog.autoComplete_label.hide()
     my_dialog.dateEdit.setMinimumDate(om_gui.pt.treatment_course.accd)
     my_dialog.dateEdit.setMaximumDate(QtCore.QDate().currentDate())
     my_dialog.dateEdit.setDate(QtCore.QDate().currentDate())
-    ##focus the "yes" button
+    # focus the "yes" button
     my_dialog.buttonBox.buttons()[0].setFocus()
 
     if (Dialog.exec_() and
-    QtGui.QMessageBox.question(om_gui, _("Confirm"),
-    _("are you sure you wish to close this course of treatment?"),
-    QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
-    QtGui.QMessageBox.Ok) == QtGui.QMessageBox.Ok):
+       QtGui.QMessageBox.question(om_gui, _("Confirm"),
+                                  _(
+                                  "are you sure you wish to close this course of treatment?"),
+                                  QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
+                                  QtGui.QMessageBox.Ok) == QtGui.QMessageBox.Ok):
 
         cmpd = my_dialog.dateEdit.date().toPyDate()
         om_gui.pt.treatment_course.setCmpd(cmpd)
@@ -188,14 +211,15 @@ def offerFinalPaperWork(om_gui):
         form_printer = GP17Printer(om_gui)
         form_printer.print_(final_paperwork=True)
 
+
 def resumeCourse(om_gui):
     '''
     resume the previous treatment course
     '''
     message = _("Resume the previous course of treatment?")
     result = QtGui.QMessageBox.question(om_gui, "Confirm", message,
-    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-    QtGui.QMessageBox.Yes )
+                                        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                                        QtGui.QMessageBox.Yes)
 
     if result == QtGui.QMessageBox.Yes:
         om_gui.pt.treatment_course.cmpd = None
@@ -205,6 +229,7 @@ def resumeCourse(om_gui):
 
         return True
 
+
 def fix_zombied_course(om_gui):
     '''
     a situation COULD arise where a new course was started and the client
@@ -212,18 +237,17 @@ def fix_zombied_course(om_gui):
     this functionality retrieves this.
     '''
     if not om_gui.pt and om_gui.pt.newer_course_found:
-        om_gui.advise(_("no zombied course found"),1)
+        om_gui.advise(_("no zombied course found"), 1)
         return
 
     message = _("a situation COULD arise where a new course was started"
-    " but the client lost connectivity crashed"
-    " (without cleaning up the temporary row in the currtrtmt2 table)")
+                " but the client lost connectivity crashed"
+                " (without cleaning up the temporary row in the currtrtmt2 table)")
     question = _("Do you wish to recover this row now?")
     if QtGui.QMessageBox.question(om_gui, _("question"),
-        u"%s<hr /><b>%s</b>" %(message, question),
-        QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
-        QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
+                                  u"%s<hr /><b>%s</b>" % (message, question),
+                                  QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                                  QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
 
         cno = om_gui.pt.max_tx_courseno
         apply_new_courseno(om_gui, cno)
-

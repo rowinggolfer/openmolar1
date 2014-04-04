@@ -1,50 +1,54 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2011-2012,  Neil Wallace <neil@openmolar.com>                  ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import logging
 import re
 from PyQt4 import QtGui, QtCore
 
 from openmolar.qt4gui.customwidgets.upper_case_line_edit import \
-UpperCaseLineEdit
+    UpperCaseLineEdit
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 from openmolar.qt4gui.customwidgets.simple_chartwidget import SimpleChartWidg
 
 LOGGER = logging.getLogger("openmolar")
 
 RETAINER_LIST = [
-("GO", _("Gold")),
-("V1", _("Bonded Porcelain")),
-("LAVA", _("Lava")),
-("OPAL", _("Opalite")),
-("EMAX", _("Emax")),
-("EVER", _("Everest")),
-("SR", _("Resin")),
-("OT", _("Other")),
+    ("GO", _("Gold")),
+    ("V1", _("Bonded Porcelain")),
+    ("LAVA", _("Lava")),
+    ("OPAL", _("Opalite")),
+    ("EMAX", _("Emax")),
+    ("EVER", _("Everest")),
+    ("SR", _("Resin")),
+    ("OT", _("Other")),
 ]
 
 PONTIC_LIST = RETAINER_LIST
 
+
 class _OptionPage(QtGui.QWidget):
+
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.dialog = parent
@@ -85,7 +89,9 @@ class _OptionPage(QtGui.QWidget):
     def cleanup(self):
         pass
 
+
 class PageZero(_OptionPage):
+
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
         self.upper_radioButton = QtGui.QRadioButton(_("Upper Bridge"))
@@ -98,7 +104,7 @@ class PageZero(_OptionPage):
     @property
     def is_completed(self):
         return (self.upper_radioButton.isChecked() or
-            self.lower_radioButton.isChecked())
+                self.lower_radioButton.isChecked())
 
     @property
     def properties(self):
@@ -106,7 +112,9 @@ class PageZero(_OptionPage):
             return (("arch", "upper"),)
         return (("arch", "lower"),)
 
+
 class PageOne(_OptionPage):
+
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
         self.label.setText(_("Bridge Type"))
@@ -120,7 +128,7 @@ class PageOne(_OptionPage):
     @property
     def is_completed(self):
         return (self.radioButton1.isChecked() or
-            self.radioButton2.isChecked())
+                self.radioButton2.isChecked())
 
     @property
     def properties(self):
@@ -128,7 +136,9 @@ class PageOne(_OptionPage):
             return (("type", "conventional"),)
         return (("type", "resin_retained"),)
 
+
 class PageTwo(_OptionPage):
+
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
         self.label.setText(_("Material"))
@@ -136,11 +146,11 @@ class PageTwo(_OptionPage):
         layout = QtGui.QGridLayout(self.frame)
         i = 0
         for shortcut, description in RETAINER_LIST:
-            if self.radio_buttons.has_key(shortcut):
+            if shortcut in self.radio_buttons:
                 LOGGER.warning("duplication in BRIDGE MATERIAL LIST")
                 continue
             rad_but = QtGui.QRadioButton(description)
-            layout.addWidget(rad_but, i//2, i%2)
+            layout.addWidget(rad_but, i // 2, i % 2)
             self.radio_buttons[shortcut] = rad_but
             i += 1
 
@@ -157,12 +167,14 @@ class PageTwo(_OptionPage):
             if rad_but.isChecked():
                 return (("material", shortcut),)
 
+
 class PageThree(_OptionPage):
+
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
         self.dl = parent
         self.label.setText(_(
-        "Please select teeth which are to be used as retainers"))
+                           "Please select teeth which are to be used as retainers"))
         self.chartwidg = SimpleChartWidg(self, auto_ctrl_key=True)
         layout = QtGui.QVBoxLayout(self.frame)
         layout.addWidget(self.chartwidg)
@@ -179,15 +191,17 @@ class PageThree(_OptionPage):
 
     @property
     def properties(self):
-        for tooth in  self.chartwidg.getSelected():
+        for tooth in self.chartwidg.getSelected():
             yield(tooth, "retainer")
 
+
 class PageFour(_OptionPage):
+
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
         self.dl = parent
         self.label.setText(_(
-        "Please select teeth which are to be used as pontics"))
+                           "Please select teeth which are to be used as pontics"))
         self.chartwidg = SimpleChartWidg(self, auto_ctrl_key=True)
         layout = QtGui.QVBoxLayout(self.frame)
         layout.addWidget(self.chartwidg)
@@ -204,19 +218,23 @@ class PageFour(_OptionPage):
 
     @property
     def properties(self):
-        for tooth in  self.chartwidg.getSelected():
+        for tooth in self.chartwidg.getSelected():
             yield(tooth, "pontic")
 
+
 class AcceptPage(_OptionPage):
+
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
-        self.label.setText("%s<hr />%s"% (
-        _("You have completed your input."),
-        _("Please click on Apply")))
+        self.label.setText("%s<hr />%s" % (
+                           _("You have completed your input."),
+                           _("Please click on Apply")))
         self.frame.hide()
 
+
 class NewBridgeDialog(ExtendableDialog):
-    def __init__(self, om_gui = None):
+
+    def __init__(self, om_gui=None):
         ExtendableDialog.__init__(self, om_gui)
 
         self.chosen_properties = {}
@@ -268,7 +286,7 @@ class NewBridgeDialog(ExtendableDialog):
     def next_widget(self):
         if not self.current_page.is_completed:
             QtGui.QMessageBox.information(self, _("Whoops"),
-            self.current_page.error_message)
+                                          self.current_page.error_message)
             return
 
         for key, value in self.current_page.properties:

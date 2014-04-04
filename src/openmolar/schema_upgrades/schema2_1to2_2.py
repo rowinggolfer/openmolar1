@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2012 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# See the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 This module provides a function 'run' which will move data
@@ -24,16 +40,16 @@ from PyQt4 import QtGui, QtCore
 logging.basicConfig()
 
 SQLSTRINGS = [
-'drop table if exists currtrtmt',
-'drop table if exists est_link',
-'drop table if exists feescales',
-'drop table est_logger',
-'update patients set addr2="" where addr2 is NULL',
-'update patients set addr3="" where addr3 is NULL',
-'update patients set town="" where town is NULL',
-'update patients set county="" where town is NULL',
+    'drop table if exists currtrtmt',
+    'drop table if exists est_link',
+    'drop table if exists feescales',
+    'drop table est_logger',
+    'update patients set addr2="" where addr2 is NULL',
+    'update patients set addr3="" where addr3 is NULL',
+    'update patients set town="" where town is NULL',
+    'update patients set county="" where town is NULL',
 
-'''
+    '''
 alter table patients
     alter column addr2 set default "",
     alter column addr3 set default "",
@@ -41,19 +57,19 @@ alter table patients
     alter column county set default ""
 ''',
 
-'''
+    '''
 alter table newestimates modify column itemcode char(5)
 ''',
 
-'''
+    '''
 update newestimates set itemcode="-----" where itemcode = "4001"
 ''',
 
-'''
+    '''
 update newestimates set itemcode="CUSTO" where itemcode = "4002"
 ''',
 
-'''
+    '''
 create table est_link (
   ix         int(11) unsigned not null auto_increment ,
   est_id     int(11),
@@ -64,9 +80,9 @@ PRIMARY KEY (ix),
 INDEX (est_id)
 )''',
 
-'create index est_link_hash_index on est_link(tx_hash)',
+    'create index est_link_hash_index on est_link(tx_hash)',
 
-'''
+    '''
 create table feescales (
     ix            int(11) unsigned  not null auto_increment,
     in_use        bool              not null default false,
@@ -76,7 +92,7 @@ create table feescales (
 PRIMARY KEY (ix)
 )''',
 
-'''
+    '''
 create table est_logger (
     ix            int(11) unsigned  not null auto_increment,
     courseno      int(11) unsigned not null,
@@ -86,21 +102,21 @@ create table est_logger (
 PRIMARY KEY (ix)
 )''',
 
-'update currtrtmt2 set ndlpl = replace(ndlpl, "SR ", "SR_")',
-'update currtrtmt2 set ndlpl = replace(ndlpl, "CC ", "CC_")',
-'update currtrtmt2 set ndupl = replace(ndupl, "SR ", "SR_")',
-'update currtrtmt2 set ndupl = replace(ndupl, "SR ", "SR_")',
-'update currtrtmt2 set ndlcmp = replace(ndlcmp, "SR ", "SR_")',
-'update currtrtmt2 set ndlcmp = replace(ndlcmp, "CC ", "CC_")',
-'update currtrtmt2 set nducmp = replace(nducmp, "SR ", "SR_")',
-'update currtrtmt2 set nducmp = replace(nducmp, "SR ", "SR_")',
+    'update currtrtmt2 set ndlpl = replace(ndlpl, "SR ", "SR_")',
+    'update currtrtmt2 set ndlpl = replace(ndlpl, "CC ", "CC_")',
+    'update currtrtmt2 set ndupl = replace(ndupl, "SR ", "SR_")',
+    'update currtrtmt2 set ndupl = replace(ndupl, "SR ", "SR_")',
+    'update currtrtmt2 set ndlcmp = replace(ndlcmp, "SR ", "SR_")',
+    'update currtrtmt2 set ndlcmp = replace(ndlcmp, "CC ", "CC_")',
+    'update currtrtmt2 set nducmp = replace(nducmp, "SR ", "SR_")',
+    'update currtrtmt2 set nducmp = replace(nducmp, "SR ", "SR_")',
 
-'''
+    '''
 update newestimates set type = replace(type, "SR ", "SR_")
 where category in ("ndu", "ndl")
 ''',
 
-'''
+    '''
 update newestimates set type = replace(type, "CC ", "CC_")
 where category in ("ndu", "ndl")
 '''
@@ -109,16 +125,16 @@ where category in ("ndu", "ndl")
 
 
 SOURCE_QUERY = ('SELECT courseno, ix, category, type, completed '
-'FROM newestimates '
-'ORDER BY serialno, courseno, category, type, completed DESC')
+                'FROM newestimates '
+                'ORDER BY serialno, courseno, category, type, completed DESC')
 
 DEST_QUERY = ('insert into est_link (est_id, tx_hash, completed) '
-'values (%s, %s, %s)')
+              'values (%s, %s, %s)')
 
 FEESCALE_QUERY = ('insert into feescales (xml_data, in_use, comment) '
-'values (%s, 1, "example feescale")')
+                  'values (%s, 1, "example feescale")')
 
-#this query gets selected estimate data for all active courses
+# this query gets selected estimate data for all active courses
 LOGGER_SELECT_QUERY = '''
  select newestimates.courseno, number, itemcode, description, csetype,
 feescale, dent, fee, ptfee from newestimates join
@@ -130,15 +146,19 @@ order by newestimates.courseno, newestimates.itemcode, newestimates.ix
 '''
 
 LOGGER_INSERT_QUERY = ('insert into est_logger '
-'(courseno, est_data, operator) values (%s,%s, %s)')
+                       '(courseno, est_data, operator) values (%s,%s, %s)')
+
 
 class UpdateException(Exception):
+
     '''
     A custom exception. If this is thrown the db will be rolled back
     '''
     pass
 
+
 class dbUpdater(QtCore.QThread):
+
     def __init__(self, parent=None):
         super(dbUpdater, self).__init__(parent)
         self.stopped = False
@@ -170,15 +190,17 @@ class dbUpdater(QtCore.QThread):
             for sql_string in sql_strings:
                 try:
                     cursor.execute(sql_string)
-                except connect.GeneralError, e:
-                    print "FAILURE in executing sql statement",  e
-                    print "erroneous statement was ",sql_string
+                except connect.GeneralError as e:
+                    print "FAILURE in executing sql statement", e
+                    print "erroneous statement was ", sql_string
                     if 1060 in e.args:
                         print "continuing, as column already exists issue"
-                self.progressSig(2+70*i/commandNo,sql_string[:40]+"...")
+                self.progressSig(
+                    2 + 70 * i / commandNo,
+                    sql_string[:40] + "...")
             sucess = True
-        except Exception, e:
-            print "FAILURE in executing sql statements",  e
+        except Exception as e:
+            print "FAILURE in executing sql statements", e
             db.rollback()
         if sucess:
             db.commit()
@@ -210,14 +232,14 @@ class dbUpdater(QtCore.QThread):
             self.progressSig(100, _("updating stored schema version"))
             self.completed = True
             self.completeSig(_("ALL DONE - sucessfully moved db to")
-            + " 2.2")
+                             + " 2.2")
 
-        except UpdateException, e:
+        except UpdateException as e:
             localsettings.CLIENT_SCHEMA_VERSION = "2.1"
             self.completeSig(_("rolled back to") + " 2.1")
 
-        except Exception, e:
-            print "Exception caught",e
+        except Exception as e:
+            print "Exception caught", e
             self.completeSig(str(e))
 
         return self.completed
@@ -239,7 +261,7 @@ class dbUpdater(QtCore.QThread):
             prev_hash = None
             for i, row in enumerate(rows):
                 courseno, ix, category, type_, completed = row
-                cat_type = "%s%s"% (category, type_)
+                cat_type = "%s%s" % (category, type_)
                 if courseno != prev_courseno:
                     count = 1
                 elif cat_type != prev_cat_type:
@@ -250,15 +272,15 @@ class dbUpdater(QtCore.QThread):
                 prev_courseno = courseno
                 prev_cat_type = cat_type
 
-                tx_hash = hash("%s%s%s%s"% (courseno, category, count, type_))
+                tx_hash = hash("%s%s%s%s" % (courseno, category, count, type_))
 
                 if completed is None:
                     completed = False
                 values = (ix, tx_hash, completed)
                 cursor.execute(DEST_QUERY, values)
                 if i % 1000 == 0:
-                    self.progressSig(50 * i/len(rows) + 10,
-                    _("transfering data"))
+                    self.progressSig(50 * i / len(rows) + 10,
+                                     _("transfering data"))
 
             cursor.execute(LOGGER_SELECT_QUERY)
             rows = cursor.fetchall()
@@ -266,18 +288,18 @@ class dbUpdater(QtCore.QThread):
             est_log_text = ""
             total, p_total = 0, 0
             for i, (courseno, number, itemcode, description, csetype,
-            feescale, dent, fee, ptfee) in enumerate(rows):
+                    feescale, dent, fee, ptfee) in enumerate(rows):
                 line_text = \
-                "%s || %s || %s || %s || %s || %s || %s || %s||\n"% (
-                    number, itemcode, description, csetype,
-                    feescale, dent, fee, ptfee)
+                    "%s || %s || %s || %s || %s || %s || %s || %s||\n" % (
+                        number, itemcode, description, csetype,
+                        feescale, dent, fee, ptfee)
 
                 if prev_courseno is None or courseno == prev_courseno:
                     est_log_text += line_text
                     total += fee
                     p_total += ptfee
                 else:
-                    est_log_text += "TOTAL ||  ||  ||  ||  ||  || %s || %s"% (
+                    est_log_text += "TOTAL ||  ||  ||  ||  ||  || %s || %s" % (
                         total, p_total)
                     values = (prev_courseno, est_log_text, "2_2script")
                     cursor.execute(LOGGER_INSERT_QUERY, values)
@@ -286,8 +308,8 @@ class dbUpdater(QtCore.QThread):
 
                 prev_courseno = courseno
                 if i % 1000 == 0:
-                    self.progressSig(30 * i/len(rows) + 60,
-                    _("transfering data"))
+                    self.progressSig(30 * i / len(rows) + 60,
+                                     _("transfering data"))
 
             db.commit()
             db.close()
@@ -298,7 +320,7 @@ class dbUpdater(QtCore.QThread):
 
     def insert_feescales(self):
         feescale_path = os.path.join(localsettings.wkdir, 'resources',
-            "feescales", "example_feescale.xml")
+                                     "feescales", "example_feescale.xml")
         db = connect.connect()
         db.autocommit(False)
         try:

@@ -1,24 +1,26 @@
-#! /usr/bin/python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2013, Neil Wallace <neil@openmolar.com>                        ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import gettext
 import logging
@@ -37,9 +39,11 @@ from lib_om_chart.config import SURGERY_NO
 from lib_om_chart.config_dialog import ConfigDialog
 from lib_om_chart.connect import Connection
 
+
 class MainWindow(QtGui.QMainWindow):
     connection = Connection()
     _loaded_serialno = None
+
     def __init__(self, parent=None):
         QtGui.QMainWindow.__init__(self, parent)
 
@@ -83,7 +87,7 @@ class MainWindow(QtGui.QMainWindow):
         load settings from QtCore.QSettings.
         '''
         settings = QtCore.QSettings()
-        #Qt settings
+        # Qt settings
         self.restoreGeometry(settings.value("geometry").toByteArray())
         self.restoreState(settings.value("windowState").toByteArray())
 
@@ -92,19 +96,19 @@ class MainWindow(QtGui.QMainWindow):
         save settings from QtCore.QSettings
         '''
         settings = QtCore.QSettings()
-        #Qt settings
+        # Qt settings
         settings.setValue("geometry", self.saveGeometry())
         settings.setValue("windowState", self.saveState())
-    
+
     def closeEvent(self, event=None):
         '''
         re-implement the close event of QtGui.QMainWindow, and check the user
         really meant to do this.
         '''
-        result = QtGui.QMessageBox.question(self,_("Confirm"),
-            _("Quit Application?"),
-            QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel,
-            QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok
+        result = QtGui.QMessageBox.question(self, _("Confirm"),
+                                            _("Quit Application?"),
+                                            QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
+                                            QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok
 
         if result:
             self.saveSettings()
@@ -120,13 +124,13 @@ class MainWindow(QtGui.QMainWindow):
         cursor = db.cursor()
         cursor.execute("select max(serialno) from patients")
         row = cursor.fetchone()
-        return row[0] + 10 #allow for a few new patients.
-        
+        return row[0] + 10  # allow for a few new patients.
+
     def get_patient(self):
         sno, result = QtGui.QInputDialog.getInt(self,
-            _("Manual Select"),
-            _("Select a serialno to load"),
-            1, 1, self.max_sno)
+                                                _("Manual Select"),
+                                                _("Select a serialno to load"),
+                                                1, 1, self.max_sno)
 
         if result:
             self.load_patient(sno)
@@ -138,14 +142,14 @@ class MainWindow(QtGui.QMainWindow):
         self.chart_widget.clear()
 
         QtGui.QApplication.instance().setOverrideCursor(
-                QtCore.Qt.WaitCursor)
-        logging.debug("loading patient %s"% sno)
+            QtCore.Qt.WaitCursor)
+        logging.debug("loading patient %s" % sno)
         try:
             pt = Patient(sno)
 
             self.chart_widget.chartgrid = pt.chartgrid()
             #--sets the tooth numbering
-            row=0
+            row = 0
 
             for tooth in pt.TOOTH_FIELDS:
                 static_text = pt.__dict__[tooth]
@@ -154,7 +158,7 @@ class MainWindow(QtGui.QMainWindow):
 
         except PatientNotFoundException:
             self._message_box = QtGui.QMessageBox(self)
-            self._message_box.setText("Patient Serialno %s not found!"% sno)
+            self._message_box.setText("Patient Serialno %s not found!" % sno)
             self._message_box.setIcon(self._message_box.Warning)
             self._message_box.setWindowTitle("whoops")
             self._message_box.show()
@@ -172,13 +176,14 @@ class MainWindow(QtGui.QMainWindow):
 
     def check_reconfigure(self):
         if QtGui.QMessageBox.question(self, _("confirm"),
-            _("Do you really want to reconfigure this application?"),
-            QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel,
-            QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok:
+                                      _(
+                                      "Do you really want to reconfigure this application?"),
+                                      QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
+                                      QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok:
                 self.reconfigure()
 
     def configure(self):
-        self.reconfigure(reconfigure = False)
+        self.reconfigure(reconfigure=False)
 
     def reconfigure(self, reconfigure=True):
         dl = ConfigDialog(self)
@@ -200,7 +205,7 @@ class MainWindow(QtGui.QMainWindow):
         for l in traceback.format_exception(exc_type, exc_val, tracebackobj):
             message += l
         QtGui.QMessageBox.warning(self, _("Error"),
-            'UNHANDLED EXCEPTION!<hr /><pre>%s</pre>'% message)
+                                  'UNHANDLED EXCEPTION!<hr /><pre>%s</pre>' % message)
         self.timer.start()
 
     def check_record_in_use(self):
@@ -217,13 +222,13 @@ class MainWindow(QtGui.QMainWindow):
             if serialno and serialno != self._loaded_serialno:
                 self.load_patient(serialno)
                 self._loaded_serialno = serialno
-                #self.setWindowState(
+                # self.setWindowState(
                 #    QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
                 self.activateWindow()
 
 if __name__ == "__main__":
     gettext.install("openmolar")
-    logging.basicConfig(level = logging.DEBUG)
+    logging.basicConfig(level=logging.DEBUG)
     app = RestorableApplication("om_charter")
     mw = MainWindow()
     sys.excepthook = mw.excepthook

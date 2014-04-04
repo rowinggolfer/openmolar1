@@ -1,39 +1,63 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License
-# for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from __future__ import division
 from openmolar.settings import localsettings
+
 
 def toHtml(pt):
     '''
     returns an HTML table of the patients pt
     '''
 
-    retarg='''<html><body><center>
+    retarg = '''<html><body><center>
     <h3>NHS DETAILS</h3>
     <table width ="100%" border="1">
     '''
-    retarg+="<tr><td>EXEMPTION</td><td>%s</td></tr>"%pt.exemption
-    retarg+="<tr><td>EXEMPTION TEXT</td><td>%s</td></tr>"%pt.exempttext
-    retarg+="<tr><td>PREVIOUS SURNAME</td><td>%s</td></tr>"%pt.psn
-    retarg+="<tr><td>NHS NUMBER</td><td>%s</td></tr>"%pt.nhsno
+    retarg += "<tr><td>EXEMPTION</td><td>%s</td></tr>" % pt.exemption
+    retarg += "<tr><td>EXEMPTION TEXT</td><td>%s</td></tr>" % pt.exempttext
+    retarg += "<tr><td>PREVIOUS SURNAME</td><td>%s</td></tr>" % pt.psn
+    retarg += "<tr><td>NHS NUMBER</td><td>%s</td></tr>" % pt.nhsno
 
-    retarg+="<tr><td>LAST CLAIM</td><td>%s</td></tr>"% localsettings.formatDate(pt.pd3)
-    retarg+="<tr><td>INITIAL ACCEPTANCE</td><td>%s</td></tr>"% localsettings.formatDate(pt.pd12)
-    retarg+="<tr><td>LAST REACCEPTANCE</td><td>%s</td></tr>"% localsettings.formatDate(pt.pd14)
-    retarg+="<tr><td>EXPIRY</td><td>%s</td></tr>"% localsettings.formatDate(pt.expiry)
-    retarg+="<tr><td>CSTATUS</td><td>%s</td></tr>"% localsettings.formatDate(pt.cstatus)
-    retarg+="<tr><td>TRANSFER</td><td>%s</td></tr>"% localsettings.formatDate(pt.transfer)
+    retarg += "<tr><td>LAST CLAIM</td><td>%s</td></tr>" % localsettings.formatDate(
+        pt.pd3)
+    retarg += "<tr><td>INITIAL ACCEPTANCE</td><td>%s</td></tr>" % localsettings.formatDate(
+        pt.pd12)
+    retarg += "<tr><td>LAST REACCEPTANCE</td><td>%s</td></tr>" % localsettings.formatDate(
+        pt.pd14)
+    retarg += "<tr><td>EXPIRY</td><td>%s</td></tr>" % localsettings.formatDate(
+        pt.expiry)
+    retarg += "<tr><td>CSTATUS</td><td>%s</td></tr>" % localsettings.formatDate(
+        pt.cstatus)
+    retarg += "<tr><td>TRANSFER</td><td>%s</td></tr>" % localsettings.formatDate(
+        pt.transfer)
 
-    if pt.sex=="F":
-        retarg+="<tr><td>CONFINEMENT DATE</td><td>%s</td></tr>"% localsettings.formatDate(pt.cnfd)
+    if pt.sex == "F":
+        retarg += "<tr><td>CONFINEMENT DATE</td><td>%s</td></tr>" % localsettings.formatDate(
+            pt.cnfd)
 
-    retarg+='</table></body></html>'
+    retarg += '</table></body></html>'
 
     return retarg
 
@@ -41,9 +65,9 @@ if __name__ == "__main__":
     from openmolar.dbtools import patient_class
     localsettings.initiate(False)
     try:
-        serialno=int(sys.argv[len(sys.argv)-1])
+        serialno = int(sys.argv[len(sys.argv) - 1])
     except:
-        serialno=707
+        serialno = 707
 
-    pt=patient_class.patient(serialno)
+    pt = patient_class.patient(serialno)
     print toHtml(pt.pt)

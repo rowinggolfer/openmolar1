@@ -1,17 +1,33 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
 
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import datetime
 import logging
 
 from openmolar.connect import connect
 
-CHECK_INTERVAL = 300 #update phrasebook every 5 minutes
+CHECK_INTERVAL = 300  # update phrasebook every 5 minutes
 
 BLANK_PHRASEBOOK = '''<?xml version="1.0" ?>
     <phrasebook>
@@ -35,6 +51,7 @@ INSERT_QUERY = "insert into phrasebook (phrases, clinician_id) values(%s, %s)"
 
 LOGGER = logging.getLogger("openmolar")
 
+
 class Phrasebooks(object):
     _books = {}
 
@@ -50,13 +67,13 @@ class Phrasebooks(object):
         return book
 
     def has_book(self, index):
-        return self._books.has_key(index)
+        return index in self._books
 
     def has_phrasebook(self, index):
         return self.book(index).has_data
 
     def get_all_books(self):
-        self._books = {} #forget any loaded books
+        self._books = {}  # forget any loaded books
         db = connect()
         cursor = db.cursor()
         cursor.execute(ALL_BOOKS_QUERY)
@@ -73,7 +90,7 @@ class Phrasebooks(object):
         cursor = db.cursor()
         result = cursor.execute(UPDATE_QUERY, (xml, clinician_id))
         cursor.close()
-        self._books = {} #forget any loaded books
+        self._books = {}  # forget any loaded books
         return result
 
     def create_book(self, clinician_id):
@@ -81,7 +98,7 @@ class Phrasebooks(object):
         cursor = db.cursor()
         result = cursor.execute(INSERT_QUERY, (BLANK_PHRASEBOOK, clinician_id))
         cursor.close()
-        self._books = {} #forget any loaded books
+        self._books = {}  # forget any loaded books
         return result
 
 
@@ -104,7 +121,7 @@ class Phrasebook(object):
     @property
     def xml(self):
         if not self.loaded or self.refresh_needed:
-            LOGGER.info("(re)loading phrasebook %s from database"% self.ix)
+            LOGGER.info("(re)loading phrasebook %s from database" % self.ix)
             db = connect()
             cursor = db.cursor()
             cursor.execute(QUERY, (self.ix,))

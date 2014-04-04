@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# See the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 This module provides a function 'run' which will move data from the estimates
@@ -16,9 +32,9 @@ variable is stored.
 from PyQt4 import QtGui, QtCore
 
 SQLSTRINGS = [
-'''alter table forum add column recipient char(8);''',
-'''alter table forum change column comment comment char(255);''',
-'''
+    '''alter table forum add column recipient char(8);''',
+    '''alter table forum change column comment comment char(255);''',
+    '''
 CREATE TABLE if not exists forumread (
 ix int(10) unsigned NOT NULL auto_increment ,
 id int(10) unsigned NOT NULL ,
@@ -26,7 +42,7 @@ op char(8),
 readdate DATETIME NOT NULL,
 PRIMARY KEY (ix),
 KEY (id))''',
-'''
+    '''
 CREATE TABLE if not exists tasks (
 ix int(10) unsigned NOT NULL auto_increment,
 op char(8),
@@ -45,6 +61,7 @@ from openmolar.settings import localsettings
 from openmolar.dbtools import schema_version
 from openmolar import connect
 
+
 def create_alter_tables():
     '''
     execute the above commands
@@ -57,19 +74,20 @@ def create_alter_tables():
     db.commit()
     return True
 
+
 def copy_OMforum_into_forum():
     '''
     I am scrapping the omforum table, put these posts into the forum
     '''
     db = connect.connect()
-    cursor=db.cursor()
+    cursor = db.cursor()
     cursor.execute('''lock tables omforum read,forum write''')
     cursor.execute('''select ix, parent_ix, inits, fdate, topic, comment, open
 from omforum order by ix''')
-    rows=cursor.fetchall()
+    rows = cursor.fetchall()
 
     cursor.execute('''select max(ix) from forum''')
-    start_ix = cursor.fetchone()[0]+1
+    start_ix = cursor.fetchone()[0] + 1
     print "start_ix =", start_ix
 
     query = '''insert into forum (parent_ix, inits, fdate, topic, comment,
@@ -91,7 +109,9 @@ from omforum order by ix''')
     db.close()
     return True
 
+
 class dbUpdater(QtCore.QThread):
+
     def __init__(self, parent=None):
         super(dbUpdater, self).__init__(parent)
         self.stopped = False
@@ -117,17 +137,17 @@ class dbUpdater(QtCore.QThread):
 
                 if copy_OMforum_into_forum():
                     self.progressSig(80,
-                    'copied data from obsolete table OMforum')
+                                     'copied data from obsolete table OMforum')
 
                 schema_version.update(("1.2",), "1_1 to 1_2 script")
 
                 self.progressSig(100, _("updating stored schema version"))
                 self.completed = True
                 self.completeSig(_("ALL DONE - sucessfully moved db to")
-                +" 1.2")
+                                 + " 1.2")
 
-        except Exception, e:
-            print "Exception caught",e
+        except Exception as e:
+            print "Exception caught", e
             self.completeSig(str(e))
 
         return self.completed

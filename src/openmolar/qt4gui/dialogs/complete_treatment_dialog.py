@@ -1,24 +1,26 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2013, Neil Wallace <rowinggolfer@googlemail.com>               ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import logging
 import re
@@ -34,19 +36,21 @@ from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 
 LOGGER = logging.getLogger("openmolar")
 
+
 class CompleteTreatmentDialog(ExtendableDialog):
 
     def __init__(self, treatments, parent=None):
         ExtendableDialog.__init__(self, parent, remove_stretch=True)
         self.om_gui = parent
 
-        LOGGER.debug("CompleteTreatmentDialog %s"% treatments)
+        LOGGER.debug("CompleteTreatmentDialog %s" % treatments)
         self.setWindowTitle(_("Complete Multiple Treatments"))
 
-        label = QtGui.QLabel(u"%s<br />%s"%(
-        _("You have selected multiple treatments."),
-        _("Please complete, reverse or delete then apply changes.")
-        ))
+        label = QtGui.QLabel(u"%s<br />%s" % (
+                             _("You have selected multiple treatments."),
+                             _(
+                             "Please complete, reverse or delete then apply changes.")
+                             ))
         self.insertWidget(label)
 
         self.treatments = treatments
@@ -61,7 +65,7 @@ class CompleteTreatmentDialog(ExtendableDialog):
 
         col = 1
         for header in (_("Planned"), _("Completed")):
-            label = QtGui.QLabel(u"<b>%s</b>"% header)
+            label = QtGui.QLabel(u"<b>%s</b>" % header)
             label.setAlignment(QtCore.Qt.AlignCenter)
             self.but_layout.addWidget(label, row, col)
             col += 1
@@ -71,10 +75,10 @@ class CompleteTreatmentDialog(ExtendableDialog):
         self.complete_icon = QtGui.QIcon(":forward.png")
 
         for i, (att, treatment, completed) in enumerate(treatments):
-            row = i+1
+            row = i + 1
             label = QtGui.QLabel(
-                "%s - <b>%s</b>"% (att.upper(), treatment.upper()))
-            label.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+                "%s - <b>%s</b>" % (att.upper(), treatment.upper()))
+            label.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
             self.but_layout.addWidget(label, row, 0)
 
             if completed:
@@ -86,7 +90,7 @@ class CompleteTreatmentDialog(ExtendableDialog):
             but = QtGui.QPushButton(icon, "")
             but.setIconSize(QtCore.QSize(10, 10))
             but.setMaximumWidth(50)
-            self.but_layout.addWidget(but, row, col+1)
+            self.but_layout.addWidget(but, row, col + 1)
 
             but.clicked.connect(partial(self._but_clicked, row))
 
@@ -99,7 +103,7 @@ class CompleteTreatmentDialog(ExtendableDialog):
             but.clicked.connect(partial(self._del_but_clicked, row))
 
         self.but_layout.addItem(QtGui.QSpacerItem(0, 10))
-        self.but_layout.setRowStretch(row+1, 2)
+        self.but_layout.setRowStretch(row + 1, 2)
 
         but_frame = QtGui.QFrame()
         layout = QtGui.QHBoxLayout(but_frame)
@@ -119,8 +123,7 @@ class CompleteTreatmentDialog(ExtendableDialog):
         self.insertWidget(scroll_area)
         self.insertWidget(but_frame)
 
-
-        #no advanced options yet
+        # no advanced options yet
         self.more_but.hide()
 
     def sizeHint(self):
@@ -175,7 +178,6 @@ class CompleteTreatmentDialog(ExtendableDialog):
         for button in self.cmp_buttons:
             button.click()
 
-
     def _enable(self):
         for val in self.completed_treatments:
             self.enableApply()
@@ -202,7 +204,7 @@ class CompleteTreatmentDialog(ExtendableDialog):
         iterate and return all buttons in the left column
         '''
         for i in range(len(self.treatments)):
-            row = i+1
+            row = i + 1
             item = self.but_layout.itemAtPosition(row, 1)
             if item is not None:
                 yield item.widget()
@@ -213,7 +215,7 @@ class CompleteTreatmentDialog(ExtendableDialog):
         iterate and return all buttons in the right column
         '''
         for i in range(len(self.treatments)):
-            row = i+1
+            row = i + 1
             item = self.but_layout.itemAtPosition(row, 2)
             if item is not None:
                 yield item.widget()
@@ -221,7 +223,7 @@ class CompleteTreatmentDialog(ExtendableDialog):
     @property
     def uncompleted_treatments(self):
         for i, (att, treat, prev_completed) in enumerate(self.treatments):
-            row = i+1
+            row = i + 1
             now_planned = self.but_layout.itemAtPosition(row, 2) is None
             if now_planned and prev_completed:
                 yield (att, treat)
@@ -229,7 +231,7 @@ class CompleteTreatmentDialog(ExtendableDialog):
     @property
     def completed_treatments(self):
         for i, (att, treat, prev_completed) in enumerate(self.treatments):
-            row = i+1
+            row = i + 1
             now_completed = self.but_layout.itemAtPosition(row, 1) is None
             if now_completed and not prev_completed:
                 yield (att, treat)
@@ -237,7 +239,7 @@ class CompleteTreatmentDialog(ExtendableDialog):
     @property
     def deleted_treatments(self):
         for i, (att, treat, prev_completed) in enumerate(self.treatments):
-            row = i+1
+            row = i + 1
             if not self.but_layout.itemAtPosition(row, 0).widget().isEnabled():
                 yield (att, treat, prev_completed)
 
@@ -257,13 +259,13 @@ if __name__ == "__main__":
         ("ur5", "MOD", False),
         ("ur5", "RT", False),
         ("ur4", "DR", True)
-        ], mw)
+    ], mw)
     if dl.exec_():
         for att, treat in dl.completed_treatments:
-            print "%s %s was completed"% (att, treat)
+            print "%s %s was completed" % (att, treat)
 
         for att, treat in dl.uncompleted_treatments:
-            print "%s %s was reversed"% (att, treat)
+            print "%s %s was reversed" % (att, treat)
 
         for att, treat, completed in dl.deleted_treatments:
-            print "%s %s %s was deleted"% (att, treat, completed)
+            print "%s %s %s was deleted" % (att, treat, completed)

@@ -1,31 +1,33 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2011-2012,  Neil Wallace <neil@openmolar.com>                  ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import logging
 import re
 from PyQt4 import QtGui, QtCore
 
 from openmolar.qt4gui.customwidgets.upper_case_line_edit import \
-UpperCaseLineEdit
+    UpperCaseLineEdit
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 from openmolar.qt4gui.customwidgets.simple_chartwidget import SimpleChartWidg
 
@@ -38,10 +40,12 @@ VALID_INPUTS = (
     "SL",
     "RE",
     "IMP",
-    "", # this one in case of no input whatsoever!
-    )
+    "",  # this one in case of no input whatsoever!
+)
+
 
 class _OptionPage(QtGui.QWidget):
+
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.dialog = parent
@@ -82,7 +86,9 @@ class _OptionPage(QtGui.QWidget):
     def cleanup(self):
         pass
 
+
 class PageZero(_OptionPage):
+
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
         self.label.setText(_("What are you Modifying?"))
@@ -99,7 +105,7 @@ class PageZero(_OptionPage):
     @property
     def is_completed(self):
         return (self.upper_radioButton.isChecked() or
-            self.lower_radioButton.isChecked())
+                self.lower_radioButton.isChecked())
 
     @property
     def return_text(self):
@@ -111,12 +117,14 @@ class PageZero(_OptionPage):
             return "upper"
         return "lower"
 
+
 class PageOne(_OptionPage):
+
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
 
         options = ["Reline", "Soft Reline", "Repair",
-        "Tooth Addition(s)", "Clasp Addition(s)"]
+                   "Tooth Addition(s)", "Clasp Addition(s)"]
 
         layout = QtGui.QVBoxLayout(self.frame)
         self.rad_buts = []
@@ -141,7 +149,7 @@ class PageOne(_OptionPage):
             return 2
         if self.rad_buts[4].isChecked():
             return 3
-        return 4 #ALL DONE!
+        return 4  # ALL DONE!
 
     @property
     def return_text(self):
@@ -157,7 +165,9 @@ class PageOne(_OptionPage):
             return "A/C"
         return ""
 
+
 class PageTwo(_OptionPage):
+
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
 
@@ -173,25 +183,27 @@ class PageTwo(_OptionPage):
     @property
     def is_completed(self):
         return (self.acrylic_radioButton.isChecked() or
-        self.metal_radioButton.isChecked())
+                self.metal_radioButton.isChecked())
 
     def cleanup(self):
         text = self.dialog.default_lineedit.text()
         if self.acrylic_radioButton.isChecked():
-            text = "%s%s"% ("SR_", text)
+            text = "%s%s" % ("SR_", text)
         if self.metal_radioButton.isChecked():
-            text = "%s%s"% ("CC_", text)
+            text = "%s%s" % ("CC_", text)
         self.dialog.default_lineedit.setText(text)
 
     @property
     def return_text(self):
         return ""
 
+
 class PageThree(_OptionPage):
+
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
         self.label.setText(_(
-        "Please select teeth to be added to this denture"))
+                           "Please select teeth to be added to this denture"))
         self.chartwidg = SimpleChartWidg(self, auto_ctrl_key=True)
         if parent.is_upper_input:
             self.chartwidg.disable_lowers()
@@ -233,6 +245,7 @@ class PageThree(_OptionPage):
 
 
 class PageFour(_OptionPage):
+
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
         self.label.setText(_("How Many Clasps?"))
@@ -252,14 +265,16 @@ class PageFour(_OptionPage):
         n_clasps = self.clasp_input.value()
         if n_clasps > 1:
             text = unicode(self.dialog.default_lineedit.text().toUtf8())
-            text = text.replace("A/C", "A/%dC"% n_clasps)
+            text = text.replace("A/C", "A/%dC" % n_clasps)
             self.dialog.default_lineedit.setText(text)
 
     @property
     def return_text(self):
         return ""
 
+
 class PageFive(_OptionPage):
+
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
         self.label.setText(
@@ -275,7 +290,7 @@ class PageFive(_OptionPage):
     @property
     def is_completed(self):
         return (self.yes_radioButton.isChecked() or
-            self.no_radioButton.isChecked())
+                self.no_radioButton.isChecked())
 
     @property
     def _additional_text(self):
@@ -292,15 +307,18 @@ class PageFive(_OptionPage):
 
 
 class AcceptPage(_OptionPage):
+
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
-        self.label.setText("%s<hr />%s"% (
-        _("You have completed your input."),
-        _("Please click on Apply")))
+        self.label.setText("%s<hr />%s" % (
+                           _("You have completed your input."),
+                           _("Please click on Apply")))
         self.frame.hide()
 
+
 class AlterDentureDialog(ExtendableDialog):
-    def __init__(self, om_gui = None):
+
+    def __init__(self, om_gui=None):
         ExtendableDialog.__init__(self, om_gui)
 
         self.om_gui = om_gui
@@ -365,7 +383,7 @@ class AlterDentureDialog(ExtendableDialog):
     def next_widget(self):
         if not self.current_page.is_completed:
             QtGui.QMessageBox.information(self, _("Whoops"),
-            self.current_page.error_message)
+                                          self.current_page.error_message)
             return
 
         if self.current_index == 0:
@@ -418,9 +436,9 @@ class AlterDentureDialog(ExtendableDialog):
                     matched = True
                     break
             if not matched:
-                LOGGER.debug("failed to match %s %s"% (input_, odu))
+                LOGGER.debug("failed to match %s %s" % (input_, odu))
                 QtGui.QMessageBox.warning(self, _("Warning"),
-                _("Your upper denture input is invalid"))
+                                          _("Your upper denture input is invalid"))
                 return False
         for odl in odls.split(" "):
             matched = False
@@ -429,9 +447,9 @@ class AlterDentureDialog(ExtendableDialog):
                     matched = True
                     break
             if not matched:
-                LOGGER.debug("failed to match %s %s"% (input_, odu))
+                LOGGER.debug("failed to match %s %s" % (input_, odu))
                 QtGui.QMessageBox.warning(self, _("Warning"),
-                _("Your lower denture input is invalid"))
+                                          _("Your lower denture input is invalid"))
                 return False
         return True
 

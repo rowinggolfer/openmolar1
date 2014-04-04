@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License
-# for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from copy import deepcopy
 import logging
@@ -16,38 +32,39 @@ from openmolar.settings import localsettings
 LOGGER = logging.getLogger("openmolar")
 
 CURRTRT_NON_TOOTH_ATTS = ('xray', 'perio', 'anaes',
-'other', 'ndu', 'ndl', 'odu', 'odl', 'custom')
+                          'other', 'ndu', 'ndl', 'odu', 'odl', 'custom')
 
 CURRTRT_ROOT_ATTS = CURRTRT_NON_TOOTH_ATTS + (
-'ur8', 'ur7', 'ur6', 'ur5', 'ur4', 'ur3', 'ur2', 'ur1', 'ul1',
-'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8', 'll8', 'll7', 'll6', 'll5',
-'ll4', 'll3', 'll2', 'll1', 'lr1', 'lr2', 'lr3', 'lr4', 'lr5', 'lr6', 'lr7',
-'lr8')
+    'ur8', 'ur7', 'ur6', 'ur5', 'ur4', 'ur3', 'ur2', 'ur1', 'ul1',
+    'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8', 'll8', 'll7', 'll6', 'll5',
+    'll4', 'll3', 'll2', 'll1', 'lr1', 'lr2', 'lr3', 'lr4', 'lr5', 'lr6', 'lr7',
+    'lr8')
 
-CURRTRT_ATTS=('courseno','xraypl','periopl','anaespl','otherpl',
-'ndupl','ndlpl','odupl','odlpl',"custompl",
-'xraycmp','periocmp','anaescmp','othercmp','nducmp','ndlcmp',
-'oducmp','odlcmp',"customcmp",'ur8pl','ur7pl',
-'ur6pl','ur5pl','ur4pl','ur3pl','ur2pl','ur1pl','ul1pl','ul2pl','ul3pl',
-'ul4pl','ul5pl','ul6pl','ul7pl',
-'ul8pl','ll8pl','ll7pl','ll6pl','ll5pl','ll4pl','ll3pl','ll2pl','ll1pl',
-'lr1pl','lr2pl','lr3pl','lr4pl',
-'lr5pl','lr6pl','lr7pl','lr8pl','ur8cmp','ur7cmp','ur6cmp','ur5cmp',
-'ur4cmp','ur3cmp','ur2cmp','ur1cmp',
-'ul1cmp','ul2cmp','ul3cmp','ul4cmp','ul5cmp','ul6cmp','ul7cmp','ul8cmp',
-'ll8cmp','ll7cmp','ll6cmp','ll5cmp',
-'ll4cmp','ll3cmp','ll2cmp','ll1cmp','lr1cmp','lr2cmp','lr3cmp','lr4cmp',
-'lr5cmp','lr6cmp','lr7cmp','lr8cmp',
-'examt','examd','accd','cmpd')
+CURRTRT_ATTS = ('courseno', 'xraypl', 'periopl', 'anaespl', 'otherpl',
+                'ndupl', 'ndlpl', 'odupl', 'odlpl', "custompl",
+                'xraycmp', 'periocmp', 'anaescmp', 'othercmp', 'nducmp', 'ndlcmp',
+                'oducmp', 'odlcmp', "customcmp", 'ur8pl', 'ur7pl',
+                'ur6pl', 'ur5pl', 'ur4pl', 'ur3pl', 'ur2pl', 'ur1pl', 'ul1pl', 'ul2pl', 'ul3pl',
+                'ul4pl', 'ul5pl', 'ul6pl', 'ul7pl',
+                'ul8pl', 'll8pl', 'll7pl', 'll6pl', 'll5pl', 'll4pl', 'll3pl', 'll2pl', 'll1pl',
+                'lr1pl', 'lr2pl', 'lr3pl', 'lr4pl',
+                'lr5pl', 'lr6pl', 'lr7pl', 'lr8pl', 'ur8cmp', 'ur7cmp', 'ur6cmp', 'ur5cmp',
+                'ur4cmp', 'ur3cmp', 'ur2cmp', 'ur1cmp',
+                'ul1cmp', 'ul2cmp', 'ul3cmp', 'ul4cmp', 'ul5cmp', 'ul6cmp', 'ul7cmp', 'ul8cmp',
+                'll8cmp', 'll7cmp', 'll6cmp', 'll5cmp',
+                'll4cmp', 'll3cmp', 'll2cmp', 'll1cmp', 'lr1cmp', 'lr2cmp', 'lr3cmp', 'lr4cmp',
+                'lr5cmp', 'lr6cmp', 'lr7cmp', 'lr8cmp',
+                'examt', 'examd', 'accd', 'cmpd')
 
 QUERY = "SELECT "
 for field in CURRTRT_ATTS:
-    QUERY += "%s, "% field
+    QUERY += "%s, " % field
 QUERY = QUERY.rstrip(", ")
 QUERY += " from currtrtmt2 where serialno=%s and courseno=%s"
 
 
 class TreatmentCourse(object):
+
     def __init__(self, sno, courseno):
         '''
         initiate the class with default variables, then load from database
@@ -151,13 +168,13 @@ class TreatmentCourse(object):
         cursor.close()
 
     def __repr__(self):
-        message = "TreatmentCourse for patient %s courseno %s\n"% (
+        message = "TreatmentCourse for patient %s courseno %s\n" % (
             self.serialno, self.courseno)
 
         for att in CURRTRT_ATTS:
             value = self.__dict__.get(att, "")
             if value != "":
-                message += "   %s,%s\n"% (att, value)
+                message += "   %s,%s\n" % (att, value)
         return message
 
     def __cmp__(self, other):
@@ -165,14 +182,14 @@ class TreatmentCourse(object):
 
     def _non_tooth_items(self, suffix="pl"):
         for att in CURRTRT_NON_TOOTH_ATTS:
-            value = self.__dict__.get(att+suffix, "")
+            value = self.__dict__.get(att + suffix, "")
             if value != "":
                 txs = value.split(" ")
                 for tx in set(txs):
                     if tx != "":
                         n = txs.count(tx)
                         if n != 1:
-                            tx = "%d%s"% (n, tx)
+                            tx = "%d%s" % (n, tx)
                         yield att, tx
 
     @property
@@ -195,7 +212,7 @@ class TreatmentCourse(object):
         for value in cursor.fetchall():
             for i, field in enumerate(CURRTRT_ATTS):
                 self.__dict__[field] = value[i]
-                #LOGGER.debug("getCurrtrt '%s' = '%s'"% (field, value[i]))
+                # LOGGER.debug("getCurrtrt '%s' = '%s'"% (field, value[i]))
         cursor.close()
 
     @property
@@ -207,8 +224,8 @@ class TreatmentCourse(object):
         db = connect.connect()
         cursor = db.cursor()
         if cursor.execute(
-        "select max(courseno) from currtrtmt2 where serialno=%s",
-        (self.serialno,)):
+            "select max(courseno) from currtrtmt2 where serialno=%s",
+                (self.serialno,)):
             cno = cursor.fetchone()[0]
         else:
             cno = 0
@@ -275,13 +292,13 @@ class TreatmentCourse(object):
         '''
         if self.examt != "":
             hash_ = localsettings.hash_func(
-                "%sexam1%s"% (self.courseno, self.examt))
-            yield (hash_, "exam", self.examt+" ")
+                "%sexam1%s" % (self.courseno, self.examt))
+            yield (hash_, "exam", self.examt + " ")
 
         for att in CURRTRT_ROOT_ATTS:
-            treats = self.__dict__[att+"cmp"]
+            treats = self.__dict__[att + "cmp"]
             if not completed_only:
-                treats += " " + self.__dict__[att+"pl"]
+                treats += " " + self.__dict__[att + "pl"]
             treat_list = sorted(treats.split(" "))
             prev_tx, count = None, 1
 
@@ -294,8 +311,8 @@ class TreatmentCourse(object):
                 else:
                     count += 1
                 hash_ = localsettings.hash_func(
-                    "%s%s%s%s"% (self.courseno, att, count, tx))
-                yield (hash_, att, tx+" ")
+                    "%s%s%s%s" % (self.courseno, att, count, tx))
+                yield (hash_, att, tx + " ")
 
     def get_tx_from_hash(self, hash_):
         '''
@@ -306,7 +323,7 @@ class TreatmentCourse(object):
         for tx_hash in self.tx_hashes:
             if tx_hash[0] == hash_:
                 return tx_hash[1], tx_hash[2]
-        LOGGER.warning("couldn't find treatment %s"% hash_)
+        LOGGER.warning("couldn't find treatment %s" % hash_)
         LOGGER.debug("listing existing hashes")
         for tx_hash in self.tx_hashes:
             LOGGER.debug(tx_hash)
@@ -317,7 +334,7 @@ class TreatmentCourse(object):
         returns the list of treatments currently planned for this attribute.
         eg pl_txs("ul8") may return ["O", "B,CO"]
         '''
-        txs = self.__dict__["%spl"%att].split(" ")
+        txs = self.__dict__["%spl" % att].split(" ")
         while "" in txs:
             txs.remove("")
         return txs
@@ -327,7 +344,7 @@ class TreatmentCourse(object):
         returns the list of treatments currently planned for this attribute.
         eg cmp_txs("ul8") may return ["O", "B,CO"]
         '''
-        txs = self.__dict__["%scmp"%att].split(" ")
+        txs = self.__dict__["%scmp" % att].split(" ")
         while "" in txs:
             txs.remove("")
         return txs
@@ -339,7 +356,7 @@ class TreatmentCourse(object):
         '''
         return self.cmp_txs(att) + self.pl_txs(att)
 
-if __name__ =="__main__":
+if __name__ == "__main__":
     '''
     testing stuff
     '''
@@ -348,7 +365,7 @@ if __name__ =="__main__":
     db = connect.connect()
     cursor = db.cursor()
     cursor.execute("select courseno0 from patients where serialno = %s",
-        (TEST_SNO,))
+                  (TEST_SNO,))
     courseno = cursor.fetchone()[0]
     cursor.close()
 
@@ -362,4 +379,3 @@ if __name__ =="__main__":
     print tc.non_tooth_plan_items
     print tc.non_tooth_cmp_items
     print tc.all_txs("ur5")
-

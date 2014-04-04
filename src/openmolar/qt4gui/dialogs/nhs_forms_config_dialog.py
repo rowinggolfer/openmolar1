@@ -1,24 +1,26 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2011-2012,  Neil Wallace <neil@openmolar.com>                  ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from PyQt4 import QtGui, QtCore
 
@@ -28,8 +30,10 @@ from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
 from openmolar.qt4gui.printing.gp17.gp17_config import gp17config
 
+
 class _PrintSettings(QtGui.QWidget):
     user_input = QtCore.pyqtSignal()
+
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.left_sb = QtGui.QSpinBox()
@@ -50,7 +54,7 @@ class _PrintSettings(QtGui.QWidget):
         self.scale_y_sb.setValue(scale_y)
 
         for widg in (self.left_sb, self.top_sb,
-        self.scale_x_sb, self.scale_y_sb):
+                     self.scale_x_sb, self.scale_y_sb):
             widg.valueChanged.connect(self.emit_user_input)
 
     def value(self, attribute):
@@ -66,13 +70,15 @@ class _PrintSettings(QtGui.QWidget):
     def emit_user_input(self, *args):
         self.user_input.emit()
 
+
 class NHSFormsConfigDialog(BaseDialog):
+
     def __init__(self, parent=None):
         BaseDialog.__init__(self, parent)
 
         title = _("NHS Form Configuration")
         self.setWindowTitle(title)
-        label = QtGui.QLabel(u"<b>%s</b>"% title)
+        label = QtGui.QLabel(u"<b>%s</b>" % title)
         label.setAlignment(QtCore.Qt.AlignCenter)
 
         self.gp17_widget = _PrintSettings()
@@ -113,7 +119,7 @@ class NHSFormsConfigDialog(BaseDialog):
             (self.gp17_widget, "gp17Front"),
             (self.gp17ifront_widget, "gp17iFront"),
             (self.gp17iback_widget, "gp17iBack")
-            ):
+        ):
             for option in ("top", "left", "scale_x", "scale_y"):
                 gp17config.set(section, option, widg.value(option))
 
@@ -121,7 +127,7 @@ class NHSFormsConfigDialog(BaseDialog):
         gp17config.read_conf()
 
     def sizeHint(self):
-        return QtCore.QSize(300,350)
+        return QtCore.QSize(300, 350)
 
     def exec_(self):
         if BaseDialog.exec_(self):

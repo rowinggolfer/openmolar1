@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for
-# more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import logging
 
@@ -16,7 +32,9 @@ from openmolar.qt4gui.customwidgets.chartwidget import ToothImage
 
 LOGGER = logging.getLogger("openmolar")
 
+
 class editor(Ui_toothprops_full_edit.Ui_Dialog):
+
     def __init__(self, tooth, chart, lineEdit, dialog):
         self.dialog = dialog
         self.setupUi(self.dialog)
@@ -25,7 +43,7 @@ class editor(Ui_toothprops_full_edit.Ui_Dialog):
         self.setLabel()
         self.lineEdit = lineEdit
         hlayout = QtGui.QHBoxLayout(self.frame)
-        hlayout.setContentsMargins(0,0,0,0)
+        hlayout.setContentsMargins(0, 0, 0, 0)
         hlayout.addWidget(self.lineEdit)
         self.setData()
         self.tableWidget.setColumnWidth(0, 50)
@@ -33,11 +51,14 @@ class editor(Ui_toothprops_full_edit.Ui_Dialog):
         self.signals()
 
     def setLabel(self):
-        if self.chart == "st": type= _("Static")
-        elif self.chart == "pl": type= _("Planned")
-        else: type= _("Completed")
+        if self.chart == "st":
+            type = _("Static")
+        elif self.chart == "pl":
+            type = _("Planned")
+        else:
+            type = _("Completed")
 
-        self.tooth_label.setText("%s - %s items"% (self.tooth.upper(), type))
+        self.tooth_label.setText("%s - %s items" % (self.tooth.upper(), type))
 
     def setData(self):
         self.initialVal = str(self.lineEdit.text().toAscii())
@@ -47,12 +68,12 @@ class editor(Ui_toothprops_full_edit.Ui_Dialog):
         self.tableWidget.setColumnCount(4)
         self.tableWidget.setRowCount(len(props))
         self.tableWidget.setHorizontalHeaderLabels(["",
-        _("Item Shortcut"), _("Demote"), _("Erase")])
+                                                    _("Item Shortcut"), _("Demote"), _("Erase")])
 
         for row, prop in enumerate(props):
             self.fillRow(prop, row)
 
-    def fillRow(self,prop, row):
+    def fillRow(self, prop, row):
         if prop and prop[0] != "!":
             self.drawProp(prop, row)
         else:
@@ -76,7 +97,7 @@ class editor(Ui_toothprops_full_edit.Ui_Dialog):
         '''
         tooth = ToothImage(self.tooth, [str(prop).lower()])
         icon_tableitem = QtGui.QTableWidgetItem()
-        image = tooth.image.scaled(40,40)
+        image = tooth.image.scaled(40, 40)
         icon_tableitem.setData(QtCore.Qt.DecorationRole, image)
         icon_tableitem.setToolTip(_("click to edit Item - ") + prop)
 
@@ -88,14 +109,14 @@ class editor(Ui_toothprops_full_edit.Ui_Dialog):
         '''
         adds a pushbutton to the tableWidget
         '''
-        p_map = QtGui.QPixmap(":/eraser.png").scaled(24,24)
+        p_map = QtGui.QPixmap(":/eraser.png").scaled(24, 24)
         tableItem = QtGui.QTableWidgetItem()
         tableItem.setData(QtCore.Qt.DecorationRole, p_map)
         tableItem.setToolTip(_("click to delete item - ") + prop)
         self.tableWidget.setItem(row, 3, tableItem)
 
     def addDownArrow(self, prop, row):
-        p_map = QtGui.QPixmap(QtGui.QPixmap(":/down.png")).scaled(24,24)
+        p_map = QtGui.QPixmap(QtGui.QPixmap(":/down.png")).scaled(24, 24)
         tableItem = QtGui.QTableWidgetItem()
         tableItem.setData(QtCore.Qt.DecorationRole, p_map)
         tableItem.setToolTip(_("click to promote Item - ") + prop)
@@ -103,7 +124,7 @@ class editor(Ui_toothprops_full_edit.Ui_Dialog):
 
     def signals(self):
         self.tableWidget.connect(self.tableWidget,
-        QtCore.SIGNAL("cellPressed (int,int)"), self.tableClicked)
+                                 QtCore.SIGNAL("cellPressed (int,int)"), self.tableClicked)
 
     def tableClicked(self, row, column):
         if column == 3:
@@ -116,16 +137,16 @@ class editor(Ui_toothprops_full_edit.Ui_Dialog):
         self.updateLineEdit()
 
     def promoteRow(self, row):
-        if row+1 < self.tableWidget.rowCount():
+        if row + 1 < self.tableWidget.rowCount():
             self.tableWidget.insertRow(row)
-            self.fillRow(self.tableWidget.item(row+2,1).text(), row)
-            self.tableWidget.removeRow(row+2)
+            self.fillRow(self.tableWidget.item(row + 2, 1).text(), row)
+            self.tableWidget.removeRow(row + 2)
             self.updateLineEdit()
 
     def updateLineEdit(self):
         s = QtCore.QString("")
         for row in range(self.tableWidget.rowCount()):
-            s += self.tableWidget.item(row, 1).text()+" "
+            s += self.tableWidget.item(row, 1).text() + " "
         self.lineEdit.setText(s)
 
     def exec_(self):
@@ -145,6 +166,5 @@ if __name__ == "__main__":
 
     le = QtGui.QLineEdit()
     le.setText("IM/TIT MOD RT CR,GO !KUO")
-    dl = editor("ul7","st", le, Dialog)
+    dl = editor("ul7", "st", le, Dialog)
     dl.exec_()
-

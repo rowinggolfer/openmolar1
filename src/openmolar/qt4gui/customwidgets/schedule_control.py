@@ -1,24 +1,26 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2011-2012,  Neil Wallace <neil@openmolar.com>                  ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import logging
 
@@ -37,6 +39,7 @@ from openmolar.qt4gui.dialogs.find_patient_dialog import FindPatientDialog
 from openmolar.qt4gui.pt_diary_widget import PtDiaryWidget
 
 LOGGER = logging.getLogger("openmolar")
+
 
 class DiaryScheduleController(QtGui.QStackedWidget):
     BROWSE_MODE = 0
@@ -98,7 +101,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         diary_button.setToolTip(_("Open the patient's diary"))
 
         icon = QtGui.QIcon(":first.png")
-        self.first_appt_button = QtGui.QPushButton(icon,"")
+        self.first_appt_button = QtGui.QPushButton(icon, "")
         self.first_appt_button.setToolTip(_("Launch the Appointment Wizard"))
 
         icon = QtGui.QIcon(":back.png")
@@ -112,40 +115,40 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         self.appt_controls_frame = QtGui.QWidget()
         layout = QtGui.QGridLayout(self.appt_controls_frame)
         layout.setMargin(1)
-        layout.addWidget(diary_button,0,0)
-        layout.addWidget(self.first_appt_button,0,1)
-        layout.addWidget(self.prev_appt_button,0,2)
-        layout.addWidget(self.next_appt_button,0,3)
+        layout.addWidget(diary_button, 0, 0)
+        layout.addWidget(self.first_appt_button, 0, 1)
+        layout.addWidget(self.prev_appt_button, 0, 2)
+        layout.addWidget(self.next_appt_button, 0, 3)
         self.appt_controls_frame.setSizePolicy(
             QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
-            QtGui.QSizePolicy.Minimum))
+                              QtGui.QSizePolicy.Minimum))
 
         # now arrange the stacked widget
 
-        #page 0 - Browsing mode
+        # page 0 - Browsing mode
         self.addWidget(QtGui.QLabel("Browsing"))
 
-        #page 1 -- scheduling mode
+        # page 1 -- scheduling mode
         widg = QtGui.QWidget()
         layout = QtGui.QGridLayout(widg)
         layout.setMargin(0)
-        layout.addWidget(self.patient_label,0,0)
-        layout.addWidget(self.get_patient_button,0,1)
-        layout.addWidget(self.appt_listView,2,0,1,2)
-        layout.addWidget(self.appt_controls_frame,3,0,1,2)
+        layout.addWidget(self.patient_label, 0, 0)
+        layout.addWidget(self.get_patient_button, 0, 1)
+        layout.addWidget(self.appt_listView, 2, 0, 1, 2)
+        layout.addWidget(self.appt_controls_frame, 3, 0, 1, 2)
 
         self.addWidget(widg)
 
-        #page 2 -- blocking mode
+        # page 2 -- blocking mode
         widg = QtGui.QWidget()
         layout = QtGui.QVBoxLayout(widg)
         layout.addWidget(self.block_listView)
         self.addWidget(widg)
 
-        #page 4 -- notes mode
+        # page 4 -- notes mode
         self.addWidget(QtGui.QLabel("Notes"))
 
-        #connect signals
+        # connect signals
 
         self.appointment_model.appointment_selected.connect(
             self.update_selected_appointment)
@@ -193,8 +196,8 @@ class DiaryScheduleController(QtGui.QStackedWidget):
     @property
     def patient_text(self):
         if self.pt:
-            return "%s %s (%s)"% (
-            self.pt.fname, self.pt.sname, self.pt.serialno)
+            return "%s %s (%s)" % (
+                self.pt.fname, self.pt.sname, self.pt.serialno)
         else:
             return _("No patient Selected")
 
@@ -328,13 +331,13 @@ class DiaryScheduleController(QtGui.QStackedWidget):
 
         for slot in sorted(slots):
             if (slot.dent in self.selectedClinicians
-            and slot.day_no not in self.excluded_days) :
+               and slot.day_no not in self.excluded_days):
                 self.available_slots.append(slot)
 
     def set_joint_slots(self, dent_slots, hyg_slots, max_wait=10):
 
         LOGGER.debug(
-            "ScheduleControl.set join slots %s %s"% (dent_slots, hyg_slots))
+            "ScheduleControl.set join slots %s %s" % (dent_slots, hyg_slots))
         self.available_slots = []
         self.hygienist_slots = []
 
@@ -342,11 +345,11 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         all_hyg_slots = []
         for slot in sorted(dent_slots):
             if (slot.dent in self.selectedClinicians
-            and slot.day_no not in self.excluded_days) :
+               and slot.day_no not in self.excluded_days):
                 all_dent_slots.append(slot)
 
         for slot in sorted(hyg_slots):
-            if slot.day_no not in self.excluded_days :
+            if slot.day_no not in self.excluded_days:
                 all_hyg_slots.append(slot)
 
         appt = self.appointment_model.currentAppt
@@ -373,7 +376,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
             self.min_hyg_slot_length,
             self.hygienist_slots)
 
-        logging.info("WAIT TIME FOR HYGIENIST = %s minutes"% wait)
+        logging.info("WAIT TIME FOR HYGIENIST = %s minutes" % wait)
         return best_slot
 
     @property
@@ -398,10 +401,10 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         '''
         this determines whether it is worth continuing
         '''
-        return (   self.is_searching and
-                    len(self.selectedClinicians)>0 and
-                    len(self.available_slots)==0
-                    )
+        return (self.is_searching and
+                len(self.selectedClinicians) > 0 and
+                len(self.available_slots) == 0
+                )
 
     @property
     def chosen_slot(self):
@@ -422,7 +425,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
     def show_pt_diary(self):
         if self.pt is None:
             QtGui.QMessageBox.information(self, _("error"),
-            _("No patient selected"))
+                                          _("No patient selected"))
             return
 
         def _find_appt(appt):
@@ -457,18 +460,20 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         self.appointment_model.load_from_database(self.pt)
         self.enable_scheduling_buttons()
 
-        #now force diary relayout
+        # now force diary relayout
         self.appointment_selected.emit(self.appointment_model.currentAppt)
 
     def enable_scheduling_buttons(self):
         appt = self.appointment_model.currentAppt
         enabled = (appt is not None and appt.unscheduled)
         for but in (self.next_appt_button, self.prev_appt_button,
-        self.first_appt_button):
+                    self.first_appt_button):
             but.setEnabled(enabled)
+
 
 class TestWindow(QtGui.QMainWindow):
     MODES = ("Browse", "Schedule", "Block", "Notes")
+
     def __init__(self, parent=None):
         QtGui.QMainWindow.__init__(self, parent)
         self.schedule_controller = DiaryScheduleController()
@@ -499,9 +504,8 @@ class TestWindow(QtGui.QMainWindow):
         self.schedule_controller.find_appt.connect(self.sig_catcher)
         self.schedule_controller.start_scheduling.connect(self.sig_catcher)
 
-
     def set_but_text(self):
-        self.but.setText("set mode (current='%s')"% self.MODES[self.mode])
+        self.but.setText("set mode (current='%s')" % self.MODES[self.mode])
 
     def change_mode(self):
         '''
@@ -516,7 +520,7 @@ class TestWindow(QtGui.QMainWindow):
 
     def sig_catcher(self, *args):
         QtGui.QMessageBox.information(self, "signal",
-        "signal emitted %s"% str(args))
+                                      "signal emitted %s" % str(args))
 
 if __name__ == "__main__":
     import gettext
@@ -529,4 +533,3 @@ if __name__ == "__main__":
     obj = TestWindow()
     obj.show()
     app.exec_()
-

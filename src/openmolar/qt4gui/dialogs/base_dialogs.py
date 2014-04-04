@@ -1,24 +1,26 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2011-2012,  Neil Wallace <neil@openmolar.com>                  ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 this module provide 2 classes, BaseDialog and ExtendableDialog.
@@ -28,20 +30,23 @@ These are backported from openmolar2
 
 from PyQt4 import QtGui, QtCore
 
+
 class BaseDialog(QtGui.QDialog):
+
     '''
     A base class for all my dialogs
     provides a button box with ok and cancel buttons,
     slots connected to accept and reject
     has a VBoxlayout - accessed by self.layout_
     '''
+
     def __init__(self, parent=None, remove_stretch=False):
         QtGui.QDialog.__init__(self, parent)
 
         self.button_box = QtGui.QDialogButtonBox(self)
         self.button_box.setOrientation(QtCore.Qt.Horizontal)
         self.button_box.setStandardButtons(
-            self.button_box.Cancel|self.button_box.Apply)
+            self.button_box.Cancel | self.button_box.Apply)
 
         self.cancel_but = self.button_box.button(self.button_box.Cancel)
         self.apply_but = self.button_box.button(self.button_box.Apply)
@@ -57,7 +62,7 @@ class BaseDialog(QtGui.QDialog):
         self.enableApply(False)
 
         self.spacer = QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Expanding,
-            QtGui.QSizePolicy.Expanding)
+                                        QtGui.QSizePolicy.Expanding)
         self.layout_.addItem(self.spacer)
         self.layout_.addWidget(self.button_box)
         self.insertpoint_offset = 2
@@ -125,9 +130,9 @@ class BaseDialog(QtGui.QDialog):
             if not self.check_before_reject_if_dirty:
                 self.reject()
             if (not self.dirty or QtGui.QMessageBox.question(self,
-            _("Confirm"), _("Abandon Changes?"),
-            QtGui.QMessageBox.Yes|QtGui.QMessageBox.Cancel,
-            QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Yes):
+               _("Confirm"), _("Abandon Changes?"),
+                QtGui.QMessageBox.Yes | QtGui.QMessageBox.Cancel,
+                    QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Yes):
                 self.reject()
 
     def enableApply(self, enable=True):
@@ -137,7 +142,7 @@ class BaseDialog(QtGui.QDialog):
         self.apply_but.setEnabled(enable)
 
     def get_confirm(self, message,
-    accept="ok", reject="cancel", default="accept"):
+                    accept="ok", reject="cancel", default="accept"):
         '''
         a convenience function to raise a dialog for confirmation of an action
         '''
@@ -151,17 +156,20 @@ class BaseDialog(QtGui.QDialog):
         elif reject == "no":
             reject_but = QtGui.QMessageBox.No
 
-        buttons = accept_but|reject_but
+        buttons = accept_but | reject_but
         default_but = accept_but if default == "accept" else reject_but
 
-        return QtGui.QMessageBox.question(self,_("Confirm"),
-        message, buttons, default_but) == accept_but
+        return QtGui.QMessageBox.question(self, _("Confirm"),
+                                          message, buttons, default_but) == accept_but
+
 
 class ExtendableDialog(BaseDialog):
+
     '''
     builds on BaseDialog, adding an area for advanced options
     unlike BaseDialog.. this dialog has no spacer item by default
     '''
+
     def __init__(self, parent=None, remove_stretch=False):
         BaseDialog.__init__(self, parent, remove_stretch)
 

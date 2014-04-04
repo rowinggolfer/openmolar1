@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/specify_appointment.ui'
@@ -17,29 +18,37 @@ except AttributeError:
 
 
 class Ui_Dialog(object):
+
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
         Dialog.resize(593, 404)
         self.gridLayout_2 = QtGui.QGridLayout(Dialog)
         self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
-        spacerItem = QtGui.QSpacerItem(81, 56, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem = QtGui.QSpacerItem(
+            81,
+            56,
+            QtGui.QSizePolicy.Expanding,
+            QtGui.QSizePolicy.Minimum)
         self.gridLayout_2.addItem(spacerItem, 0, 0, 1, 1)
         self.gridLayout_3 = QtGui.QGridLayout()
         self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
         self.label = QtGui.QLabel(Dialog)
-        self.label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label.setObjectName(_fromUtf8("label"))
         self.gridLayout_3.addWidget(self.label, 0, 0, 1, 1)
         self.practix_comboBox = QtGui.QComboBox(Dialog)
         self.practix_comboBox.setObjectName(_fromUtf8("practix_comboBox"))
         self.gridLayout_3.addWidget(self.practix_comboBox, 0, 1, 1, 1)
         self.label_2 = QtGui.QLabel(Dialog)
-        self.label_2.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_2.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.gridLayout_3.addWidget(self.label_2, 1, 0, 1, 1)
         self.apptlength_comboBox = QtGui.QComboBox(Dialog)
         self.apptlength_comboBox.setMaxVisibleItems(20)
-        self.apptlength_comboBox.setObjectName(_fromUtf8("apptlength_comboBox"))
+        self.apptlength_comboBox.setObjectName(
+            _fromUtf8("apptlength_comboBox"))
         self.apptlength_comboBox.addItem(_fromUtf8(""))
         self.apptlength_comboBox.addItem(_fromUtf8(""))
         self.apptlength_comboBox.addItem(_fromUtf8(""))
@@ -60,10 +69,15 @@ class Ui_Dialog(object):
         self.combinedApptcheckBox = QtGui.QCheckBox(Dialog)
         self.combinedApptcheckBox.setEnabled(False)
         self.combinedApptcheckBox.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.combinedApptcheckBox.setObjectName(_fromUtf8("combinedApptcheckBox"))
+        self.combinedApptcheckBox.setObjectName(
+            _fromUtf8("combinedApptcheckBox"))
         self.gridLayout_3.addWidget(self.combinedApptcheckBox, 2, 0, 1, 2)
         self.gridLayout_2.addLayout(self.gridLayout_3, 0, 1, 1, 1)
-        spacerItem1 = QtGui.QSpacerItem(152, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem1 = QtGui.QSpacerItem(
+            152,
+            20,
+            QtGui.QSizePolicy.Expanding,
+            QtGui.QSizePolicy.Minimum)
         self.gridLayout_2.addItem(spacerItem1, 0, 2, 1, 1)
         self.line = QtGui.QFrame(Dialog)
         self.line.setFrameShape(QtGui.QFrame.HLine)
@@ -116,7 +130,8 @@ class Ui_Dialog(object):
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.label_6 = QtGui.QLabel(Dialog)
         self.label_6.setMaximumSize(QtCore.QSize(16777215, 30))
-        self.label_6.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_6.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_6.setObjectName(_fromUtf8("label_6"))
         self.horizontalLayout.addWidget(self.label_6)
         self.lineEdit = QtGui.QLineEdit(Dialog)
@@ -134,22 +149,37 @@ class Ui_Dialog(object):
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         self.scheduleNow_pushButton = QtGui.QPushButton(Dialog)
-        self.scheduleNow_pushButton.setObjectName(_fromUtf8("scheduleNow_pushButton"))
+        self.scheduleNow_pushButton.setObjectName(
+            _fromUtf8("scheduleNow_pushButton"))
         self.horizontalLayout_2.addWidget(self.scheduleNow_pushButton)
-        spacerItem2 = QtGui.QSpacerItem(128, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem2 = QtGui.QSpacerItem(
+            128,
+            20,
+            QtGui.QSizePolicy.Expanding,
+            QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem2)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Save)
+        self.buttonBox.setStandardButtons(
+            QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Save)
         self.buttonBox.setCenterButtons(False)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
         self.horizontalLayout_2.addWidget(self.buttonBox)
         self.gridLayout_2.addLayout(self.horizontalLayout_2, 6, 0, 1, 3)
 
         self.retranslateUi(Dialog)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Dialog.reject)
-        QtCore.QObject.connect(self.scheduleNow_pushButton, QtCore.SIGNAL(_fromUtf8("clicked()")), Dialog.accept)
+        QtCore.QObject.connect(
+            self.buttonBox,
+            QtCore.SIGNAL(_fromUtf8("accepted()")),
+            Dialog.accept)
+        QtCore.QObject.connect(
+            self.buttonBox,
+            QtCore.SIGNAL(_fromUtf8("rejected()")),
+            Dialog.reject)
+        QtCore.QObject.connect(
+            self.scheduleNow_pushButton,
+            QtCore.SIGNAL(_fromUtf8("clicked()")),
+            Dialog.accept)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -172,7 +202,8 @@ class Ui_Dialog(object):
         self.apptlength_comboBox.setItemText(13, _("2 hours 30 minutes"))
         self.apptlength_comboBox.setItemText(14, _("3 hours"))
         self.apptlength_comboBox.setItemText(15, _("other"))
-        self.combinedApptcheckBox.setText(_("Combined Appointment With Hygenist?"))
+        self.combinedApptcheckBox.setText(
+            _("Combined Appointment With Hygenist?"))
         self.label_3.setText(_("Reason 1"))
         self.label_5.setText(_("Reason 3"))
         self.label_4.setText(_("Reason 2"))
@@ -190,4 +221,3 @@ if __name__ == "__main__":
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())
-

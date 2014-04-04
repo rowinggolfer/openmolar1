@@ -1,24 +1,26 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2010-2012, Neil Wallace <neil@openmolar.com>                   ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 provides the BaseMainWindow class
@@ -33,7 +35,9 @@ from lib_openmolar.common.qt4.widgets import Advisor, DockableMenuBar
 
 logging.basicConfig(level=logging.DEBUG)
 
+
 class BaseMainWindow(QtGui.QMainWindow, Advisor):
+
     '''
     This class is a MainWindow, with menu, toolbar and statusbar.
     Some of the layout signals/slots already connected.
@@ -51,7 +55,7 @@ class BaseMainWindow(QtGui.QMainWindow, Advisor):
 
         self.setMinimumSize(300, 300)
 
-        #####          setup menu and headers                              ####
+        # setup menu and headers                              ####
 
         #: a pointer to the main toolbar
         self.main_toolbar = QtGui.QToolBar()
@@ -61,12 +65,12 @@ class BaseMainWindow(QtGui.QMainWindow, Advisor):
         #: a pointer to the :doc:`DockableMenuBar`
         menubar = DockableMenuBar(self)
 
-        ## add them to the app
+        # add them to the app
         self.setMenuBar(menubar)
 
         self.addToolBar(QtCore.Qt.TopToolBarArea, self.main_toolbar)
 
-        ####          setup a statusbar with a label                       ####
+        # setup a statusbar with a label                       ####
 
         #: a pointer to the QtGui.QStatusBar
         self.statusbar = QtGui.QStatusBar()
@@ -91,7 +95,7 @@ class BaseMainWindow(QtGui.QMainWindow, Advisor):
         self.menu_help = QtGui.QMenu(_("&Help"), self)
         menubar.addMenu(self.menu_help)
 
-        ####          file menu                                            ####
+        # file menu                                            ####
 
         icon = QtGui.QIcon.fromTheme("application-exit")
 
@@ -101,7 +105,7 @@ class BaseMainWindow(QtGui.QMainWindow, Advisor):
         self.menu_file.addSeparator()
         self.menu_file.addAction(self.action_quit)
 
-        ####         edit menu                                             ####
+        # edit menu                                             ####
 
         icon = QtGui.QIcon.fromTheme("preferences-desktop")
         #: a pointer to the preferences qAction
@@ -109,7 +113,7 @@ class BaseMainWindow(QtGui.QMainWindow, Advisor):
 
         self.menu_edit.addAction(self.action_preferences)
 
-        ####         view menu                                             ####
+        # view menu                                             ####
 
         #: a pointer to the show statusbar qaction
         self.action_show_statusbar = QtGui.QAction(_("Show Status&bar"), self)
@@ -118,7 +122,8 @@ class BaseMainWindow(QtGui.QMainWindow, Advisor):
 
         icon = QtGui.QIcon.fromTheme("view-fullscreen")
         #: a pointer to the fullscreen mode qaction
-        self.action_fullscreen = QtGui.QAction(icon, _("FullScreen Mode"), self)
+        self.action_fullscreen = QtGui.QAction(
+            icon, _("FullScreen Mode"), self)
         self.action_fullscreen.setCheckable(True)
         self.action_fullscreen.setShortcut("f11")
 
@@ -126,7 +131,7 @@ class BaseMainWindow(QtGui.QMainWindow, Advisor):
         self.menu_view.addAction(self.action_show_statusbar)
         self.menu_view.addAction(self.action_fullscreen)
 
-        ####         about menu                                            ####
+        # about menu                                            ####
 
         icon = QtGui.QIcon.fromTheme("help-about")
         #: a pointer to the about qaction
@@ -149,8 +154,8 @@ class BaseMainWindow(QtGui.QMainWindow, Advisor):
         self.menu_help.addSeparator()
         self.menu_help.addAction(self.action_help)
 
-        ####         toolbar                                               ####
-        ####         add selected menu items to the toolbar                ####
+        # toolbar                                               ####
+        # add selected menu items to the toolbar                ####
 
         #:
         self.help_toolbar = QtGui.QToolBar()
@@ -168,7 +173,7 @@ class BaseMainWindow(QtGui.QMainWindow, Advisor):
         :func:`__init__`
         '''
         self.connect(self.action_quit, QtCore.SIGNAL("triggered()"),
-        QtGui.QApplication.instance().closeAllWindows)
+                     QtGui.QApplication.instance().closeAllWindows)
 
         self.action_preferences.triggered.connect(self.show_preferences_dialog)
 
@@ -180,7 +185,7 @@ class BaseMainWindow(QtGui.QMainWindow, Advisor):
         self.action_license.triggered.connect(self.show_license)
 
         self.connect(self.action_about_qt, QtCore.SIGNAL("triggered()"),
-            QtGui.qApp, QtCore.SLOT("aboutQt()"))
+                     QtGui.qApp, QtCore.SLOT("aboutQt()"))
 
         self.action_help.triggered.connect(self.show_help)
 
@@ -194,8 +199,8 @@ class BaseMainWindow(QtGui.QMainWindow, Advisor):
         for l in traceback.format_exception(exc_type, exc_val, tracebackobj):
             message += l
 
-        self.log.error('UNHANDLED EXCEPTION!\n\n%s\n'% message)
-        self.advise('UNHANDLED EXCEPTION!<hr /><pre>%s'% message, 2)
+        self.log.error('UNHANDLED EXCEPTION!\n\n%s\n' % message)
+        self.advise('UNHANDLED EXCEPTION!<hr /><pre>%s' % message, 2)
 
     def resizeEvent(self, event):
         '''
@@ -228,7 +233,7 @@ class BaseMainWindow(QtGui.QMainWindow, Advisor):
         yield all toolbars of the application
         '''
         for child in self.children():
-            if type(child) == QtGui.QToolBar:
+            if isinstance(child, QtGui.QToolBar):
                 yield child
 
     def insertToolBar(self, *args):
@@ -256,7 +261,7 @@ class BaseMainWindow(QtGui.QMainWindow, Advisor):
         if sep:
             insertpoint = self.main_toolbar.insertSeparator(insertpoint)
             added.append(insertpoint)
-        if type(action) == QtGui.QAction:
+        if isinstance(action, QtGui.QAction):
             added.append(self.main_toolbar.insertAction(insertpoint, action))
         else:
             added.append(self.main_toolbar.insertWidget(insertpoint, action))
@@ -267,7 +272,7 @@ class BaseMainWindow(QtGui.QMainWindow, Advisor):
         load settings from QtCore.QSettings.
         '''
         settings = QtCore.QSettings()
-        #Qt settings
+        # Qt settings
         self.restoreGeometry(settings.value("geometry").toByteArray())
         self.restoreState(settings.value("windowState").toByteArray())
         statusbar_hidden = settings.value("statusbar_hidden").toBool()
@@ -293,14 +298,13 @@ class BaseMainWindow(QtGui.QMainWindow, Advisor):
         save settings from QtCore.QSettings
         '''
         settings = QtCore.QSettings()
-        #Qt settings
+        # Qt settings
         settings.setValue("geometry", self.saveGeometry())
         settings.setValue("windowState", self.saveState())
         settings.setValue("statusbar_hidden", self.statusbar.isHidden())
         settings.setValue("Font", self.font())
         settings.setValue("Toolbar", self.main_toolbar.toolButtonStyle())
         settings.setValue("TinyMenu", not self.menuBar().isVisible())
-
 
     def show_toolbar(self):
         if self.action_show_toolbar.isChecked():
@@ -316,8 +320,8 @@ class BaseMainWindow(QtGui.QMainWindow, Advisor):
 
     def reimplement_needed(self, func_name):
         QtGui.QMessageBox.information(self, "please re-implement",
-        '''please overwrite function <b>'%s'</b><br />
-        in any class which inherits from 'BaseMainWindow' '''% func_name)
+                                      '''please overwrite function <b>'%s'</b><br />
+        in any class which inherits from 'BaseMainWindow' ''' % func_name)
 
     def show_preferences_dialog(self):
         self.reimplement_needed('show_preferences_dialog')
@@ -385,7 +389,7 @@ class BaseMainWindow(QtGui.QMainWindow, Advisor):
             event.ignore()
 
     def get_confirm(self, message,
-    accept="ok", reject="cancel", default="accept"):
+                    accept="ok", reject="cancel", default="accept"):
         '''
         a convenience function to raise a dialog for confirmation of an action
         '''
@@ -399,11 +403,11 @@ class BaseMainWindow(QtGui.QMainWindow, Advisor):
         elif reject == "no":
             reject_but = QtGui.QMessageBox.No
 
-        buttons = accept_but|reject_but
+        buttons = accept_but | reject_but
         default_but = accept_but if default == "accept" else reject_but
 
-        return QtGui.QMessageBox.question(self,_("Confirm"),
-        message, buttons, default_but) == accept_but
+        return QtGui.QMessageBox.question(self, _("Confirm"),
+                                          message, buttons, default_but) == accept_but
 
 
 if __name__ == "__main__":

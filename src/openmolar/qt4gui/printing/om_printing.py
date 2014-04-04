@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# See the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 provides the main class which is my gui
@@ -49,17 +65,18 @@ from openmolar.qt4gui.dialogs.print_record_dialog import PrintRecordDialog
 
 LOGGER = logging.getLogger("openmolar")
 
+
 def commitPDFtoDB(om_gui, descr, serialno=None):
     '''
     grabs "temp.pdf" and puts into the db.
     '''
     LOGGER.info("comitting pdf to db")
-    if serialno == None:
+    if serialno is None:
         serialno = om_gui.pt.serialno
     try:
-        ##todo - this try/catch is naff.
+        # todo - this try/catch is naff.
         pdfDup = utilities.getPDF()
-        if pdfDup == None:
+        if pdfDup is None:
             om_gui.advise(_("PDF is NONE - (tell devs this happened)"))
         else:
             #-field is 20 chars max.. hence the [:14]
@@ -67,8 +84,9 @@ def commitPDFtoDB(om_gui, descr, serialno=None):
             #--now refresh the docprinted widget (if visible)
             if om_gui.ui.prevCorres_treeWidget.isVisible():
                 om_gui.docsPrintedInit()
-    except Exception, e:
-        om_gui.advise(_("Error saving PDF copy %s")% e, 2)
+    except Exception as e:
+        om_gui.advise(_("Error saving PDF copy %s") % e, 2)
+
 
 def printDupReceipt(om_gui):
     '''
@@ -77,13 +95,14 @@ def printDupReceipt(om_gui):
     dupdate = localsettings.currentDay()
     amount = om_gui.ui.receiptDoubleSpinBox.value()
 
-    printReceipt(om_gui, {_("Professional Services"):amount*100},
-        total=amount*100, duplicate=True, dupdate=dupdate)
+    printReceipt(om_gui, {_("Professional Services"): amount * 100},
+                 total=amount * 100, duplicate=True, dupdate=dupdate)
 
-    om_gui.pt.addHiddenNote("printed", "%s %.02f"% (
+    om_gui.pt.addHiddenNote("printed", "%s %.02f" % (
         _("duplicate receipt for"),
         amount))
     om_gui.updateHiddenNotesLabel()
+
 
 def printReceipt(om_gui, valDict, total="0.00"):
     '''
@@ -95,8 +114,8 @@ def printReceipt(om_gui, valDict, total="0.00"):
     myreceipt = receiptPrint.Receipt()
 
     myreceipt.setProps(om_gui.pt.title, om_gui.pt.fname, om_gui.pt.sname,
-    om_gui.pt.addr1, om_gui.pt.addr2, om_gui.pt.addr3, om_gui.pt.town,
-    om_gui.pt.county, om_gui.pt.pcde)
+                       om_gui.pt.addr1, om_gui.pt.addr2, om_gui.pt.addr3, om_gui.pt.town,
+                       om_gui.pt.county, om_gui.pt.pcde)
 
     myreceipt.total = total
 
@@ -106,6 +125,7 @@ def printReceipt(om_gui, valDict, total="0.00"):
         commitPDFtoDB(om_gui, "receipt")
         om_gui.pt.addHiddenNote("printed", "receipt")
         om_gui.updateHiddenNotesLabel()
+
 
 def printLetter(om_gui):
     '''
@@ -135,6 +155,7 @@ def printLetter(om_gui):
         else:
             referred_pt.toNotes(referred_pt.serialno, referred_pt.HIDDENNOTES)
 
+
 def printAccountsTable(om_gui):
     '''
     print the table
@@ -160,24 +181,25 @@ def printAccountsTable(om_gui):
             item = table.item(row, col)
             if item:
                 if col == 1:
-                    html += '<td align="right">%s</td>'% item.text()
+                    html += '<td align="right">%s</td>' % item.text()
                 elif col == 12:
                     money = int(float(item.text()) * 100)
                     money_str = localsettings.formatMoney(money)
-                    html += '<td align="right">%s</td>'% money_str
+                    html += '<td align="right">%s</td>' % money_str
                     total += money
                 else:
-                    html += '<td>%s</td>'% item.text()
+                    html += '<td>%s</td>' % item.text()
             else:
                 html += '<td> </td>'
         html += '</tr>\n'
 
     html += '<tr><td colspan="11"></td><td><b>' + _('TOTAL') + '''</b></td>
-        <td align="right"><b>%s</b></td></tr></table></body></html>'''% (
+        <td align="right"><b>%s</b></td></tr></table></body></html>''' % (
         localsettings.formatMoney(total))
 
     myclass = letterprint.letter(html)
     myclass.printpage()
+
 
 def printEstimate(om_gui):
     if om_gui.pt.serialno == 0:
@@ -187,7 +209,7 @@ def printEstimate(om_gui):
     est = estimatePrint.estimate()
 
     est.setProps(om_gui.pt.title, om_gui.pt.fname, om_gui.pt.sname,
-    om_gui.pt.serialno)
+                 om_gui.pt.serialno)
 
     est.setEsts(estimates.sorted_estimates(om_gui.pt.estimates))
 
@@ -195,6 +217,7 @@ def printEstimate(om_gui):
         commitPDFtoDB(om_gui, "auto estimate")
         om_gui.pt.addHiddenNote("printed", "estimate")
         om_gui.updateHiddenNotesLabel()
+
 
 def customEstimate(om_gui, html=""):
     '''
@@ -206,14 +229,13 @@ def customEstimate(om_gui, html=""):
     if html == "":
         html = standardletter.getHtml(om_gui.pt)
         pt_total = 0
-        ehtml = "<br />%s"% _(
-        "Estimate for your current course of treatment.")
-        ehtml += "<br />"*4
+        ehtml = "<br />%s" % _(
+            "Estimate for your current course of treatment.")
+        ehtml += "<br />" * 4
         ehtml += '<table width="400">'
 
-
-        #separate into NHS and non-NHS items.
-        sorted_ests = {"N":[], "P":[]}
+        # separate into NHS and non-NHS items.
+        sorted_ests = {"N": [], "P": []}
 
         for est in estimates.sorted_estimates(om_gui.pt.estimates):
             if "N" in est.csetype:
@@ -224,9 +246,9 @@ def customEstimate(om_gui, html=""):
         for type_, description in (
             ("N", _("NHS items")),
             ("P", _("Private items"))
-            ):
+        ):
             if sorted_ests[type_]:
-                ehtml += '<tr><td colspan = "3"><b>%s</b></td></tr>'% (
+                ehtml += '<tr><td colspan = "3"><b>%s</b></td></tr>' % (
                     description)
             for est in sorted_ests[type_]:
                 pt_total += est.ptfee
@@ -241,19 +263,20 @@ def customEstimate(om_gui, html=""):
                     item = item.replace("^", "")
 
                 ehtml += '''<tr><td>%s</td><td>%s</td>
-    <td align="right">%s</td></tr>'''% (
-                number, item, localsettings.formatMoney(amount))
+    <td align="right">%s</td></tr>''' % (
+                    number, item, localsettings.formatMoney(amount))
 
         ehtml += _('''<tr><td></td><td><b>TOTAL</b></td>
-<td align="right"><b>%s</b></td></tr>''')% localsettings.formatMoney(pt_total)
-        ehtml += "</table>" + "<br />"*4
-        html = html.replace("<br />"*(12), ehtml)
+<td align="right"><b>%s</b></td></tr>''') % localsettings.formatMoney(pt_total)
+        ehtml += "</table>" + "<br />" * 4
+        html = html.replace("<br />" * (12), ehtml)
         html += _('''<p><i>Please note, this estimate may be subject
 to change if clinical circumstances dictate.</i></p>''')
 
     if htmlEditor(om_gui, type="cust Estimate", html=html, version=0):
         om_gui.pt.addHiddenNote("printed", "cust estimate")
         om_gui.updateHiddenNotesLabel()
+
 
 def htmlEditor(om_gui, type="", html="", version=0):
     '''
@@ -270,22 +293,29 @@ def htmlEditor(om_gui, type="", html="", version=0):
 
         html = str(dl.textEdit.toHtml().toAscii())
 
-        docsprinted.add(om_gui.pt.serialno, "%s (html)"% type, html, version+1)
+        docsprinted.add(
+            om_gui.pt.serialno,
+            "%s (html)" %
+            type,
+            html,
+            version +
+            1)
         return True
+
 
 def printReferral(om_gui):
     '''prints a referal letter controlled by referal.xml file'''
-    ####TODO this file should really be in the sql database
+    # TODO this file should really be in the sql database
     if om_gui.pt.serialno == 0:
         om_gui.advise("no patient selected", 1)
         return
     desc = om_gui.ui.referralLettersComboBox.currentText()
-    ##todo re-enable this
-    #if "Ortho" in desc:
+    # todo re-enable this
+    # if "Ortho" in desc:
     #    orthoWizard(om_gui)
     #    return
     html = referral.getHtml(desc, om_gui.pt)
-    Dialog = QtGui.QDialog()#,  QtCore.Qt.WindowMinimizeButtonHint)
+    Dialog = QtGui.QDialog()  # ,  QtCore.Qt.WindowMinimizeButtonHint)
     dl = Ui_enter_letter_text.Ui_Dialog()
     dl.setupUi(Dialog)
     dl.textEdit.setHtml(html)
@@ -304,6 +334,7 @@ def printReferral(om_gui):
                 om_gui.docsPrintedInit()
         else:
             referred_pt.toNotes(referred_pt.serialno, referred_pt.HIDDENNOTES)
+
 
 def orthoWizard(om_gui):
     '''prints a referal letter controlled by referal.xml file'''
@@ -324,6 +355,7 @@ def orthoWizard(om_gui):
             om_gui.docsPrintedInit()
         om_gui.updateHiddenNotesLabel()
 
+
 def printChart(om_gui):
     if om_gui.pt.serialno == 0:
         om_gui.advise("no patient selected", 1)
@@ -334,6 +366,7 @@ def printChart(om_gui):
     om_gui.pt.addHiddenNote("printed", "static chart")
     om_gui.updateHiddenNotesLabel()
 
+
 def printMonth(om_gui):
     temp = om_gui.ui.monthView.selectedDate
     om_gui.ui.monthView.selectedDate = None
@@ -343,6 +376,7 @@ def printMonth(om_gui):
     myclass.printpage()
     om_gui.ui.monthView.selectedDate = temp
 
+
 def printaccount(om_gui, tone="A"):
     if om_gui.pt.serialno == 0:
         om_gui.advise("no patient selected", 1)
@@ -350,29 +384,31 @@ def printaccount(om_gui, tone="A"):
         doc = accountPrint.document(
             om_gui.pt.title, om_gui.pt.fname, om_gui.pt.sname,
             (om_gui.pt.addr1, om_gui.pt.addr2, om_gui.pt.addr3,
-            om_gui.pt.town, om_gui.pt.county),
+             om_gui.pt.town, om_gui.pt.county),
             om_gui.pt.pcde, om_gui.pt.fees
-            )
+        )
         doc.setTone(tone)
         if tone == "B":
             doc.setPreviousCorrespondenceDate(om_gui.pt.billdate)
-            ####TODO unsure if this is correct date! - p
-            ####lease print one and try it!
+            # TODO unsure if this is correct date! - p
+            # lease print one and try it!
         if doc.print_():
             om_gui.pt.updateBilling(tone)
-            om_gui.pt.addHiddenNote("printed", "account - tone %s"%tone)
+            om_gui.pt.addHiddenNote("printed", "account - tone %s" % tone)
             om_gui.addNewNote("Account Printed")
-            commitPDFtoDB(om_gui, "Account tone%s"%tone)
+            commitPDFtoDB(om_gui, "Account tone%s" % tone)
             om_gui.updateHiddenNotesLabel()
+
 
 def accountButton2Clicked(om_gui):
     if om_gui.ui.accountB_radioButton.isChecked():
         om_gui.printaccount("B")
     elif om_gui.ui.accountC_radioButton.isChecked():
-        #print "harsh letter"
+        # print "harsh letter"
         om_gui.printaccount("C")
     else:
         om_gui.printaccount()
+
 
 def printdaylists(om_gui, args, expanded=False):
     '''
@@ -389,6 +425,7 @@ def printdaylists(om_gui, args, expanded=False):
     if something_to_print:
         dlist.print_(expanded)
 
+
 def printmultiDayList(om_gui, args):
     '''
     prints the multiday pages
@@ -398,12 +435,13 @@ def printmultiDayList(om_gui, args):
     something_to_print = False
     for arg in args:
         data = appointments.printableDaylistData(arg[1].toPyDate(), arg[0])
-        #note arg[1]=Qdate
+        # note arg[1]=Qdate
         if data != []:
             something_to_print = True
             dlist.addDaylist(arg[1], arg[0], data)
     if something_to_print:
         dlist.print_()
+
 
 def daylistPrintWizard(om_gui):
     def checkAll(arg):
@@ -441,22 +479,24 @@ def daylistPrintWizard(om_gui):
             printmultiDayList(om_gui, books)
         else:
             printdaylists(
-            om_gui, books, dl.onePageFull_radioButton.isChecked())
+                om_gui, books, dl.onePageFull_radioButton.isChecked())
+
 
 def printrecall(om_gui):
     if om_gui.pt.serialno == 0:
         om_gui.advise("no patient selected", 1)
     else:
         args = (
-        (om_gui.pt.title, om_gui.pt.fname, om_gui.pt.sname, om_gui.pt.dnt1,
-        om_gui.pt.serialno, om_gui.pt.addr1, om_gui.pt.addr2, om_gui.pt.addr3,
-        om_gui.pt.town, om_gui.pt.county, om_gui.pt.pcde), )
+            (om_gui.pt.title, om_gui.pt.fname, om_gui.pt.sname, om_gui.pt.dnt1,
+             om_gui.pt.serialno, om_gui.pt.addr1, om_gui.pt.addr2, om_gui.pt.addr3,
+             om_gui.pt.town, om_gui.pt.county, om_gui.pt.pcde), )
 
         recall_printer = recallprint.RecallPrinter(args)
         recall_printer.print_()
 
         om_gui.pt.addHiddenNote("printed", "recall - non batch")
         om_gui.updateHiddenNotesLabel()
+
 
 def printNotes(om_gui):
     if om_gui.pt.serialno == 0:
@@ -467,21 +507,23 @@ def printNotes(om_gui):
     image = QtGui.QPixmap.grabWidget(om_gui.ui.summaryChartWidget)
     image.save(image_file.name)
     dl = PrintRecordDialog(
-        om_gui.pt, "file://%s"% image_file.name, om_gui)
+        om_gui.pt, "file://%s" % image_file.name, om_gui)
     dl.exec_()
+
 
 def print_mh_form(om_gui):
     if om_gui.pt.serialno == 0:
         om_gui.advise("no patient selected", 1)
         return
-    LOGGER.info("print MH form for %s"% om_gui.pt.serialno)
+    LOGGER.info("print MH form for %s" % om_gui.pt.serialno)
     mh_printer = MHPrint(om_gui.pt, om_gui)
     mh_printer.print_()
+
 
 def print_mh_forms(serialnos, om_gui):
     for serialno in serialnos:
         pt = patient_class.patient(serialno)
-        LOGGER.info("print MH form for %s"% pt.serialno)
+        LOGGER.info("print MH form for %s" % pt.serialno)
         mh_printer = MHPrint(pt, om_gui)
         mh_printer.print_()
 
@@ -501,15 +543,16 @@ def printSelectedAccounts(om_gui):
         for col in range(13, 16):
             item = om_gui.ui.accounts_tableWidget.item(row, col)
             if item.checkState():
-                tone = ("A", "B", "C")[col-13]
+                tone = ("A", "B", "C")[col - 13]
                 sno = int(om_gui.ui.accounts_tableWidget.item(row, 1).text())
-                LOGGER.info("Account tone %s letter to %s"%(tone, sno))
+                LOGGER.info("Account tone %s letter to %s" % (tone, sno))
                 printpt = patient_class.patient(sno)
 
                 doc = accountPrint.document(printpt.title,
-                printpt.fname, printpt.sname, (printpt.addr1,
-                printpt.addr2, printpt.addr3, printpt.town,
-                printpt.county), printpt.pcde, printpt.fees)
+                                            printpt.fname, printpt.sname, (
+                                                printpt.addr1,
+                                            printpt.addr2, printpt.addr3, printpt.town,
+                                            printpt.county), printpt.pcde, printpt.fees)
 
                 doc.setTone(tone)
 
@@ -531,19 +574,20 @@ def printSelectedAccounts(om_gui):
                 if doc.print_():
                     printpt.updateBilling(tone)
                     printpt.addHiddenNote(
-                    "printed", "account - tone %s"%tone)
+                        "printed", "account - tone %s" % tone)
 
                     patient_write_changes.discreet_changes(printpt, (
-                    "billct", "billdate", "billtype"))
+                                                           "billct", "billdate", "billtype"))
 
                     patient_write_changes.toNotes(sno,
-                        printpt.HIDDENNOTES)
+                                                  printpt.HIDDENNOTES)
 
                     commitPDFtoDB(om_gui,
-                    "Account tone%s"%tone, printpt.serialno)
+                                  "Account tone%s" % tone, printpt.serialno)
 
                     no_printed += 1
-    om_gui.advise("%d letters printed"% no_printed, 1)
+    om_gui.advise("%d letters printed" % no_printed, 1)
+
 
 def historyPrint(om_gui):
     html = om_gui.ui.debugBrowser.toHtml()

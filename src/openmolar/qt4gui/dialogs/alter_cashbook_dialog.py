@@ -1,24 +1,26 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2011-2012,  Neil Wallace <neil@openmolar.com>                  ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from PyQt4 import QtGui, QtCore
 
@@ -39,13 +41,14 @@ where id = %s'''
 
 
 class AlterCashbookDialog(ExtendableDialog):
+
     def __init__(self, ix, parent=None):
         ExtendableDialog.__init__(self, parent)
 
         self.ix = ix
         title = _("Alter Cashbook Entry")
         self.setWindowTitle(title)
-        label = QtGui.QLabel(u"<b>%s</b>"% title)
+        label = QtGui.QLabel(u"<b>%s</b>" % title)
         label.setAlignment(QtCore.Qt.AlignCenter)
 
         frame = QtGui.QFrame()
@@ -59,7 +62,7 @@ class AlterCashbookDialog(ExtendableDialog):
 
         self.code_cb = QtGui.QComboBox()
         self.amount_sb = QtGui.QDoubleSpinBox()
-        self.amount_sb.setRange(0,10000)
+        self.amount_sb.setRange(0, 10000)
 
         self.codestrings = cashbookCodesDict.values()
         self.code_cb.addItems(self.codestrings)
@@ -76,7 +79,6 @@ class AlterCashbookDialog(ExtendableDialog):
         self.date_edit.setEnabled(False)
         self.dentist_cb.setEnabled(False)
         self.amount_sb.setEnabled(False)
-
 
         self.insertWidget(label)
         self.insertWidget(frame)
@@ -129,7 +131,7 @@ class AlterCashbookDialog(ExtendableDialog):
 
         pounds = amt // 100
         pence = amt % 100
-        double_val = float("%s.%s"% (pounds, pence))
+        double_val = float("%s.%s" % (pounds, pence))
         self.amount_sb.setValue(double_val)
 
         self.check_enable()
@@ -144,7 +146,7 @@ class AlterCashbookDialog(ExtendableDialog):
                 break
         dntid = localsettings.ops_reverse[str(self.dentist_cb.currentText())]
 
-        currency = "%.02f"%self.amount_sb.value()
+        currency = "%.02f" % self.amount_sb.value()
         amt = int(currency.replace(".", ""))
 
         values = (date_, ref, descr, code, dntid, amt, self.ix)
@@ -155,7 +157,7 @@ class AlterCashbookDialog(ExtendableDialog):
         db.commit()
 
     def sizeHint(self):
-        return QtCore.QSize(300,350)
+        return QtCore.QSize(300, 350)
 
     def exec_(self):
         if ExtendableDialog.exec_(self):

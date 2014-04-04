@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/apptTools.ui'
@@ -17,11 +18,15 @@ except AttributeError:
 
 
 class Ui_MainWindow(object):
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.resize(599, 255)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/logo.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(
+            QtGui.QPixmap(_fromUtf8(":/logo.png")),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
@@ -35,13 +40,16 @@ class Ui_MainWindow(object):
         self.label.setObjectName(_fromUtf8("label"))
         self.gridLayout.addWidget(self.label, 0, 0, 5, 1)
         self.extendBook_pushButton = QtGui.QPushButton(self.centralwidget)
-        self.extendBook_pushButton.setObjectName(_fromUtf8("extendBook_pushButton"))
+        self.extendBook_pushButton.setObjectName(
+            _fromUtf8("extendBook_pushButton"))
         self.gridLayout.addWidget(self.extendBook_pushButton, 0, 1, 1, 1)
         self.removeOld_pushButton = QtGui.QPushButton(self.centralwidget)
-        self.removeOld_pushButton.setObjectName(_fromUtf8("removeOld_pushButton"))
+        self.removeOld_pushButton.setObjectName(
+            _fromUtf8("removeOld_pushButton"))
         self.gridLayout.addWidget(self.removeOld_pushButton, 2, 1, 1, 1)
         self.editWeeks_pushButton = QtGui.QPushButton(self.centralwidget)
-        self.editWeeks_pushButton.setObjectName(_fromUtf8("editWeeks_pushButton"))
+        self.editWeeks_pushButton.setObjectName(
+            _fromUtf8("editWeeks_pushButton"))
         self.gridLayout.addWidget(self.editWeeks_pushButton, 3, 1, 1, 1)
         self.openDay_pushButton = QtGui.QPushButton(self.centralwidget)
         self.openDay_pushButton.setObjectName(_fromUtf8("openDay_pushButton"))
@@ -66,10 +74,12 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_("Appointment Tools"))
-        self.extendBook_pushButton.setToolTip(_("Move the end date for making appointments."))
+        self.extendBook_pushButton.setToolTip(
+            _("Move the end date for making appointments."))
         self.extendBook_pushButton.setText(_("Extend Books"))
         self.removeOld_pushButton.setText(_("Remove old weeks"))
-        self.editWeeks_pushButton.setText(_("Edit Standard Working Weeks for Clinicians"))
+        self.editWeeks_pushButton.setText(
+            _("Edit Standard Working Weeks for Clinicians"))
         self.openDay_pushButton.setText(_("Open A Day"))
         self.blocks_pushButton.setText(_("Insert regular blocks"))
         self.menu_Quit.setTitle(_("&Quit"))
@@ -86,4 +96,3 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-

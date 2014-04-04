@@ -1,14 +1,26 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 2 of the License, or
-# version 3 of the License, or (at your option) any later version. It is
-# provided for educational purposes and is distributed in the hope that
-# it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-# warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
-# the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 this module puts the "openmolar" modules onto the python path,
@@ -23,21 +35,24 @@ import hashlib
 from PyQt4 import QtGui, QtCore
 from xml.dom import minidom
 
-## a variable to force the first run and database update tools
+# a variable to force the first run and database update tools
 FIRST_RUN_TESTING = False
 IGNORE_SCHEMA_CHECK = False
 
 SHORTARGS = "v"
-LONGARGS = ["help","version","setup","firstrun","user=", "db=", "port=",
-"ignore-schema-check"]
+LONGARGS = ["help", "version", "setup", "firstrun", "user=", "db=", "port=",
+            "ignore-schema-check"]
 
 LOGGER = logging.getLogger("openmolar")
 
+
 class LoginError(Exception):
+
     '''
     a custom exception thrown when the user gets password or username incorrect
     '''
     pass
+
 
 def proceed():
     '''
@@ -62,28 +77,28 @@ def proceed():
 
     elif localsettings.CLIENT_SCHEMA_VERSION < sv:
         print "client is out of date....."
-        compatible  = schema_version.clientCompatibility(
+        compatible = schema_version.clientCompatibility(
             localsettings.CLIENT_SCHEMA_VERSION)
 
         if not compatible:
             QtGui.QMessageBox.warning(None, _("Update Client"),
-            _('''<p>Sorry, you cannot run this version of the openMolar client
+                                      _('''<p>Sorry, you cannot run this version of the openMolar client
 because your database schema is more advanced.</p>
 <p>this client requires schema version %s, but your database is at %s</p>
-<p>Please Update openMolar now</p>''')% (
-            localsettings.CLIENT_SCHEMA_VERSION, sv))
+<p>Please Update openMolar now</p>''') % (
+                                      localsettings.CLIENT_SCHEMA_VERSION, sv))
         else:
             result = QtGui.QMessageBox.question(None,
-            _("Proceed without upgrade?"),
-            _('''<p>This openMolar client has fallen behind your database
+                                                _("Proceed without upgrade?"),
+                                                _('''<p>This openMolar client has fallen behind your database
 schema version<br />this client was written for schema version %s,
 but your database is now at %s<br />However, the differences are not critical,
 and you can continue if you wish</p>
 <p><i>It would still be wise to update this client ASAP</i></p>
-<hr /><p>Do you wish to continue?</p>''')% (
-            localsettings.CLIENT_SCHEMA_VERSION, sv),
-            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-            QtGui.QMessageBox.Yes )
+<hr /><p>Do you wish to continue?</p>''') % (
+                                                localsettings.CLIENT_SCHEMA_VERSION, sv),
+                                                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                                                QtGui.QMessageBox.Yes)
 
             if result == QtGui.QMessageBox.Yes:
                 run_main = True
@@ -93,6 +108,7 @@ and you can continue if you wish</p>
         maingui.main(my_app)
     else:
         sys.exit()
+
 
 def main():
     '''
@@ -109,7 +125,7 @@ def main():
 
     AUTOUSER = ""
 
-    def autoreception(arg):    #arg is a QString
+    def autoreception(arg):  # arg is a QString
         '''
         check to see if the user is special user "rec"
         which implies a reception machine
@@ -124,11 +140,11 @@ def main():
         i = actions.index(chosenAction)
 
         message = localsettings.server_names[i] + "<br />" + _(
-        "This is not the default database - are you sure?")
+            "This is not the default database - are you sure?")
         if i != 0:
             if QtGui.QMessageBox.question(my_dialog, _("confirm"), message,
-            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-            QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
+                                          QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                                          QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
                 i = 0
 
         dl.chosenServer = i
@@ -143,7 +159,7 @@ def main():
             def_string = " (" + _("DEFAULT") + ")"
 
         dl.chosenServer_label.setText(_("Chosen server") + " - " +
-        localsettings.server_names[i] +  def_string)
+                                      localsettings.server_names[i] + def_string)
 
     if not FIRST_RUN_TESTING:
         cf_Found = True
@@ -166,9 +182,9 @@ If you do not have a database, you will be prompted to create one<</p>
 Are you ready to proceed?</center>''')
 
         result = QtGui.QMessageBox.question(None, _("First Run"),
-        message,
-        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-        QtGui.QMessageBox.Yes )
+                                            message,
+                                            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                                            QtGui.QMessageBox.Yes)
 
         if result == QtGui.QMessageBox.Yes:
             import firstRun
@@ -176,7 +192,7 @@ Are you ready to proceed?</center>''')
                 my_app.closeAllWindows()
                 sys.exit()
             else:
-                AUTOUSER="user"
+                AUTOUSER = "user"
         else:
             my_app.closeAllWindows()
             sys.exit()
@@ -189,16 +205,16 @@ Are you ready to proceed?</center>''')
         servernames = dom.getElementsByTagName("connection")
         for server in servernames:
             nameDict = server.attributes
-            if nameDict.has_key("name"):
+            if "name" in nameDict:
                 localsettings.server_names.append(nameDict["name"].value)
 
         if localsettings.server_names == []:
             localsettings.server_names.append("")
 
-    except IOError, e:
-        print "still no settings... %s\nquitting politely"% e
+    except IOError as e:
+        print "still no settings... %s\nquitting politely" % e
         QtGui.QMessageBox.information(None, _("Unable to Run OpenMolar"),
-        _("Good Bye!"))
+                                      _("Good Bye!"))
 
         my_app.closeAllWindows()
         sys.exit("unable to run - openMolar couldn't find a settings file")
@@ -222,10 +238,10 @@ Are you ready to proceed?</center>''')
         dl.advanced_frame.hide()
 
     servermenu.connect(servermenu,
-    QtCore.SIGNAL("triggered (QAction *)"), chosenServer)
+                       QtCore.SIGNAL("triggered (QAction *)"), chosenServer)
 
     QtCore.QObject.connect(dl.user1_lineEdit,
-    QtCore.SIGNAL("textEdited (const QString&)"), autoreception)
+                           QtCore.SIGNAL("textEdited (const QString&)"), autoreception)
 
     while True:
         if my_dialog.exec_():
@@ -237,11 +253,11 @@ Are you ready to proceed?</center>''')
             try:
                 #--"salt" the password
                 pword = "diqug_ADD_SALT_3i2some" + str(
-                dl.password_lineEdit.text())
+                    dl.password_lineEdit.text())
                 #-- hash the salted password (twice!) and compare to the value
                 #-- stored in /etc/openmolar/openmolar.conf (linux)
                 stored_password = hashlib.md5(
-                hashlib.sha1(pword).hexdigest()).hexdigest()
+                    hashlib.sha1(pword).hexdigest()).hexdigest()
 
                 if stored_password != sys_password:
                     #-- end password check
@@ -265,8 +281,8 @@ Are you ready to proceed?</center>''')
                 #-- allowed_logins in a list of practice staff.
                 if not u1_qstring in localsettings.allowed_logins:
                     raise LoginError
-                if (u2_qstring !="" and
-                not u2_qstring in localsettings.allowed_logins):
+                if (u2_qstring != "" and
+                   not u2_qstring in localsettings.allowed_logins):
                     raise LoginError
 
                 #-- set a variable to allow the main program to run
@@ -280,16 +296,16 @@ Are you ready to proceed?</center>''')
 
             except LoginError:
                 QtGui.QMessageBox.warning(my_dialog,
-                _("Login Error"),
-                u'<h2>%s %s</h2><em>%s</em>'% (
-                    _('Incorrect'),
-                    _("User/password combination!"),
-                    _('Please Try Again.')
-                    )
-                )
+                                          _("Login Error"),
+                                          u'<h2>%s %s</h2><em>%s</em>' % (
+                                              _('Incorrect'),
+                                              _("User/password combination!"),
+                                              _('Please Try Again.')
+                                          )
+                                          )
             except Exception as exc:
                 LOGGER.exception("UNEXPECTED ERROR")
-                message = u'<p>%s</p><p>%s</p><hr /><pre>%s</pre>'% (
+                message = u'<p>%s</p><p>%s</p><hr /><pre>%s</pre>' % (
                     _("UNEXPECTED ERROR"),
                     _("application cannot run"),
                     exc)
@@ -300,6 +316,7 @@ Are you ready to proceed?</center>''')
             break
     my_app.closeAllWindows()
 
+
 def setup(argv):
     '''
     run the setup gui, which allows customisation of the app
@@ -307,6 +324,7 @@ def setup(argv):
     print "running setup"
     from openmolar.qt4gui.tools import new_setup
     new_setup.main(argv)
+
 
 def usage():
     '''
@@ -320,12 +338,14 @@ def usage():
 --setup   \ttakes you to the admin page
 --version \tshow the versioning and exit'''
 
+
 def version():
     '''
     show the version on the command line
     '''
     from openmolar.settings import localsettings
     localsettings.showVersion()
+
 
 def run():
     '''
@@ -341,11 +361,11 @@ def run():
         # above will print something like "option -foo not recognized"
         sys.exit(2)
 
-    #some backward compatibility stuff here...
+    # some backward compatibility stuff here...
     if "setup" in sys.argv:
-        opts.append(("--setup",""))
+        opts.append(("--setup", ""))
     if "firstrun" in sys.argv:
-        opts.append(("--firstrun",""))
+        opts.append(("--firstrun", ""))
 
     for option, arg in opts:
         if option == "--help":
@@ -372,19 +392,19 @@ if __name__ == "__main__":
     #-- put "openmolar" on the pyth path and go....
     LOGGER.debug("starting openMolar.... using main.py as __main__")
 
-    def determine_path ():
+    def determine_path():
         """Borrowed from wxglade.py"""
         try:
             root = __file__
-            if os.path.islink (root):
-                root = os.path.realpath (root)
-            retarg = os.path.dirname (os.path.abspath (root))
+            if os.path.islink(root):
+                root = os.path.realpath(root)
+            retarg = os.path.dirname(os.path.abspath(root))
             return retarg
         except:
             LOGGER.exception(
-            "There is no __file__ variable.\n"
-            "OpenMolar cannot run in this environment")
-            sys.exit ()
+                "There is no __file__ variable.\n"
+                "OpenMolar cannot run in this environment")
+            sys.exit()
 
     wkdir = determine_path()
     sys.path.insert(0, os.path.dirname(wkdir))

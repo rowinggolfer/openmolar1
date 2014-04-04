@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/record_tools.ui'
@@ -17,6 +18,7 @@ except AttributeError:
 
 
 class Ui_Dialog(object):
+
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
         Dialog.resize(628, 521)
@@ -32,95 +34,114 @@ class Ui_Dialog(object):
         self.money_scrollArea.setWidgetResizable(True)
         self.money_scrollArea.setObjectName(_fromUtf8("money_scrollArea"))
         self.money_scrollAreaWidgetContents = QtGui.QWidget()
-        self.money_scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 443, 424))
-        self.money_scrollAreaWidgetContents.setObjectName(_fromUtf8("money_scrollAreaWidgetContents"))
-        self.gridLayout = QtGui.QGridLayout(self.money_scrollAreaWidgetContents)
+        self.money_scrollAreaWidgetContents.setGeometry(
+            QtCore.QRect(0, 0, 443, 424))
+        self.money_scrollAreaWidgetContents.setObjectName(
+            _fromUtf8("money_scrollAreaWidgetContents"))
+        self.gridLayout = QtGui.QGridLayout(
+            self.money_scrollAreaWidgetContents)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.label = QtGui.QLabel(self.money_scrollAreaWidgetContents)
         self.label.setObjectName(_fromUtf8("label"))
         self.gridLayout.addWidget(self.label, 1, 0, 1, 1)
-        self.money0_spinBox = QtGui.QSpinBox(self.money_scrollAreaWidgetContents)
+        self.money0_spinBox = QtGui.QSpinBox(
+            self.money_scrollAreaWidgetContents)
         self.money0_spinBox.setMaximum(1000000)
         self.money0_spinBox.setObjectName(_fromUtf8("money0_spinBox"))
         self.gridLayout.addWidget(self.money0_spinBox, 1, 1, 1, 1)
         self.label_2 = QtGui.QLabel(self.money_scrollAreaWidgetContents)
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.gridLayout.addWidget(self.label_2, 2, 0, 1, 1)
-        self.money2_spinBox = QtGui.QSpinBox(self.money_scrollAreaWidgetContents)
+        self.money2_spinBox = QtGui.QSpinBox(
+            self.money_scrollAreaWidgetContents)
         self.money2_spinBox.setMaximum(1000000)
         self.money2_spinBox.setObjectName(_fromUtf8("money2_spinBox"))
         self.gridLayout.addWidget(self.money2_spinBox, 2, 1, 1, 1)
         self.label_5 = QtGui.QLabel(self.money_scrollAreaWidgetContents)
         self.label_5.setObjectName(_fromUtf8("label_5"))
         self.gridLayout.addWidget(self.label_5, 7, 0, 1, 1)
-        self.money4_spinBox = QtGui.QSpinBox(self.money_scrollAreaWidgetContents)
+        self.money4_spinBox = QtGui.QSpinBox(
+            self.money_scrollAreaWidgetContents)
         self.money4_spinBox.setMaximum(1000000)
         self.money4_spinBox.setObjectName(_fromUtf8("money4_spinBox"))
         self.gridLayout.addWidget(self.money4_spinBox, 7, 1, 1, 1)
         self.label_6 = QtGui.QLabel(self.money_scrollAreaWidgetContents)
         self.label_6.setObjectName(_fromUtf8("label_6"))
         self.gridLayout.addWidget(self.label_6, 8, 0, 1, 1)
-        self.money5_spinBox = QtGui.QSpinBox(self.money_scrollAreaWidgetContents)
+        self.money5_spinBox = QtGui.QSpinBox(
+            self.money_scrollAreaWidgetContents)
         self.money5_spinBox.setMaximum(1000000)
         self.money5_spinBox.setObjectName(_fromUtf8("money5_spinBox"))
         self.gridLayout.addWidget(self.money5_spinBox, 8, 1, 1, 1)
         self.label_7 = QtGui.QLabel(self.money_scrollAreaWidgetContents)
         self.label_7.setObjectName(_fromUtf8("label_7"))
         self.gridLayout.addWidget(self.label_7, 9, 0, 1, 1)
-        self.money6_spinBox = QtGui.QSpinBox(self.money_scrollAreaWidgetContents)
+        self.money6_spinBox = QtGui.QSpinBox(
+            self.money_scrollAreaWidgetContents)
         self.money6_spinBox.setMaximum(1000000)
         self.money6_spinBox.setObjectName(_fromUtf8("money6_spinBox"))
         self.gridLayout.addWidget(self.money6_spinBox, 9, 1, 1, 1)
         self.label_8 = QtGui.QLabel(self.money_scrollAreaWidgetContents)
         self.label_8.setObjectName(_fromUtf8("label_8"))
         self.gridLayout.addWidget(self.label_8, 10, 0, 1, 1)
-        self.money7_spinBox = QtGui.QSpinBox(self.money_scrollAreaWidgetContents)
+        self.money7_spinBox = QtGui.QSpinBox(
+            self.money_scrollAreaWidgetContents)
         self.money7_spinBox.setMaximum(1000000)
         self.money7_spinBox.setObjectName(_fromUtf8("money7_spinBox"))
         self.gridLayout.addWidget(self.money7_spinBox, 10, 1, 1, 1)
         self.label_9 = QtGui.QLabel(self.money_scrollAreaWidgetContents)
         self.label_9.setObjectName(_fromUtf8("label_9"))
         self.gridLayout.addWidget(self.label_9, 11, 0, 1, 1)
-        self.money8_spinBox = QtGui.QSpinBox(self.money_scrollAreaWidgetContents)
+        self.money8_spinBox = QtGui.QSpinBox(
+            self.money_scrollAreaWidgetContents)
         self.money8_spinBox.setMaximum(1000000)
         self.money8_spinBox.setObjectName(_fromUtf8("money8_spinBox"))
         self.gridLayout.addWidget(self.money8_spinBox, 11, 1, 1, 1)
         self.label_10 = QtGui.QLabel(self.money_scrollAreaWidgetContents)
         self.label_10.setObjectName(_fromUtf8("label_10"))
         self.gridLayout.addWidget(self.label_10, 12, 0, 1, 1)
-        self.money9_spinBox = QtGui.QSpinBox(self.money_scrollAreaWidgetContents)
+        self.money9_spinBox = QtGui.QSpinBox(
+            self.money_scrollAreaWidgetContents)
         self.money9_spinBox.setMaximum(1000000)
         self.money9_spinBox.setObjectName(_fromUtf8("money9_spinBox"))
         self.gridLayout.addWidget(self.money9_spinBox, 12, 1, 1, 1)
         self.label_11 = QtGui.QLabel(self.money_scrollAreaWidgetContents)
         self.label_11.setObjectName(_fromUtf8("label_11"))
         self.gridLayout.addWidget(self.label_11, 13, 0, 1, 1)
-        self.money10_spinBox = QtGui.QSpinBox(self.money_scrollAreaWidgetContents)
+        self.money10_spinBox = QtGui.QSpinBox(
+            self.money_scrollAreaWidgetContents)
         self.money10_spinBox.setMaximum(1000000)
         self.money10_spinBox.setObjectName(_fromUtf8("money10_spinBox"))
         self.gridLayout.addWidget(self.money10_spinBox, 13, 1, 1, 1)
         self.label_12 = QtGui.QLabel(self.money_scrollAreaWidgetContents)
         self.label_12.setObjectName(_fromUtf8("label_12"))
         self.gridLayout.addWidget(self.label_12, 14, 0, 1, 1)
-        self.money11_spinBox = QtGui.QSpinBox(self.money_scrollAreaWidgetContents)
+        self.money11_spinBox = QtGui.QSpinBox(
+            self.money_scrollAreaWidgetContents)
         self.money11_spinBox.setMaximum(1000000)
         self.money11_spinBox.setObjectName(_fromUtf8("money11_spinBox"))
         self.gridLayout.addWidget(self.money11_spinBox, 14, 1, 1, 1)
         self.label_3 = QtGui.QLabel(self.money_scrollAreaWidgetContents)
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.gridLayout.addWidget(self.label_3, 3, 0, 1, 1)
-        self.money1_spinBox = QtGui.QSpinBox(self.money_scrollAreaWidgetContents)
+        self.money1_spinBox = QtGui.QSpinBox(
+            self.money_scrollAreaWidgetContents)
         self.money1_spinBox.setMaximum(1000000)
         self.money1_spinBox.setObjectName(_fromUtf8("money1_spinBox"))
         self.gridLayout.addWidget(self.money1_spinBox, 3, 1, 1, 1)
-        self.money3_spinBox = QtGui.QSpinBox(self.money_scrollAreaWidgetContents)
+        self.money3_spinBox = QtGui.QSpinBox(
+            self.money_scrollAreaWidgetContents)
         self.money3_spinBox.setMaximum(1000000)
         self.money3_spinBox.setObjectName(_fromUtf8("money3_spinBox"))
         self.gridLayout.addWidget(self.money3_spinBox, 4, 1, 1, 1)
         self.label_4 = QtGui.QLabel(self.money_scrollAreaWidgetContents)
         self.label_4.setObjectName(_fromUtf8("label_4"))
         self.gridLayout.addWidget(self.label_4, 4, 0, 1, 1)
-        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        spacerItem = QtGui.QSpacerItem(
+            20,
+            40,
+            QtGui.QSizePolicy.Minimum,
+            QtGui.QSizePolicy.Expanding)
         self.gridLayout.addItem(spacerItem, 15, 0, 1, 2)
         self.label_14 = QtGui.QLabel(self.money_scrollAreaWidgetContents)
         self.label_14.setObjectName(_fromUtf8("label_14"))
@@ -142,11 +163,18 @@ class Ui_Dialog(object):
         self.gridLayout_2.addWidget(self.total_label, 1, 1, 1, 1)
         self.money_pushButton = QtGui.QPushButton(self.tab)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/button_ok.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(
+            QtGui.QPixmap(_fromUtf8(":/button_ok.png")),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
         self.money_pushButton.setIcon(icon)
         self.money_pushButton.setObjectName(_fromUtf8("money_pushButton"))
         self.gridLayout_2.addWidget(self.money_pushButton, 2, 1, 1, 1)
-        spacerItem1 = QtGui.QSpacerItem(20, 337, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        spacerItem1 = QtGui.QSpacerItem(
+            20,
+            337,
+            QtGui.QSizePolicy.Minimum,
+            QtGui.QSizePolicy.Expanding)
         self.gridLayout_2.addItem(spacerItem1, 3, 1, 1, 1)
         self.tabWidget.addTab(self.tab, _fromUtf8(""))
         self.tab_2 = QtGui.QWidget()
@@ -157,14 +185,19 @@ class Ui_Dialog(object):
         self.dates_pushButton.setIcon(icon)
         self.dates_pushButton.setObjectName(_fromUtf8("dates_pushButton"))
         self.gridLayout_4.addWidget(self.dates_pushButton, 0, 1, 1, 1)
-        spacerItem2 = QtGui.QSpacerItem(82, 388, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        spacerItem2 = QtGui.QSpacerItem(
+            82,
+            388,
+            QtGui.QSizePolicy.Minimum,
+            QtGui.QSizePolicy.Expanding)
         self.gridLayout_4.addItem(spacerItem2, 1, 1, 1, 1)
         self.scrollArea = QtGui.QScrollArea(self.tab_2)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 345, 263))
-        self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
+        self.scrollAreaWidgetContents.setObjectName(
+            _fromUtf8("scrollAreaWidgetContents"))
         self.gridLayout_3 = QtGui.QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
         self.label_15 = QtGui.QLabel(self.scrollAreaWidgetContents)
@@ -254,11 +287,17 @@ class Ui_Dialog(object):
         self.billdate_dateEdit.setCalendarPopup(True)
         self.billdate_dateEdit.setObjectName(_fromUtf8("billdate_dateEdit"))
         self.horizontalLayout_7.addWidget(self.billdate_dateEdit)
-        self.billdate_pushButton = QtGui.QPushButton(self.scrollAreaWidgetContents)
-        self.billdate_pushButton.setObjectName(_fromUtf8("billdate_pushButton"))
+        self.billdate_pushButton = QtGui.QPushButton(
+            self.scrollAreaWidgetContents)
+        self.billdate_pushButton.setObjectName(
+            _fromUtf8("billdate_pushButton"))
         self.horizontalLayout_7.addWidget(self.billdate_pushButton)
         self.gridLayout_3.addLayout(self.horizontalLayout_7, 6, 1, 1, 1)
-        spacerItem3 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        spacerItem3 = QtGui.QSpacerItem(
+            20,
+            40,
+            QtGui.QSizePolicy.Minimum,
+            QtGui.QSizePolicy.Expanding)
         self.gridLayout_3.addItem(spacerItem3, 7, 0, 1, 1)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout_4.addWidget(self.scrollArea, 0, 0, 2, 1)
@@ -272,8 +311,10 @@ class Ui_Dialog(object):
         self.scrollArea_2.setObjectName(_fromUtf8("scrollArea_2"))
         self.scrollAreaWidgetContents_2 = QtGui.QWidget()
         self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 36, 28))
-        self.scrollAreaWidgetContents_2.setObjectName(_fromUtf8("scrollAreaWidgetContents_2"))
-        self.verticalLayout_2 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_2)
+        self.scrollAreaWidgetContents_2.setObjectName(
+            _fromUtf8("scrollAreaWidgetContents_2"))
+        self.verticalLayout_2 = QtGui.QVBoxLayout(
+            self.scrollAreaWidgetContents_2)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.chartplan_frame = QtGui.QFrame(self.scrollAreaWidgetContents_2)
         self.chartplan_frame.setFrameShape(QtGui.QFrame.StyledPanel)
@@ -286,7 +327,11 @@ class Ui_Dialog(object):
         self.plan_pushButton.setIcon(icon)
         self.plan_pushButton.setObjectName(_fromUtf8("plan_pushButton"))
         self.gridLayout_11.addWidget(self.plan_pushButton, 0, 3, 1, 1)
-        spacerItem4 = QtGui.QSpacerItem(82, 388, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        spacerItem4 = QtGui.QSpacerItem(
+            82,
+            388,
+            QtGui.QSizePolicy.Minimum,
+            QtGui.QSizePolicy.Expanding)
         self.gridLayout_11.addItem(spacerItem4, 1, 3, 2, 1)
         self.gridLayout_9 = QtGui.QGridLayout()
         self.gridLayout_9.setObjectName(_fromUtf8("gridLayout_9"))
@@ -379,22 +424,32 @@ class Ui_Dialog(object):
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollArea_3.setObjectName(_fromUtf8("scrollArea_3"))
         self.scrollAreaWidgetContents_3 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 461, 225))
-        self.scrollAreaWidgetContents_3.setObjectName(_fromUtf8("scrollAreaWidgetContents_3"))
-        self.verticalLayout_3 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents_3)
+        self.scrollAreaWidgetContents_3.setGeometry(
+            QtCore.QRect(0, 0, 461, 225))
+        self.scrollAreaWidgetContents_3.setObjectName(
+            _fromUtf8("scrollAreaWidgetContents_3"))
+        self.verticalLayout_3 = QtGui.QVBoxLayout(
+            self.scrollAreaWidgetContents_3)
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
-        self.chartcompleted_frame = QtGui.QFrame(self.scrollAreaWidgetContents_3)
+        self.chartcompleted_frame = QtGui.QFrame(
+            self.scrollAreaWidgetContents_3)
         self.chartcompleted_frame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.chartcompleted_frame.setFrameShadow(QtGui.QFrame.Raised)
-        self.chartcompleted_frame.setObjectName(_fromUtf8("chartcompleted_frame"))
+        self.chartcompleted_frame.setObjectName(
+            _fromUtf8("chartcompleted_frame"))
         self.verticalLayout_3.addWidget(self.chartcompleted_frame)
         self.scrollArea_3.setWidget(self.scrollAreaWidgetContents_3)
         self.gridLayout_5.addWidget(self.scrollArea_3, 0, 0, 2, 3)
         self.completed_pushButton = QtGui.QPushButton(self.tab_4)
         self.completed_pushButton.setIcon(icon)
-        self.completed_pushButton.setObjectName(_fromUtf8("completed_pushButton"))
+        self.completed_pushButton.setObjectName(
+            _fromUtf8("completed_pushButton"))
         self.gridLayout_5.addWidget(self.completed_pushButton, 0, 3, 1, 1)
-        spacerItem5 = QtGui.QSpacerItem(82, 388, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        spacerItem5 = QtGui.QSpacerItem(
+            82,
+            388,
+            QtGui.QSizePolicy.Minimum,
+            QtGui.QSizePolicy.Expanding)
         self.gridLayout_5.addItem(spacerItem5, 1, 3, 2, 1)
         self.gridLayout_12 = QtGui.QGridLayout()
         self.gridLayout_12.setObjectName(_fromUtf8("gridLayout_12"))
@@ -489,16 +544,22 @@ class Ui_Dialog(object):
         self.label_26.setObjectName(_fromUtf8("label_26"))
         self.verticalLayout_4.addWidget(self.label_26)
         self.hidden_notes_tableWidget = QtGui.QTableWidget(self.tab_5)
-        self.hidden_notes_tableWidget.setObjectName(_fromUtf8("hidden_notes_tableWidget"))
+        self.hidden_notes_tableWidget.setObjectName(
+            _fromUtf8("hidden_notes_tableWidget"))
         self.hidden_notes_tableWidget.setColumnCount(0)
         self.hidden_notes_tableWidget.setRowCount(0)
         self.verticalLayout_4.addWidget(self.hidden_notes_tableWidget)
         self.gridLayout_6.addLayout(self.verticalLayout_4, 0, 0, 2, 1)
         self.hidden_notes_pushButton = QtGui.QPushButton(self.tab_5)
         self.hidden_notes_pushButton.setIcon(icon)
-        self.hidden_notes_pushButton.setObjectName(_fromUtf8("hidden_notes_pushButton"))
+        self.hidden_notes_pushButton.setObjectName(
+            _fromUtf8("hidden_notes_pushButton"))
         self.gridLayout_6.addWidget(self.hidden_notes_pushButton, 0, 1, 1, 1)
-        spacerItem6 = QtGui.QSpacerItem(20, 377, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        spacerItem6 = QtGui.QSpacerItem(
+            20,
+            377,
+            QtGui.QSizePolicy.Minimum,
+            QtGui.QSizePolicy.Expanding)
         self.gridLayout_6.addItem(spacerItem6, 1, 1, 1, 1)
         self.tabWidget.addTab(self.tab_5, _fromUtf8(""))
         self.verticalLayout.addWidget(self.tabWidget)
@@ -510,8 +571,14 @@ class Ui_Dialog(object):
 
         self.retranslateUi(Dialog)
         self.tabWidget.setCurrentIndex(0)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Dialog.reject)
+        QtCore.QObject.connect(
+            self.buttonBox,
+            QtCore.SIGNAL(_fromUtf8("accepted()")),
+            Dialog.accept)
+        QtCore.QObject.connect(
+            self.buttonBox,
+            QtCore.SIGNAL(_fromUtf8("rejected()")),
+            Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -520,8 +587,10 @@ class Ui_Dialog(object):
         self.label_2.setText(_("NHS payments (money2)"))
         self.label_5.setText(_("NHS estimated (money4)"))
         self.label_6.setText(_("private estimate (money5)"))
-        self.label_7.setText(_("Exempt - nhs gross - completed treatment (money6)"))
-        self.label_8.setText(_("Exempt - NHS gross - estimated current (money7)"))
+        self.label_7.setText(
+            _("Exempt - nhs gross - completed treatment (money6)"))
+        self.label_8.setText(
+            _("Exempt - NHS gross - estimated current (money7)"))
         self.label_9.setText(_("credit (money8)"))
         self.label_10.setText(_("debt (money9)"))
         self.label_11.setText(_("debt2 (money10)"))
@@ -548,7 +617,9 @@ class Ui_Dialog(object):
         self.pd10_pushButton.setText(_("Add Date"))
         self.label_21.setText(_("Last Account sent (billdate)"))
         self.billdate_pushButton.setText(_("Add Date"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _("Dates"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_2),
+            _("Dates"))
         self.plan_pushButton.setText(_("Apply Changes"))
         self.label_22.setText(_("Xray"))
         self.label_23.setText(_("Perio"))
@@ -560,7 +631,9 @@ class Ui_Dialog(object):
         self.label_53.setText(_("new lower"))
         self.label_54.setText(_("repair upper"))
         self.label_55.setText(_("repair lower"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _("Treatment Plan"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_3),
+            _("Treatment Plan"))
         self.completed_pushButton.setText(_("Apply Changes"))
         self.label_24.setText(_("Xray"))
         self.label_25.setText(_("Perio"))
@@ -572,10 +645,14 @@ class Ui_Dialog(object):
         self.label_60.setText(_("new lower"))
         self.label_61.setText(_("repair upper"))
         self.label_62.setText(_("repair lower"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _("Completed Treatment"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_4),
+            _("Completed Treatment"))
         self.label_26.setText(_("Hidden Notes"))
         self.hidden_notes_pushButton.setText(_("Apply Changes"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _("Miscellaneous"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_5),
+            _("Miscellaneous"))
 
 from openmolar.qt4gui import resources_rc
 
@@ -589,4 +666,3 @@ if __name__ == "__main__":
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())
-

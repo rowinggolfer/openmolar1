@@ -1,24 +1,26 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2011, Neil Wallace <rowinggolfer@googlemail.com>               ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your OPTION) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 Provides a Class for printing the GP17s
@@ -30,7 +32,9 @@ from PyQt4 import QtCore, QtGui
 from openmolar.qt4gui.dialogs.gp17_printdialog import GP17PrintDialog
 from openmolar.qt4gui.printing.om_printing import commitPDFtoDB
 
+
 class GP17Printer(object):
+
     def __init__(self, om_gui):
         self.om_gui = om_gui
 
@@ -46,23 +50,23 @@ class GP17Printer(object):
 
         if final_paperwork:
             result = QtGui.QMessageBox.question(self.om_gui,
-            _("Question"),
-            _("Print an NHS form now?"),
-            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-            QtGui.QMessageBox.Yes )
+                                                _("Question"),
+                                                _("Print an NHS form now?"),
+                                                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                                                QtGui.QMessageBox.Yes)
             if result == QtGui.QMessageBox.No:
                 return
 
-        if test: #self.om_gui.pt.serialno == 0:
+        if test:  # self.om_gui.pt.serialno == 0:
             pt = None
         else:
             pt = self.om_gui.pt
         dl = GP17PrintDialog(pt, self.om_gui)
 
         dl.choose_form_widget.boxes_checkbox.setChecked(test)
-        #chosenDent = str(dl.dents_comboBox.currentText())
-        #dent = localsettings.ops_reverse.get(chosenDent)
-        #form = GP17.gp17(self.om_gui.pt, dent, self.om_gui, test)
+        # chosenDent = str(dl.dents_comboBox.currentText())
+        # dent = localsettings.ops_reverse.get(chosenDent)
+        # form = GP17.gp17(self.om_gui.pt, dent, self.om_gui, test)
         if dl.exec_():
             for Form in dl.chosen_forms:
                 form = Form()
@@ -74,7 +78,7 @@ class GP17Printer(object):
                     commitPDFtoDB(self.om_gui, form.NAME)
 
                     self.om_gui.pt.addHiddenNote(
-                        "printed", "%s %s"% (form.NAME, dl.dent_inits))
+                        "printed", "%s %s" % (form.NAME, dl.dent_inits))
                     self.om_gui.updateHiddenNotesLabel()
 
 
@@ -83,10 +87,10 @@ if __name__ == "__main__":
     from openmolar.qt4gui import maingui
     from openmolar.dbtools import patient_class
 
-    os.chdir(os.path.expanduser("~")) #for save pdf
+    os.chdir(os.path.expanduser("~"))  # for save pdf
 
     localsettings.initiate()
-    localsettings.station="reception" #prevent no clinician popup
+    localsettings.station = "reception"  # prevent no clinician popup
 
     app = QtGui.QApplication([])
 

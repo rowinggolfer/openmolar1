@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# See the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 this module provides a model class so that feescales can be displayed
@@ -18,16 +34,18 @@ import logging
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 
-HIDE_RARE_CODES = 0 # fee items have an "obscurity" level of 0-2
+HIDE_RARE_CODES = 0  # fee items have an "obscurity" level of 0-2
 
-#new for version 0.5 - categories come from the feescale XML
+# new for version 0.5 - categories come from the feescale XML
 
-#CATEGORIES = ("", "Examinations", "Diagnosis", "Perio", "Chart",
+# CATEGORIES = ("", "Examinations", "Diagnosis", "Perio", "Chart",
 #"Prosthetics", "Ortho", "Misc", "Emergency", "Other", "Custom", "Occasional")
 
 LOGGER = logging.getLogger("openmolar")
 
+
 class TreeItem(object):
+
     def __init__(self, table, key, data, parent=None, index=0):
         self.table = table
         self.parentItem = parent
@@ -64,7 +82,7 @@ class TreeItem(object):
                 if uc == self.parentItem.itemData.usercode:
                     uc = ""
                 if self.itemData.has_fee_shortcuts:
-                    uc = self.itemData.fee_shortcut_for_display(self.row()+1)
+                    uc = self.itemData.fee_shortcut_for_display(self.row() + 1)
             except AttributeError:
                 pass
             return uc
@@ -80,7 +98,7 @@ class TreeItem(object):
         elif column == 4:
             return localsettings.formatMoney(self.itemData.fees[self.myindex])
         elif column == 5:
-            #if self.table.hasPtCols:
+            # if self.table.hasPtCols:
             try:
                 return localsettings.formatMoney(
                     self.itemData.ptFees[self.myindex])
@@ -97,10 +115,13 @@ class TreeItem(object):
             return self.parentItem.childItems.index(self)
         return 0
 
+
 class treeModel(QtCore.QAbstractItemModel):
+
     '''
     a model to display a feetables data
     '''
+
     def __init__(self, table):
         super(QtCore.QAbstractItemModel, self).__init__()
         self.table = table
@@ -134,8 +155,8 @@ class treeModel(QtCore.QAbstractItemModel):
             if index.column() > 3:
                 return QtCore.QVariant(QtCore.Qt.AlignRight)
         if role == QtCore.Qt.UserRole:
-            ## a user role which simply returns the python object
-            ## in this case a FeeItem
+            # a user role which simply returns the python object
+            # in this case a FeeItem
             return (item.itemData, item.myindex)
 
         return QtCore.QVariant()
@@ -148,17 +169,17 @@ class treeModel(QtCore.QAbstractItemModel):
 
     def headerData(self, column, orientation, role):
         if (orientation == QtCore.Qt.Horizontal and
-        role == QtCore.Qt.DisplayRole):
+           role == QtCore.Qt.DisplayRole):
 
-            if column==1:
+            if column == 1:
                 return _("Usercode")
-            elif column==2:
+            elif column == 2:
                 return _("Description")
-            elif column==3:
+            elif column == 3:
                 return _("brief description")
-            elif column==4:
+            elif column == 4:
                 return _("Gross Fee")
-            elif column==5:
+            elif column == 5:
                 return _("Charge to Patient")
 
         return QtCore.QVariant()
@@ -205,7 +226,7 @@ class treeModel(QtCore.QAbstractItemModel):
         return parentItem.childCount()
 
     def setupModelData(self):
-        parents = {0:self.rootItem}
+        parents = {0: self.rootItem}
 
         current_cat = 0
         for key in sorted(self.table.feesDict.keys()):
@@ -213,22 +234,22 @@ class treeModel(QtCore.QAbstractItemModel):
             if feeItem.obscurity > HIDE_RARE_CODES:
                 continue
             section = feeItem.section
-            if not parents.has_key(section) :
+            if section not in parents:
                 try:
                     header = self.table.headers[section]
                 except KeyError:
-                    header = "Unknown Section - '%s'"% section
+                    header = "Unknown Section - '%s'" % section
                 head = TreeItem(self.table, header, None, self.rootItem)
                 parents[section] = head
                 self.rootItem.appendChild(head)
 
             number_in_group = len(feeItem.brief_descriptions)
-            branch = TreeItem(self.table, key,feeItem, parents[section])
+            branch = TreeItem(self.table, key, feeItem, parents[section])
             parents[section].appendChild(branch)
 
             for row in range(1, number_in_group):
                 branch.appendChild(
-                TreeItem(self.table, key, feeItem, branch, row))
+                    TreeItem(self.table, key, feeItem, branch, row))
 
     def searchNode(self, node, columns=()):
         '''
@@ -236,12 +257,12 @@ class treeModel(QtCore.QAbstractItemModel):
         '''
         matchflags = QtCore.Qt.MatchFlags(QtCore.Qt.MatchContains)
         child = node.childItems[0]
-        #columns = range(child.columnCount()) ## <-- would search entire model
+        # columns = range(child.columnCount()) ## <-- would search entire model
         for column in columns:
             start_index = self.createIndex(0, column, child)
 
             indexes = self.match(start_index, QtCore.Qt.DisplayRole,
-            QtCore.QVariant(self.search_phrase), -1, matchflags)
+                                 QtCore.QVariant(self.search_phrase), -1, matchflags)
 
             for index in indexes:
                 self.foundItems.append(index)
@@ -249,7 +270,6 @@ class treeModel(QtCore.QAbstractItemModel):
         for child in node.childItems:
             if child.childCount():
                 self.searchNode(child, columns)
-
 
     def search(self, search_phrase, columns=()):
         self.foundItems = []
@@ -274,7 +294,7 @@ if __name__ == "__main__":
 
     dialog = QtGui.QDialog()
 
-    dialog.setMinimumSize(800,300)
+    dialog.setMinimumSize(800, 300)
     layout = QtGui.QHBoxLayout(dialog)
 
     tv = QtGui.QTreeView(dialog)

@@ -1,3 +1,27 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
+
 import datetime
 import logging
 import cPickle
@@ -9,6 +33,7 @@ from openmolar.dbtools import appointments
 from openmolar.settings import localsettings
 
 LOGGER = logging.getLogger("openmolar")
+
 
 class SimpleListModel(QtCore.QAbstractListModel):
 
@@ -28,7 +53,7 @@ class SimpleListModel(QtCore.QAbstractListModel):
         self.selectedAppts = []
         self.normal_icon = QtGui.QIcon()
         self.normal_icon.addPixmap(QtGui.QPixmap(":/schedule.png"),
-                QtGui.QIcon.Normal, QtGui.QIcon.Off)
+                                   QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.selected_icon = QtGui.QIcon()
         self.selected_icon.addPixmap(
             QtGui.QPixmap(":/icons/schedule_active.png"))
@@ -101,7 +126,7 @@ class SimpleListModel(QtCore.QAbstractListModel):
         else:
             self.set_current_appt(None)
 
-    def rowCount(self, parent = QtCore.QModelIndex()):
+    def rowCount(self, parent=QtCore.QModelIndex()):
         return len(self.list)
 
     def data(self, index, role):
@@ -110,24 +135,24 @@ class SimpleListModel(QtCore.QAbstractListModel):
         app = self.list[index.row()]
         if role == QtCore.Qt.DisplayRole:
             if app.flag == -128:
-                info = "%s (%s)"% (app.name, app.length)
+                info = "%s (%s)" % (app.name, app.length)
             elif app.unscheduled:
-                info = "%s %s - %s"% (app.length,
-                    app.trt1, app.dent_inits)
+                info = "%s %s - %s" % (app.length,
+                                       app.trt1, app.dent_inits)
             else:
-                info = "%s %s with %s"% (app.readableDate,
-                    app.readableTime, app.dent_inits)
+                info = "%s %s with %s" % (app.readableDate,
+                                          app.readableTime, app.dent_inits)
             return QtCore.QVariant(info)
         elif role == QtCore.Qt.ForegroundRole:
             if app.unscheduled:
                 return QtCore.QVariant(QtGui.QBrush(QtGui.QColor("red")))
         elif role == QtCore.Qt.DecorationRole:
-            #if app in self.selectedAppts: #
+            # if app in self.selectedAppts: #
             if app.unscheduled:
                 if app == self.currentAppt:
                     return QtCore.QVariant(self.selected_icon)
                 return QtCore.QVariant(self.normal_icon)
-        elif role == QtCore.Qt.UserRole:  #return the whole python object
+        elif role == QtCore.Qt.UserRole:  # return the whole python object
             return app
         return QtCore.QVariant()
 
@@ -154,7 +179,7 @@ class SimpleListModel(QtCore.QAbstractListModel):
         '''
         LOGGER.debug("SimpleListModel.set_current_appt")
         self.currentAppt = appt
-        if appt == None:
+        if appt is None:
             self.selection_model.clear()
             self.min_slot_length = 0
         else:
@@ -162,7 +187,7 @@ class SimpleListModel(QtCore.QAbstractListModel):
                 index = self.index(self.list.index(appt))
                 self.min_slot_length = appt.length
                 self.selection_model.select(index,
-                    QtGui.QItemSelectionModel.Select)
+                                            QtGui.QItemSelectionModel.Select)
                 return index
             except ValueError:
                 pass
@@ -183,21 +208,24 @@ class SimpleListModel(QtCore.QAbstractListModel):
         self.set_appointments(appts, None)
         self.set_current_appt(app)
 
+
 class BlockListModel(SimpleListModel):
+
     '''
     customise the above model just for blocks
     '''
+
     def __init__(self, parent=None):
         super(BlockListModel, self).__init__(parent)
         self.list = []
         for val, length in (
-        (_("Lunch"), 60),
-        (_("Lunch"), 30),
-        (_("staff meeting"), 10),
-        (_("emergency"), 15),
-        (_("emergency"), 20),
-        (_("emergency"), 30),
-        (_("Out of Office"), 30)):
+            (_("Lunch"), 60),
+            (_("Lunch"), 30),
+            (_("staff meeting"), 10),
+            (_("emergency"), 15),
+            (_("emergency"), 20),
+            (_("emergency"), 30),
+                (_("Out of Office"), 30)):
             block = appointments.APR_Appointment()
             block.name = val
             block.length = length
@@ -206,4 +234,3 @@ class BlockListModel(SimpleListModel):
 
     def reset(self):
         pass
-

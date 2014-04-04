@@ -1,24 +1,26 @@
-#! /usr/bin/python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2013, Neil Wallace <neil@openmolar.com>                        ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 has one class, a dialog to write the config
@@ -31,21 +33,23 @@ from PyQt4 import QtGui, QtCore
 
 import config
 
+
 class ConfigDialog(QtGui.QDialog):
+
     def __init__(self, parent=None):
         QtGui.QDialog.__init__(self, parent)
 
-        label = QtGui.QLabel(u"<b>%s</b>"% _(
+        label = QtGui.QLabel(u"<b>%s</b>" % _(
             "Please complete the following form"))
         label.setAlignment(QtCore.Qt.AlignCenter)
         frame = QtGui.QFrame()
         form_layout = QtGui.QFormLayout(frame)
 
-        self.host_le= QtGui.QLineEdit()
-        self.port_le= QtGui.QLineEdit()
-        self.database_le= QtGui.QLineEdit()
-        self.user_le= QtGui.QLineEdit()
-        self.password_le= QtGui.QLineEdit()
+        self.host_le = QtGui.QLineEdit()
+        self.port_le = QtGui.QLineEdit()
+        self.database_le = QtGui.QLineEdit()
+        self.user_le = QtGui.QLineEdit()
+        self.password_le = QtGui.QLineEdit()
         self.password_le.setEchoMode(QtGui.QLineEdit.Password)
         self.surgery_sb = QtGui.QSpinBox()
 
@@ -59,7 +63,7 @@ class ConfigDialog(QtGui.QDialog):
         self.button_box = QtGui.QDialogButtonBox(self)
         self.button_box.setOrientation(QtCore.Qt.Horizontal)
         self.button_box.setStandardButtons(
-            self.button_box.Cancel|self.button_box.Apply)
+            self.button_box.Cancel | self.button_box.Apply)
         self.button_box.setCenterButtons(True)
 
         layout = QtGui.QVBoxLayout(self)
@@ -67,7 +71,6 @@ class ConfigDialog(QtGui.QDialog):
         layout.addWidget(frame)
         layout.addStretch()
         layout.addWidget(self.button_box)
-
 
         self.button_box.clicked.connect(self._clicked)
 
@@ -79,7 +82,7 @@ class ConfigDialog(QtGui.QDialog):
         if role == self.button_box.ApplyRole:
             self.accept()
         else:
-             self.reject()
+            self.reject()
 
     @property
     def host(self):
@@ -109,13 +112,13 @@ class ConfigDialog(QtGui.QDialog):
     @property
     def has_acceptable_values(self):
         return (
-            self.host !="" and
+            self.host != "" and
             self.user != "" and
             self.port != 0 and
             self.password != "" and
             self.db_name != "" and
             self.surgery != 0
-            )
+        )
 
     def exec_(self, reconfigure=False):
         result = True

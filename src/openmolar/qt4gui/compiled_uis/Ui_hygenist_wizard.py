@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/hygenist_wizard.ui'
@@ -17,6 +18,7 @@ except AttributeError:
 
 
 class Ui_Dialog(object):
+
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
         Dialog.resize(339, 350)
@@ -52,7 +54,11 @@ class Ui_Dialog(object):
         self.extsp_radioButton.setChecked(False)
         self.extsp_radioButton.setObjectName(_fromUtf8("extsp_radioButton"))
         self.verticalLayout.addWidget(self.extsp_radioButton)
-        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        spacerItem = QtGui.QSpacerItem(
+            20,
+            40,
+            QtGui.QSizePolicy.Minimum,
+            QtGui.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem)
         self.verticalLayout_3.addWidget(self.groupBox)
         self.clinicianGroupBox = QtGui.QGroupBox(Dialog)
@@ -60,7 +66,11 @@ class Ui_Dialog(object):
         self.clinicianGroupBox.setObjectName(_fromUtf8("clinicianGroupBox"))
         self.horizontalLayout = QtGui.QHBoxLayout(self.clinicianGroupBox)
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        spacerItem1 = QtGui.QSpacerItem(89, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem1 = QtGui.QSpacerItem(
+            89,
+            20,
+            QtGui.QSizePolicy.Expanding,
+            QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
         self.dents_comboBox = QtGui.QComboBox(self.clinicianGroupBox)
         self.dents_comboBox.setMinimumSize(QtCore.QSize(100, 0))
@@ -71,21 +81,36 @@ class Ui_Dialog(object):
         self.dents_comboBox.setFont(font)
         self.dents_comboBox.setObjectName(_fromUtf8("dents_comboBox"))
         self.horizontalLayout.addWidget(self.dents_comboBox)
-        spacerItem2 = QtGui.QSpacerItem(88, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem2 = QtGui.QSpacerItem(
+            88,
+            20,
+            QtGui.QSizePolicy.Expanding,
+            QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem2)
         self.verticalLayout_3.addWidget(self.clinicianGroupBox)
-        spacerItem3 = QtGui.QSpacerItem(20, 29, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        spacerItem3 = QtGui.QSpacerItem(
+            20,
+            29,
+            QtGui.QSizePolicy.Minimum,
+            QtGui.QSizePolicy.Expanding)
         self.verticalLayout_3.addItem(spacerItem3)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(
+            QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setCenterButtons(True)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
         self.verticalLayout_3.addWidget(self.buttonBox)
 
         self.retranslateUi(Dialog)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Dialog.reject)
+        QtCore.QObject.connect(
+            self.buttonBox,
+            QtCore.SIGNAL(_fromUtf8("accepted()")),
+            Dialog.accept)
+        QtCore.QObject.connect(
+            self.buttonBox,
+            QtCore.SIGNAL(_fromUtf8("rejected()")),
+            Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -110,4 +135,3 @@ if __name__ == "__main__":
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())
-

@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/codeChecker.ui'
@@ -17,16 +18,20 @@ except AttributeError:
 
 
 class Ui_Dialog(object):
+
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
         Dialog.resize(907, 686)
         self.verticalLayout_3 = QtGui.QVBoxLayout(Dialog)
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
         self.splitter = QtGui.QSplitter(Dialog)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy = QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Expanding,
+            QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.splitter.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.splitter.sizePolicy().hasHeightForWidth())
         self.splitter.setSizePolicy(sizePolicy)
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
         self.splitter.setObjectName(_fromUtf8("splitter"))
@@ -56,10 +61,13 @@ class Ui_Dialog(object):
         self.verticalLayout = QtGui.QVBoxLayout(self.frame_2)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.label_2 = QtGui.QLabel(self.frame_2)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
+        sizePolicy = QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Preferred,
+            QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label_2.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.label_2.sizePolicy().hasHeightForWidth())
         self.label_2.setSizePolicy(sizePolicy)
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.verticalLayout.addWidget(self.label_2)
@@ -93,7 +101,8 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(_("Dialog"))
         self.label.setText(_("Deciduous Teeth"))
         self.label_2.setText(_("Adult Teeth"))
-        self.instruction_label.setText(_("Enter a Restoration Code (eg. MOD) to see how a feescale interprets the shortcut"))
+        self.instruction_label.setText(
+            _("Enter a Restoration Code (eg. MOD) to see how a feescale interprets the shortcut"))
         self.pushButton.setText(_("GO"))
         self.quit_pushButton.setText(_("QUIT"))
 
@@ -108,4 +117,3 @@ if __name__ == "__main__":
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())
-

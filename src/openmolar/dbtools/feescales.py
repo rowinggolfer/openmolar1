@@ -1,24 +1,26 @@
-#! /usr/bin/python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2013, Neil Wallace <neil@openmolar.com>                        ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import logging
 import os
@@ -32,8 +34,9 @@ from openmolar.settings import localsettings
 
 LOGGER = logging.getLogger("openmolar")
 
+
 def write_readme():
-    LOGGER.info("creating directory %s"% FEESCALE_DIR)
+    LOGGER.info("creating directory %s" % FEESCALE_DIR)
     os.makedirs(FEESCALE_DIR)
     f = open(os.path.join(FEESCALE_DIR, "README.txt"), "w")
     f.write('''
@@ -63,6 +66,7 @@ UPDATE_QUERY = "update feescales set xml_data = %s where ix = %s"
 
 NEW_FEESCALE_QUERY = "insert into feescales (xml_data) values(%s)"
 
+
 class FeescaleHandler(object):
 
     def get_feescale_from_database(self, ix):
@@ -79,7 +83,7 @@ class FeescaleHandler(object):
         return ""
 
     def get_feescales_from_database(self,
-    in_use_only=True, priority_order=True):
+                                    in_use_only=True, priority_order=True):
         '''
         connects and get the data from feetable_key
         '''
@@ -93,12 +97,12 @@ class FeescaleHandler(object):
         cursor.execute(query)
         rows = cursor.fetchall()
         cursor.close()
-        LOGGER.debug("%d feescales retrieved"% len(rows))
+        LOGGER.debug("%d feescales retrieved" % len(rows))
         return rows
 
     def save_file(self, ix, xml_data):
         file_path = self.index_to_local_filepath(ix)
-        LOGGER.debug("writing %s"% file_path)
+        LOGGER.debug("writing %s" % file_path)
         f = open(file_path, "w")
         f.write(xml_data)
         f.close()
@@ -111,8 +115,8 @@ class FeescaleHandler(object):
 
             yield xml_file
 
-            #self.save_file(ix, xml_data)
-        #LOGGER.info("feescales data written to local filesystem")
+            # self.save_file(ix, xml_data)
+        # LOGGER.info("feescales data written to local filesystem")
 
     def non_existant_and_modified_local_files(self):
         '''
@@ -132,7 +136,7 @@ class FeescaleHandler(object):
         return unwritten, modified
 
     def index_to_local_filepath(self, ix):
-        return os.path.join(FEESCALE_DIR, "feescale_%d.xml"% ix)
+        return os.path.join(FEESCALE_DIR, "feescale_%d.xml" % ix)
 
     @property
     def local_files(self):
@@ -155,9 +159,9 @@ class FeescaleHandler(object):
     def update_db(self, ix):
         message = ""
         filepath = self.index_to_local_filepath(ix)
-        LOGGER.debug("updating database ix %s"% ix)
+        LOGGER.debug("updating database ix %s" % ix)
         if not os.path.isfile(filepath):
-            message = "FATAL %s does not exist!"% filepath
+            message = "FATAL %s does not exist!" % filepath
         else:
             db = connect.connect()
             cursor = db.cursor()
@@ -167,10 +171,10 @@ class FeescaleHandler(object):
             f.close()
 
             values = (data, ix)
-            result =  cursor.execute(UPDATE_QUERY, values)
+            result = cursor.execute(UPDATE_QUERY, values)
 
-            r_message = "commiting feescale '%s' to database."% filepath
-            message = "updating feescale %d    result = %s\n"% (
+            r_message = "commiting feescale '%s' to database." % filepath
+            message = "updating feescale %d    result = %s\n" % (
                 ix, "OK" if result else "No Change applied")
 
             db.close()
@@ -180,11 +184,11 @@ class FeescaleHandler(object):
 
     def save_xml(self, ix, xml):
         file_path = self.index_to_local_filepath(ix)
-        LOGGER.info("saving %s"% file_path)
+        LOGGER.info("saving %s" % file_path)
 
         LOGGER.debug("creating backup")
         try:
-            shutil.copy(file_path, file_path+"~")
+            shutil.copy(file_path, file_path + "~")
         except IOError:
             LOGGER.warning("no backup file created")
 

@@ -1,4 +1,26 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from distutils.command.install_data import install_data
 from distutils.core import setup
@@ -17,7 +39,9 @@ sys.path.insert(0, OM_PATH)
 sys.argv.append("-q")
 from openmolar.settings.localsettings import VERSION
 
+
 class InstallData(install_data):
+
     def run(self):
         self.data_files.extend(self._compile_po_files())
         install_data.run(self)
@@ -29,21 +53,21 @@ class InstallData(install_data):
             print "WARNING - language files are missing!"
         for po in glob.glob("src/openmolar/locale/*.po"):
             directory, file = os.path.split(po)
-            lang = file.replace(".po","")
+            lang = file.replace(".po", "")
             mo = os.path.join(directory, lang)
             try:
-            	os.mkdir(mo)
+                os.mkdir(mo)
             except OSError:
                 pass
             mo = os.path.join(mo, "openmolar.mo")
             if not os.path.exists(mo) or newer(po, mo):
                 cmd = 'msgfmt -o %s %s' % (mo, po)
-                info ('compiling %s -> %s' % (po, mo))
+                info('compiling %s -> %s' % (po, mo))
                 if os.system(cmd) != 0:
-                    info('Error while running msgfmt on %s'% po)
+                    info('Error while running msgfmt on %s' % po)
 
-            destdir = os.path.join ("/usr","share", "locale", lang,
-            "LC_MESSAGES")
+            destdir = os.path.join("/usr", "share", "locale", lang,
+                                   "LC_MESSAGES")
 
             i18nfiles.append((destdir, [mo]))
         return i18nfiles
@@ -52,15 +76,15 @@ if os.path.isfile("MANIFEST"):
     os.unlink("MANIFEST")
 
 setup(
-    name = 'openmolar',
-    version = VERSION,
-    description = 'Open Source Dental Practice Management Software',
-    author = 'Neil Wallace',
-    author_email = 'rowinggolfer@googlemail.com',
-    url = 'https://launchpad.net/openmolar',
-    license = 'GPL v3',
-    package_dir = {'openmolar' : 'src/openmolar'},
-    packages = ['openmolar',
+    name='openmolar',
+    version=VERSION,
+    description='Open Source Dental Practice Management Software',
+    author='Neil Wallace',
+    author_email='rowinggolfer@googlemail.com',
+    url='https://launchpad.net/openmolar',
+    license='GPL v3',
+    package_dir={'openmolar': 'src/openmolar'},
+    packages=['openmolar',
                 'openmolar.backports',
                 'openmolar.dbtools',
                 'openmolar.schema_upgrades',
@@ -79,21 +103,21 @@ setup(
                 'openmolar.qt4gui.tools',
                 'openmolar.settings',
                 'openmolar.ptModules'],
-    package_data = {'openmolar' : ['resources/icons/*.*',
-                                    'resources/teeth/*.png',
-                                    'resources/gp17/*.jpg',
-                                    'resources/gp17-1/*.png',
-                                    'resources/feescales/*.xml',
-                                    'resources/feescales/*.xsd',
-                                    'resources/phrasebook/*.*',
-                                    'resources/*.*',
-                                    'html/*.*',
-                                    'html/images/*.*',
-                                    'html/firstrun/*.*',] },
-    data_files = [
+    package_data={'openmolar': ['resources/icons/*.*',
+                                'resources/teeth/*.png',
+                                'resources/gp17/*.jpg',
+                                'resources/gp17-1/*.png',
+                                'resources/feescales/*.xml',
+                                'resources/feescales/*.xsd',
+                                'resources/phrasebook/*.*',
+                                'resources/*.*',
+                                'html/*.*',
+                                'html/images/*.*',
+                                'html/firstrun/*.*', ]},
+    data_files=[
         ('/usr/share/man/man1', ['bin/openmolar.1']),
         ('/usr/share/icons/hicolor/scalable/apps', ['bin/openmolar.svg']),
-        ('/usr/share/applications', ['bin/openmolar.desktop']),],
-    cmdclass = {'install_data': InstallData},
-    scripts = ['openmolar'],
-    )
+        ('/usr/share/applications', ['bin/openmolar.desktop']), ],
+    cmdclass={'install_data': InstallData},
+    scripts=['openmolar'],
+)

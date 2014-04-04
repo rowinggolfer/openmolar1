@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2012 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# See the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 This module provides a function 'run' which will move data
@@ -19,26 +35,30 @@ from openmolar import connect
 from PyQt4 import QtGui, QtCore
 
 SQLSTRINGS = [
-'''
+    '''
 create table formatted_notes (ix serial, serialno int(11),
 ndate date, op1 varchar(8), op2 varchar(8), ntype varchar(32),
 note varchar(80), timestamp timestamp default NOW());
 ''',
-'''
+    '''
 create index formatted_notes_serialno_index on formatted_notes(serialno);
 ''',
-'''
+    '''
 create index newdocsprinted_serialno_index on newdocsprinted(serialno);
 '''
 ]
 
+
 class UpdateException(Exception):
+
     '''
     A custom exception. If this is thrown the db will be rolled back
     '''
     pass
 
+
 class dbUpdater(QtCore.QThread):
+
     def __init__(self, parent=None):
         super(dbUpdater, self).__init__(parent)
         self.stopped = False
@@ -70,15 +90,17 @@ class dbUpdater(QtCore.QThread):
             for sql_string in SQLSTRINGS:
                 try:
                     cursor.execute(sql_string)
-                except connect.GeneralError, e:
-                    print "FAILURE in executing sql statement",  e
-                    print "erroneous statement was ",sql_string
+                except connect.GeneralError as e:
+                    print "FAILURE in executing sql statement", e
+                    print "erroneous statement was ", sql_string
                     if 1060 in e.args:
                         print "continuing, as column already exists issue"
-                self.progressSig(2+70*i/commandNo,sql_string[:40]+"...")
+                self.progressSig(
+                    2 + 70 * i / commandNo,
+                    sql_string[:40] + "...")
             sucess = True
-        except Exception, e:
-            print "FAILURE in executing sql statements",  e
+        except Exception as e:
+            print "FAILURE in executing sql statements", e
             db.rollback()
         if sucess:
             db.commit()
@@ -93,13 +115,13 @@ class dbUpdater(QtCore.QThread):
         from openmolar.schema_upgrades import formatted_notes1_9
         max_sno = formatted_notes1_9.get_max_sno()
         sno = 0
-        print "max_sno in notes = %s "% max_sno
+        print "max_sno in notes = %s " % max_sno
 
         while sno < max_sno:
             sno += 1
             formatted_notes1_9.transfer(sno)
-            progress = int(sno/max_sno * 90)+8
-            self.progressSig(progress, "%s %s"% (
+            progress = int(sno / max_sno * 90) + 8
+            self.progressSig(progress, "%s %s" % (
                 _('converting note'), sno))
             QtGui.QApplication.instance().processEvents()
 
@@ -130,14 +152,14 @@ class dbUpdater(QtCore.QThread):
             self.progressSig(100, _("updating stored schema version"))
             self.completed = True
             self.completeSig(_("ALL DONE - sucessfully moved db to")
-            + " 1.9")
+                             + " 1.9")
 
-        except UpdateException, e:
+        except UpdateException as e:
             localsettings.CLIENT_SCHEMA_VERSION = "1.8"
             self.completeSig(_("rolled back to") + " 1.8")
 
-        except Exception, e:
-            print "Exception caught",e
+        except Exception as e:
+            print "Exception caught", e
             self.completeSig(str(e))
 
         return self.completed

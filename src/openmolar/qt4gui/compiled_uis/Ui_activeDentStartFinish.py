@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/activeDentStartFinish.ui'
@@ -17,6 +18,7 @@ except AttributeError:
 
 
 class Ui_Form(object):
+
     def setupUi(self, Form):
         Form.setObjectName(_fromUtf8("Form"))
         Form.resize(562, 25)
@@ -28,7 +30,11 @@ class Ui_Form(object):
         self.checkBox.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.checkBox.setObjectName(_fromUtf8("checkBox"))
         self.horizontalLayout.addWidget(self.checkBox)
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem = QtGui.QSpacerItem(
+            40,
+            20,
+            QtGui.QSizePolicy.Expanding,
+            QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.widget = QtGui.QWidget(Form)
         self.widget.setMinimumSize(QtCore.QSize(80, 0))
@@ -62,4 +68,3 @@ if __name__ == "__main__":
     ui.setupUi(Form)
     Form.show()
     sys.exit(app.exec_())
-

@@ -1,24 +1,26 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2011-2012,  Neil Wallace <neil@openmolar.com>                  ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import datetime
 import re
@@ -49,11 +51,13 @@ NEW_GROUP_QUERY = "update patients set familyno=%s where serialno=%s"
 DELETE_FAMILYNO_QUERY = "update patients set familyno=NULL where familyno=%s"
 
 HEADERS = (
-    _("Address 1"),_("Address 2"),_("Address 3"),
+    _("Address 1"), _("Address 2"), _("Address 3"),
     _("TOWN"), _("County"), _("Postcode")
-    )
+)
+
 
 class _DuckPatient(object):
+
     def __init__(self, result):
         self.serialno = result[0]
         self.title = result[1]
@@ -79,11 +83,11 @@ class _DuckPatient(object):
 
         try:
             nextbirthday = datetime.date(today.year, self.dob.month,
-            self.dob.day)
+                                         self.dob.day)
         except ValueError:
-            #catch leap years!!
+            # catch leap years!!
             nextbirthday = datetime.date(today.year, self.dob.month,
-            self.dob.day-1)
+                                         self.dob.day - 1)
 
         ageYears = today.year - self.dob.year
 
@@ -95,17 +99,19 @@ class _DuckPatient(object):
         if self.dob.day > today.day:
             months -= 1
 
-        isToday =  nextbirthday == today
+        isToday = nextbirthday == today
 
         return (ageYears, months, isToday)
 
+
 class _ConfirmDialog(BaseDialog):
+
     def __init__(self, serialno, parent=None):
         BaseDialog.__init__(self, parent)
         self.browser = QtGui.QTextBrowser()
 
-        label = QtGui.QLabel(u"%s %s %s" %(_("Add Record"), serialno,
-            _("to this family group?")))
+        label = QtGui.QLabel(u"%s %s %s" % (_("Add Record"), serialno,
+                                            _("to this family group?")))
 
         self.insertWidget(label)
         self.insertWidget(self.browser)
@@ -122,7 +128,9 @@ class _ConfirmDialog(BaseDialog):
         pt = _DuckPatient(member)
         self.browser.setText(patientDetails.header(pt))
 
+
 class _ChooseAddressDialog(BaseDialog):
+
     def __init__(self, addresses, parent=None):
         BaseDialog.__init__(self, parent)
 
@@ -152,11 +160,12 @@ class _ChooseAddressDialog(BaseDialog):
         self.table_widget.itemSelectionChanged.connect(self.enableApply)
 
     def sizeHint(self):
-        return QtCore.QSize(800,200)
+        return QtCore.QSize(800, 200)
 
     @property
     def chosen_address(self):
         return self.addresses[self.table_widget.currentIndex().row()]
+
 
 class _AdvancedWidget(QtGui.QWidget):
     sync_address_signal = QtCore.pyqtSignal()
@@ -179,7 +188,7 @@ class _AdvancedWidget(QtGui.QWidget):
         find_address_but.clicked.connect(self.find_others_signal.emit)
 
         icon = QtGui.QIcon(":/eraser.png")
-        delete_group_but = QtGui.QPushButton(icon,_("Delete this group"))
+        delete_group_but = QtGui.QPushButton(icon, _("Delete this group"))
         delete_group_but.clicked.connect(self.delete_group_signal.emit)
 
         layout = QtGui.QHBoxLayout(self)
@@ -189,17 +198,17 @@ class _AdvancedWidget(QtGui.QWidget):
         add_layout.addWidget(add_member_but)
         add_layout.addWidget(find_address_but)
 
-        manage_groupbox  = QtGui.QGroupBox(_("Manage Group"))
+        manage_groupbox = QtGui.QGroupBox(_("Manage Group"))
         manage_layout = QtGui.QVBoxLayout(manage_groupbox)
         manage_layout.addWidget(sync_address_but)
         manage_layout.addWidget(delete_group_but)
-
 
         layout.addWidget(add_groupbox)
         layout.addWidget(manage_groupbox)
 
 
 class FamilyManageDialog(ExtendableDialog):
+
     def __init__(self, om_gui):
         ExtendableDialog.__init__(self, om_gui, remove_stretch=True)
 
@@ -207,7 +216,7 @@ class FamilyManageDialog(ExtendableDialog):
 
         title = _("Manage Family Group")
         self.setWindowTitle(title)
-        label = QtGui.QLabel(u"<b>%s</b>"% title)
+        label = QtGui.QLabel(u"<b>%s</b>" % title)
         label.setAlignment(QtCore.Qt.AlignCenter)
 
         frame = QtGui.QFrame()
@@ -236,9 +245,9 @@ class FamilyManageDialog(ExtendableDialog):
         self.load_values()
 
     def sizeHint(self):
-        return QtCore.QSize(800,600)
+        return QtCore.QSize(800, 600)
 
-    def load_values(self, mes1 = _("Unlink"), mes2=_("from group")):
+    def load_values(self, mes1=_("Unlink"), mes2=_("from group")):
         self.family_no = self.om_gui.pt.familyno
         self.member_dict = {}
 
@@ -256,16 +265,16 @@ class FamilyManageDialog(ExtendableDialog):
             browser = QtGui.QTextBrowser()
             browser.setText(patientDetails.header(pt))
 
-            row = (i//4)*2
-            column = i%4
+            row = (i // 4) * 2
+            column = i % 4
             self.frame_layout.addWidget(browser, row, column)
-            message = u"%s %s %s"% (mes1, pt.serialno, mes2)
+            message = u"%s %s %s" % (mes1, pt.serialno, mes2)
             if mes1 == _("Unlink"):
                 icon = QtGui.QIcon(":/eraser.png")
             else:
                 icon = QtGui.QIcon(":/logo.png")
             member_but = QtGui.QPushButton(icon, message)
-            self.frame_layout.addWidget(member_but, row+1, column)
+            self.frame_layout.addWidget(member_but, row + 1, column)
 
             self.member_dict[member_but] = pt
             member_but.clicked.connect(self.member_but_clicked)
@@ -288,18 +297,18 @@ class FamilyManageDialog(ExtendableDialog):
             self.widgets.append(but2)
 
             self.frame_layout.addWidget(label, 0, 0)
-            self.frame_layout.addWidget(but,0, 1)
-            self.frame_layout.addWidget(but2,1, 1)
+            self.frame_layout.addWidget(but, 0, 1)
+            self.frame_layout.addWidget(but2, 1, 1)
         else:
             self.advanced_widg.setEnabled(True)
 
     def member_but_clicked(self):
         pt = self.member_dict[self.sender()]
         if QtGui.QMessageBox.question(self, _("Confirm"),
-        u"%s %s %s %s %s" %(_("Remove"), pt.title, pt.fname, pt.sname,
-        _("from this family group?")),
-        QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel,
-        QtGui.QMessageBox.Ok) == QtGui.QMessageBox.Cancel:
+                                      u"%s %s %s %s %s" % (_("Remove"), pt.title, pt.fname, pt.sname,
+                                                           _("from this family group?")),
+                                      QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
+                                      QtGui.QMessageBox.Ok) == QtGui.QMessageBox.Cancel:
             return
 
         db = connect()
@@ -338,12 +347,12 @@ class FamilyManageDialog(ExtendableDialog):
                 member.town,
                 member.county,
                 member.pcde
-                )
+            )
             address_set.add(address_tup)
 
         if len(address_set) == 1:
             QtGui.QMessageBox.information(self, _("Information"),
-            _("Addresses are all identical - nothing to do!"))
+                                          _("Addresses are all identical - nothing to do!"))
             return
 
         dl = _ChooseAddressDialog(address_set, self)
@@ -354,7 +363,7 @@ class FamilyManageDialog(ExtendableDialog):
             count = cursor.execute(SYNC_QUERY, values)
             cursor.close()
             QtGui.QMessageBox.information(self, _("Information"),
-            u"%d %s"% (count, _("Address(es) updated")))
+                                          u"%d %s" % (count, _("Address(es) updated")))
             self.load_values()
 
     def address_search(self):
@@ -370,7 +379,6 @@ class FamilyManageDialog(ExtendableDialog):
 
         dl.exec_()
 
-
     def new_family_group(self):
         db = connect()
         cursor = db.cursor()
@@ -383,9 +391,9 @@ class FamilyManageDialog(ExtendableDialog):
 
     def delete_group(self):
         if QtGui.QMessageBox.question(self, _("Confirm"),
-        _("Delete this family group?"),
-        QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel,
-        QtGui.QMessageBox.Ok) == QtGui.QMessageBox.Cancel:
+                                      _("Delete this family group?"),
+                                      QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
+                                      QtGui.QMessageBox.Ok) == QtGui.QMessageBox.Cancel:
             return
 
         db = connect()
@@ -393,10 +401,12 @@ class FamilyManageDialog(ExtendableDialog):
         cursor.execute(DELETE_FAMILYNO_QUERY, (self.family_no,))
         self.load_values()
 
+
 class LoadRelativesDialog(FamilyManageDialog):
     chosen_sno = 0
+
     def load_values(self):
-        FamilyManageDialog.load_values(self,_("Load Patient"), "")
+        FamilyManageDialog.load_values(self, _("Load Patient"), "")
 
     def member_but_clicked(self):
         pt = self.member_dict[self.sender()]
@@ -409,8 +419,8 @@ if __name__ == "__main__":
     app = QtGui.QApplication([])
 
     mw = QtGui.QWidget()
-    mw.pt = _DuckPatient((1,"","","","The Gables",
-        "Craggiemore Daviot","Inverness","","","IV2 5XQ", "", "active", ""))
+    mw.pt = _DuckPatient((1, "", "", "", "The Gables",
+                          "Craggiemore Daviot", "Inverness", "", "", "IV2 5XQ", "", "active", ""))
 
     mw.pt.familyno = 1
 
@@ -418,5 +428,5 @@ if __name__ == "__main__":
     dl.exec_()
 
 
-    #dl = LoadRelativesDialog(mw)
-    #dl.exec_()
+    # dl = LoadRelativesDialog(mw)
+    # dl.exec_()

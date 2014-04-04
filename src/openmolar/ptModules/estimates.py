@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License
-# for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from __future__ import division
 import copy
@@ -17,7 +33,9 @@ from openmolar.ptModules import plan
 
 LOGGER = logging.getLogger("openmolar")
 
+
 class TXHash(object):
+
     def __init__(self, hash_, completed=False):
         self.hash = hash_
         self.completed = completed
@@ -27,20 +45,23 @@ class TXHash(object):
         compare the object with another hash
         note - completion state is irrelevant
         '''
-        if type(other) == TXHash:
+        if isinstance(other, TXHash):
             return self.hash == other.hash
         return self.hash == other
 
     def __repr__(self):
-        return ("TXHash %s completed=%s"% (self.hash, self.completed))
+        return ("TXHash %s completed=%s" % (self.hash, self.completed))
+
 
 class Estimate(object):
+
     '''
     this class has attributes suitable for storing in the estimates table
     '''
     COMPLETED = 2
     PARTIALLY_COMPLETED = 1
     PLANNED = 0
+
     def __init__(self):
         self.ix = None
         self.serialno = None
@@ -62,7 +83,7 @@ class Estimate(object):
         the replacement of "-" with "Z" ensures that "other" items are last
         '''
         return cmp(
-        self.itemcode.replace("-", "Z"), other.itemcode.replace("-", "Z"))
+            self.itemcode.replace("-", "Z"), other.itemcode.replace("-", "Z"))
 
     @property
     def completed(self):
@@ -90,19 +111,19 @@ class Estimate(object):
     def interim_fee(self):
         if self.tx_hashes == []:
             return 0
-        return self.n_completed * self.fee//len(self.tx_hashes)
+        return self.n_completed * self.fee // len(self.tx_hashes)
 
     @property
     def interim_pt_fee(self):
         if self.tx_hashes == []:
             return 0
-        return self.n_completed * self.ptfee//len(self.tx_hashes)
+        return self.n_completed * self.ptfee // len(self.tx_hashes)
 
     def __repr__(self):
         return self.__str__()
 
     def __str__(self):
-        return "\nEstimate\n        (%s %s %s %s %s %s %s %s %s %s %s %s)"% (
+        return "\nEstimate\n        (%s %s %s %s %s %s %s %s %s %s %s %s)" % (
             self.ix,
             self.serialno,
             self.courseno,
@@ -122,7 +143,7 @@ class Estimate(object):
         estimate data formatted so as to be useful in a log
         || can be used to separate values
         '''
-        return "%s || %s || %s || %s || %s || %s || %s || %s||\n"% (
+        return "%s || %s || %s || %s || %s || %s || %s || %s||\n" % (
             self.number, self.itemcode, self.description, self.csetype,
             self.feescale, self.dent, self.fee, self.ptfee)
 
@@ -132,9 +153,9 @@ class Estimate(object):
     def toHtmlRow(self):
         hash_string = ""
         for tx_hash in self.tx_hashes:
-            hash_string += "<li>%s</li>"% tx_hash.hash
+            hash_string += "<li>%s</li>" % tx_hash.hash
         if hash_string:
-            hash_string = "<ul>%s</ul>"% hash_string
+            hash_string = "<ul>%s</ul>" % hash_string
         else:
             hash_string = _("no treatments")
 
@@ -157,17 +178,17 @@ class Estimate(object):
                 <td>%s</td>
                 <td>%s</td>
             </tr>
-            '''%(
-        localsettings.ops.get(self.dent),
-        self.number,
-        self.itemcode,
-        self.description,
-        localsettings.formatMoney(self.fee),
-        localsettings.formatMoney(self.ptfee),
-        self.feescale,
-        self.csetype,
-        completed,
-        hash_string)
+            ''' % (
+            localsettings.ops.get(self.dent),
+            self.number,
+            self.itemcode,
+            self.description,
+            localsettings.formatMoney(self.fee),
+            localsettings.formatMoney(self.ptfee),
+            self.feescale,
+            self.csetype,
+            completed,
+            hash_string)
 
     def htmlHeader(self):
         return '''<tr><th>Dentist</th><th>number</th><th>code</th>
@@ -209,6 +230,7 @@ class Estimate(object):
     def has_multi_txs(self):
         return len(self.tx_hashes) > 1
 
+
 def strip_curlies(description):
     '''
     comments such as {2 of 2} are present in the estimates...
@@ -219,6 +241,7 @@ def strip_curlies(description):
     else:
         return description
 
+
 def sorted_estimates(ests):
     '''
     compresses a list of estimates down into number*itemcode
@@ -227,17 +250,18 @@ def sorted_estimates(ests):
         'define how ests are sorted'
         return cmp(a.itemcode, b.itemcode)
 
-    sortedEsts=[]
+    sortedEsts = []
+
     def combineEsts(est):
         for se in sortedEsts:
             if se.itemcode == est.itemcode:
                 if se.description == strip_curlies(est.description):
                     #--don't combine items where description has changed
-                    if est.number != None and se.number != None:
+                    if est.number is not None and se.number is not None:
                         se.number += est.number
                     se.fee += est.fee
                     se.ptfee += est.ptfee
-                    #se.type += "|" + est.type
+                    # se.type += "|" + est.type
                     return True
     for est in ests:
         if not combineEsts(est):
@@ -247,6 +271,7 @@ def sorted_estimates(ests):
     sortedEsts.sort(cmp1)
 
     return sortedEsts
+
 
 def apply_exemption(pt, maxCharge=0):
     '''
@@ -273,7 +298,7 @@ if __name__ == "__main__":
     from openmolar.dbtools import patient_class
     localsettings.initiate()
     try:
-        serialno = int(sys.argv[len(sys.argv)-1])
+        serialno = int(sys.argv[len(sys.argv) - 1])
     except:
         serialno = 23664
 

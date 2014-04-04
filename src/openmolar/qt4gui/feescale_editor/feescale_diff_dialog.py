@@ -1,24 +1,26 @@
-#! /usr/bin/python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2013, Neil Wallace <neil@openmolar.com>                        ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import difflib
 import logging
@@ -35,7 +37,9 @@ LOGGER = logging.getLogger("openmolar")
 
 from feescale_xml_editor import XMLEditor
 
+
 class DiffDialog(BaseDialog):
+
     def __init__(self, text1, text2, parent=None):
         BaseDialog.__init__(self, parent, remove_stretch=True)
         self.text1 = text1
@@ -79,7 +83,7 @@ class DiffDialog(BaseDialog):
         splitter = QtGui.QSplitter()
         splitter.addWidget(self.xml_editor1)
         splitter.addWidget(self.xml_editor2)
-        #splitter.setSizes([150, 650])
+        # splitter.setSizes([150, 650])
 
         self.insertWidget(self.main_toolbar)
         self.insertWidget(splitter)
@@ -91,7 +95,7 @@ class DiffDialog(BaseDialog):
         self.load_diffs()
 
     def sizeHint(self):
-        return QtCore.QSize(800,500)
+        return QtCore.QSize(800, 500)
 
     def text_editors_to_unidiff_mode(self, unidiff_mode=True):
         for editor in (self.xml_editor1, self.xml_editor2):
@@ -111,7 +115,7 @@ class DiffDialog(BaseDialog):
         diffs = difflib.unified_diff(
             self.text1.splitlines(True),
             self.text2.splitlines(True), n=PADDING
-            )
+        )
 
         for line_ in diffs:
             if line_.strip() in ("---", "+++"):
@@ -120,13 +124,13 @@ class DiffDialog(BaseDialog):
                 LOGGER.debug(line_.strip())
             m = re.match("@@ \-(\d+),?(\d+)? \+(\d+),?(\d+)? @@", line_)
             if m:
-                LOGGER.debug("match! %s"% str(m.groups()))
+                LOGGER.debug("match! %s" % str(m.groups()))
                 if (line_no1 + line_no2) != 0:
                     text1 += "\n\n"
                     text2 += "\n\n"
                     line_no1 += 2
                     line_no2 += 2
-                #create tuple start, end, mapping
+                # create tuple start, end, mapping
                 start_ = int(m.groups()[0])
                 try:
                     end_ = start_ + int(m.groups()[1])
@@ -150,7 +154,7 @@ class DiffDialog(BaseDialog):
                 formatted_line = (line_)[1:]
                 line_no1 += 1
             else:
-                formatted_line =line_
+                formatted_line = line_
                 line_no1 += 1
                 line_no2 += 1
 
@@ -160,22 +164,22 @@ class DiffDialog(BaseDialog):
                 text1 += formatted_line
 
         pad_lines = len(text1.splitlines()) - len(text2.splitlines())
-        pad1 = pad_lines if pad_lines >0 else 0
-        pad2 = -pad_lines if pad_lines <0 else 0
+        pad1 = pad_lines if pad_lines > 0 else 0
+        pad2 = -pad_lines if pad_lines < 0 else 0
 
         self.xml_editor1.setText(text1 + ("\n" * pad1))
         self.xml_editor2.setText(text2 + ("\n" * pad2))
 
         for lineno_start, lineno_end, offset in highlights1:
             for i, line_no in enumerate(range(lineno_start, lineno_end)):
-                self.xml_editor1.setMarginText(offset+i, "%d"%(line_no), 0)
+                self.xml_editor1.setMarginText(offset + i, "%d" % (line_no), 0)
 
         for lineno in arrows1:
             self.xml_editor1.highlight_line(lineno)
 
         for lineno_start, lineno_end, offset in highlights2:
             for i, line_no in enumerate(range(lineno_start, lineno_end)):
-                self.xml_editor2.setMarginText(offset+i, "%d"%(line_no), 0)
+                self.xml_editor2.setMarginText(offset + i, "%d" % (line_no), 0)
 
         for lineno in arrows2:
             self.xml_editor2.highlight_line(lineno)
@@ -189,14 +193,14 @@ class DiffDialog(BaseDialog):
         PADDING = 4
         lines1 = self.text1.splitlines(True)
         lines2 = self.text2.splitlines(True)
-        diffs = difflib.unified_diff(lines1, lines2 , n=PADDING)
+        diffs = difflib.unified_diff(lines1, lines2, n=PADDING)
 
         for line_ in diffs:
             if line_.strip() in ("---", "+++"):
                 continue
             m = re.match("@@ \-(\d+),?(\d+)? \+(\d+),?(\d+)? @@", line_)
             if m:
-                #create tuple start, end
+                # create tuple start, end
                 text1_start = int(m.groups()[0])
                 try:
                     text1_end = text1_start + int(m.groups()[1])
@@ -224,30 +228,29 @@ class DiffDialog(BaseDialog):
                 offset2 += 1
 
         pad_lines = len(lines2) - len(lines1)
-        pad1 = pad_lines if pad_lines >0 else 0
-        pad2 = -pad_lines if pad_lines <0 else 0
+        pad1 = pad_lines if pad_lines > 0 else 0
+        pad2 = -pad_lines if pad_lines < 0 else 0
 
         self.xml_editor1.setText(self.text1 + ("\n" * pad1))
         self.xml_editor2.setText(self.text2 + ("\n" * pad2))
 
-        for lineno_start, lineno_end  in highlights1:
+        for lineno_start, lineno_end in highlights1:
             for line_no in range(lineno_start, lineno_end):
-                self.xml_editor1.setMarginText(line_no, "%d"%(line_no), 0)
+                self.xml_editor1.setMarginText(line_no, "%d" % (line_no), 0)
         for lineno in arrows1:
             self.xml_editor1.highlight_line(lineno)
 
-        for lineno_start, lineno_end  in highlights2:
+        for lineno_start, lineno_end in highlights2:
             for line_no in range(lineno_start, lineno_end):
-                self.xml_editor2.setMarginText(line_no, "%d"%(line_no), 0)
+                self.xml_editor2.setMarginText(line_no, "%d" % (line_no), 0)
         for lineno in arrows2:
             self.xml_editor2.highlight_line(lineno)
 
-
     def files_are_identical(self):
         if (self.xml_editor1.text_object.text ==
-        self.xml_editor2.text_object.text):
+           self.xml_editor2.text_object.text):
             QtGui.QMessageBox.information(self, _("Information"),
-            _("Files are identical"))
+                                          _("Files are identical"))
             return True
 
     def exec_(self):
@@ -261,7 +264,7 @@ if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
     test_node = "<node>\n    hello\n</node>\n"
     orig = test_node * 10
-    new =  test_node * 4
+    new = test_node * 4
     new += "<node>\n    world\n</node>\n"
     new += test_node * 2
     new += "<node>\n  <subnode>\n    hello\n  <subnode>\n</node>\n"

@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/medhist.ui'
@@ -17,6 +18,7 @@ except AttributeError:
 
 
 class Ui_Dialog(object):
+
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
         Dialog.resize(790, 559)
@@ -28,7 +30,8 @@ class Ui_Dialog(object):
         self.gridLayout_3 = QtGui.QGridLayout(self.groupBox_2)
         self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
         self.label = QtGui.QLabel(self.groupBox_2)
-        self.label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label.setObjectName(_fromUtf8("label"))
         self.gridLayout_3.addWidget(self.label, 0, 0, 1, 1)
         self.doctor_lineEdit = QtGui.QLineEdit(self.groupBox_2)
@@ -36,12 +39,14 @@ class Ui_Dialog(object):
         self.doctor_lineEdit.setObjectName(_fromUtf8("doctor_lineEdit"))
         self.gridLayout_3.addWidget(self.doctor_lineEdit, 0, 1, 1, 1)
         self.label_2 = QtGui.QLabel(self.groupBox_2)
-        self.label_2.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_2.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.gridLayout_3.addWidget(self.label_2, 1, 0, 1, 1)
         self.doctorAddy_lineEdit = QtGui.QLineEdit(self.groupBox_2)
         self.doctorAddy_lineEdit.setMaxLength(60)
-        self.doctorAddy_lineEdit.setObjectName(_fromUtf8("doctorAddy_lineEdit"))
+        self.doctorAddy_lineEdit.setObjectName(
+            _fromUtf8("doctorAddy_lineEdit"))
         self.gridLayout_3.addWidget(self.doctorAddy_lineEdit, 1, 1, 1, 1)
         self.gridLayout_2.addWidget(self.groupBox_2, 0, 0, 1, 7)
         self.groupBox = QtGui.QGroupBox(Dialog)
@@ -49,7 +54,8 @@ class Ui_Dialog(object):
         self.gridLayout = QtGui.QGridLayout(self.groupBox)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.label_3 = QtGui.QLabel(self.groupBox)
-        self.label_3.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_3.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.gridLayout.addWidget(self.label_3, 0, 1, 1, 1)
         self.curMeds_lineEdit = QtGui.QLineEdit(self.groupBox)
@@ -57,7 +63,8 @@ class Ui_Dialog(object):
         self.curMeds_lineEdit.setObjectName(_fromUtf8("curMeds_lineEdit"))
         self.gridLayout.addWidget(self.curMeds_lineEdit, 0, 2, 1, 1)
         self.label_4 = QtGui.QLabel(self.groupBox)
-        self.label_4.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_4.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_4.setObjectName(_fromUtf8("label_4"))
         self.gridLayout.addWidget(self.label_4, 1, 1, 1, 1)
         self.pastMeds_lineEdit = QtGui.QLineEdit(self.groupBox)
@@ -65,7 +72,8 @@ class Ui_Dialog(object):
         self.pastMeds_lineEdit.setObjectName(_fromUtf8("pastMeds_lineEdit"))
         self.gridLayout.addWidget(self.pastMeds_lineEdit, 1, 2, 1, 1)
         self.label_5 = QtGui.QLabel(self.groupBox)
-        self.label_5.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_5.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_5.setObjectName(_fromUtf8("label_5"))
         self.gridLayout.addWidget(self.label_5, 2, 1, 1, 1)
         self.allergies_lineEdit = QtGui.QLineEdit(self.groupBox)
@@ -73,7 +81,8 @@ class Ui_Dialog(object):
         self.allergies_lineEdit.setObjectName(_fromUtf8("allergies_lineEdit"))
         self.gridLayout.addWidget(self.allergies_lineEdit, 2, 2, 1, 1)
         self.label_6 = QtGui.QLabel(self.groupBox)
-        self.label_6.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_6.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_6.setObjectName(_fromUtf8("label_6"))
         self.gridLayout.addWidget(self.label_6, 3, 1, 1, 1)
         self.heart_lineEdit = QtGui.QLineEdit(self.groupBox)
@@ -81,7 +90,8 @@ class Ui_Dialog(object):
         self.heart_lineEdit.setObjectName(_fromUtf8("heart_lineEdit"))
         self.gridLayout.addWidget(self.heart_lineEdit, 3, 2, 1, 1)
         self.label_7 = QtGui.QLabel(self.groupBox)
-        self.label_7.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_7.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_7.setObjectName(_fromUtf8("label_7"))
         self.gridLayout.addWidget(self.label_7, 4, 0, 1, 2)
         self.lungs_lineEdit = QtGui.QLineEdit(self.groupBox)
@@ -89,7 +99,8 @@ class Ui_Dialog(object):
         self.lungs_lineEdit.setObjectName(_fromUtf8("lungs_lineEdit"))
         self.gridLayout.addWidget(self.lungs_lineEdit, 4, 2, 1, 1)
         self.label_8 = QtGui.QLabel(self.groupBox)
-        self.label_8.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_8.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_8.setObjectName(_fromUtf8("label_8"))
         self.gridLayout.addWidget(self.label_8, 5, 1, 1, 1)
         self.liver_lineEdit = QtGui.QLineEdit(self.groupBox)
@@ -97,7 +108,8 @@ class Ui_Dialog(object):
         self.liver_lineEdit.setObjectName(_fromUtf8("liver_lineEdit"))
         self.gridLayout.addWidget(self.liver_lineEdit, 5, 2, 1, 1)
         self.label_11 = QtGui.QLabel(self.groupBox)
-        self.label_11.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_11.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_11.setObjectName(_fromUtf8("label_11"))
         self.gridLayout.addWidget(self.label_11, 6, 0, 1, 2)
         self.bleeding_lineEdit = QtGui.QLineEdit(self.groupBox)
@@ -105,7 +117,8 @@ class Ui_Dialog(object):
         self.bleeding_lineEdit.setObjectName(_fromUtf8("bleeding_lineEdit"))
         self.gridLayout.addWidget(self.bleeding_lineEdit, 6, 2, 1, 1)
         self.label_9 = QtGui.QLabel(self.groupBox)
-        self.label_9.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_9.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_9.setObjectName(_fromUtf8("label_9"))
         self.gridLayout.addWidget(self.label_9, 7, 0, 1, 2)
         self.kidneys_lineEdit = QtGui.QLineEdit(self.groupBox)
@@ -113,15 +126,18 @@ class Ui_Dialog(object):
         self.kidneys_lineEdit.setObjectName(_fromUtf8("kidneys_lineEdit"))
         self.gridLayout.addWidget(self.kidneys_lineEdit, 7, 2, 1, 1)
         self.label_10 = QtGui.QLabel(self.groupBox)
-        self.label_10.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_10.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_10.setObjectName(_fromUtf8("label_10"))
         self.gridLayout.addWidget(self.label_10, 8, 0, 1, 2)
         self.anaesthetic_lineEdit = QtGui.QLineEdit(self.groupBox)
         self.anaesthetic_lineEdit.setMaxLength(60)
-        self.anaesthetic_lineEdit.setObjectName(_fromUtf8("anaesthetic_lineEdit"))
+        self.anaesthetic_lineEdit.setObjectName(
+            _fromUtf8("anaesthetic_lineEdit"))
         self.gridLayout.addWidget(self.anaesthetic_lineEdit, 8, 2, 1, 1)
         self.label_12 = QtGui.QLabel(self.groupBox)
-        self.label_12.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_12.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_12.setObjectName(_fromUtf8("label_12"))
         self.gridLayout.addWidget(self.label_12, 9, 0, 1, 2)
         self.other_lineEdit = QtGui.QLineEdit(self.groupBox)
@@ -132,19 +148,29 @@ class Ui_Dialog(object):
         self.checked_pushButton = QtGui.QPushButton(Dialog)
         self.checked_pushButton.setObjectName(_fromUtf8("checked_pushButton"))
         self.gridLayout_2.addWidget(self.checked_pushButton, 2, 0, 1, 1)
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem = QtGui.QSpacerItem(
+            40,
+            20,
+            QtGui.QSizePolicy.Expanding,
+            QtGui.QSizePolicy.Minimum)
         self.gridLayout_2.addItem(spacerItem, 2, 1, 1, 1)
         self.date_label = QtGui.QLabel(Dialog)
-        self.date_label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.date_label.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.date_label.setObjectName(_fromUtf8("date_label"))
         self.gridLayout_2.addWidget(self.date_label, 2, 2, 1, 1)
         self.dateEdit = QtGui.QDateEdit(Dialog)
         self.dateEdit.setReadOnly(True)
         self.dateEdit.setButtonSymbols(QtGui.QAbstractSpinBox.NoButtons)
-        self.dateEdit.setDateTime(QtCore.QDateTime(QtCore.QDate(1900, 1, 1), QtCore.QTime(0, 0, 0)))
+        self.dateEdit.setDateTime(
+            QtCore.QDateTime(QtCore.QDate(1900, 1, 1), QtCore.QTime(0, 0, 0)))
         self.dateEdit.setObjectName(_fromUtf8("dateEdit"))
         self.gridLayout_2.addWidget(self.dateEdit, 2, 3, 1, 1)
-        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem1 = QtGui.QSpacerItem(
+            40,
+            20,
+            QtGui.QSizePolicy.Expanding,
+            QtGui.QSizePolicy.Minimum)
         self.gridLayout_2.addItem(spacerItem1, 2, 4, 1, 1)
         self.checkBox = QtGui.QCheckBox(Dialog)
         self.checkBox.setObjectName(_fromUtf8("checkBox"))
@@ -156,8 +182,14 @@ class Ui_Dialog(object):
         self.gridLayout_2.addWidget(self.buttonBox, 2, 6, 1, 1)
 
         self.retranslateUi(Dialog)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Dialog.reject)
+        QtCore.QObject.connect(
+            self.buttonBox,
+            QtCore.SIGNAL(_fromUtf8("accepted()")),
+            Dialog.accept)
+        QtCore.QObject.connect(
+            self.buttonBox,
+            QtCore.SIGNAL(_fromUtf8("rejected()")),
+            Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -191,4 +223,3 @@ if __name__ == "__main__":
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())
-

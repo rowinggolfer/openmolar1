@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License
-# for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import logging
 import sys
@@ -23,16 +39,16 @@ BPE_INS_QUERY = '''insert into bpe (serialno, bpedate, bpe)
 values (%s, %s, %s) on duplicate key update bpe=%s'''
 
 EXMPT_INS_QUERY = ('insert into exemptions '
-'(serialno, exemption, exempttext, datestamp) '
-'values (%s,%s,%s, NOW())')
+                   '(serialno, exemption, exempttext, datestamp) '
+                   'values (%s,%s,%s, NOW())')
 
 ESTS_INS_QUERY = ('insert into newestimates (serialno, '
-'courseno, number, itemcode, description, fee, ptfee, feescale, '
-'csetype, dent, modified_by, time_stamp) values '
-'(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())')
+                  'courseno, number, itemcode, description, fee, ptfee, feescale, '
+                  'csetype, dent, modified_by, time_stamp) values '
+                  '(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())')
 
 EST_LINK_INS_QUERY = (
-'insert into est_link2 (est_id, tx_hash, completed) values (%s, %s, %s)')
+    'insert into est_link2 (est_id, tx_hash, completed) values (%s, %s, %s)')
 
 EST_DEL_QUERY = "delete from newestimates where ix=%s"
 EST_LINK_DEL_QUERY = "delete from est_link2 where est_id=%s"
@@ -41,17 +57,18 @@ SYNOPSIS_INS_QUERY = '''
 insert into clinical_memos (serialno, synopsis, author, datestamp)
 values (%s, %s, %s, NOW())'''
 
+
 def all_changes(pt, changes):
-    LOGGER.debug("writing_changes to patient - %s"% str(changes))
+    LOGGER.debug("writing_changes to patient - %s" % str(changes))
     if changes == []:
         LOGGER.warning(
-            "write changes called, but no changes for patient %d!"% (
-            pt.serialno)
+            "write changes called, but no changes for patient %d!" % (
+                pt.serialno)
         )
         return True
     else:
-        #set up some booleans to prevent multiple updates of the same data
-        #example exemption AND exemption text have changed..
+        # set up some booleans to prevent multiple updates of the same data
+        # example exemption AND exemption text have changed..
         exemptionsHandled = False
 
         if pt.HIDDENNOTES != []:
@@ -67,36 +84,36 @@ def all_changes(pt, changes):
         trtchanges, trtvalues = "", []
         for change in changes:
             if change == "courseno":
-                pass #these values should never get munged.
+                pass  # these values should never get munged.
 
             elif change in ("money0, money1"):
                 diff = pt.__dict__[change] - pt.dbstate.__dict__[change]
-                patvalues.append (diff)
-                patchanges += '%s = %s + %%s,'% (change, change)
+                patvalues.append(diff)
+                patchanges += '%s = %s + %%s,' % (change, change)
 
             elif change in patient_class.patientTableAtts:
                 patvalues.append(pt.__dict__[change])
-                patchanges += '%s = %%s,'% change
+                patchanges += '%s = %%s,' % change
 
             elif (change in patient_class.exemptionTableAtts and
-            not exemptionsHandled):
+                  not exemptionsHandled):
                 values = (pt.serialno, pt.exemption, pt.exempttext)
                 sqlcommands['exemptions'] = ((EXMPT_INS_QUERY, values),)
                 exemptionsHandled = True
 
             elif change == "bpe":
-                values = (  pt.serialno,
-                            pt.bpe[-1][0],
-                            pt.bpe[-1][1],
-                            pt.bpe[-1][1]
-                            )
-                sqlcommands['bpe'] =((BPE_INS_QUERY, values),)
+                values = (pt.serialno,
+                          pt.bpe[-1][0],
+                          pt.bpe[-1][1],
+                          pt.bpe[-1][1]
+                          )
+                sqlcommands['bpe'] = ((BPE_INS_QUERY, values),)
 
             elif change == "synopsis":
                 values = (pt.serialno, pt.synopsis,
-                localsettings.operator)
+                          localsettings.operator)
 
-                sqlcommands['clinical_memos']= ((SYNOPSIS_INS_QUERY, values),)
+                sqlcommands['clinical_memos'] = ((SYNOPSIS_INS_QUERY, values),)
 
             elif change == "estimates":
                 estimate_commands["insertions"] = []
@@ -105,27 +122,27 @@ def all_changes(pt, changes):
 
                 oldEstDict = {}
 
-                for est in  pt.dbstate.estimates:
+                for est in pt.dbstate.estimates:
                     #-- generate a dictionary with the
                     #-- autogenerated db indexas key
-                    if est.ix != None:
+                    if est.ix is not None:
                         oldEstDict[est.ix] = est
 
                 for est in pt.estimates:
-                    if est.ix == None: #--new item
+                    if est.ix is None:  # --new item
                         values = (pt.serialno, est.courseno, est.number,
-                        est.itemcode, est.description,
-                        est.fee, est.ptfee, est.feescale, est.csetype,
-                        est.dent, localsettings.operator)
+                                  est.itemcode, est.description,
+                                  est.fee, est.ptfee, est.feescale, est.csetype,
+                                  est.dent, localsettings.operator)
 
                         estimate_commands["insertions"].append(
                             (ESTS_INS_QUERY, values, est.tx_hashes)
-                            )
+                        )
 
                     elif est.ix in oldEstDict.keys():
                         oldEst = oldEstDict[est.ix]
 
-                        if str(oldEst) !=  str(est):
+                        if str(oldEst) != str(est):
                             #-- have to use the str because est class does not
                             #-- have a _eq_ property ??
                             query = 'update newestimates set '
@@ -156,16 +173,15 @@ def all_changes(pt, changes):
                                 values.append(est.dent)
 
                             query += ('modified_by = %s, '
-                            'time_stamp = NOW() where ix = %s')
+                                      'time_stamp = NOW() where ix = %s')
 
                             values.append(localsettings.operator)
                             values.append(est.ix)
 
                             estimate_commands["updates"].append(
-                            (query, tuple(values), est))
+                                (query, tuple(values), est))
 
                         oldEstDict.pop(est.ix)
-
 
                 #-- all that is left in oldEstDict now are items which
                 #-- have been removed.
@@ -178,24 +194,24 @@ def all_changes(pt, changes):
                         deletions.append((EST_DEL_QUERY, values))
                         deletions.append((EST_LINK_DEL_QUERY, values))
 
-            elif change == "treatment_course": #patient.CURRTRT_ATTS:
+            elif change == "treatment_course":  # patient.CURRTRT_ATTS:
                 for trt_att in CURRTRT_ATTS:
                     value = pt.treatment_course.__dict__[trt_att]
                     existing = pt.dbstate.treatment_course.__dict__[trt_att]
                     if pt.has_new_course or value != existing:
-                        trtchanges += '%s = %%s ,'% trt_att
+                        trtchanges += '%s = %%s ,' % trt_att
                         trtvalues.append(value)
 
             elif change == "appt_prefs":
                 pt.appt_prefs.commit_changes()
-
 
     result = True
     if patchanges != "":
         patvalues.append(pt.serialno)
         values = tuple(patvalues)
 
-        query = "update patients SET %s where serialno=%%s"% patchanges.strip(",")
+        query = "update patients SET %s where serialno=%%s" % patchanges.strip(
+            ",")
 
         sqlcommands['patients'] = ((query, values),)
 
@@ -205,7 +221,7 @@ def all_changes(pt, changes):
         values = tuple(trtvalues)
 
         query = ('update currtrtmt2 SET '
-        '%s where serialno=%%s and courseno=%%s'%( trtchanges.strip(",")))
+                 '%s where serialno=%%s and courseno=%%s' % (trtchanges.strip(",")))
         sqlcommands['currtrtmt'] = ((query, values),)
 
     if sqlcommands != {} or estimate_commands != {}:
@@ -219,7 +235,7 @@ def all_changes(pt, changes):
                 try:
                     cursor.execute(query, values)
                 except Exception as exc:
-                    LOGGER.exception("error executing query %s"% query)
+                    LOGGER.exception("error executing query %s" % query)
                     result = False
 
         insert_commands = estimate_commands.get("insertions", [])
@@ -232,11 +248,11 @@ def all_changes(pt, changes):
                         vals = (ix, tx_hash.hash, tx_hash.completed)
                         cursor.execute(EST_LINK_INS_QUERY, vals)
                 except Exception as exc:
-                    LOGGER.exception("error executing query\n %s\n %s"% (
+                    LOGGER.exception("error executing query\n %s\n %s" % (
                         EST_LINK_INS_QUERY, vals))
                     result = False
             except Exception as exc:
-                LOGGER.exception("error executing query\n %s\n %s"% (
+                LOGGER.exception("error executing query\n %s\n %s" % (
                     query, str(values)))
                 result = False
 
@@ -247,10 +263,11 @@ def all_changes(pt, changes):
                 cursor.execute(EST_LINK_DEL_QUERY, (estimate.ix,))
                 for tx_hash in estimate.tx_hashes:
                     cursor.execute(EST_LINK_INS_QUERY,
-                    (estimate.ix, tx_hash.hash, tx_hash.completed)
-                    )
+                                  (estimate.ix, tx_hash.hash,
+                                   tx_hash.completed)
+                                   )
             except Exception as exc:
-                LOGGER.exception("error updating estimate %s"% estimate)
+                LOGGER.exception("error updating estimate %s" % estimate)
                 result = False
 
         cursor.close()
@@ -258,13 +275,14 @@ def all_changes(pt, changes):
 
     return result
 
+
 def toNotes(serialno, newnotes):
     '''
     new code with schema 1.9
     '''
-    LOGGER.debug("write changes - toNotes for patient %d"% serialno)
+    LOGGER.debug("write changes - toNotes for patient %d" % serialno)
 
-    #database version stores max line length of 80chars
+    # database version stores max line length of 80chars
 
     query = '''insert into formatted_notes
     (serialno, ndate, op1, op2, ntype, note)
@@ -274,9 +292,9 @@ def toNotes(serialno, newnotes):
 
     tstamp = localsettings.currentTime().strftime("%d/%m/%Y %T")
     notetuplets.append(
-        ("opened", "System date - %s"% tstamp))
+        ("opened", "System date - %s" % tstamp))
     for ntype, note in newnotes:
-        while len(note)>79:
+        while len(note) > 79:
             if " " in note[:79]:
                 pos = note[:79].rindex(" ")
                 #--try to split nicely
@@ -287,11 +305,11 @@ def toNotes(serialno, newnotes):
                 pos = 79
                 #--ok, no option (unlikely to happen though)
             notetuplets.append((ntype, note[:pos]))
-            note = note[pos+1:]
+            note = note[pos + 1:]
 
-        notetuplets.append((ntype, note+"\n"))
+        notetuplets.append((ntype, note + "\n"))
     notetuplets.append(
-        ("closed", "%s %s"% (localsettings.operator,tstamp)))
+        ("closed", "%s %s" % (localsettings.operator, tstamp)))
 
     values = []
     ops = localsettings.operator.split("/")
@@ -305,11 +323,11 @@ def toNotes(serialno, newnotes):
 
     rows = 0
     if values:
-        db=connect()
+        db = connect()
         cursor = db.cursor()
 
-        #this (superior code?) didn't work on older MySQLdb versions.
-        #rows = cursor.executemany(query, tuple(values))
+        # this (superior code?) didn't work on older MySQLdb versions.
+        # rows = cursor.executemany(query, tuple(values))
         for value in values:
             rows += cursor.execute(query, value)
 
@@ -318,7 +336,8 @@ def toNotes(serialno, newnotes):
 
     return rows > 0
 
-def discreet_changes(pt_changed,changes):
+
+def discreet_changes(pt_changed, changes):
     '''
     this updates only the selected atts
     (usually called by automated proc such as recalls...
@@ -329,32 +348,31 @@ def discreet_changes(pt_changed,changes):
     sqlcond = ""
     for change in changes:
         value = pt_changed.__dict__[change]
-        LOGGER.debug("discreet change %s %s"% (change, type(value)))
+        LOGGER.debug("discreet change %s %s" % (change, type(value)))
         if change in patient_class.dateFields:
-            if value != "" and value != None:
-                sqlcond += '%s="%s" ,'%(change, value)
-        elif value == None:
-            sqlcond += '%s=NULL ,'% change
-        elif type(value) in (types.IntType,types.LongType):
-            sqlcond += '%s=%s ,'% (change,value)
+            if value != "" and value is not None:
+                sqlcond += '%s="%s" ,' % (change, value)
+        elif value is None:
+            sqlcond += '%s=NULL ,' % change
+        elif type(value) in (int, int):
+            sqlcond += '%s=%s ,' % (change, value)
         else:
-            sqlcond += '%s="%s" ,'% (change,value)
+            sqlcond += '%s="%s" ,' % (change, value)
 
-    sqlcommand= "update patients SET %s where serialno=%%s"%(
+    sqlcommand = "update patients SET %s where serialno=%%s" % (
         sqlcond.strip(","))
 
-    LOGGER.debug("%s (%s,)"% (sqlcommand, pt_changed.serialno))
+    LOGGER.debug("%s (%s,)" % (sqlcommand, pt_changed.serialno))
 
-    result=True
+    result = True
     if sqlcond != "":
-        db=connect()
+        db = connect()
         cursor = db.cursor()
         try:
             cursor.execute(sqlcommand, (pt_changed.serialno,))
             db.commit()
-        except Exception,e:
+        except Exception as e:
             LOGGER.exception("unable to write discreet changes")
-            result=False
+            result = False
         cursor.close()
     return result
-

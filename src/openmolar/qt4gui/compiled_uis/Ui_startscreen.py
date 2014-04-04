@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/startscreen.ui'
@@ -17,18 +18,24 @@ except AttributeError:
 
 
 class Ui_Dialog(object):
+
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
         Dialog.setWindowModality(QtCore.Qt.WindowModal)
         Dialog.resize(276, 343)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        sizePolicy = QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Preferred,
+            QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(Dialog.sizePolicy().hasHeightForWidth())
         Dialog.setSizePolicy(sizePolicy)
         Dialog.setMinimumSize(QtCore.QSize(200, 200))
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/openmolar.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(
+            QtGui.QPixmap(_fromUtf8(":/openmolar.svg")),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
         Dialog.setWindowIcon(icon)
         self.gridLayout_2 = QtGui.QGridLayout(Dialog)
         self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
@@ -49,10 +56,13 @@ class Ui_Dialog(object):
         self.horizontalLayout.addWidget(self.password_lineEdit)
         self.gridLayout_2.addLayout(self.horizontalLayout, 0, 0, 1, 2)
         self.line = QtGui.QFrame(Dialog)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        sizePolicy = QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Preferred,
+            QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.line.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.line.sizePolicy().hasHeightForWidth())
         self.line.setSizePolicy(sizePolicy)
         self.line.setMinimumSize(QtCore.QSize(0, 16))
         self.line.setFrameShape(QtGui.QFrame.HLine)
@@ -85,16 +95,19 @@ class Ui_Dialog(object):
         self.surgery_radioButton = QtGui.QRadioButton(Dialog)
         self.surgery_radioButton.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.surgery_radioButton.setChecked(True)
-        self.surgery_radioButton.setObjectName(_fromUtf8("surgery_radioButton"))
+        self.surgery_radioButton.setObjectName(
+            _fromUtf8("surgery_radioButton"))
         self.gridLayout.addWidget(self.surgery_radioButton, 2, 0, 1, 2)
         self.reception_radioButton = QtGui.QRadioButton(Dialog)
         self.reception_radioButton.setLayoutDirection(QtCore.Qt.RightToLeft)
-        self.reception_radioButton.setObjectName(_fromUtf8("reception_radioButton"))
+        self.reception_radioButton.setObjectName(
+            _fromUtf8("reception_radioButton"))
         self.gridLayout.addWidget(self.reception_radioButton, 3, 0, 1, 2)
         self.gridLayout_2.addLayout(self.gridLayout, 2, 0, 1, 2)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(
+            QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setCenterButtons(True)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
         self.gridLayout_2.addWidget(self.buttonBox, 4, 0, 1, 2)
@@ -115,23 +128,38 @@ class Ui_Dialog(object):
         self.chosenServer_label.setObjectName(_fromUtf8("chosenServer_label"))
         self.gridLayout_3.addWidget(self.chosenServer_label, 1, 0, 2, 1)
         self.advanced_toolButton = QtGui.QToolButton(self.advanced_frame)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
+        sizePolicy = QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Minimum,
+            QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.advanced_toolButton.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.advanced_toolButton.sizePolicy().hasHeightForWidth())
         self.advanced_toolButton.setSizePolicy(sizePolicy)
         self.advanced_toolButton.setPopupMode(QtGui.QToolButton.InstantPopup)
-        self.advanced_toolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
+        self.advanced_toolButton.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextOnly)
         self.advanced_toolButton.setArrowType(QtCore.Qt.DownArrow)
-        self.advanced_toolButton.setObjectName(_fromUtf8("advanced_toolButton"))
+        self.advanced_toolButton.setObjectName(
+            _fromUtf8("advanced_toolButton"))
         self.gridLayout_3.addWidget(self.advanced_toolButton, 2, 1, 1, 1)
         self.gridLayout_2.addWidget(self.advanced_frame, 6, 0, 1, 2)
-        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        spacerItem = QtGui.QSpacerItem(
+            20,
+            40,
+            QtGui.QSizePolicy.Minimum,
+            QtGui.QSizePolicy.Expanding)
         self.gridLayout_2.addItem(spacerItem, 3, 0, 1, 2)
 
         self.retranslateUi(Dialog)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Dialog.reject)
+        QtCore.QObject.connect(
+            self.buttonBox,
+            QtCore.SIGNAL(_fromUtf8("accepted()")),
+            Dialog.accept)
+        QtCore.QObject.connect(
+            self.buttonBox,
+            QtCore.SIGNAL(_fromUtf8("rejected()")),
+            Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -156,4 +184,3 @@ if __name__ == "__main__":
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())
-

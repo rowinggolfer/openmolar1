@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/toothPerioProps.ui'
@@ -17,6 +18,7 @@ except AttributeError:
 
 
 class Ui_Form(object):
+
     def setupUi(self, Form):
         Form.setObjectName(_fromUtf8("Form"))
         Form.resize(499, 148)
@@ -62,26 +64,37 @@ class Ui_Form(object):
         self.copy_pushButton.setObjectName(_fromUtf8("copy_pushButton"))
         self.gridLayout.addWidget(self.copy_pushButton, 1, 2, 1, 1)
         self.cp_pushButton = QtGui.QPushButton(Form)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        sizePolicy = QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Preferred,
+            QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.cp_pushButton.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.cp_pushButton.sizePolicy().hasHeightForWidth())
         self.cp_pushButton.setSizePolicy(sizePolicy)
         self.cp_pushButton.setMinimumSize(QtCore.QSize(0, 20))
         self.cp_pushButton.setMaximumSize(QtCore.QSize(40, 28))
         self.cp_pushButton.setObjectName(_fromUtf8("cp_pushButton"))
         self.gridLayout.addWidget(self.cp_pushButton, 1, 3, 1, 1)
         self.clear_pushButton = QtGui.QPushButton(Form)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        sizePolicy = QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Preferred,
+            QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.clear_pushButton.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.clear_pushButton.sizePolicy(
+            ).hasHeightForWidth(
+            ))
         self.clear_pushButton.setSizePolicy(sizePolicy)
         self.clear_pushButton.setMinimumSize(QtCore.QSize(0, 20))
         self.clear_pushButton.setMaximumSize(QtCore.QSize(40, 28))
         self.clear_pushButton.setText(_fromUtf8(""))
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/eraser.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(
+            QtGui.QPixmap(_fromUtf8(":/eraser.png")),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
         self.clear_pushButton.setIcon(icon)
         self.clear_pushButton.setObjectName(_fromUtf8("clear_pushButton"))
         self.gridLayout.addWidget(self.clear_pushButton, 1, 4, 1, 1)
@@ -92,10 +105,14 @@ class Ui_Form(object):
         self.leftTooth_pushButton.setMaximumSize(QtCore.QSize(24, 24))
         self.leftTooth_pushButton.setText(_fromUtf8(""))
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/back.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(
+            QtGui.QPixmap(_fromUtf8(":/back.png")),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
         self.leftTooth_pushButton.setIcon(icon1)
         self.leftTooth_pushButton.setIconSize(QtCore.QSize(24, 18))
-        self.leftTooth_pushButton.setObjectName(_fromUtf8("leftTooth_pushButton"))
+        self.leftTooth_pushButton.setObjectName(
+            _fromUtf8("leftTooth_pushButton"))
         self.horizontalLayout.addWidget(self.leftTooth_pushButton)
         self.le_frame = QtGui.QFrame(Form)
         self.le_frame.setMaximumSize(QtCore.QSize(16777215, 16777215))
@@ -108,10 +125,14 @@ class Ui_Form(object):
         self.rightTooth_pushButton.setMaximumSize(QtCore.QSize(24, 24))
         self.rightTooth_pushButton.setText(_fromUtf8(""))
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(_fromUtf8(":/forward.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(
+            QtGui.QPixmap(_fromUtf8(":/forward.png")),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
         self.rightTooth_pushButton.setIcon(icon2)
         self.rightTooth_pushButton.setIconSize(QtCore.QSize(24, 18))
-        self.rightTooth_pushButton.setObjectName(_fromUtf8("rightTooth_pushButton"))
+        self.rightTooth_pushButton.setObjectName(
+            _fromUtf8("rightTooth_pushButton"))
         self.horizontalLayout.addWidget(self.rightTooth_pushButton)
         self.gridLayout.addLayout(self.horizontalLayout, 2, 2, 1, 2)
         self.mobilitycomboBox = QtGui.QComboBox(Form)
@@ -160,4 +181,3 @@ if __name__ == "__main__":
     ui.setupUi(Form)
     Form.show()
     sys.exit(app.exec_())
-

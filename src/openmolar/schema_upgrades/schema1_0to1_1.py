@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# See the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 This module provides a function 'run' which will move data from the estimates
@@ -39,7 +55,7 @@ PRIMARY KEY (ix),
 KEY (serialno),
 KEY (courseno));
 ''',
-'''
+                        '''
 CREATE TABLE IF NOT EXISTS settings (
 `ix` int(10) unsigned NOT NULL auto_increment ,
 `value` varchar(128),
@@ -52,7 +68,7 @@ CREATE TABLE IF NOT EXISTS settings (
 PRIMARY KEY (ix),
 KEY (value));
 ''',
-'''
+                        '''
 CREATE TABLE IF NOT EXISTS calendar (
 `ix` int(10) unsigned NOT NULL auto_increment ,
 `adate` DATE NOT NULL,
@@ -60,7 +76,7 @@ CREATE TABLE IF NOT EXISTS calendar (
 PRIMARY KEY (ix),
 KEY (adate));
 '''
-]
+                        ]
 
 import sys
 from openmolar.settings import localsettings
@@ -70,6 +86,7 @@ from openmolar import connect
 
 
 class dbUpdater(QtCore.QThread):
+
     def __init__(self, parent=None):
         super(dbUpdater, self).__init__(parent)
         self.stopped = False
@@ -89,7 +106,7 @@ class dbUpdater(QtCore.QThread):
                 cursor.execute(sql_strings)
             db.commit()
             return True
-        except Exception, e:
+        except Exception as e:
             print e
             print "unable to execute createNewEstimates"
 
@@ -98,11 +115,11 @@ class dbUpdater(QtCore.QThread):
         get ALL data from the estimates table
         '''
         db = connect.connect()
-        cursor=db.cursor()
+        cursor = db.cursor()
         cursor.execute('''select serialno, courseno, type, number, itemcode,
         description, fee, ptfee, feescale, csetype, dent, completed,
         carriedover, linked from estimates''')
-        rows=cursor.fetchall()
+        rows = cursor.fetchall()
         cursor.close()
         db.close()
         return rows
@@ -111,13 +128,13 @@ class dbUpdater(QtCore.QThread):
         '''
         convert to the new row type
         '''
-        retlist=[]
+        retlist = []
         progress_var = len(rows)
         for row in rows:
             newrow = []
             for i in range(len(row)):
                 data = row[i]
-                if i == 2: #split the type into the new catergory / type fields
+                if i == 2:  # split the type into the new catergory / type fields
                     try:
                         splitdata = data.split(" ")
                         category = splitdata[0]
@@ -136,8 +153,8 @@ class dbUpdater(QtCore.QThread):
 
                 if i % 100 == 0:
                     self.progressSig((i / progress_var) * 40 + 20)
-            if len(row) != len(newrow)-1:
-                print "Error converting ",row
+            if len(row) != len(newrow) - 1:
+                print "Error converting ", row
                 sys.exit()
             retlist.append(newrow)
         return retlist
@@ -150,7 +167,7 @@ class dbUpdater(QtCore.QThread):
         cursor = db.cursor()
         progress_var = len(rows)
         i = 0
-        query='''insert into newestimates
+        query = '''insert into newestimates
         (serialno, courseno, category, type, number, itemcode, description,
         fee, ptfee , csetype, feescale, dent, completed, carriedover ,
         linked , modified_by , time_stamp) values (%s, %s, %s, %s, %s, %s,
@@ -164,7 +181,6 @@ class dbUpdater(QtCore.QThread):
 
         db.commit()
         db.close()
-
 
     def progressSig(self, val, message=""):
         '''
@@ -197,8 +213,8 @@ class dbUpdater(QtCore.QThread):
                 self.completed = True
                 self.completeSig("ALL DONE - sucessfully moved db to 1,1")
 
-        except Exception, e:
-            print "Exception caught",e
+        except Exception as e:
+            print "Exception caught", e
             self.completeSig(str(e))
 
         return self.completed

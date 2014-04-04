@@ -1,31 +1,49 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License
-# for more details.
 
-import os, re
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
+
+import os
+import re
 from openmolar.settings import localsettings
 from PyQt4 import QtGui
 
 TOOTHPIXMAPS = {}
+
 
 def toothPixmaps():
     if TOOTHPIXMAPS == {}:
         filepath = os.path.join(localsettings.resources_location, "teeth")
         for f in os.listdir(filepath):
             filename = os.path.basename(f)
-            reg = re.match ("([ul][lr][1-8,a-d]).png", filename)
+            reg = re.match("([ul][lr][1-8,a-d]).png", filename)
             if reg:
                 tooth = reg.groups()[0]
                 TOOTHPIXMAPS[tooth] = QtGui.QPixmap(os.path.join(filepath, f))
-        #print TOOTHPIXMAPS
+        # print TOOTHPIXMAPS
     return TOOTHPIXMAPS
 
 
-if __name__== "__main__":
+if __name__ == "__main__":
     app = QtGui.QApplication([])
     lab = QtGui.QLabel()
     lab.setPixmap(toothPixmaps()["lr6"])

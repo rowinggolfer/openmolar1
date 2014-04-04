@@ -1,14 +1,32 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for
-# more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from PyQt4 import QtGui, QtCore
 
+
 class dentHygSelector(QtGui.QTreeWidget):
+
     def __init__(self, dents, hygs):
         QtGui.QTreeWidget.__init__(self)
         self.setHeaderHidden(True)
@@ -43,22 +61,22 @@ class dentHygSelector(QtGui.QTreeWidget):
     def signals(self, connect):
         if connect:
             self.connect(self,
-            QtCore.SIGNAL("itemChanged (QTreeWidgetItem *,int)"),
-            self.interact)
+                         QtCore.SIGNAL("itemChanged (QTreeWidgetItem *,int)"),
+                         self.interact)
         else:
             self.disconnect(self,
-            QtCore.SIGNAL("itemChanged (QTreeWidgetItem *,int)"),
-            self.interact)
+                            QtCore.SIGNAL(
+                                "itemChanged (QTreeWidgetItem *,int)"),
+                            self.interact)
 
     def checkAll(self, checkstate=QtCore.Qt.Checked,
-    ignoreHygs=False, ignoreDents=False):
+                 ignoreHygs=False, ignoreDents=False):
         if not ignoreHygs:
             for hyg in self.hyg_cbs.values():
                 hyg.setCheckState(0, checkstate)
         if not ignoreDents:
             for dent in self.dent_cbs.values():
                 dent.setCheckState(0, checkstate)
-
 
     def interact(self, item, column):
         self.signals(False)
@@ -69,7 +87,6 @@ class dentHygSelector(QtGui.QTreeWidget):
             self.checkAll(self.dent_root.checkState(0), ignoreHygs=True)
         elif item == self.hyg_root:
             self.checkAll(self.hyg_root.checkState(0), ignoreDents=True)
-
 
         self.selectedDents = []
         self.selectedHygs = []
@@ -115,7 +132,7 @@ class dentHygSelector(QtGui.QTreeWidget):
 
 if __name__ == "__main__":
     app = QtGui.QApplication([])
-    dents = ["Neil","Bea","Helen", "Andy"]
+    dents = ["Neil", "Bea", "Helen", "Andy"]
     hygs = ["Rosie", "Sally", "Ariana"]
     w = dentHygSelector(dents, hygs)
     w.show()

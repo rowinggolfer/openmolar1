@@ -1,23 +1,41 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from __future__ import division
 import datetime
 
-from PyQt4 import QtCore,QtGui
+from PyQt4 import QtCore, QtGui
 
 from openmolar.settings import localsettings
 
 
 class Card(object):
+
     def __init__(self, parent=None):
         self.printer = QtGui.QPrinter()
         self.pt = None
-        self.appts=()
+        self.appts = ()
 
     def setProps(self, patient, appts=()):
         self.pt = patient
@@ -38,50 +56,48 @@ class Card(object):
 
         painter.setFont(font)
 
-        rect = QtCore.QRectF(pageRect.width()/6, pageRect.height()/20,
-            pageRect.width()*5/6, pageRect.height()/3)
+        rect = QtCore.QRectF(pageRect.width() / 6, pageRect.height() / 20,
+                             pageRect.width() * 5 / 6, pageRect.height() / 3)
 
-        text = "%s %s %s\n%s\n"%(
+        text = "%s %s %s\n%s\n" % (
             self.pt.title, self.pt.fname, self.pt.sname, self.pt.address)
-        text += "Our ref %d\n\n"% self.pt.serialno
+        text += "Our ref %d\n\n" % self.pt.serialno
         painter.drawText(rect, text)
 
         option = QtGui.QTextOption(QtCore.Qt.AlignCenter)
         option.setWrapMode(QtGui.QTextOption.WordWrap)
 
-        y = pageRect.height()/3
-        painter.drawLine(0,int(y),int(pageRect.width()),int(y))
+        y = pageRect.height() / 3
+        painter.drawLine(0, int(y), int(pageRect.width()), int(y))
 
-        y += fontLineHeight*1.5
+        y += fontLineHeight * 1.5
 
         font.setBold(True)
         painter.setFont(font)
-        rect = QtCore.QRectF(0, y, pageRect.width(), fontLineHeight*1.5)
+        rect = QtCore.QRectF(0, y, pageRect.width(), fontLineHeight * 1.5)
         painter.drawText(rect, "You have the following appointments with us",
-            option)
+                         option)
         font.setBold(False)
         painter.setFont(font)
 
         for appt in self.appts:
-            y += fontLineHeight*1.5
+            y += fontLineHeight * 1.5
             atime = localsettings.wystimeToHumanTime(appt.atime)
             adate = localsettings.longDate(appt.date)
 
-            text = "%s - %s with %s"%(atime, adate, appt.dent_inits)
+            text = "%s - %s with %s" % (atime, adate, appt.dent_inits)
 
-            rect = QtCore.QRectF(0, y, pageRect.width(), fontLineHeight*1.5)
+            rect = QtCore.QRectF(0, y, pageRect.width(), fontLineHeight * 1.5)
 
             painter.drawText(rect, text, option)
 
+        y = pageRect.height() * 2 / 3
 
-
-        y = pageRect.height() *2/3
-
-        painter.drawLine(0,int(y),int(pageRect.width()),int(y))
+        painter.drawLine(0, int(y), int(pageRect.width()), int(y))
         font.setItalic(True)
         painter.setFont(font)
 
-        rect = QtCore.QRectF(0, y, pageRect.width(), pageRect.height()*1/3)
+        rect = QtCore.QRectF(0, y, pageRect.width(), pageRect.height() * 1 / 3)
         painter.drawText(rect, localsettings.APPOINTMENT_CARD_FOOTER, option)
 
 if __name__ == "__main__":
@@ -96,4 +112,3 @@ if __name__ == "__main__":
     appts = appointments.get_pts_appts(pt, True)
     mycard.setProps(pt, appts)
     mycard.print_()
-

@@ -1,24 +1,26 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2009-2014,  Neil Wallace <neil@openmolar.com>                  ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from copy import deepcopy
 import datetime
@@ -40,77 +42,79 @@ from openmolar.dbtools.queries import ESTS_QUERY, PATIENT_QUERY
 LOGGER = logging.getLogger("openmolar")
 
 dateFields = ("dob", "pd0", "pd1", "pd2", "pd3", "pd4", "pd5", "pd6",
-"pd7", "pd8", "pd9", "pd10", "pd11", "pd12", "pd13", "pd14", "cnfd",
-"recd", "billdate", "enrolled", "initaccept", "lastreaccept", "lastclaim",
-"expiry", "transfer", "chartdate", "accd", "cmpd", "examd", "bpedate")
+              "pd7", "pd8", "pd9", "pd10", "pd11", "pd12", "pd13", "pd14", "cnfd",
+              "recd", "billdate", "enrolled", "initaccept", "lastreaccept", "lastclaim",
+              "expiry", "transfer", "chartdate", "accd", "cmpd", "examd", "bpedate")
 
 nullDate = None
 
 patientTableAtts = (
-'pf0','pf1','pf2','pf3','pf4','pf5','pf6','pf7','pf8','pf9','pf10','pf11',
-'pf12','pf14','pf15','pf16','pf17','pf18','pf19',
-'money0','money1','money2','money3','money4','money5','money6','money7',
-'money8','money9','money10',
-'pd0','pd1','pd2','pd3','pd4','pd5','pd6','pd7','pd8','pd9','pd10','pd11',
-'pd12','pd13','pd14',
-'sname','fname','title','sex','dob', 'addr1','addr2','addr3','pcde','tel1',
-'tel2','occup',
-'nhsno','cnfd','psn','cset','dnt1','dnt2','courseno0','courseno1',
-'ur8st','ur7st','ur6st','ur5st','ur4st','ur3st','ur2st','ur1st',
-'ul1st','ul2st','ul3st','ul4st','ul5st','ul6st','ul7st','ul8st',
-'ll8st','ll7st','ll6st','ll5st','ll4st','ll3st','ll2st','ll1st',
-'lr1st','lr2st','lr3st','lr4st','lr5st','lr6st','lr7st','lr8st',
-'dent0','dent1','dent2','dent3',
-'dmask','minstart','maxend','billdate','billct',
-'billtype','pf20','money11','pf13','familyno','memo',
-'town','county','mobile','fax','email1','email2','status','source',
-'enrolled','archived',
-'initaccept','lastreaccept','lastclaim','expiry','cstatus','transfer',
-'pstatus','courseno2')
+    'pf0', 'pf1', 'pf2', 'pf3', 'pf4', 'pf5', 'pf6', 'pf7', 'pf8', 'pf9', 'pf10', 'pf11',
+    'pf12', 'pf14', 'pf15', 'pf16', 'pf17', 'pf18', 'pf19',
+    'money0', 'money1', 'money2', 'money3', 'money4', 'money5', 'money6', 'money7',
+    'money8', 'money9', 'money10',
+    'pd0', 'pd1', 'pd2', 'pd3', 'pd4', 'pd5', 'pd6', 'pd7', 'pd8', 'pd9', 'pd10', 'pd11',
+    'pd12', 'pd13', 'pd14',
+    'sname', 'fname', 'title', 'sex', 'dob', 'addr1', 'addr2', 'addr3', 'pcde', 'tel1',
+    'tel2', 'occup',
+    'nhsno', 'cnfd', 'psn', 'cset', 'dnt1', 'dnt2', 'courseno0', 'courseno1',
+    'ur8st', 'ur7st', 'ur6st', 'ur5st', 'ur4st', 'ur3st', 'ur2st', 'ur1st',
+    'ul1st', 'ul2st', 'ul3st', 'ul4st', 'ul5st', 'ul6st', 'ul7st', 'ul8st',
+    'll8st', 'll7st', 'll6st', 'll5st', 'll4st', 'll3st', 'll2st', 'll1st',
+    'lr1st', 'lr2st', 'lr3st', 'lr4st', 'lr5st', 'lr6st', 'lr7st', 'lr8st',
+    'dent0', 'dent1', 'dent2', 'dent3',
+    'dmask', 'minstart', 'maxend', 'billdate', 'billct',
+    'billtype', 'pf20', 'money11', 'pf13', 'familyno', 'memo',
+    'town', 'county', 'mobile', 'fax', 'email1', 'email2', 'status', 'source',
+    'enrolled', 'archived',
+    'initaccept', 'lastreaccept', 'lastclaim', 'expiry', 'cstatus', 'transfer',
+    'pstatus', 'courseno2')
 
-exemptionTableAtts = ('exemption','exempttext')
+exemptionTableAtts = ('exemption', 'exempttext')
 
-patientTableVals=(
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,
-nullDate, nullDate, nullDate, nullDate, nullDate, nullDate, nullDate,
-nullDate, nullDate, nullDate, nullDate, nullDate, nullDate, nullDate,nullDate,
-'','','','',nullDate,'','', '','', '','', '',
-'',nullDate, '','',0,0,0,0,
-'','', '','', '','', '','',
-'','', '','', '','', '','',
-'','', '','', '','', '','',
-'','', '','', '','', '','',
-0,0,0,0,
-'YYYYYYY',0,0,nullDate,0,None,
-0,0,0,0,'','',
-'','','','','','','','',
-nullDate,0,
-nullDate,nullDate,nullDate,nullDate,0,nullDate,
-0,0)
+patientTableVals = (
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    nullDate, nullDate, nullDate, nullDate, nullDate, nullDate, nullDate,
+    nullDate, nullDate, nullDate, nullDate, nullDate, nullDate, nullDate, nullDate,
+    '', '', '', '', nullDate, '', '', '', '', '', '', '',
+    '', nullDate, '', '', 0, 0, 0, 0,
+    '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '',
+    0, 0, 0, 0,
+    'YYYYYYY', 0, 0, nullDate, 0, None,
+    0, 0, 0, 0, '', '',
+    '', '', '', '', '', '', '', '',
+    nullDate, 0,
+    nullDate, nullDate, nullDate, nullDate, 0, nullDate,
+    0, 0)
 
-bpeTableAtts=('bpedate','bpe')
-bpeTableVals=(nullDate,'',())
+bpeTableAtts = ('bpedate', 'bpe')
+bpeTableVals = (nullDate, '', ())
 
-perioTableAtts=('chartdate','bpe','chartdata','flag')
+perioTableAtts = ('chartdate', 'bpe', 'chartdata', 'flag')
 
-mnhistTableAtts=('chgdate','ix','note')
+mnhistTableAtts = ('chgdate', 'ix', 'note')
 
-notesTableAtts=('lineno','line')
+notesTableAtts = ('lineno', 'line')
 
-mouth= ['ul8','ul7','ul6','ul5','ul4','ul3','ul2','ul1',
-'ur1','ur2','ur3','ur4','ur5','ur6','ur7','ur8',
-'lr8','lr7','lr6','lr5','lr4','lr3','lr2','lr1',
-'ll1','ll2','ll3','ll4','ll5','ll6','ll7','ll8']
+mouth = ['ul8', 'ul7', 'ul6', 'ul5', 'ul4', 'ul3', 'ul2', 'ul1',
+         'ur1', 'ur2', 'ur3', 'ur4', 'ur5', 'ur6', 'ur7', 'ur8',
+         'lr8', 'lr7', 'lr6', 'lr5', 'lr4', 'lr3', 'lr2', 'lr1',
+         'll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8']
 
-decidmouth= ['***','***','***','ulE','ulD','ulC','ulB','ulA',
-'urA','urB','urC','urD','urE','***','***','***',
-'***','***','***','lrE','lrD','lrC','lrB','lrA',
-'llA','llB','llC','llD','llE','***','***','***']
+decidmouth = ['***', '***', '***', 'ulE', 'ulD', 'ulC', 'ulB', 'ulA',
+              'urA', 'urB', 'urC', 'urD', 'urE', '***', '***', '***',
+              '***', '***', '***', 'lrE', 'lrD', 'lrC', 'lrB', 'lrA',
+              'llA', 'llB', 'llC', 'llD', 'llE', '***', '***', '***']
 
 clinical_memos = ("synopsis",)
 
+
 class patient(object):
+
     def __init__(self, sno):
         '''
         initiate the class with default variables, then load from database
@@ -120,7 +124,7 @@ class patient(object):
 
         self.load_warnings = []
 
-        ## patient table atts
+        # patient table atts
         self.courseno0 = None
         self.pf0 = 0
         self.pf1 = 0
@@ -252,17 +256,17 @@ class patient(object):
         self.pstatus = None
         self.courseno2 = 0
 
-        ######TABLE 'mnhist'#######
+        # TABLE 'mnhist'#######
         self.chgdate = nullDate   # date 	YES 	 	None
-        self.ix = 0               #tinyint(3) unsigned 	YES 	 	None
-        self.note = ''            #varchar(60) 	YES 	 	None
+        self.ix = 0  # tinyint(3) unsigned 	YES 	 	None
+        self.note = ''  # varchar(60) 	YES 	 	None
 
         self.estimates = []
 
-        ##from userdata
+        # from userdata
         self.plandata = PlanData(self.serialno)
 
-        ###NEIL'S STUFF####
+        # NEIL'S STUFF####
         self.exemption = ""
         self.exempttext = ""
         self.perioData = {}
@@ -284,16 +288,16 @@ class patient(object):
         if self.serialno == 0:
             return
 
-        ######################################
-        ## now load stuff from the database ##
-        ######################################
+        #
+        # now load stuff from the database ##
+        #
         db = connect.connect()
         cursor = db.cursor()
 
         self.getSynopsis()
 
         cursor.execute(PATIENT_QUERY, (self.serialno,))
-        values= cursor.fetchall()
+        values = cursor.fetchall()
 
         if values == ():
             raise localsettings.PatientNotFoundError
@@ -331,26 +335,26 @@ class patient(object):
 
         query = 'select chartdate,chartdata from perio where serialno=%s'
         cursor.execute(query, self.serialno)
-        perioData=cursor.fetchall()
+        perioData = cursor.fetchall()
 
         for data in perioData:
             self.perioData[localsettings.formatDate(data[0])] = (
-            perio.get_perioData(data[1]))
+                perio.get_perioData(data[1]))
             #--perioData is
             #--a dictionary (keys=dates) of dictionaries with keys
             #--like "ur8" and containing 7 tuples of data
 
-        query = 'select drnm,adrtel,curmed,oldmed,allerg,heart,lungs,'+\
-        'liver,kidney,bleed,anaes,other,alert,chkdate from mednotes'+\
-        ' where serialno=%s'
+        query = 'select drnm,adrtel,curmed,oldmed,allerg,heart,lungs,' +\
+            'liver,kidney,bleed,anaes,other,alert,chkdate from mednotes' +\
+            ' where serialno=%s'
         cursor.execute(query, (self.serialno,))
 
-        self.MH=cursor.fetchone()
-        if self.MH!=None:
-            self.MEDALERT=self.MH[12]
+        self.MH = cursor.fetchone()
+        if self.MH is not None:
+            self.MEDALERT = self.MH[12]
 
         cursor.close()
-        #db.close()
+        # db.close()
 
         #-- load from plandata
         self.plandata.getFromDB()
@@ -360,7 +364,6 @@ class patient(object):
         self.updateChartgrid()
 
         self.take_snapshot()
-
 
     @property
     def appt_memo(self):
@@ -384,12 +387,12 @@ class patient(object):
             cursor = db.cursor()
             query = 'select date, trtid, chart from daybook where serialno=%s'
             cursor.execute(query, self.serialno)
-            self._dayBookHistory=cursor.fetchall()
+            self._dayBookHistory = cursor.fetchall()
             cursor.close()
         return self._dayBookHistory
 
     def __repr__(self):
-        return "'Patient_class instance - serialno %d'"% self.serialno
+        return "'Patient_class instance - serialno %d'" % self.serialno
 
     @property
     def address(self):
@@ -398,9 +401,9 @@ class patient(object):
         '''
         address = ""
         for line in (self.addr1, self.addr2, self.addr3,
-        self.town, self.county, self.pcde):
+                     self.town, self.county, self.pcde):
             if line.strip(" ") != "":
-                address += "%s\n"% line.strip(" ")
+                address += "%s\n" % line.strip(" ")
         return address
 
     def getAge(self, on_date=None):
@@ -408,17 +411,17 @@ class patient(object):
         return the age in form (year(int), months(int), isToday(bool))
         '''
         if on_date is None:
-            #use today
+            # use today
             on_date = localsettings.currentDay()
 
         day = self.dob.day
         try:
             nextbirthday = datetime.date(on_date.year, self.dob.month,
-            self.dob.day)
+                                         self.dob.day)
         except ValueError:
-            #catch leap years!!
+            # catch leap years!!
             nextbirthday = datetime.date(on_date.year, self.dob.month,
-            self.dob.day-1)
+                                         self.dob.day - 1)
 
         ageYears = on_date.year - self.dob.year
 
@@ -430,7 +433,7 @@ class patient(object):
         if self.dob.day > on_date.day:
             months -= 1
 
-        isToday =  nextbirthday == localsettings.currentDay()
+        isToday = nextbirthday == localsettings.currentDay()
 
         return (ageYears, months, isToday)
 
@@ -474,16 +477,16 @@ class patient(object):
                 cse_accd = self.treatment_course.accd
             for table in localsettings.FEETABLES.tables.values():
                 LOGGER.debug(
-                "checking feescale %s to see if suitable a feetable"% (
-                table))
+                    "checking feescale %s to see if suitable a feetable" % (
+                        table))
 
                 start, end = table.startDate, table.endDate
-                LOGGER.debug("categories, start, end = %s, %s, %s"% (
+                LOGGER.debug("categories, start, end = %s, %s, %s" % (
                     table.categories, start, end))
                 if end is None:
                     end = localsettings.currentDay()
 
-                if self.cset in table.categories and start <= cse_accd <=end:
+                if self.cset in table.categories and start <= cse_accd <= end:
                     self._fee_table = table
 
             if self._fee_table is None:
@@ -514,7 +517,7 @@ class patient(object):
             ix = row[0]
 
             found = False
-            #use existing est if one relates to multiple treatments
+            # use existing est if one relates to multiple treatments
             for existing_est in self.estimates:
                 if existing_est.ix == ix:
                     existing_est.tx_hashes.append(tx_hash)
@@ -523,7 +526,7 @@ class patient(object):
             if found:
                 continue
 
-            #initiate a custom data class
+            # initiate a custom data class
             est = estimates.Estimate()
 
             est.ix = ix
@@ -548,23 +551,23 @@ class patient(object):
         db = connect.connect()
         cursor = db.cursor()
         fields = clinical_memos
-        query=""
+        query = ""
         for field in fields:
-            query += field+","
-        query=query.strip(",")
+            query += field + ","
+        query = query.strip(",")
         try:
             if cursor.execute(
-            'SELECT %s from clinical_memos where serialno=%d'% ( query,
-            self.serialno)):
+                'SELECT %s from clinical_memos where serialno=%d' % (query,
+                                                                     self.serialno)):
                 self.synopsis = cursor.fetchall()[-1][0]
-        except connect.OperationalError, e:
+        except connect.OperationalError as e:
             'necessary because the column is missing is db schema 1.4'
             print "WARNING -", e
 
     @property
     def underTreatment(self):
         return (self.treatment_course is not None and
-        self.treatment_course.underTreatment)
+                self.treatment_course.underTreatment)
 
     @property
     def max_tx_courseno(self):
@@ -585,42 +588,42 @@ class patient(object):
         switches a deciduous tooth to a permanent one,
         and viceVersa pass a variable like "ur5"
         '''
-        quadrant=tooth[:2]
-        pos=int(tooth[2])-1                 # will be 0-7
-        if quadrant=="ul":
-            var=self.dent1
-            pos=7-pos
-        elif quadrant=="ur":
-            var=self.dent0
-        elif quadrant=="ll":
-            var=self.dent2
-        else: #lr
-            var=self.dent3
-            pos=7-pos
-        existing=dec_perm.fromSignedByte(var)
-        if existing[pos]=="1":
-            existing=existing[:pos]+"0"+existing[pos+1:]
+        quadrant = tooth[:2]
+        pos = int(tooth[2]) - 1                 # will be 0-7
+        if quadrant == "ul":
+            var = self.dent1
+            pos = 7 - pos
+        elif quadrant == "ur":
+            var = self.dent0
+        elif quadrant == "ll":
+            var = self.dent2
+        else:  # lr
+            var = self.dent3
+            pos = 7 - pos
+        existing = dec_perm.fromSignedByte(var)
+        if existing[pos] == "1":
+            existing = existing[:pos] + "0" + existing[pos + 1:]
         else:
-            existing=existing[:pos]+"1"+existing[pos+1:]
-        if quadrant=="ul":
-            self.dent1=dec_perm.toSignedByte(existing)
-        elif quadrant=="ur":
-            self.dent0=dec_perm.toSignedByte(existing)
-        elif quadrant=="ll":
-            self.dent2=dec_perm.toSignedByte(existing)
-        else: #lr
-            self.dent3=dec_perm.toSignedByte(existing)
+            existing = existing[:pos] + "1" + existing[pos + 1:]
+        if quadrant == "ul":
+            self.dent1 = dec_perm.toSignedByte(existing)
+        elif quadrant == "ur":
+            self.dent0 = dec_perm.toSignedByte(existing)
+        elif quadrant == "ll":
+            self.dent2 = dec_perm.toSignedByte(existing)
+        else:  # lr
+            self.dent3 = dec_perm.toSignedByte(existing)
         self.updateChartgrid()
 
     def updateChartgrid(self):
-        grid=""
-        for quad in (self.dent1,self.dent0,self.dent3,self.dent2):
-            grid+=dec_perm.fromSignedByte(quad)
+        grid = ""
+        for quad in (self.dent1, self.dent0, self.dent3, self.dent2):
+            grid += dec_perm.fromSignedByte(quad)
         for pos in mouth:
-            if grid[mouth.index(pos)]=="0":
-                self.chartgrid[pos]=pos
+            if grid[mouth.index(pos)] == "0":
+                self.chartgrid[pos] = pos
             else:
-                self.chartgrid[pos]=decidmouth[mouth.index(pos)]
+                self.chartgrid[pos] = decidmouth[mouth.index(pos)]
 
     def apply_fees(self):
         if "N" in self.cset:
@@ -631,7 +634,7 @@ class patient(object):
     @property
     def fees(self):
         return int(self.money0 + self.money1 + self.money9 + self.money10 +
-        self.money11 - self.money2 - self.money3 - self.money8)
+                   self.money11 - self.money2 - self.money3 - self.money8)
 
     @property
     def fees_accrued(self):
@@ -640,11 +643,11 @@ class patient(object):
             old_estimate_charges = self.dbstate.estimate_charges
 
         accrued_fees = self.estimate_charges - old_estimate_charges
-        LOGGER.debug("fees_accrued = (new-existing) = %d - %d = %d"%(
-                self.estimate_charges,
-                old_estimate_charges,
-                accrued_fees)
-                )
+        LOGGER.debug("fees_accrued = (new-existing) = %d - %d = %d" % (
+            self.estimate_charges,
+            old_estimate_charges,
+            accrued_fees)
+        )
         return accrued_fees
 
     @property
@@ -669,7 +672,7 @@ class patient(object):
             text += estimate.log_text
             total += estimate.fee
             p_total += estimate.ptfee
-        text += "TOTAL ||  ||  ||  ||  ||  || %s || %s"% (total, p_total)
+        text += "TOTAL ||  ||  ||  ||  ||  || %s || %s" % (total, p_total)
         return text
 
     def resetAllMonies(self):
@@ -688,9 +691,9 @@ class patient(object):
         claims = []
         for est in self.estimates:
             if (est.csetype.startswith("N") and
-            (not completed_only or est.completed == 2)
-            ):
-                #yield est
+               (not completed_only or est.completed == 2)
+                ):
+                # yield est
                 claims.append(est)
         return claims
 
@@ -699,40 +702,40 @@ class patient(object):
         re-written for schema 1.9
         '''
         LOGGER.info(
-        "patient.addHiddenNote(ntype='%s',note='%s', attempt_delete='%s'"% (
-        ntype, note, attempt_delete))
+            "patient.addHiddenNote(ntype='%s',note='%s', attempt_delete='%s'" % (
+                ntype, note, attempt_delete))
 
         HN = ()
-        if ntype=="payment":
-            HN=("RECEIVED: ", note)
-        elif ntype=="printed":
-            HN=("PRINTED: ", note)
-        elif ntype=="exam":
-            HN=("TC: EXAM", note)
-        elif ntype=="chart_treatment":
-            HN=("TC:", note)
-        elif ntype=="perio_treatment":
-            HN=("TC: PERIO", note)
-        elif ntype=="xray_treatment":
-            HN=("TC: XRAY", note)
-        elif ntype=="treatment":
-            HN=("TC: OTHER", note)
-        elif ntype=="mednotes":               #other treatment
-            HN=("UPDATED:Medical Notes", note)
-        elif ntype=="close_course":
-            HN=("COURSE CLOSED", "="*10)
-        elif ntype=="open_course":
-            HN=("COURSE OPENED", "= "*5)
-        elif ntype=="resume_course":
-            HN=("COURSE RE-OPENED", "= "*5)
-        elif ntype=="fee":
-            HN=("INTERIM: ", note)
+        if ntype == "payment":
+            HN = ("RECEIVED: ", note)
+        elif ntype == "printed":
+            HN = ("PRINTED: ", note)
+        elif ntype == "exam":
+            HN = ("TC: EXAM", note)
+        elif ntype == "chart_treatment":
+            HN = ("TC:", note)
+        elif ntype == "perio_treatment":
+            HN = ("TC: PERIO", note)
+        elif ntype == "xray_treatment":
+            HN = ("TC: XRAY", note)
+        elif ntype == "treatment":
+            HN = ("TC: OTHER", note)
+        elif ntype == "mednotes":  # other treatment
+            HN = ("UPDATED:Medical Notes", note)
+        elif ntype == "close_course":
+            HN = ("COURSE CLOSED", "=" * 10)
+        elif ntype == "open_course":
+            HN = ("COURSE OPENED", "= " * 5)
+        elif ntype == "resume_course":
+            HN = ("COURSE RE-OPENED", "= " * 5)
+        elif ntype == "fee":
+            HN = ("INTERIM: ", note)
 
         if not HN:
-            print "unable to add Hidden Note notetype '%s' not found"% ntype
+            print "unable to add Hidden Note notetype '%s' not found" % ntype
             return
 
-        reversing_note = ("UNCOMPLETED", "{%s}"% note)
+        reversing_note = ("UNCOMPLETED", "{%s}" % note)
 
         if attempt_delete:
             try:
@@ -746,9 +749,9 @@ class patient(object):
                 self.HIDDENNOTES.append(HN)
 
     def clearHiddenNotes(self):
-        self.HIDDENNOTES=[]
+        self.HIDDENNOTES = []
 
-    def updateBilling(self,tone):
+    def updateBilling(self, tone):
         self.billdate = localsettings.currentDay()
         self.billct += 1
         self.billtype = tone
@@ -767,12 +770,12 @@ class patient(object):
 
     @property
     def name_id(self):
-        return u"%s - %s"% (
+        return u"%s - %s" % (
             self.name, self.serialno)
 
     @property
     def name(self):
-        return u"%s %s %s"% (
+        return u"%s %s %s" % (
             self.title, self.fname, self.sname)
 
     @property
@@ -792,7 +795,7 @@ class patient(object):
             return False
         years, months = self.age_course_start
 
-        return years < 17 or ( years == 17 and months < 11)
+        return years < 17 or (years == 17 and months < 11)
 
     def new_tx_course(self, new_courseno):
         self.courseno0 = new_courseno
@@ -806,7 +809,7 @@ class patient(object):
         return (patientTableAtts +
             exemptionTableAtts + bpeTableAtts + mnhistTableAtts +
             perioTableAtts + clinical_memos + (
-            "fees", "estimate_charges", "serialno", "estimates",
+                "fees", "estimate_charges", "serialno", "estimates",
             "appt_prefs", "treatment_course", "chartgrid"))
 
     @property
@@ -817,7 +820,7 @@ class patient(object):
         used to determine whether the patient has been edited.
         '''
         for att in self.COPIED_ATTRIBUTES:
-            #if att not in ("treatment_course", "estimates", "chartgrid"):
+            # if att not in ("treatment_course", "estimates", "chartgrid"):
             yield att
 
     @property
@@ -826,11 +829,11 @@ class patient(object):
         for att in self.USER_CHANGEABLE_ATTRIBUTES:
             new_value = self.__dict__.get(att, "")
             db_value = self.dbstate.__dict__.get(att, "")
-            if  new_value != db_value:
-                message = "Altered pt.%s"% att.ljust(20)
+            if new_value != db_value:
+                message = "Altered pt.%s" % att.ljust(20)
                 if att not in ("treatment_course", "estimates"):
                     message += (
-                    " ORIG = '%s' NEW = '%s'"% (db_value, new_value))
+                        " ORIG = '%s' NEW = '%s'" % (db_value, new_value))
                 LOGGER.debug(message)
                 changes.append(att)
         return changes
@@ -847,7 +850,7 @@ class patient(object):
                 setattr(snapshot, att, deepcopy(v, memo))
         self.dbstate = snapshot
 
-        LOGGER.debug("snapshot of %s taken"% self)
+        LOGGER.debug("snapshot of %s taken" % self)
 
     @property
     def course_dentist(self):
@@ -867,7 +870,7 @@ class patient(object):
         if self.treatment_course and self.dbstate.treatment_course is None:
             return True
         return (self.treatment_course.courseno !=
-                        self.dbstate.treatment_course.courseno)
+               self.dbstate.treatment_course.courseno)
 
     @property
     def tx_hash_tups(self):
@@ -915,10 +918,10 @@ class patient(object):
                     yield est
 
 
-if __name__ =="__main__":
+if __name__ == "__main__":
     '''testing stuff'''
     try:
-        serialno = int(sys.argv[len(sys.argv)-1])
+        serialno = int(sys.argv[len(sys.argv) - 1])
     except:
         serialno = 1
 
@@ -927,12 +930,12 @@ if __name__ =="__main__":
     if "-v" in sys.argv:
         verbose = True
     else:
-         verbose = False
+        verbose = False
 
     pt = patient(serialno)
     if verbose:
-      for att in sorted(pt.__dict__.keys()):
-            print "%s '%s'"% (att.ljust(20), pt.__dict__[att])
+        for att in sorted(pt.__dict__.keys()):
+            print "%s '%s'" % (att.ljust(20), pt.__dict__[att])
 
     localsettings.loadFeeTables()
     pt.fee_table

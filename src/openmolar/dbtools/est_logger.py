@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License
-# for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 this module provides read/write tools for the est_logger database table
@@ -20,15 +36,17 @@ from openmolar.connect import connect
 LOGGER = logging.getLogger("openmolar")
 
 SELECT_QUERY = ('select est_data from est_logger '
-'where courseno=%s order by ix desc limit 1')
+                'where courseno=%s order by ix desc limit 1')
 
 INSERT_QUERY = ('insert into est_logger '
-'(courseno, est_data, operator) values (%s,%s,%s)')
+                '(courseno, est_data, operator) values (%s,%s,%s)')
 
 HISTORY_QUERY = ('select est_data, operator, time_stamp '
-'from est_logger where courseno=%s')
+                 'from est_logger where courseno=%s')
+
 
 class EstLogger(object):
+
     def __init__(self, courseno):
         self.courseno = courseno
         self.est_data = ""
@@ -39,7 +57,7 @@ class EstLogger(object):
         cursor = db.cursor()
         LOGGER.debug(
             'getting last estimate text from est_logger for courseno %s' % (
-            self.courseno))
+                self.courseno))
 
         cursor.execute(SELECT_QUERY, (self.courseno,))
 
@@ -72,6 +90,7 @@ class EstLogger(object):
     def _write_needed(self, courseno, est_data):
         return courseno != courseno or est_data != self.est_data
 
+
 def html_history(courseno):
     db = connect()
     cursor = db.cursor()
@@ -85,13 +104,13 @@ def html_history(courseno):
             <body>
                 <h1>%s %s</h1>
             </body>
-        </html>'''% (_("No estimate history found for course"), courseno)
+        </html>''' % (_("No estimate history found for course"), courseno)
 
     html = u'''<html>
         <body>
             <h1>%s</h1>
             <table width = '100%%' border="1">
-    '''% _("Current Estimate Version History")
+    ''' % _("Current Estimate Version History")
 
     html += u'''<tr>
             <th>%s</th>
@@ -99,20 +118,20 @@ def html_history(courseno):
             </tr>''' % (
             _("Estimate"),
             _("Author")
-            )
+    )
 
     for est_data, author, time_stamp in rows:
         lines = est_data.split("||\n")
         formatted_est = '''<table width="100%%" border="1">
         <tr><th>%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th>
-        <th>%s</th><th>%s</th></tr>'''%(
-        _("No."), _("Itemcode"), _("Description"), "CseTyp", _("Feescale"),
-        _("Dentist"), _("Fee"), _("Charge"))
+        <th>%s</th><th>%s</th></tr>''' % (
+            _("No."), _("Itemcode"), _("Description"), "CseTyp", _("Feescale"),
+            _("Dentist"), _("Fee"), _("Charge"))
         for line in lines:
             formatted_est += "<tr>"
             for i, field in enumerate(line.split(" || ")):
                 align = 'align="center"' if i < 6 else 'align="right"'
-                formatted_est += "<td %s>%s</td>"% (align, field)
+                formatted_est += "<td %s>%s</td>" % (align, field)
             formatted_est += "</tr>"
         html += u'''<tr>
             <td>%s</table></td>

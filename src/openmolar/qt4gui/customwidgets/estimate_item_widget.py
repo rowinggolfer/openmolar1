@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License
-# for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import logging
 
@@ -16,10 +32,13 @@ from openmolar.qt4gui.customwidgets.confirming_check_box import ConfirmingCheckB
 
 LOGGER = logging.getLogger("openmolar")
 
+
 def decimalise(pence):
-    return "%d.%02d"% (pence // 100, pence % 100)
+    return "%d.%02d" % (pence // 100, pence % 100)
+
 
 class EstimateItemWidget(QtGui.QWidget):
+
     '''
     a class to show one specific item of treatment
     '''
@@ -55,7 +74,7 @@ class EstimateItemWidget(QtGui.QWidget):
 
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/eraser.png"),
-            QtGui.QIcon.Normal, QtGui.QIcon.Off)
+                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.delete_pushButton = QtGui.QPushButton()
         self.delete_pushButton.setMaximumWidth(30)
         self.delete_pushButton.setIcon(icon)
@@ -63,19 +82,18 @@ class EstimateItemWidget(QtGui.QWidget):
 
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":icons/expand.svg"),
-            QtGui.QIcon.Normal, QtGui.QIcon.Off)
+                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.expand_pushButton = QtGui.QPushButton()
         self.expand_pushButton.setIcon(icon)
         self.expand_pushButton.setMaximumWidth(30)
         self.expand_pushButton.setFlat(True)
         self.expand_pushButton.setSizePolicy(QtGui.QSizePolicy(
             QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-            )
+        )
 
         self.examine_icon = QtGui.QIcon()
         self.examine_icon.addPixmap(QtGui.QPixmap(":/search.png"),
-            QtGui.QIcon.Normal, QtGui.QIcon.Off)
-
+                                    QtGui.QIcon.Normal, QtGui.QIcon.Off)
 
         self.validators()
         self.feesLinked = True
@@ -88,16 +106,16 @@ class EstimateItemWidget(QtGui.QWidget):
         returns all the sub widgets.
         '''
         return (
-        self.number_label,
-        self.itemCode_label,
-        self.description_lineEdit,
-        self.cset_lineEdit,
-        self.fee_lineEdit,
-        self.chain,
-        self.ptFee_lineEdit,
-        self.completed_checkBox,
-        self.delete_pushButton,
-        self.expand_pushButton)
+            self.number_label,
+            self.itemCode_label,
+            self.description_lineEdit,
+            self.cset_lineEdit,
+            self.fee_lineEdit,
+            self.chain,
+            self.ptFee_lineEdit,
+            self.completed_checkBox,
+            self.delete_pushButton,
+            self.expand_pushButton)
 
     def linkfees(self, arg):
         '''
@@ -128,13 +146,13 @@ class EstimateItemWidget(QtGui.QWidget):
             Dent - %s<br />
             Hashes - %s<br />
             DBindex - %s<hr />
-            '''% (
-            item.itemcode,
-            item.feescale,
-            item.csetype,
-            item.dent,
-            str(item.tx_hashes),
-            item.ix)
+            ''' % (
+                item.itemcode,
+                item.feescale,
+                item.csetype,
+                item.dent,
+                str(item.tx_hashes),
+                item.ix)
         return retarg + "</center>"
 
     def loadValues(self):
@@ -161,7 +179,7 @@ class EstimateItemWidget(QtGui.QWidget):
 
         n_items = len(self.est_items)
         if n_items > 1:
-            #self.expand_pushButton.setText("%d %s"% (n_items, _("items")))
+            # self.expand_pushButton.setText("%d %s"% (n_items, _("items")))
             if all_planned:
                 self.setCompleted(0)
             elif all_completed:
@@ -170,7 +188,7 @@ class EstimateItemWidget(QtGui.QWidget):
                 self.setCompleted(1)
         else:
             n_txs = len(self.est_items[0].tx_hashes)
-            if n_txs >1:
+            if n_txs > 1:
                 self.expand_pushButton.setIcon(self.examine_icon)
             self.setCompleted(item.completed)
 
@@ -218,7 +236,7 @@ class EstimateItemWidget(QtGui.QWidget):
         self.fee_lineEdit.textEdited.connect(self.update_Fee)
         self.ptFee_lineEdit.textEdited.connect(self.update_ptFee)
         self.completed_checkBox.new_state_signal.connect(
-                self.completed_state_changed)
+            self.completed_state_changed)
 
     def update_cset(self, arg):
         '''
@@ -243,7 +261,7 @@ class EstimateItemWidget(QtGui.QWidget):
         of items.
         '''
         try:
-            newVal = int(float(arg)*100)
+            newVal = int(float(arg) * 100)
             if self.feesLinked and userPerforming:
                 self.ptFee_lineEdit.setText(arg)
                 self.update_ptFee(arg, False)
@@ -261,7 +279,7 @@ class EstimateItemWidget(QtGui.QWidget):
         of items.
         '''
         try:
-            newVal = int(float(arg)*100)
+            newVal = int(float(arg) * 100)
             if self.feesLinked and userPerforming:
                 self.fee_lineEdit.setText(arg)
                 self.update_Fee(arg, False)
@@ -320,9 +338,9 @@ class EstimateItemWidget(QtGui.QWidget):
         '''
         function so that external calls can alter this widget
         '''
-        #LOGGER.debug("est_item_widget.setCompleted %s"% arg)
-        self.completed_checkBox.setCheckState(arg) #ed(bool(arg))
-        #self.enable_components()
+        # LOGGER.debug("est_item_widget.setCompleted %s"% arg)
+        self.completed_checkBox.setCheckState(arg)  # ed(bool(arg))
+        # self.enable_components()
 
     def deleteItem(self):
         '''
@@ -344,8 +362,8 @@ class EstimateItemWidget(QtGui.QWidget):
         this is a slot called when the completed checkbox changes
         '''
         state = (self.completed_checkBox.checkState() == 0 or
-        (self.completed_checkBox.checkState() == 1 and
-        len(self.est_items) == 1) )
+                (self.completed_checkBox.checkState() == 1 and
+                 len(self.est_items) == 1))
 
         self.fee_lineEdit.setEnabled(state)
         self.ptFee_lineEdit.setEnabled(state)
@@ -360,7 +378,7 @@ class EstimateItemWidget(QtGui.QWidget):
         tx_hashes = []
         for item in self.est_items:
             tx_hashes += item.tx_hashes
-        assert len(tx_hashes) >0 , \
+        assert len(tx_hashes) > 0 , \
             "no treatments found.. this shouldn't happen"
 
         txs = []
@@ -370,18 +388,18 @@ class EstimateItemWidget(QtGui.QWidget):
                     txs.append((att, tx, tx_hash.completed))
         list_ = ""
         for att, tx, completed in txs:
-            list_ += "<li>%s <b>%s</b>"% (att, tx)
+            list_ += "<li>%s <b>%s</b>" % (att, tx)
             if completed:
-                list_ += " (%s)</li>"% _("completed already")
+                list_ += " (%s)</li>" % _("completed already")
             else:
                 list_ += "</li>"
-        message = "%s<ul>%s</ul><hr />%s"%(
-        _("There are multiple treatments associated with this estimate item"),
-        list_,
-        _("All must be completed for the full charge to be applied"))
+        message = "%s<ul>%s</ul><hr />%s" % (
+            _(
+                "There are multiple treatments associated with this estimate item"),
+            list_,
+            _("All must be completed for the full charge to be applied"))
 
         QtGui.QMessageBox.information(self, _("information"), message)
-
 
     @property
     def has_no_treatments(self):
@@ -398,9 +416,10 @@ class EstimateItemWidget(QtGui.QWidget):
         LOGGER.debug("EstimateItemWidget.check_first")
         if self.est_items[0].is_exam:
             if QtGui.QMessageBox.question(self, _("confirm"),
-            _("Delete examination from this treatment plan and estimate?"),
-            QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel,
-            QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok:
+                                          _(
+                                          "Delete examination from this treatment plan and estimate?"),
+                                          QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
+                                          QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok:
                 self.deleteItem()
             return
 
@@ -411,19 +430,19 @@ class EstimateItemWidget(QtGui.QWidget):
         if est_item.has_multi_txs:
             return self._multi_tx_check()
         else:
-            #if we've got this far, then there is only 1 tx associated.
+            # if we've got this far, then there is only 1 tx associated.
             completing = not self.completed_checkBox.isChecked()
             return self.est_widget.allow_check(est_item, completing)
 
     def _multi_item_check(self):
-        #allow for tri-state!!
+        # allow for tri-state!!
         if len(self.est_items) == 1:
             return True
         self.est_widget.raise_multi_treatment_dialog(self)
         return False
 
     def _multi_tx_check(self):
-        #allow for tri-state!!
+        # allow for tri-state!!
         self.est_widget.raise_multi_treatment_dialog(self)
         return False
 
@@ -432,7 +451,7 @@ class EstimateItemWidget(QtGui.QWidget):
         a slot for the checkbox state change
         should only happen when this is altered by user (not programatically)
         '''
-        LOGGER.debug("EstimateItemWidget.completed_state_changed %s"% args)
+        LOGGER.debug("EstimateItemWidget.completed_state_changed %s" % args)
         completed = self.completed_checkBox.isChecked()
 
         for est in self.est_items:
@@ -443,7 +462,9 @@ class EstimateItemWidget(QtGui.QWidget):
 
         self.edited_signal.emit()
 
+
 class _TestParent(QtGui.QWidget):
+
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
 
@@ -486,6 +507,5 @@ if __name__ == "__main__":
 
     form.setCentralWidget(widg)
     form.show()
-
 
     sys.exit(app.exec_())

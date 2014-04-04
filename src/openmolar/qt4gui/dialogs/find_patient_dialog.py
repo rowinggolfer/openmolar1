@@ -1,24 +1,26 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2011-2012,  Neil Wallace <neil@openmolar.com>                  ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import datetime
 import logging
@@ -35,6 +37,7 @@ from openmolar.qt4gui.compiled_uis import Ui_select_patient
 class FindPatientDialog(QtGui.QDialog, Ui_patient_finder.Ui_Dialog):
 
     chosen_sno = None
+
     def __init__(self, parent=None):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
@@ -68,15 +71,16 @@ class FindPatientDialog(QtGui.QDialog, Ui_patient_finder.Ui_Dialog):
 
             if serialno > 0:
                 self.chosen_sno = serialno
-                #self.getrecord(serialno, True)
+                # self.getrecord(serialno, True)
             else:
                 candidates = search.getcandidates(dob, addr, tel, sname,
-                self.snameSoundex_checkBox.checkState(), fname,
-                self.fnameSoundex_checkBox.checkState(), pcde)
+                                                  self.snameSoundex_checkBox.checkState(
+                                                  ), fname,
+                                                  self.fnameSoundex_checkBox.checkState(), pcde)
 
                 if candidates == ():
                     QtGui.QMessageBox.warning(self.parent(), "warning",
-                    _("no match found"))
+                                              _("no match found"))
                     return False
                 else:
                     if len(candidates) > 1:
@@ -90,8 +94,10 @@ class FindPatientDialog(QtGui.QDialog, Ui_patient_finder.Ui_Dialog):
 
         return False
 
+
 class FinalChoiceDialog(QtGui.QDialog, Ui_select_patient.Ui_Dialog):
     chosen_sno = None
+
     def __init__(self, candidates, parent=None):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
@@ -99,31 +105,31 @@ class FinalChoiceDialog(QtGui.QDialog, Ui_select_patient.Ui_Dialog):
         self.tableWidget.setSortingEnabled(False)
         #--good practice to disable this while loading
         self.tableWidget.setRowCount(len(candidates))
-        headers=('Serialno', 'Surname', 'Forename', 'dob', 'Address1',
-        'Address2', 'POSTCODE')
+        headers = ('Serialno', 'Surname', 'Forename', 'dob', 'Address1',
+                   'Address2', 'POSTCODE')
 
-        widthFraction=(0, 20, 20, 15, 30, 30, 10)
+        widthFraction = (0, 20, 20, 15, 30, 30, 10)
         self.tableWidget.setColumnCount(len(headers))
         self.tableWidget.setHorizontalHeaderLabels(headers)
         self.tableWidget.verticalHeader().hide()
         self.tableWidget.horizontalHeader().setStretchLastSection(True)
-        row=0
+        row = 0
 
         for col in range(len(headers)):
-            self.tableWidget.setColumnWidth(col, widthFraction[col]*\
-                                          (self.width()-100)/130)
+            self.tableWidget.setColumnWidth(col, widthFraction[col] *
+                                           (self.width() - 100) / 130)
 
         for candidate in candidates:
-            col=0
+            col = 0
             for attr in candidate:
-                if type(attr) == datetime.date:
+                if isinstance(attr, datetime.date):
                     item = QtGui.QTableWidgetItem(
-                    localsettings.formatDate(attr))
+                        localsettings.formatDate(attr))
                 else:
                     item = QtGui.QTableWidgetItem(str(attr))
                 self.tableWidget.setItem(row, col, item)
-                col+=1
-            row+=1
+                col += 1
+            row += 1
         self.tableWidget.setCurrentCell(0, 1)
 
         self.tableWidget.itemDoubleClicked.connect(self.accept)
@@ -142,6 +148,6 @@ if __name__ == "__main__":
     app = QtGui.QApplication([])
 
     dl = FindPatientDialog()
-    print ("chosen sno = %s"% dl.chosen_sno)
+    print ("chosen sno = %s" % dl.chosen_sno)
     if dl.exec_():
         print (dl.chosen_sno)

@@ -1,14 +1,26 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 2 of the License, or
-# version 3 of the License, or (at your option) any later version. It is
-# provided for educational purposes and is distributed in the hope that
-# it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-# warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
-# the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 this module is only called if a settings file isn't found
@@ -44,6 +56,7 @@ blankXML = '''<?xml version="1.1" ?>
 
 
 class newsetup(QtGui.QDialog, Ui_newSetup.Ui_Dialog):
+
     '''
     a new setup - creates and saves a config file
     creates a database if required
@@ -76,13 +89,13 @@ class newsetup(QtGui.QDialog, Ui_newSetup.Ui_Dialog):
             advice += "C:\\Program Files\\openmolar\\"
         else:
             advice = _("If you ever need to run this wizard again, ") +\
-            "(" + _("Eg. if your server location changes, ") +\
-            _("or you require a new password")+")"
-            advice += "<br>"+ _("type") + " 'openmolar firstrun' "
+                "(" + _("Eg. if your server location changes, ") +\
+                _("or you require a new password") + ")"
+            advice += "<br>" + _("type") + " 'openmolar firstrun' "
             advice += _("on the command line, or delete the file")
-            advice += "<br />"+"~/.openmolar/openmolar.conf" +"<br />"*2
+            advice += "<br />" + "~/.openmolar/openmolar.conf" + "<br />" * 2
             advice += _(
-            "For a more secure setup, you should move this file to")
+                "For a more secure setup, you should move this file to")
             advice += "/etc/openmolar/openmolar.conf"
 
         self.sysAdvice_label.setText(advice)
@@ -91,37 +104,37 @@ class newsetup(QtGui.QDialog, Ui_newSetup.Ui_Dialog):
         self.connect(self.go_pushButton, QtCore.SIGNAL("clicked()"), self.next)
 
         self.connect(self.back_pushButton,
-        QtCore.SIGNAL("clicked()"), self.back)
+                     QtCore.SIGNAL("clicked()"), self.back)
 
         self.connect(self.rootPassword_checkBox, QtCore.SIGNAL(
-        "stateChanged(int)"), self.rootechomode)
+                     "stateChanged(int)"), self.rootechomode)
 
         self.connect(self.mainpassword_checkBox, QtCore.SIGNAL(
-        "stateChanged(int)"), self.echomode)
+                     "stateChanged(int)"), self.echomode)
 
         self.connect(self.dbpassword_checkBox, QtCore.SIGNAL(
-        "stateChanged(int)"), self.dbechomode)
+                     "stateChanged(int)"), self.dbechomode)
 
         self.connect(self.existingDB_radioButton, QtCore.SIGNAL(
-        "toggled(bool)"),self.demo_or_existing)
+                     "toggled(bool)"), self.demo_or_existing)
 
         self.connect(self.testDB_pushButton,
-        QtCore.SIGNAL("clicked()"), self.testConnection)
+                     QtCore.SIGNAL("clicked()"), self.testConnection)
 
         self.connect(self.stackedWidget,
-        QtCore.SIGNAL("currentChanged (int)"), self.title_label_update)
+                     QtCore.SIGNAL("currentChanged (int)"), self.title_label_update)
 
         for le in (self.rootPassword_lineEdit,
-                    self.user_lineEdit,
-                    self.password_lineEdit,
-                    self.main_password_lineEdit,
-                    self.repeat_password_lineEdit,
-                    self.host_lineEdit,
-                    self.port_lineEdit):
+                   self.user_lineEdit,
+                   self.password_lineEdit,
+                   self.main_password_lineEdit,
+                   self.repeat_password_lineEdit,
+                   self.host_lineEdit,
+                   self.port_lineEdit):
             self.connect(le,
-            QtCore.SIGNAL("returnPressed()"), self.next)
+                         QtCore.SIGNAL("returnPressed()"), self.next)
 
-    def advise(self, message, warning = False):
+    def advise(self, message, warning=False):
         '''
         throws up a message box
         '''
@@ -129,7 +142,7 @@ class newsetup(QtGui.QDialog, Ui_newSetup.Ui_Dialog):
             QtGui.QMessageBox.warning(self, _("Error"), message)
         else:
             QtGui.QMessageBox.information(self, _("Advisory"),
-            message)
+                                          message)
 
     def next(self):
         '''
@@ -172,15 +185,15 @@ class newsetup(QtGui.QDialog, Ui_newSetup.Ui_Dialog):
 
         elif i == 5:
             self.snapshot()
-            result=QtGui.QMessageBox.question(self,
-            _("Create Database"),
-            _("Create Demo Database now with the following settings?") +
-            '''<br><ul><li>host - %s </li><li>port - %s</li>
+            result = QtGui.QMessageBox.question(self,
+                                                _("Create Database"),
+                                                _("Create Demo Database now with the following settings?") +
+                                                '''<br><ul><li>host - %s </li><li>port - %s</li>
             <li>database name - %s</li>
-            <li>username - %s</li><li>password - (hidden)</li>'''% (
-            self.HOST,self.PORT,self.DB,self.MysqlUser),
-            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-            QtGui.QMessageBox.Yes )
+            <li>username - %s</li><li>password - (hidden)</li>''' % (
+                self.HOST, self.PORT, self.DB, self.MysqlUser),
+                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                QtGui.QMessageBox.Yes)
 
             if result == QtGui.QMessageBox.Yes:
                 self.stackedWidget.setCurrentIndex(6)
@@ -206,20 +219,20 @@ class newsetup(QtGui.QDialog, Ui_newSetup.Ui_Dialog):
             self.back_pushButton.hide()
         elif i == 5:
             i -= 1
-        self.stackedWidget.setCurrentIndex(i-1)
+        self.stackedWidget.setCurrentIndex(i - 1)
 
     def title_label_update(self, i):
         '''
         updates the header label when the stacked widget changes
         '''
         message = (
-        _("Welcome to the openMolar settings wizard."),
-        _("Set the application Password"),
-        _("Server Location"),
-        _("Database Settings"),
-        _("Save settings and exit"),
-        _("Create a demo database"),
-        _("Creating Database"))[i]
+            _("Welcome to the openMolar settings wizard."),
+            _("Set the application Password"),
+            _("Server Location"),
+            _("Database Settings"),
+            _("Save settings and exit"),
+            _("Create a demo database"),
+            _("Creating Database"))[i]
 
         self.title_label.setText(message)
 
@@ -256,25 +269,25 @@ class newsetup(QtGui.QDialog, Ui_newSetup.Ui_Dialog):
         result = False
         try:
 
-            print "attempting to connect to mysql server on %s port %s..."% (
-            self.HOST, self.PORT)
-            db = MySQLdb.connect(host = self.HOST,
-            port = self.PORT, db = self.DB,
-            passwd = self.MysqlPassword, user = self.MysqlUser)
+            print "attempting to connect to mysql server on %s port %s..." % (
+                self.HOST, self.PORT)
+            db = MySQLdb.connect(host=self.HOST,
+                                 port=self.PORT, db=self.DB,
+                                 passwd=self.MysqlPassword, user=self.MysqlUser)
 
             result = db.open
             db.close()
 
-        except Exception,e:
+        except Exception as e:
             print e
             self.advise(_("The connection attempt threw an exception")
-            + "<hr>%s"% e, True)
+                        + "<hr>%s" % e, True)
             return
 
         if result:
             QtGui.QMessageBox.information(None,
-            _("Success!"),
-            _("The %s database accepted the connection.")% self.DB)
+                                          _("Success!"),
+                                          _("The %s database accepted the connection.") % self.DB)
 
         else:
             self.advise(_('''The connection attempt failed,
@@ -285,42 +298,43 @@ please recheck your settings'''), True)
         self.progressBar.setValue(0)
         self.snapshot()
         PB_LIMIT = 50
+
         def updatePB():
             val = self.progressBar.value()
             if val < PB_LIMIT:
-                self.progressBar.setValue(val+5)
+                self.progressBar.setValue(val + 5)
                 self.progressBar.update()
 
         self.timer1 = QtCore.QTimer()
-        self.timer1.start(10) # 1/100thsecond
+        self.timer1.start(10)  # 1/100thsecond
         self.connect(self.timer1, QtCore.SIGNAL("timeout()"),
-        updatePB)
+                     updatePB)
 
         try:
             from openmolar import createdemodatabase
             self.progressBar.setValue(10)
             if createdemodatabase.create_database(self.HOST, self.PORT,
-            self.MysqlUser, self.MysqlPassword, self.DB, self.rootpass):
+                                                  self.MysqlUser, self.MysqlPassword, self.DB, self.rootpass):
                 print 'New database created sucessfully.'
             else:
                 print "error creating database"
-                raise IOError ("error creating database")
+                raise IOError("error creating database")
             self.progressBar.setValue(50)
             PB_LIMIT = 90
             print 'attempting to loadtables....',
             if createdemodatabase.loadTables(self.HOST, self.PORT,
-            self.MysqlUser, self.MysqlPassword, self.DB):
+                                             self.MysqlUser, self.MysqlPassword, self.DB):
                 print "successfully loaded tables"
             else:
                 print "error loading tables"
-                raise IOError ("error loading tables")
+                raise IOError("error loading tables")
             self.progressBar.setValue(100)
 
             return True
 
-        except Exception, e:
-            print "error in creatDemoDB",  e
-            self.advise( _("Error Creating Database") +"<hr>%s"% e,2)
+        except Exception as e:
+            print "error in creatDemoDB", e
+            self.advise(_("Error Creating Database") + "<hr>%s" % e, 2)
 
     def echomode(self, arg):
         '''
@@ -352,35 +366,35 @@ please recheck your settings'''), True)
             dom = minidom.parseString(blankXML)
             #-- hash the password and save it
             PSWORD = hashlib.md5(hashlib.sha1(
-            str("diqug_ADD_SALT_3i2some"+self.PASSWORD)).hexdigest()
-            ).hexdigest()
+                                 str("diqug_ADD_SALT_3i2some" + self.PASSWORD)).hexdigest()
+                                 ).hexdigest()
 
             dom.getElementsByTagName(
-            "system_password")[0].firstChild.replaceWholeText(PSWORD)
+                "system_password")[0].firstChild.replaceWholeText(PSWORD)
 
             #-- server settings
             xmlnode = dom.getElementsByTagName("server")[0]
             #--save the location
             xmlnode.getElementsByTagName(
-            "location")[0].firstChild.replaceWholeText(self.HOST)
+                "location")[0].firstChild.replaceWholeText(self.HOST)
 
             #--port
             xmlnode.getElementsByTagName(
-            "port")[0].firstChild.replaceWholeText(str(self.PORT))
+                "port")[0].firstChild.replaceWholeText(str(self.PORT))
 
             #-- database settings
             xmlnode = dom.getElementsByTagName("database")[0]
 
             #--user
             xmlnode.getElementsByTagName(
-            "user")[0].firstChild.replaceWholeText(self.MysqlUser)
+                "user")[0].firstChild.replaceWholeText(self.MysqlUser)
 
             xmlnode.getElementsByTagName(
-            "password")[0].firstChild.replaceWholeText(
-            base64.b64encode(self.MysqlPassword))
+                "password")[0].firstChild.replaceWholeText(
+                base64.b64encode(self.MysqlPassword))
 
             xmlnode.getElementsByTagName(
-            "dbname")[0].firstChild.replaceWholeText(self.DB)
+                "dbname")[0].firstChild.replaceWholeText(self.DB)
 
             settingsDir = os.path.dirname(localsettings.global_cflocation)
 
@@ -392,7 +406,7 @@ please recheck your settings'''), True)
                     os.mkdir(settingsDir)
                     print '...ok'
                 print 'writing settings to', localsettings.global_cflocation,
-                f = open(localsettings.global_cflocation,"w")
+                f = open(localsettings.global_cflocation, "w")
                 f.write(dom.toxml())
                 f.close()
                 print '...ok'
@@ -404,7 +418,7 @@ please recheck your settings'''), True)
                 pass
 
             if not sucessful_save:
-                print 'unable to write to %s...'%settingsDir,
+                print 'unable to write to %s...' % settingsDir,
                 print ' we need root privileges for that'
 
                 print "will resort to putting settings into a local file",
@@ -417,7 +431,7 @@ please recheck your settings'''), True)
 
                 print 'putting a local settings file in', settingsDir,
 
-                f = open(localsettings.cflocation,"w")
+                f = open(localsettings.cflocation, "w")
                 f.write(dom.toxml())
                 f.close()
                 print '...ok'
@@ -425,8 +439,8 @@ please recheck your settings'''), True)
 
             self.accept()
 
-        except Exception, e:
-            print "error saving settings",  e
+        except Exception as e:
+            print "error saving settings", e
             QtGui.QMessageBox.warning(self, _("FAILURE"), str(e))
 
 

@@ -1,24 +1,26 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2011-2012,  Neil Wallace <neil@openmolar.com>                  ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import logging
 from PyQt4 import QtGui, QtCore
@@ -37,13 +39,12 @@ class AppointmentCardDialog(BaseDialog):
         self.pt = patient
 
         self.main_ui = parent
-        patient_label = QtGui.QLabel("%s<br /><b>%s</b>"% (
-        _("Appointment Card for"), patient.name_id))
+        patient_label = QtGui.QLabel("%s<br /><b>%s</b>" % (
+                                     _("Appointment Card for"), patient.name_id))
 
         patient_label.setAlignment(QtCore.Qt.AlignCenter)
 
         self.appointments_label = QtGui.QLabel()
-
 
         self.check_box = QtGui.QCheckBox(_("Include Today's appointments?"))
         self.check_box.setChecked(True)
@@ -63,14 +64,13 @@ class AppointmentCardDialog(BaseDialog):
 
         QtCore.QTimer.singleShot(100, self.get_data)
 
-
     def sizeHint(self):
         return QtCore.QSize(260, 300)
 
     def set_label_text(self):
         html = "<ul>"
         for appt in self.appts:
-            html += "<li>%s</li>"% appt.html
+            html += "<li>%s</li>" % appt.html
         html += "</ul>"
         self.appointments_label.setText(html)
 
@@ -103,7 +103,7 @@ class AppointmentCardDialog(BaseDialog):
     def accept(self):
         if self.appts == []:
             QtGui.QMessageBox.information(self, "warning",
-                _("No appointments to print!"))
+                                          _("No appointments to print!"))
             self.reject()
 
         card = apptcardPrint.Card()

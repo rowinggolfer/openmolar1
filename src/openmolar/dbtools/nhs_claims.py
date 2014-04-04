@@ -1,16 +1,33 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for
-# more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 module for getting/setting information from the claims table
 '''
 
 from openmolar.connect import connect
+
 
 def details(sno):
     '''returns an html set showing pt name etc...'''
@@ -19,19 +36,19 @@ def details(sno):
     headers += 'authdate,dob,sname,fname,addr1,addr2,addr3,pcde,nhsno,'
     headers += 'prevsname,exempttext,i0,i1,i2,i3,i4,f0,f1,f2,f3,f4,f5,f6,f7,'
     headers += 'f8,f9,submstatus,submcount,submno,archdate,'
-    headers += 'town,county,regtype' #claimdata,trtdata,
+    headers += 'town,county,regtype'  # claimdata,trtdata,
 
     db = connect()
     cursor = db.cursor()
     cursor.execute(
-    'select %s from claims where serialno=%d order by proddate DESC'%(
-    headers,sno))
+        'select %s from claims where serialno=%d order by proddate DESC' % (
+            headers, sno))
 
     rows = cursor.fetchall()
     cursor.close()
 
     claimNo = len(rows)
-    retarg = "<h3>NHS Claims - %d found</h3>"% claimNo
+    retarg = "<h3>NHS Claims - %d found</h3>" % claimNo
     if claimNo == 0:
         return retarg
     retarg += '<table border="1">'
@@ -41,13 +58,13 @@ def details(sno):
         bgcolor = ""
         if i2 % 2 == 0:
             bgcolor = ' bgcolor="#eeffff"'
-        retarg += '<td%s>Claim %s</td>'% (bgcolor, i2+1)
+        retarg += '<td%s>Claim %s</td>' % (bgcolor, i2 + 1)
     retarg += '</tr>'
 
     headerArray = headers.split(",")
     for i in range(len(headerArray)):
         retarg += "<tr>"
-        retarg += "<th>%s</th>"% headerArray[i]
+        retarg += "<th>%s</th>" % headerArray[i]
         for i2 in range(len(rows)):
             bgcolor = ""
             if i2 % 2 == 0:
@@ -55,12 +72,12 @@ def details(sno):
             val = rows[i2][i]
             if not val:
                 val = "-"
-            retarg += '<td%s>%s</td>'% (bgcolor, val)
+            retarg += '<td%s>%s</td>' % (bgcolor, val)
 
         retarg += '</tr>\n'
 
     retarg += '</table>'
-    #db.close()
+    # db.close()
 
     return retarg
 

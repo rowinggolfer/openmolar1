@@ -1,4 +1,26 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 '''
 Use this in preference to pyuic4, because it adapts the files to utilise
@@ -17,16 +39,16 @@ logging.basicConfig(level=logging.INFO)
 
 logger = logging.getLogger("om_pyuic4")
 
-## can be switched off so generated files are not executable
+# can be switched off so generated files are not executable
 MAKE_EX = True
 
-## change the commented line if you want all redone!!
+# change the commented line if you want all redone!!
 CHANGED_ONLY = True
 if "ALL" in sys.argv:
     CHANGED_ONLY = False
 
 REMOVALS = [
-'''try:
+    '''try:
     _encoding = QtGui.QApplication.UnicodeUTF8
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
@@ -37,40 +59,41 @@ except AttributeError:
 ]
 
 REPLACEMENT1 = (
-"import resources_rc",
-"from openmolar.qt4gui import resources_rc"
+    "import resources_rc",
+    "from openmolar.qt4gui import resources_rc"
 )
 
 REPLACEMENT2 = (
-'''if __name__ == "__main__":
+    '''if __name__ == "__main__":
 ''',
-'''if __name__ == "__main__":
+    '''if __name__ == "__main__":
     import gettext
     gettext.install("openmolar")
 ''')
 
 
 def translate_middle(match):
-    return '_(%s)'% match.groups()[0].strip(" ")
+    return '_(%s)' % match.groups()[0].strip(" ")
+
 
 def compile_ui(ui_fname, outdir=""):
     if outdir == "":
         outdir = os.path.dirname(ui_fname)
     name = os.path.basename(ui_fname)
-    outname = "Ui_%s.py"% name.rstrip(".ui")
+    outname = "Ui_%s.py" % name.rstrip(".ui")
     pyfile = os.path.join(outdir, outname)
 
-    logger.info("compiling %s"% ui_fname)
+    logger.info("compiling %s" % ui_fname)
 
     try:
-    	f = open(pyfile,"w")
-    	uic.compileUi(ui_fname, f, execute=MAKE_EX)
-    except IOError: #ui has been removed by git?
+        f = open(pyfile, "w")
+        uic.compileUi(ui_fname, f, execute=MAKE_EX)
+    except IOError:  # ui has been removed by git?
         pass
     finally:
         f.close()
 
-    f = open(pyfile,"r")
+    f = open(pyfile, "r")
     data = f.read()
     f.close()
 
@@ -79,7 +102,7 @@ def compile_ui(ui_fname, outdir=""):
         newdata = newdata.replace(removal, "")
 
     newdata = re.sub('_translate\(".*?", (".*?"), None\)', translate_middle,
-        newdata, 0, re.DOTALL)
+                     newdata, 0, re.DOTALL)
 
     orig, new = REPLACEMENT1
     newdata = newdata.replace(orig, new)
@@ -88,8 +111,8 @@ def compile_ui(ui_fname, outdir=""):
         orig, new = REPLACEMENT2
         newdata = newdata.replace(orig, new)
 
-    #some hacks for 4.5/4.6 compatibility
-    #newdata = newdata.replace('setShowSortIndicator',"setSortIndicatorShown")
+    # some hacks for 4.5/4.6 compatibility
+    # newdata = newdata.replace('setShowSortIndicator',"setSortIndicatorShown")
 
     if newdata != data:
         f = open(pyfile, "w")
@@ -100,11 +123,13 @@ def compile_ui(ui_fname, outdir=""):
 
     return pyfile
 
+
 def get_changed_ui_files(repo):
     files = repo.git.status("--porcelain")
     for file_ in files.split("\n"):
-       if re.match(".*.ui$", file_):
+        if re.match(".*.ui$", file_):
             yield file_[3:]
+
 
 def get_all_ui_files(dirname):
     for ui_file in os.listdir(dirname):

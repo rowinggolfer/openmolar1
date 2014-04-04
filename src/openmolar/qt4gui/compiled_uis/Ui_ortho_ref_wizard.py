@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/ortho_ref_wizard.ui'
@@ -17,6 +18,7 @@ except AttributeError:
 
 
 class Ui_Dialog(object):
+
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
         Dialog.resize(910, 594)
@@ -32,10 +34,13 @@ class Ui_Dialog(object):
         self.gridLayout_4.setMargin(2)
         self.gridLayout_4.setObjectName(_fromUtf8("gridLayout_4"))
         self.dh_plainTextEdit = QtGui.QPlainTextEdit(self.groupBox_5)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+        sizePolicy = QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Expanding,
+            QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.dh_plainTextEdit.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.dh_plainTextEdit.sizePolicy().hasHeightForWidth())
         self.dh_plainTextEdit.setSizePolicy(sizePolicy)
         self.dh_plainTextEdit.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.dh_plainTextEdit.setObjectName(_fromUtf8("dh_plainTextEdit"))
@@ -54,7 +59,11 @@ class Ui_Dialog(object):
         self.ref1_radioButton.setChecked(True)
         self.ref1_radioButton.setObjectName(_fromUtf8("ref1_radioButton"))
         self.gridLayout.addWidget(self.ref1_radioButton, 0, 0, 1, 1)
-        spacerItem = QtGui.QSpacerItem(68, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem = QtGui.QSpacerItem(
+            68,
+            20,
+            QtGui.QSizePolicy.Expanding,
+            QtGui.QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem, 0, 1, 1, 2)
         self.ref2_radioButton = QtGui.QRadioButton(self.frame)
         self.ref2_radioButton.setObjectName(_fromUtf8("ref2_radioButton"))
@@ -73,7 +82,8 @@ class Ui_Dialog(object):
         self.gridLayout_5.addWidget(self.chart_groupBox, 0, 1, 1, 1)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(
+            QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
         self.gridLayout_5.addWidget(self.buttonBox, 4, 0, 1, 3)
         self.groupBox_4 = QtGui.QGroupBox(Dialog)
@@ -83,20 +93,28 @@ class Ui_Dialog(object):
         self.gridLayout_3.setMargin(2)
         self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
         self.mh__plainTextEdit = QtGui.QPlainTextEdit(self.groupBox_4)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+        sizePolicy = QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Expanding,
+            QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.mh__plainTextEdit.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.mh__plainTextEdit.sizePolicy(
+            ).hasHeightForWidth(
+            ))
         self.mh__plainTextEdit.setSizePolicy(sizePolicy)
         self.mh__plainTextEdit.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.mh__plainTextEdit.setObjectName(_fromUtf8("mh__plainTextEdit"))
         self.gridLayout_3.addWidget(self.mh__plainTextEdit, 0, 0, 1, 1)
         self.gridLayout_5.addWidget(self.groupBox_4, 3, 1, 1, 1)
         self.groupBox = QtGui.QGroupBox(Dialog)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.MinimumExpanding)
+        sizePolicy = QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Preferred,
+            QtGui.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.groupBox.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.groupBox.sizePolicy().hasHeightForWidth())
         self.groupBox.setSizePolicy(sizePolicy)
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.groupBox)
@@ -109,19 +127,24 @@ class Ui_Dialog(object):
         self.verticalLayout_3.setMargin(2)
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
         self.crowding5_radioButton = QtGui.QRadioButton(self.groupBox_2)
-        self.crowding5_radioButton.setObjectName(_fromUtf8("crowding5_radioButton"))
+        self.crowding5_radioButton.setObjectName(
+            _fromUtf8("crowding5_radioButton"))
         self.verticalLayout_3.addWidget(self.crowding5_radioButton)
         self.crowding4_radioButton = QtGui.QRadioButton(self.groupBox_2)
-        self.crowding4_radioButton.setObjectName(_fromUtf8("crowding4_radioButton"))
+        self.crowding4_radioButton.setObjectName(
+            _fromUtf8("crowding4_radioButton"))
         self.verticalLayout_3.addWidget(self.crowding4_radioButton)
         self.crowding3_radioButton = QtGui.QRadioButton(self.groupBox_2)
-        self.crowding3_radioButton.setObjectName(_fromUtf8("crowding3_radioButton"))
+        self.crowding3_radioButton.setObjectName(
+            _fromUtf8("crowding3_radioButton"))
         self.verticalLayout_3.addWidget(self.crowding3_radioButton)
         self.crowding2_radioButton = QtGui.QRadioButton(self.groupBox_2)
-        self.crowding2_radioButton.setObjectName(_fromUtf8("crowding2_radioButton"))
+        self.crowding2_radioButton.setObjectName(
+            _fromUtf8("crowding2_radioButton"))
         self.verticalLayout_3.addWidget(self.crowding2_radioButton)
         self.crowding1_radioButton = QtGui.QRadioButton(self.groupBox_2)
-        self.crowding1_radioButton.setObjectName(_fromUtf8("crowding1_radioButton"))
+        self.crowding1_radioButton.setObjectName(
+            _fromUtf8("crowding1_radioButton"))
         self.verticalLayout_3.addWidget(self.crowding1_radioButton)
         self.verticalLayout_2.addWidget(self.groupBox_2)
         self.groupBox_3 = QtGui.QGroupBox(self.groupBox)
@@ -137,7 +160,11 @@ class Ui_Dialog(object):
         self.oj_spinBox.setMaximum(20)
         self.oj_spinBox.setObjectName(_fromUtf8("oj_spinBox"))
         self.gridLayout_2.addWidget(self.oj_spinBox, 0, 1, 1, 1)
-        spacerItem1 = QtGui.QSpacerItem(248, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem1 = QtGui.QSpacerItem(
+            248,
+            20,
+            QtGui.QSizePolicy.Expanding,
+            QtGui.QSizePolicy.Minimum)
         self.gridLayout_2.addItem(spacerItem1, 0, 2, 1, 3)
         self.label_3 = QtGui.QLabel(self.groupBox_3)
         self.label_3.setObjectName(_fromUtf8("label_3"))
@@ -172,8 +199,14 @@ class Ui_Dialog(object):
         self.gridLayout_5.addWidget(self.groupBox, 2, 0, 2, 1)
 
         self.retranslateUi(Dialog)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Dialog.reject)
+        QtCore.QObject.connect(
+            self.buttonBox,
+            QtCore.SIGNAL(_fromUtf8("accepted()")),
+            Dialog.accept)
+        QtCore.QObject.connect(
+            self.buttonBox,
+            QtCore.SIGNAL(_fromUtf8("rejected()")),
+            Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -182,7 +215,8 @@ class Ui_Dialog(object):
         self.label_2.setText(_("Previous Referral Date"))
         self.ref1_radioButton.setText(_("1st referral"))
         self.ref2_radioButton.setText(_("re - referral"))
-        self.tx_checkBox.setText(_("I am Willing to carry out simple treatment"))
+        self.tx_checkBox.setText(
+            _("I am Willing to carry out simple treatment"))
         self.chart_groupBox.setTitle(_("Teeth With Poor Prognosis"))
         self.groupBox_4.setTitle(_("Relevant Medical History"))
         self.groupBox.setTitle(_("Reason for Referral"))
@@ -215,4 +249,3 @@ if __name__ == "__main__":
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())
-

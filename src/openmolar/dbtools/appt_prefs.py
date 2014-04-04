@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License
-# for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import logging
 
@@ -15,7 +31,7 @@ from PyQt4.QtCore import QDate
 
 LOGGER = logging.getLogger("openmolar")
 
-#NOTE - the appt_prefs table has unused columns at this point!
+# NOTE - the appt_prefs table has unused columns at this point!
 
 QUERY = '''SELECT recall_active, recdent_period, recdent,
 rechyg_period, rechyg, recall_method, note
@@ -29,12 +45,14 @@ UPDATE_QUERY = '''replace into appt_prefs
 
 
 class ApptPrefs(object):
+
     '''
     has a tiny percentage of the footprint (and loading time) of the
     main patient class
     '''
     recall_active = False
     note = ""
+
     def __init__(self, serialno):
         '''
         initiate the class with default variables, then load from database
@@ -56,9 +74,9 @@ class ApptPrefs(object):
         if not row:
             return
 
-        (self.recall_active, self.recdent_period, self.recdent ,
-        self.rechyg_period, self.rechyg,
-        self.recall_method, self.note) = row
+        (self.recall_active, self.recdent_period, self.recdent,
+         self.rechyg_period, self.rechyg,
+         self.recall_method, self.note) = row
 
         if self.note is None:
             self.note = ""
@@ -81,11 +99,11 @@ class ApptPrefs(object):
         values = (
             self.serialno,
             self.recall_active,
-             self.recdent_period, self.recdent ,
+            self.recdent_period, self.recdent,
             self.rechyg_period, self.rechyg,
             self.recall_method,
             self.note
-            )
+        )
 
         db = connect.connect()
         cursor = db.cursor()
@@ -96,26 +114,26 @@ class ApptPrefs(object):
         return self.__str__()
 
     def __str__(self):
-        return "%s %s %s %s %s %s %s %s"% (self.serialno,
-        self.recdent_period,
-        self.recdent,
-        self.rechyg_period,
-        self.rechyg,
-        self.recall_method,
-        self.note,
-        self.recall_active)
+        return "%s %s %s %s %s %s %s %s" % (self.serialno,
+                                            self.recdent_period,
+                                            self.recdent,
+                                            self.rechyg_period,
+                                            self.rechyg,
+                                            self.recall_method,
+                                            self.note,
+                                            self.recall_active)
 
     def __eq__(self, other):
-        return str(self)== str(other)
+        return str(self) == str(other)
 
     def __ne__(self, other):
-        return str(self)!= str(other)
+        return str(self) != str(other)
 
-if __name__ =="__main__":
+if __name__ == "__main__":
     try:
-        serialno=int(sys.argv[len(sys.argv)-1])
+        serialno = int(sys.argv[len(sys.argv) - 1])
     except:
-        serialno=11956
+        serialno = 11956
 
     prefs = ApptPrefs(serialno)
     for att in prefs.__dict__.keys():

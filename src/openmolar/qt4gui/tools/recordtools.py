@@ -1,9 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import re
 from PyQt4 import QtGui, QtCore
@@ -12,12 +29,14 @@ from openmolar.settings import localsettings
 from openmolar.qt4gui.compiled_uis import Ui_record_tools
 
 TEETH = (
-'ur8', 'ur7', 'ur6', 'ur5', 'ur4', 'ur3', 'ur2', 'ur1',
-'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8',
-'ll8', 'll7', 'll6', 'll5', 'll4', 'll3', 'll2', 'll1',
-'lr1', 'lr2', 'lr3', 'lr4', 'lr5', 'lr6', 'lr7', 'lr8')
+    'ur8', 'ur7', 'ur6', 'ur5', 'ur4', 'ur3', 'ur2', 'ur1',
+    'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8',
+    'll8', 'll7', 'll6', 'll5', 'll4', 'll3', 'll2', 'll1',
+    'lr1', 'lr2', 'lr3', 'lr4', 'lr5', 'lr6', 'lr7', 'lr8')
+
 
 class recordTools(Ui_record_tools.Ui_Dialog):
+
     def __init__(self, om_gui):
         self.om_gui = om_gui
         self.dialog = QtGui.QDialog(om_gui)
@@ -37,7 +56,7 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         loads the money at startup
         '''
         self.total_label.setText(localsettings.formatMoney(
-        self.om_gui.pt.fees))
+                                 self.om_gui.pt.fees))
 
         self.money0_spinBox.setValue(self.om_gui.pt.money0)
         self.money1_spinBox.setValue(self.om_gui.pt.money1)
@@ -57,9 +76,9 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         updates the money label
         '''
         fees = (self.money0_spinBox.value() + self.money1_spinBox.value() +
-        self.money9_spinBox.value() + self.money10_spinBox.value() +
-        self.money11_spinBox.value() - self.money2_spinBox.value() -
-        self.money3_spinBox.value() - self.money8_spinBox.value())
+                self.money9_spinBox.value() + self.money10_spinBox.value() +
+                self.money11_spinBox.value() - self.money2_spinBox.value() -
+                self.money3_spinBox.value() - self.money8_spinBox.value())
 
         self.total_label.setText(localsettings.formatMoney(fees))
 
@@ -93,7 +112,7 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         except TypeError:
             self.pd5_dateEdit.hide()
             QtCore.QObject.connect(self.pd5_pushButton,
-            QtCore.SIGNAL("clicked()"), self.pd5_dateEdit.show)
+                                   QtCore.SIGNAL("clicked()"), self.pd5_dateEdit.show)
 
         try:
             self.pd6_dateEdit.setDate(self.om_gui.pt.pd6)
@@ -101,7 +120,7 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         except TypeError:
             self.pd6_dateEdit.hide()
             QtCore.QObject.connect(self.pd6_pushButton,
-            QtCore.SIGNAL("clicked()"), self.pd6_dateEdit.show)
+                                   QtCore.SIGNAL("clicked()"), self.pd6_dateEdit.show)
 
         try:
             self.pd7_dateEdit.setDate(self.om_gui.pt.pd7)
@@ -109,7 +128,7 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         except TypeError:
             self.pd7_dateEdit.hide()
             QtCore.QObject.connect(self.pd7_pushButton,
-            QtCore.SIGNAL("clicked()"), self.pd7_dateEdit.show)
+                                   QtCore.SIGNAL("clicked()"), self.pd7_dateEdit.show)
 
         try:
             self.pd8_dateEdit.setDate(self.om_gui.pt.pd8)
@@ -117,7 +136,7 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         except TypeError:
             self.pd8_dateEdit.hide()
             QtCore.QObject.connect(self.pd8_pushButton,
-            QtCore.SIGNAL("clicked()"), self.pd8_dateEdit.show)
+                                   QtCore.SIGNAL("clicked()"), self.pd8_dateEdit.show)
 
         try:
             self.pd9_dateEdit.setDate(self.om_gui.pt.pd9)
@@ -125,7 +144,7 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         except TypeError:
             self.pd9_dateEdit.hide()
             QtCore.QObject.connect(self.pd9_pushButton,
-            QtCore.SIGNAL("clicked()"), self.pd9_dateEdit.show)
+                                   QtCore.SIGNAL("clicked()"), self.pd9_dateEdit.show)
 
         try:
             self.pd10_dateEdit.setDate(self.om_gui.pt.pd10)
@@ -133,7 +152,7 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         except TypeError:
             self.pd10_dateEdit.hide()
             QtCore.QObject.connect(self.pd10_pushButton,
-            QtCore.SIGNAL("clicked()"), self.pd10_dateEdit.show)
+                                   QtCore.SIGNAL("clicked()"), self.pd10_dateEdit.show)
 
         try:
             self.billdate_dateEdit.setDate(self.om_gui.pt.billdate)
@@ -141,7 +160,7 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         except TypeError:
             self.billdate_dateEdit.hide()
             QtCore.QObject.connect(self.billdate_pushButton,
-            QtCore.SIGNAL("clicked()"), self.billdate_dateEdit.show)
+                                   QtCore.SIGNAL("clicked()"), self.billdate_dateEdit.show)
 
     def changeDates(self):
         '''
@@ -161,7 +180,7 @@ class recordTools(Ui_record_tools.Ui_Dialog):
             self.om_gui.pt.pd10 = self.pd10_dateEdit.date().toPyDate()
         if self.billdate_dateEdit.isVisible():
             self.om_gui.pt.billdate = \
-            self.billdate_dateEdit.date().toPyDate()
+                self.billdate_dateEdit.date().toPyDate()
 
         self.om_gui.updateDetails()
         self.om_gui.advise(_("date changes applied"), 1)
@@ -171,15 +190,15 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         set up the plan page
         '''
         glayout = QtGui.QGridLayout(self.chartplan_frame)
-        #glayout.setSpacing(0)
-        row=0
+        # glayout.setSpacing(0)
+        row = 0
         for tooth in TEETH:
             label = QtGui.QLabel()
             label.setText(tooth)
             self.chartplan_lineEdits[tooth] = QtGui.QLineEdit()
             self.chartplan_lineEdits[tooth].setMaxLength(34)
             self.chartplan_lineEdits[tooth].setText(
-            self.om_gui.pt.treatment_course.__dict__.get(tooth+"pl"))
+                self.om_gui.pt.treatment_course.__dict__.get(tooth + "pl"))
 
             glayout.addWidget(label, row, 0)
             glayout.addWidget(self.chartplan_lineEdits[tooth], row, 1)
@@ -189,7 +208,8 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         self.periopl_lineEdit.setText(self.om_gui.pt.treatment_course.periopl)
         self.anaespl_lineEdit.setText(self.om_gui.pt.treatment_course.anaespl)
         self.otherpl_lineEdit.setText(self.om_gui.pt.treatment_course.otherpl)
-        self.custompl_lineEdit.setText(self.om_gui.pt.treatment_course.custompl)
+        self.custompl_lineEdit.setText(
+            self.om_gui.pt.treatment_course.custompl)
         self.ndupl_lineEdit.setText(self.om_gui.pt.treatment_course.ndupl)
         self.ndlpl_lineEdit.setText(self.om_gui.pt.treatment_course.ndlpl)
         self.odupl_lineEdit.setText(self.om_gui.pt.treatment_course.odupl)
@@ -218,7 +238,7 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         apply date changes
         '''
         for tooth in TEETH:
-            self.om_gui.pt.treatment_course.__dict__[tooth+"pl"] = \
+            self.om_gui.pt.treatment_course.__dict__[tooth + "pl"] = \
                 self.planEntryCheck(self.chartplan_lineEdits[tooth])
 
         course = self.om_gui.pt.treatment_course
@@ -237,15 +257,15 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         set up the plan page
         '''
         glayout = QtGui.QGridLayout(self.chartcompleted_frame)
-        #glayout.setSpacing(0)
-        row=0
+        # glayout.setSpacing(0)
+        row = 0
         for tooth in TEETH:
             label = QtGui.QLabel()
             label.setText(tooth)
             self.chartcompleted_lineEdits[tooth] = QtGui.QLineEdit()
             self.chartcompleted_lineEdits[tooth].setMaxLength(34)
             self.chartcompleted_lineEdits[tooth].setText(
-            self.om_gui.pt.treatment_course.__dict__.get(tooth+"cmp"))
+                self.om_gui.pt.treatment_course.__dict__.get(tooth + "cmp"))
 
             glayout.addWidget(label, row, 0)
             glayout.addWidget(self.chartcompleted_lineEdits[tooth], row, 1)
@@ -267,7 +287,7 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         apply date changes
         '''
         for tooth in TEETH:
-            self.om_gui.pt.treatment_course.__dict__[tooth+"cmp"] = \
+            self.om_gui.pt.treatment_course.__dict__[tooth + "cmp"] = \
                 self.planEntryCheck(self.chartcompleted_lineEdits[tooth])
 
         course = self.om_gui.pt.treatment_course
@@ -321,24 +341,24 @@ class recordTools(Ui_record_tools.Ui_Dialog):
         connect signals
         '''
         for widg in self.money_scrollAreaWidgetContents.children():
-            if type(widg) == QtGui.QSpinBox:
+            if isinstance(widg, QtGui.QSpinBox):
                 QtCore.QObject.connect(widg,
-                QtCore.SIGNAL("valueChanged (int)"), self.updateMoneyTotal)
+                                       QtCore.SIGNAL("valueChanged (int)"), self.updateMoneyTotal)
 
         QtCore.QObject.connect(self.money_pushButton,
-        QtCore.SIGNAL("clicked()"), self.changeMoney)
+                               QtCore.SIGNAL("clicked()"), self.changeMoney)
 
         QtCore.QObject.connect(self.dates_pushButton,
-        QtCore.SIGNAL("clicked()"), self.changeDates)
+                               QtCore.SIGNAL("clicked()"), self.changeDates)
 
         QtCore.QObject.connect(self.plan_pushButton,
-        QtCore.SIGNAL("clicked()"), self.changePlan)
+                               QtCore.SIGNAL("clicked()"), self.changePlan)
 
         QtCore.QObject.connect(self.completed_pushButton,
-        QtCore.SIGNAL("clicked()"), self.changeCompleted)
+                               QtCore.SIGNAL("clicked()"), self.changeCompleted)
 
         QtCore.QObject.connect(self.hidden_notes_pushButton,
-        QtCore.SIGNAL("clicked()"), self.changeHidden_notes)
+                               QtCore.SIGNAL("clicked()"), self.changeHidden_notes)
 
     def exec_(self):
         self.dialog.exec_()
@@ -354,9 +374,8 @@ if __name__ == "__main__":
     om_gui.pt.HIDDENNOTES = [
         ('COURSE OPENED', '= = = = = '),
         ('TC: EXAM', 'CE')
-        ]
+    ]
 
     ui = recordTools(om_gui)
     ui.exec_()
     sys.exit(app.exec_())
-

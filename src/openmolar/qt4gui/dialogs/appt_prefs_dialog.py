@@ -1,24 +1,26 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2011-2012,  Neil Wallace <neil@openmolar.com>                  ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from PyQt4 import QtGui, QtCore
 
@@ -27,16 +29,18 @@ from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
 from openmolar import connect
 
-RECALL_METHODS = ["post","email","sms"]
+RECALL_METHODS = ["post", "email", "sms"]
+
 
 class ShortcutButs(QtGui.QWidget):
     clicked = QtCore.pyqtSignal(object)
+
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         layout = QtGui.QHBoxLayout(self)
         layout.setMargin(0)
-        for term in (1,2,3,6,9,12):
-            but = QtGui.QPushButton("%d"% term)
+        for term in (1, 2, 3, 6, 9, 12):
+            but = QtGui.QPushButton("%d" % term)
             but.setMaximumWidth(40)
             layout.addWidget(but)
             if term == 9:
@@ -47,14 +51,16 @@ class ShortcutButs(QtGui.QWidget):
         but = self.sender()
         self.clicked.emit(int(but.text()))
 
+
 class ApptPrefsDialog(BaseDialog):
+
     def __init__(self, patient, parent):
         BaseDialog.__init__(self, parent)
         self.pt = patient
 
         self.main_ui = parent
-        self.patient_label = QtGui.QLabel("%s<br /><b>%s</b>"% (
-        _("Appointment Preferences for Patient"), patient.name_id))
+        self.patient_label = QtGui.QLabel("%s<br /><b>%s</b>" % (
+                                          _("Appointment Preferences for Patient"), patient.name_id))
 
         self.patient_label.setAlignment(QtCore.Qt.AlignCenter)
 
@@ -77,20 +83,18 @@ class ApptPrefsDialog(BaseDialog):
         self.recdent_date_edit.setDate(QtCore.QDate.currentDate())
         self.dent_shortcut_buts = ShortcutButs()
 
-
         layout = QtGui.QFormLayout(self.recdent_groupbox)
         layout.addRow(_("dentist recall period (months)"),
-            self.recdent_period_spinbox)
+                      self.recdent_period_spinbox)
         layout.addRow(_("Next Recall Date"), self.recdent_date_edit)
         layout.addRow(_("Shortcuts (months from today)"),
-            self.dent_shortcut_buts)
+                      self.dent_shortcut_buts)
 
         self.rechyg_groupbox = QtGui.QGroupBox(
             _("Hygienist Recall"))
 
         self.rechyg_groupbox.setCheckable(True)
         self.rechyg_groupbox.setChecked(False)
-
 
         self.rechyg_period_spinbox = QtGui.QSpinBox()
         self.rechyg_period_spinbox.setMinimum(1)
@@ -99,35 +103,33 @@ class ApptPrefsDialog(BaseDialog):
         self.rechyg_date_edit.setCalendarPopup(True)
         self.rechyg_date_edit.setDate(QtCore.QDate.currentDate())
 
-
         layout = QtGui.QFormLayout(self.rechyg_groupbox)
         layout.addRow(_("hygienist recall period (months)"),
-            self.rechyg_period_spinbox)
+                      self.rechyg_period_spinbox)
         layout.addRow(_("Next Recall"), self.rechyg_date_edit)
-
 
         self.recall_method_combobox = QtGui.QComboBox()
         self.recall_method_combobox.addItems(
             [_("Post"), _("email"), _("sms")])
 
-        #self.sms_reminders_checkbox = QtGui.QCheckBox(
+        # self.sms_reminders_checkbox = QtGui.QCheckBox(
         #    _("sms reminders for appointments?"))
 
-        #self.combined_appointment_checkbox = QtGui.QCheckBox(
+        # self.combined_appointment_checkbox = QtGui.QCheckBox(
         #    _("Don't offer joint appointments"))
 
         layout = QtGui.QGridLayout(self.recall_groupbox)
-        layout.addWidget(self.recdent_groupbox,0,0,1,2)
-        layout.addWidget(self.rechyg_groupbox,1,0,1,2)
+        layout.addWidget(self.recdent_groupbox, 0, 0, 1, 2)
+        layout.addWidget(self.rechyg_groupbox, 1, 0, 1, 2)
 
-        layout.addWidget(QtGui.QLabel(_("Recall method")), 2,0)
-        layout.addWidget(self.recall_method_combobox, 2,1)
+        layout.addWidget(QtGui.QLabel(_("Recall method")), 2, 0)
+        layout.addWidget(self.recall_method_combobox, 2, 1)
 
         self.insertWidget(self.patient_label)
         self.insertWidget(self.recall_groupbox)
 
-        #self.insertWidget(self.sms_reminders_checkbox)
-        #self.insertWidget(self.combined_appointment_checkbox)
+        # self.insertWidget(self.sms_reminders_checkbox)
+        # self.insertWidget(self.combined_appointment_checkbox)
 
         QtCore.QTimer.singleShot(0, self.get_appt_prefs)
 
@@ -164,16 +166,16 @@ class ApptPrefsDialog(BaseDialog):
 
     def init_edited_signals(self):
         for widg in (
-        self.recall_groupbox,
-        self.recdent_groupbox,
-        self.rechyg_groupbox,
-        #self.sms_reminders_checkbox,
-        #self.combined_appointment_checkbox
-         ):
+            self.recall_groupbox,
+            self.recdent_groupbox,
+            self.rechyg_groupbox,
+            # self.sms_reminders_checkbox,
+            # self.combined_appointment_checkbox
+        ):
             widg.toggled.connect(self._set_enabled)
         for widg in (
-        self.recdent_date_edit,
-        self.rechyg_date_edit,
+            self.recdent_date_edit,
+            self.rechyg_date_edit,
         ):
             widg.dateChanged.connect(self._set_enabled)
 
@@ -194,11 +196,14 @@ class ApptPrefsDialog(BaseDialog):
         self.pt.appt_prefs.recall_active = self.recall_groupbox.isChecked()
 
         if self.recdent_groupbox.isChecked():
-            self.pt.appt_prefs.recdent_period = self.recdent_period_spinbox.value()
-            self.pt.appt_prefs.recdent = self.recdent_date_edit.date().toPyDate()
+            self.pt.appt_prefs.recdent_period = self.recdent_period_spinbox.value(
+            )
+            self.pt.appt_prefs.recdent = self.recdent_date_edit.date(
+            ).toPyDate()
 
         if self.rechyg_groupbox.isChecked():
-            self.pt.appt_prefs.rechyg_period = self.rechyg_period_spinbox.value()
+            self.pt.appt_prefs.rechyg_period = self.rechyg_period_spinbox.value(
+            )
             self.pt.appt_prefs.rechyg = self.rechyg_date_edit.date().toPyDate()
 
         i = self.recall_method_combobox.currentIndex()

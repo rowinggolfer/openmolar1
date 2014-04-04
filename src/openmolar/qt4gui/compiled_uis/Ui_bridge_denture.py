@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/bridge_denture.ui'
@@ -17,6 +18,7 @@ except AttributeError:
 
 
 class Ui_Dialog(object):
+
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
         Dialog.resize(632, 480)
@@ -43,7 +45,11 @@ class Ui_Dialog(object):
         self.radioButton_3 = QtGui.QRadioButton(self.tab)
         self.radioButton_3.setObjectName(_fromUtf8("radioButton_3"))
         self.verticalLayout_4.addWidget(self.radioButton_3)
-        spacerItem = QtGui.QSpacerItem(20, 295, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        spacerItem = QtGui.QSpacerItem(
+            20,
+            295,
+            QtGui.QSizePolicy.Minimum,
+            QtGui.QSizePolicy.Expanding)
         self.verticalLayout_4.addItem(spacerItem)
         self.tabWidget.addTab(self.tab, _fromUtf8(""))
         self.tab_2 = QtGui.QWidget()
@@ -104,14 +110,21 @@ class Ui_Dialog(object):
         self.gridLayout.addWidget(self.tabWidget, 0, 1, 1, 1)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(
+            QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
         self.gridLayout.addWidget(self.buttonBox, 1, 1, 1, 1)
 
         self.retranslateUi(Dialog)
         self.tabWidget.setCurrentIndex(0)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Dialog.reject)
+        QtCore.QObject.connect(
+            self.buttonBox,
+            QtCore.SIGNAL(_fromUtf8("accepted()")),
+            Dialog.accept)
+        QtCore.QObject.connect(
+            self.buttonBox,
+            QtCore.SIGNAL(_fromUtf8("rejected()")),
+            Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -119,7 +132,9 @@ class Ui_Dialog(object):
         self.radioButton.setText(_("Porcelain / Precious Metal"))
         self.radioButton_2.setText(_("Lava (or all ceramic)"))
         self.radioButton_3.setText(_("Resin Retained"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _("Bridge"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab),
+            _("Bridge"))
         self.label_2.setText(_("Upper"))
         self.radioButton_4.setText(_("Full (acrylic)"))
         self.radioButton_8.setText(_("Full (co-chrome)"))
@@ -132,7 +147,9 @@ class Ui_Dialog(object):
         self.radioButton_10.setText(_("Partial (acrylic)"))
         self.radioButton_11.setText(_("Partial (co-chrome)"))
         self.radioButton_12.setText(_("Other"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _("Denture"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_2),
+            _("Denture"))
 
 
 if __name__ == "__main__":
@@ -145,4 +162,3 @@ if __name__ == "__main__":
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())
-

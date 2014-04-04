@@ -1,24 +1,26 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2014 Neil Wallace <neil@openmolar.com>                         ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import logging
 import os
@@ -32,10 +34,13 @@ from xml.dom import minidom
 
 LOGGER = logging.getLogger("openmolar")
 
+
 def _null_func():
     return None
 
+
 class _FileListWidget(QtGui.QScrollArea):
+
     def __init__(self, files, parent=None):
         assert files != [], "no files passed to FileListWidget"
         QtGui.QScrollArea.__init__(self, parent)
@@ -61,9 +66,11 @@ class _FileListWidget(QtGui.QScrollArea):
                 return self.files[i]
 
     def sizeHint(self):
-        return QtCore.QSize(200,400)
+        return QtCore.QSize(200, 400)
+
 
 class _LabelledFileListWidget(_FileListWidget):
+
     def __init__(self, nodelist, parent=None):
         QtGui.QScrollArea.__init__(self, parent)
         self.files = []
@@ -75,20 +82,24 @@ class _LabelledFileListWidget(_FileListWidget):
         assert self.files != [], "no files passed to _LabelledFileListWidget"
         self.layout_widgets()
 
+
 class DocumentDialog(ExtendableDialog):
+
     def __init__(self, parent=None):
         ExtendableDialog.__init__(self, parent, remove_stretch=True)
 
         title = _("Openmolar Documents Dialog")
         self.setWindowTitle(title)
-        label = QtGui.QLabel("<b>%s</b>"% _("Please choose a document to open"))
+        label = QtGui.QLabel(
+            "<b>%s</b>" %
+            _("Please choose a document to open"))
         label.setAlignment(QtCore.Qt.AlignCenter)
 
         self.chosen_document = None
 
-        message = '<p>%s<br /><a href="%s">%s</a></p>'% (
-             _("For help configuring this feature, see"),
-             urls.DOCUMENT_HELP, urls.DOCUMENT_HELP)
+        message = '<p>%s<br /><a href="%s">%s</a></p>' % (
+            _("For help configuring this feature, see"),
+            urls.DOCUMENT_HELP, urls.DOCUMENT_HELP)
 
         advanced_label = QtGui.QLabel(message)
         advanced_label.setOpenExternalLinks(True)
@@ -97,9 +108,9 @@ class DocumentDialog(ExtendableDialog):
         files = os.listdir(localsettings.DOCS_DIRECTORY)
 
         if files == []:
-            widg = QtGui.QLabel("<p>%s %s</p><hr />%s"% (
-            _("You have no documents stored in"),
-            localsettings.DOCS_DIRECTORY, message))
+            widg = QtGui.QLabel("<p>%s %s</p><hr />%s" % (
+                                _("You have no documents stored in"),
+                                localsettings.DOCS_DIRECTORY, message))
             widg.setAlignment(QtCore.Qt.AlignCenter)
             widg.setOpenExternalLinks(True)
             widg.selected_file = _null_func
@@ -115,15 +126,17 @@ class DocumentDialog(ExtendableDialog):
                 for group in doc_node.getElementsByTagName("group"):
                     docs = group.getElementsByTagName("document")
                     group_widg = _LabelledFileListWidget(docs)
-                    tab = widg.addTab(group_widg, group.getAttribute("heading"))
+                    tab = widg.addTab(
+                        group_widg,
+                        group.getAttribute("heading"))
                     group_widg.radio_buts[0].setChecked(True)
                 widg.selected_file = widg.currentWidget().selected_file
             except:
-                LOGGER.exception("unable to parse '%s'"% control_f)
+                LOGGER.exception("unable to parse '%s'" % control_f)
                 widg = QtGui.QLabel(_("docs.xml is not parseable"))
 
         else:
-            #self.remove_spacer()
+            # self.remove_spacer()
             widg = _FileListWidget(files)
 
         self.enableApply(bool(widg.selected_file()))
@@ -139,7 +152,7 @@ class DocumentDialog(ExtendableDialog):
             return self._widg
 
     def sizeHint(self):
-        return QtCore.QSize(400,350)
+        return QtCore.QSize(400, 350)
 
     def _open_document(self):
         '''
@@ -150,8 +163,8 @@ class DocumentDialog(ExtendableDialog):
             return
         try:
             doc = os.path.abspath(
-            os.path.join(localsettings.DOCS_DIRECTORY, doc))
-            LOGGER.info("opening %s"% doc)
+                os.path.join(localsettings.DOCS_DIRECTORY, doc))
+            LOGGER.info("opening %s" % doc)
             localsettings.openPDF(doc)
         except Exception as exc:
             message = _("Error opening PDF file")
@@ -167,6 +180,7 @@ class DocumentDialog(ExtendableDialog):
 
 if __name__ == "__main__":
     app = QtGui.QApplication([])
+
     def advise(message, severity):
         QtGui.QMessageBox.information(dl, "message", message)
 

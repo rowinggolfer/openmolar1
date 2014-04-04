@@ -1,3 +1,27 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
+
 import datetime
 import cPickle
 import pickle
@@ -14,6 +38,7 @@ from openmolar.qt4gui.appointment_gui_modules.list_models \
 
 
 class _DragTestDialog(QtGui.QDialog):
+
     def __init__(self, parent=None):
         QtGui.QDialog.__init__(self, parent)
         self.setWindowTitle("Drag Drop Test")
@@ -39,50 +64,48 @@ class _DragTestDialog(QtGui.QDialog):
         self.book.setStartTime(1015)
         self.book.setEndTime(1145)
         for appoint in (
-        (1, 1030, 1045, 'MCDONALD I', 6155L, 'EXAM', '', '', '', 1, 73, 0,
-        0, datetime.datetime.now())
-
-        ,(1, 1115, 1130, 'EMERGENCY', 0L, '', '', '', '', -128, 0, 0,
-        0, datetime.datetime.now())):
+            (1, 1030, 1045, 'MCDONALD I', 6155, 'EXAM', '', '', '', 1, 73, 0,
+             0, datetime.datetime.now()), (1, 1115, 1130, 'EMERGENCY', 0, '', '', '', '', -128, 0, 0,
+                                           0, datetime.datetime.now())):
             self.book.setAppointment(appoint)
 
         self.OVbook = AppointmentOverviewWidget("1000", "1200", 15, 2, self)
 
         d1 = appointments.DentistDay(1)
-        d1.start=1015
-        d1.end=1145
-        d1.memo="hello"
+        d1.start = 1015
+        d1.end = 1145
+        d1.memo = "hello"
 
         d2 = appointments.DentistDay(4)
-        d2.start=1015
-        d2.end=1145
+        d2.start = 1015
+        d2.end = 1145
 
-        self.OVbook.dents=[d1,d2]
+        self.OVbook.dents = [d1, d2]
         self.OVbook.clear()
         self.OVbook.init_dicts()
 
-        for d in (d1,d2):
+        for d in (d1, d2):
             self.OVbook.setStartTime(d)
             self.OVbook.setEndTime(d)
             self.OVbook.setMemo(d)
             self.OVbook.setFlags(d)
 
-        slot = appointments.FreeSlot(datetime.datetime(2009,2,2,10,45),
-            1,20)
-        slot2 = appointments.FreeSlot(datetime.datetime(2009,2,2,11,05),
-            4,60)
+        slot = appointments.FreeSlot(datetime.datetime(2009, 2, 2, 10, 45),
+                                     1, 20)
+        slot2 = appointments.FreeSlot(datetime.datetime(2009, 2, 2, 11, 0o5),
+                                      4, 60)
 
         self.OVbook.addSlot(slot)
         self.OVbook.addSlot(slot2)
 
         appt = appointments.WeekViewAppointment()
-        appt.mpm = 10*60+30
+        appt.mpm = 10 * 60 + 30
         appt.length = 15
         appt.dent = 1
         self.OVbook.appts[1] = (appt,)
 
         emerg = appointments.WeekViewAppointment()
-        emerg.mpm = 11*60+15
+        emerg.mpm = 11 * 60 + 15
         emerg.length = 15
         emerg.reason = "emergency"
         self.OVbook.eTimes[1] = (emerg,)
@@ -92,21 +115,20 @@ class _DragTestDialog(QtGui.QDialog):
         self.tw.addTab(self.book, "day")
         self.tw.addTab(self.OVbook, "week")
 
-        layout.addWidget(self.appt_listView,0,0)
-        layout.addWidget(self.blockView,2,0)
+        layout.addWidget(self.appt_listView, 0, 0)
+        layout.addWidget(self.blockView, 2, 0)
 
-        layout.addWidget(self.tw,0,1,3,1)
-        #self.tw.setCurrentIndex(1)
+        layout.addWidget(self.tw, 0, 1, 3, 1)
+        # self.tw.setCurrentIndex(1)
 
         self.model.appointment_selected.connect(slot_catcher)
-
 
 
 if __name__ == "__main__":
 
     from openmolar.qt4gui.customwidgets import appointmentwidget
     from openmolar.qt4gui.customwidgets.appointment_overviewwidget \
-         import AppointmentOverviewWidget
+        import AppointmentOverviewWidget
 
     from openmolar.dbtools import appointments
     from openmolar.settings import localsettings
@@ -116,6 +138,7 @@ if __name__ == "__main__":
         print arg
 
     class duckPt(object):
+
         def __init__(self):
             self.serialno = 11956
             self.title = "Mr"
@@ -126,4 +149,3 @@ if __name__ == "__main__":
     app = QtGui.QApplication([])
     dl = _DragTestDialog()
     dl.exec_()
-

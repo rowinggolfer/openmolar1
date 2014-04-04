@@ -1,24 +1,26 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2011-2012,  Neil Wallace <neil@openmolar.com>                  ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import logging
 import re
@@ -30,8 +32,10 @@ from openmolar.qt4gui.dialogs.new_bridge_dialog import NewBridgeDialog
 
 LOGGER = logging.getLogger("openmolar")
 
+
 class BridgeDialog(BaseDialog):
-    def __init__(self, om_gui = None):
+
+    def __init__(self, om_gui=None):
         BaseDialog.__init__(self, om_gui)
 
         self.chosen_treatments = []
@@ -45,9 +49,9 @@ class BridgeDialog(BaseDialog):
         layout = QtGui.QHBoxLayout(frame)
 
         new_but = QtGui.QPushButton(_("Plan a New Bridge"))
-        new_but.setMinimumSize(QtCore.QSize(150,150))
+        new_but.setMinimumSize(QtCore.QSize(150, 150))
         alt_but = QtGui.QPushButton(_("Recement/Repairs"))
-        alt_but.setMinimumSize(QtCore.QSize(150,150))
+        alt_but.setMinimumSize(QtCore.QSize(150, 150))
 
         layout.addWidget(new_but)
         layout.addWidget(alt_but)
@@ -75,9 +79,9 @@ class BridgeDialog(BaseDialog):
             material = dl.chosen_properties["material"]
             for key, value in dl.chosen_properties.iteritems():
                 if re.match("[ul][lr][1-8]", key) and value == "pontic":
-                    self.chosen_treatments.append((key, "BR/P,%s"% material))
+                    self.chosen_treatments.append((key, "BR/P,%s" % material))
                 elif re.match("[ul][lr][1-8]", key) and value == "retainer":
-                    self.chosen_treatments.append((key, "BR/CR,%s"% material))
+                    self.chosen_treatments.append((key, "BR/CR,%s" % material))
             self.accept()
         else:
             self.reject()

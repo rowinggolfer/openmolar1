@@ -1,9 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
+
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from __future__ import division
 
@@ -13,7 +30,9 @@ from openmolar.settings import localsettings
 from openmolar.qt4gui.compiled_uis import Ui_addTreatment
 from openmolar.qt4gui.compiled_uis import Ui_treatmentItemWidget
 
+
 class itemWidget(Ui_treatmentItemWidget.Ui_Form):
+
     def __init__(self, parent, widget):
         self.parent = parent
         self.setupUi(widget)
@@ -27,20 +46,22 @@ class itemWidget(Ui_treatmentItemWidget.Ui_Form):
 
     def setDescription(self, description):
         self.description = description
-        self.label.setText("%s (%s)"% (self.description, self.itemcode))
+        self.label.setText("%s (%s)" % (self.description, self.itemcode))
 
 
 class AddTreatmentDialog(QtGui.QDialog, Ui_addTreatment.Ui_Dialog):
+
     '''
     a custom dialog to offer a range of treatments for selection
     '''
+
     def __init__(self, usercodes, pt, parent=None):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
         self.items = []
         feetable = pt.fee_table
         for att, shortcut in usercodes:
-            item = feetable.getItemCodeFromUserCode("%s %s"% (att, shortcut))
+            item = feetable.getItemCodeFromUserCode("%s %s" % (att, shortcut))
             item_description = feetable.getItemDescription(item, shortcut)
             self.items.append((item, item_description, (att, shortcut)))
 
@@ -90,11 +111,10 @@ if __name__ == "__main__":
     items = (
             ("exam", "CE"),
             ("xray", "M"),
-            ("perio","SP")
-            )
+            ("perio", "SP")
+    )
 
     dl = AddTreatmentDialog(items, pt)
     dl.use_completed_messages()
     for att, shortcut in dl.getInput():
-        print "chosen item = %s %s"% (att, shortcut)
-
+        print "chosen item = %s %s" % (att, shortcut)

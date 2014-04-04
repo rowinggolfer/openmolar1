@@ -1,24 +1,26 @@
-#! /usr/bin/python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2013, Neil Wallace <neil@openmolar.com>                        ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import logging
 from gettext import gettext as _
@@ -33,9 +35,11 @@ __all__ = [
     "PercentageInputDialog",
     "RoundupFeesDialog",
     "ChargePercentageInputDialog"
-    ]
+]
+
 
 class _InputDialog(BaseDialog):
+
     def __init__(self, parent=None):
         BaseDialog.__init__(self, parent)
         self.setWindowTitle(_("Input Required"))
@@ -61,7 +65,7 @@ class _InputDialog(BaseDialog):
         return QtCore.QSize(300, 200)
 
     def check_enable(self, value):
-        self.enableApply(value!=0)
+        self.enableApply(value != 0)
 
     @property
     def value(self):
@@ -71,7 +75,9 @@ class _InputDialog(BaseDialog):
     def alter_gross(self):
         return not self.charge_radio_button.isChecked()
 
+
 class PercentageInputDialog(_InputDialog):
+
     def __init__(self, parent=None):
         _InputDialog.__init__(self, parent)
         self.label.setText(_("Please enter a percentage"))
@@ -88,17 +94,19 @@ class PercentageInputDialog(_InputDialog):
             message = _("gross fees have been increased by")
         else:
             message = _("charges have been increased by")
-        return "%s %.02f%%"% (message, self.percentage)
+        return "%s %.02f%%" % (message, self.percentage)
+
 
 class RoundupFeesDialog(_InputDialog):
     ROUND_UP = 0
     ROUND_DOWN = 1
     ROUND_NEAREST = 2
+
     def __init__(self, parent=None):
         _InputDialog.__init__(self, parent)
         self.label.setText(_("Please enter the precision you require"))
         self.spinbox.setPrefix(localsettings.formatMoney(0)[0])
-        #self.spinbox.setValue(0.10)
+        # self.spinbox.setValue(0.10)
 
         self.round_down_radio_button = QtGui.QRadioButton(_("round down"))
         self.round_up_radio_button = QtGui.QRadioButton(_("round up"))
@@ -147,9 +155,11 @@ class RoundupFeesDialog(_InputDialog):
             message2 = _("gross fees have been")
         else:
             message2 = _("charges have been")
-        return "%s %s %.02f"% (message2, message1, self.value)
+        return "%s %s %.02f" % (message2, message1, self.value)
+
 
 class ChargePercentageInputDialog(_InputDialog):
+
     def __init__(self, parent=None):
         _InputDialog.__init__(self, parent)
         self.label.setText(_("Please enter a percentage"))
@@ -169,8 +179,8 @@ class ChargePercentageInputDialog(_InputDialog):
 
     @property
     def message(self):
-        return "%s %s %s"% (
-        _("charges set at"), self.percentage, _("of the fees"))
+        return "%s %s %s" % (
+            _("charges set at"), self.percentage, _("of the fees"))
 
     @property
     def leave_zero_charges_unchanged(self):

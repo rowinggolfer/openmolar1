@@ -1,24 +1,26 @@
-#! /usr/bin/python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2013, Neil Wallace <neil@openmolar.com>                        ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import logging
 import re
@@ -29,7 +31,9 @@ from PyQt4 import QtCore, QtGui
 from openmolar.qt4gui.feescale_editor.feescale_xml_editor import XMLEditor
 LOGGER = logging.getLogger("openmolar")
 
+
 class CompareWidget(QtGui.QWidget):
+
     def __init__(self, parser, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.parser = parser
@@ -47,7 +51,9 @@ class CompareWidget(QtGui.QWidget):
         else:
             self.xml_editor.setText(_("No Match Found"))
 
+
 class CompareItemsDockWidget(QtGui.QDockWidget):
+
     def __init__(self, parsers, parent=None):
         QtGui.QDockWidget.__init__(self, parent)
 
@@ -70,14 +76,15 @@ class CompareItemsDockWidget(QtGui.QDockWidget):
 
 if __name__ == "__main__":
     class _MockNode(object):
+
         def toxml(self):
             return "Mock Node"
 
     class _MockParser(object):
         label_text = "Mock"
+
         def itemnode_from_id(self, id, ignore_prefix):
             return _MockNode()
-
 
     mp1, mp2 = _MockParser(), _MockParser()
     LOGGER.setLevel(logging.DEBUG)

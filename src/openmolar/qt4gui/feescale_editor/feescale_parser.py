@@ -1,24 +1,26 @@
-#! /usr/bin/python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2013, Neil Wallace <neil@openmolar.com>                        ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 import logging
 import os
@@ -27,9 +29,9 @@ from xml.dom import minidom
 
 from PyQt4 import QtCore
 from PyQt4.QtXmlPatterns import (
-     QXmlSchemaValidator,
-     QXmlSchema,
-     QAbstractMessageHandler)
+    QXmlSchemaValidator,
+    QXmlSchema,
+    QAbstractMessageHandler)
 
 from openmolar.settings.localsettings import resources_location
 
@@ -38,32 +40,38 @@ LOGGER = logging.getLogger("openmolar")
 STYLESHEET = os.path.join(
     resources_location, "feescales", "feescale_schema.xsd")
 
+
 class MessageHandler(QAbstractMessageHandler):
     last_error = ""
+
     def __init__(self, parent=None):
         QAbstractMessageHandler.__init__(self, parent)
 
     def handleMessage(self, type_, descr, id_, source):
-        position = "line %s column %d"% (source.line(), source.column())
+        position = "line %s column %d" % (source.line(), source.column())
 
-        LOGGER.debug("xml message - type =        '%s'"% type_)
-        LOGGER.debug("xml message - description = '%s'"% descr)
-        LOGGER.debug("xml message - id =          '%s'"% id_)
-        LOGGER.debug("xml message - source      = %s"% position)
+        LOGGER.debug("xml message - type =        '%s'" % type_)
+        LOGGER.debug("xml message - description = '%s'" % descr)
+        LOGGER.debug("xml message - id =          '%s'" % id_)
+        LOGGER.debug("xml message - source      = %s" % position)
 
-        self.last_error = descr.replace("</body>", "<p>%s</p></body>"% position)
+        self.last_error = descr.replace(
+            "</body>", "<p>%s</p></body>" %
+            position)
 
     def reset(self):
         self.last_error = ""
 
+
 class FeescaleParser(object):
+
     def __init__(self, filepath, ix):
         self._edited_text = None
         self._items = None
         self._c_scuts = None
         self.filepath = filepath
         self.ix = ix
-        LOGGER.info("parsing feescale %s"% filepath)
+        LOGGER.info("parsing feescale %s" % filepath)
         self.orig_modified = self.last_modified
         self.dom = minidom.Document()
         self.dom.appendChild(self.dom.createElement("feescale"))
@@ -81,17 +89,16 @@ class FeescaleParser(object):
             f = open(self.filepath, "r")
             self._edited_text = f.read()
             f.close()
-            LOGGER.exception("unable to parse %s"% self.filepath)
+            LOGGER.exception("unable to parse %s" % self.filepath)
             raise exc
 
     @property
     def label_text(self):
-        return "%s %d"% (_("feescale"), self.ix)
+        return "%s %d" % (_("feescale"), self.ix)
 
     @property
     def detailed_label_text(self):
-        return "%s %s"% (self.label_text, self.tablename)
-
+        return "%s %s" % (self.label_text, self.tablename)
 
     @property
     def is_externally_modified(self):
@@ -109,7 +116,7 @@ class FeescaleParser(object):
         self.orig_modified = self.last_modified
 
     def refresh(self):
-        LOGGER.info("refreshing feescale %s"% self.filepath)
+        LOGGER.info("refreshing feescale %s" % self.filepath)
         self._edited_text = None
         self._items = None
         self.dom = minidom.parse(self.filepath)
@@ -137,18 +144,18 @@ class FeescaleParser(object):
                 "Feescale complies with stylesheet!")
         else:
             LOGGER.warning(
-                "Feescale does not comply with stylesheet %s"% STYLESHEET)
+                "Feescale does not comply with stylesheet %s" % STYLESHEET)
         return (result, self.message_handler.last_error)
 
     def is_valid(self):
-        LOGGER.debug("checking validity of %s"% self.dom)
+        LOGGER.debug("checking validity of %s" % self.dom)
         return self.check_validity(self.text)
 
     @property
     def items(self):
         if self._items is None:
             self._items = self.dom.getElementsByTagName("item")
-            LOGGER.debug("%d items"% len(self._items))
+            LOGGER.debug("%d items" % len(self._items))
         return self._items
 
     def item_ids(self, index):
@@ -167,7 +174,7 @@ class FeescaleParser(object):
             return s.groups()[1]
         if ignore_prefix:
             id = re.sub("([^\d]*)(\d+)$", remove_prefix, id)
-        LOGGER.debug("looking for %s"% id)
+        LOGGER.debug("looking for %s" % id)
         for itemnode in self.items:
             node_id = itemnode.getAttribute("id")
             if ignore_prefix:
@@ -179,7 +186,7 @@ class FeescaleParser(object):
     def complex_shortcuts(self):
         if self._c_scuts is None:
             self._c_scuts = self.dom.getElementsByTagName("complex_shortcut")
-            LOGGER.debug("%d complex shortcuts"% len(self._c_scuts))
+            LOGGER.debug("%d complex shortcuts" % len(self._c_scuts))
         return self._c_scuts
 
     @property
@@ -193,16 +200,17 @@ class FeescaleParser(object):
 
     def roundup_fees(self, precision, up=False, down=False, att="gross"):
         LOGGER.debug((precision, up, down, att))
+
         def round_to_value(pence, r_up=False, r_down=False):
-            offset = pence%precision
+            offset = pence % precision
             LOGGER.debug(offset)
             if offset == 0:
                 return int(pence)
             if r_up:
-                return int(pence + (precision-offset))
+                return int(pence + (precision - offset))
             if r_down:
                 return int(pence - offset)
-            if offset < (precision+1)//2:
+            if offset < (precision + 1) // 2:
                 return round_to_value(pence, r_down=True)
             else:
                 return round_to_value(pence, r_up=True)
@@ -210,8 +218,8 @@ class FeescaleParser(object):
         for node in self.dom.getElementsByTagName(att):
             fee = node.firstChild.data
             new_fee = str(round_to_value(int(fee), up, down))
-            message = "%s %s changed to %s"% (
-                att.ljust(8, " "), fee.rjust(8," "), new_fee.rjust(8," "))
+            message = "%s %s changed to %s" % (
+                att.ljust(8, " "), fee.rjust(8, " "), new_fee.rjust(8, " "))
             node.firstChild.replaceWholeText(new_fee)
 
         self._edited_text = None
@@ -222,26 +230,26 @@ class FeescaleParser(object):
 
     def increase_fees(self, percentage, att="gross"):
         def increase(pence):
-            return int((pence * mult)//100)
+            return int((pence * mult) // 100)
 
         mult = 100 + percentage
         for node in self.dom.getElementsByTagName(att):
             fee = node.firstChild.data
             new_fee = str(increase(int(fee)))
-            message = "%s %s increased to %s"% (
-                att.ljust(8, " "), fee.rjust(8," "), new_fee.rjust(8," "))
+            message = "%s %s increased to %s" % (
+                att.ljust(8, " "), fee.rjust(8, " "), new_fee.rjust(8, " "))
             node.firstChild.replaceWholeText(new_fee)
 
             LOGGER.debug(message)
 
         self._edited_text = None
         LOGGER.info(
-        "%s %s fees increased by %s%%"% (self.description, att, percentage))
+            "%s %s fees increased by %s%%" % (self.description, att, percentage))
 
     def relate_charges_to_gross_fees(self, percentage,
-    leave_zeros_untouched=False):
+                                     leave_zeros_untouched=False):
         def get_charge(pence):
-            return int(pence*percentage//100)
+            return int(pence * percentage // 100)
 
         for node in self.dom.getElementsByTagName("gross"):
             charge_nodes = node.parentNode.getElementsByTagName("charge")
@@ -253,8 +261,8 @@ class FeescaleParser(object):
             if charge == "0" and leave_zeros_untouched:
                 continue
             new_charge = str(get_charge(int(fee)))
-            message = "Fee %s has a charge of %s"% (
-                fee.rjust(8," "), new_charge.rjust(8," "))
+            message = "Fee %s has a charge of %s" % (
+                fee.rjust(8, " "), new_charge.rjust(8, " "))
             charge_node.firstChild.replaceWholeText(new_charge)
 
             LOGGER.debug(message)
@@ -267,7 +275,7 @@ class FeescaleParser(object):
             node.firstChild.replaceWholeText("0")
 
         self._edited_text = None
-        LOGGER.info("%s patient charges zeroed"% self.description)
+        LOGGER.info("%s patient charges zeroed" % self.description)
 
     @property
     def tablename(self):
@@ -282,7 +290,7 @@ class FeescaleParser(object):
     def description(self):
         try:
             description_nodes = self.dom.getElementsByTagName(
-            "feescale_description")
+                "feescale_description")
             return description_nodes[0].childNodes[0].data
         except:
             LOGGER.exception("unable to get description from Feescale Parser")
@@ -296,14 +304,14 @@ class FeescaleParser(object):
                 "description")[0].firstChild.data
         except AttributeError:
             name = ""
-        return "%s - %s"% (id_, name)
+        return "%s - %s" % (id_, name)
 
     def complex_shortcut_text(self, index):
         node = self.complex_shortcuts[index]
         shortcut_node = node.getElementsByTagName("shortcut")[0]
         att = shortcut_node.getAttribute("att")
         shortcut = shortcut_node.firstChild.data
-        return "%s - %s"% (att, shortcut)
+        return "%s - %s" % (att, shortcut)
 
     def set_edited_text(self, text):
         self._edited_text = unicode(text)
@@ -329,6 +337,7 @@ class FeescaleParser(object):
     @property
     def is_dirty(self):
         return self.text != self.saved_xml
+
 
 def _test():
     LOGGER.debug("running _test")

@@ -1,10 +1,26 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009 Neil Wallace. All rights reserved.
-# This program or module is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version. See the GNU General Public License for more details.
 
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from openmolar.settings import localsettings
 from openmolar.connect import connect
@@ -14,6 +30,7 @@ QUERY = '''SELECT newestimates.ix, number, itemcode, description,
 fee, ptfee, feescale, csetype, dent, est_link2.completed, tx_hash, courseno
 from newestimates right join est_link2 on newestimates.ix = est_link2.est_id
 where serialno=%s order by courseno desc, itemcode, ix'''
+
 
 def getEsts(sno):
     db = connect()
@@ -33,7 +50,7 @@ def getEsts(sno):
         ix = row[0]
 
         found = False
-        #use existing est if one relates to multiple treatments
+        # use existing est if one relates to multiple treatments
         for existing_est in estimates:
             if existing_est.ix == ix:
                 existing_est.tx_hashes.append(tx_hash)
@@ -42,7 +59,7 @@ def getEsts(sno):
         if found:
             continue
 
-        #initiate a custom data class
+        # initiate a custom data class
         est = Estimate()
 
         est.ix = ix
@@ -56,8 +73,8 @@ def getEsts(sno):
         est.csetype = row[7]
         est.dent = row[8]
 
-        #est.category = "TODO"
-        #est.type_ = "TODO"
+        # est.category = "TODO"
+        # est.type_ = "TODO"
 
         est.tx_hashes = [tx_hash]
         estimates.append(est)
@@ -66,13 +83,14 @@ def getEsts(sno):
 
     return estimates
 
+
 def details(sno):
     '''
     returns an html page showing pt's old estimates
     '''
     estimatesList = getEsts(sno)
     claimNo = len(estimatesList)
-    retarg = "<h2>Past Estimates - %d rows found</h2>"% claimNo
+    retarg = "<h2>Past Estimates - %d rows found</h2>" % claimNo
     if claimNo == 0:
         return retarg
     courseno = -1
@@ -80,10 +98,10 @@ def details(sno):
     for est in estimatesList:
         if est.courseno != courseno:
             if not firstRow:
-                retarg+="</table>"
+                retarg += "</table>"
                 firstRow = False
             retarg += '''</table><h3>Estimate for course number %d</h3>
-            <table width="100%%" border="1">'''% est.courseno
+            <table width="100%%" border="1">''' % est.courseno
             retarg += est.htmlHeader()
             courseno = est.courseno
         retarg += est.toHtmlRow()

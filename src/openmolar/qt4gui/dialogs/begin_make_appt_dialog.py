@@ -1,24 +1,26 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-##                                                                           ##
-##  Copyright 2011-2012,  Neil Wallace <neil@openmolar.com>                  ##
-##                                                                           ##
-##  This program is free software: you can redistribute it and/or modify     ##
-##  it under the terms of the GNU General Public License as published by     ##
-##  the Free Software Foundation, either version 3 of the License, or        ##
-##  (at your option) any later version.                                      ##
-##                                                                           ##
-##  This program is distributed in the hope that it will be useful,          ##
-##  but WITHOUT ANY WARRANTY; without even the implied warranty of           ##
-##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            ##
-##  GNU General Public License for more details.                             ##
-##                                                                           ##
-##  You should have received a copy of the GNU General Public License        ##
-##  along with this program.  If not, see <http://www.gnu.org/licenses/>.    ##
-##                                                                           ##
-###############################################################################
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from PyQt4 import QtGui, QtCore
 
@@ -43,19 +45,19 @@ class BeginMakeApptDialog(BaseDialog):
         BaseDialog.__init__(self, parent)
         self.setWindowTitle(_("Begin Make Appointment Dialog"))
 
-        label = QtGui.QLabel("<b>%s</b>"%
-            _("Please set criteria for making this appointment"))
+        label = QtGui.QLabel("<b>%s</b>" %
+                             _("Please set criteria for making this appointment"))
         label.setAlignment(QtCore.Qt.AlignCenter)
 
         self.pt = pt
         self.appt = appt
 
-        #WHEN TO LOOK
+        # WHEN TO LOOK
         begin_search_frame = QtGui.QFrame()
-        w_label = QtGui.QLabel("<b>%s</b>"% _("When to Look"))
+        w_label = QtGui.QLabel("<b>%s</b>" % _("When to Look"))
         w_label.setAlignment(QtCore.Qt.AlignCenter)
         layout = QtGui.QGridLayout(begin_search_frame)
-        layout.addWidget(w_label,0,0,1,3)
+        layout.addWidget(w_label, 0, 0, 1, 3)
 
         self.first_available_appointment_radiobut = QtGui.QRadioButton(
             _("Find First Available Appointment"))
@@ -70,12 +72,12 @@ class BeginMakeApptDialog(BaseDialog):
         layout.addWidget(self.week_ahead_appointment_radiobut)
         layout.addWidget(self.follow_on_appointment_radiobut)
 
-        #DAY OR WEEK VIEW
+        # DAY OR WEEK VIEW
         day_week_frame = QtGui.QFrame()
-        w_label = QtGui.QLabel("<b>%s</b>"% _("Day or Week Graphical View"))
+        w_label = QtGui.QLabel("<b>%s</b>" % _("Day or Week Graphical View"))
         w_label.setAlignment(QtCore.Qt.AlignCenter)
         layout = QtGui.QGridLayout(day_week_frame)
-        layout.addWidget(w_label,0,0,1,2)
+        layout.addWidget(w_label, 0, 0, 1, 2)
 
         self.day_radio_but = QtGui.QRadioButton(_("Day View"))
         self.day_radio_but.setChecked(not WEEK_VIEW)
@@ -85,10 +87,9 @@ class BeginMakeApptDialog(BaseDialog):
         layout.addWidget(self.day_radio_but)
         layout.addWidget(week_radio_but)
 
-
-        #CLINICIAN POLICY
+        # CLINICIAN POLICY
         clinician_frame = QtGui.QFrame()
-        c_label = QtGui.QLabel("<b>%s</b>"% _("Clinician selection policy"))
+        c_label = QtGui.QLabel("<b>%s</b>" % _("Clinician selection policy"))
         c_label.setAlignment(QtCore.Qt.AlignCenter)
         layout = QtGui.QGridLayout(clinician_frame)
 
@@ -100,38 +101,35 @@ class BeginMakeApptDialog(BaseDialog):
         self.any_hygienist_radiobut.setChecked(ANY_HYGIENIST)
         self.any_clinician_radiobut = QtGui.QRadioButton(_("Any Clinician"))
 
-        layout.addWidget(c_label,0,0,1,2)
-        layout.addWidget(self.specified_clinician_radiobut,1,0)
-        layout.addWidget(self.any_dentist_radiobut,1,1)
-        layout.addWidget(self.any_hygienist_radiobut,2,0)
-        layout.addWidget(self.any_clinician_radiobut,2,1)
-
+        layout.addWidget(c_label, 0, 0, 1, 2)
+        layout.addWidget(self.specified_clinician_radiobut, 1, 0)
+        layout.addWidget(self.any_dentist_radiobut, 1, 1)
+        layout.addWidget(self.any_hygienist_radiobut, 2, 0)
+        layout.addWidget(self.any_clinician_radiobut, 2, 1)
 
         ignore_emergencies_frame = QtGui.QFrame()
         layout = QtGui.QVBoxLayout(ignore_emergencies_frame)
         emergency_label = QtGui.QLabel(
-            "<b>%s</b>"% _("Emergency time management"))
+            "<b>%s</b>" % _("Emergency time management"))
         self.ignore_emergency_checkbox = QtGui.QCheckBox(
             _("Ignore Emergency Spaces"))
         self.ignore_emergency_checkbox.setChecked(False)
         layout.addWidget(emergency_label)
         layout.addWidget(self.ignore_emergency_checkbox)
 
-
-        #DAY OF WEEK
+        # DAY OF WEEK
         self.dow_checkboxes = []
         dow_frame = QtGui.QFrame()
-        dow_label = QtGui.QLabel("<b>%s</b>"%
-            _("Look for appointments on these days"))
+        dow_label = QtGui.QLabel("<b>%s</b>" %
+                                 _("Look for appointments on these days"))
         dow_label.setAlignment(QtCore.Qt.AlignCenter)
         layout = QtGui.QGridLayout(dow_frame)
-        layout.addWidget(dow_label,0,0,1,7)
+        layout.addWidget(dow_label, 0, 0, 1, 7)
         self.add_dow_checkboxes(layout)
 
-        #JOINT APPOINTMENTS
-        self.joint_appt_checkbox= QtGui.QCheckBox(
+        # JOINT APPOINTMENTS
+        self.joint_appt_checkbox = QtGui.QCheckBox(
             _("Look for Joint Appointments with the hygienist"))
-
 
         self.insertWidget(label)
         self.insertWidget(self.joint_appt_checkbox)
@@ -147,9 +145,9 @@ class BeginMakeApptDialog(BaseDialog):
 
     def add_dow_checkboxes(self, layout):
         for i in range(7):
-            cb = QtGui.QCheckBox(QtCore.QDate.shortDayName(i+1))
+            cb = QtGui.QCheckBox(QtCore.QDate.shortDayName(i + 1))
             cb.setChecked(True)
-            layout.addWidget(cb,1,i)
+            layout.addWidget(cb, 1, i)
             self.dow_checkboxes.append(cb)
 
     @property
@@ -167,7 +165,7 @@ class BeginMakeApptDialog(BaseDialog):
         days = []
         for i in range(7):
             if not self.dow_checkboxes[i].isChecked():
-                days.append(i+1)
+                days.append(i + 1)
         return days
 
     @property
@@ -193,7 +191,7 @@ class BeginMakeApptDialog(BaseDialog):
 
     @property
     def message(self):
-        message = "<body>%s <b>%s</b><br />%s"% (
+        message = "<body>%s <b>%s</b><br />%s" % (
             _("begin making appointment for patient"),
             self.pt.name_id,
             self.appt.html)
