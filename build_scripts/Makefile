@@ -23,6 +23,7 @@ endef
 export USEAGE
 export EXAMPLES
 
+PACKAGE=openmolar
 CURRENT_MAKEFILE_LIST := $(MAKEFILE_LIST)
 BUILD_SCRIPTS_DIR := $(abspath $(dir $(firstword $(CURRENT_MAKEFILE_LIST))))/
 HEAD = $(shell $(BUILD_SCRIPTS_DIR)get_git_branch.py)/
@@ -37,7 +38,7 @@ ifeq ($(NEW_VERSION), )
 	NEW_VERSION=$(VERSION)
 endif
 
-TARBALL = $(PACKAGE)-$(NEW_VERSION).tar.gz
+TARBALL = $(PACKAGE)-$(VERSION).tar.gz
 TARBALL_DIR=$(HEAD)builds/tarballs/
 
 TMP_DIR=$(HEAD)tmp/
@@ -65,7 +66,7 @@ clean_codebase:
 	./code_cleaner.py
 
 git_tag:
-	git tag -a v$(NEW_VERSION) -m "$(NEW_VERSION)"
+	git tag $(FORCE_TAG) -a v$(NEW_VERSION) -m "$(NEW_VERSION)"
 
 version:
 	@echo "modding version.py"
@@ -76,6 +77,7 @@ version:
 
 tarball:
 	echo "making  tarball (using setup.py sdist)"
+	make FORCE_TAG=-f git_tag
 	make clean_tmp
 	cd $(HEAD) ;\
 		python setup.py sdist ;\
