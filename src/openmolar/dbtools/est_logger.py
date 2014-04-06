@@ -72,7 +72,7 @@ class EstLogger(object):
         '''
         add a row to the daybook table, and save state.
         '''
-        if self._write_needed(courseno, est_data):
+        if courseno and self._write_needed(courseno, est_data):
             db = connect()
             cursor = db.cursor()
 
@@ -88,7 +88,7 @@ class EstLogger(object):
             LOGGER.debug("est_logger up to date")
 
     def _write_needed(self, courseno, est_data):
-        return courseno != courseno or est_data != self.est_data
+        return courseno !=self. courseno or est_data != self.est_data
 
 
 def html_history(courseno):
