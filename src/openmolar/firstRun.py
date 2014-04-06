@@ -34,7 +34,7 @@ import MySQLdb
 from PyQt4 import QtGui, QtCore
 from xml.dom import minidom
 
-from openmolar.qt4gui.compiled_uis import Ui_newSetup
+from openmolar.qt4gui.compiled_uis.Ui_newSetup import Ui_MainWindow
 from openmolar.settings import localsettings
 
 blankXML = '''<?xml version="1.1" ?>
@@ -55,16 +55,17 @@ blankXML = '''<?xml version="1.1" ?>
 </settings>'''
 
 
-class newsetup(QtGui.QDialog, Ui_newSetup.Ui_Dialog):
+class NewSetupMainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     '''
     a new setup - creates and saves a config file
     creates a database if required
     loads a demo set of data.
     '''
+    completed = False
 
     def __init__(self, parent=None):
-        super(newsetup, self).__init__(parent)
+        super(NewSetupMainWindow, self).__init__(parent)
         self.setupUi(self)
         self.stackedWidget.setCurrentIndex(0)
         self.PASSWORD = ""
@@ -151,39 +152,38 @@ class newsetup(QtGui.QDialog, Ui_newSetup.Ui_Dialog):
         '''
         i = self.stackedWidget.currentIndex()
 
-        if i == 0:
+        if i == 0:  # welcome screen
             self.stackedWidget.setCurrentIndex(1)
             self.main_password_lineEdit.setFocus()
             self.back_pushButton.show()
 
-        elif i == 1:
+        elif i == 1:  # system password
             p1 = self.main_password_lineEdit.text()
             p2 = self.repeat_password_lineEdit.text()
-            if p1 != p2:
+            if p1 == "":
+                self.advise(_("Password must not be blank!"))
+            elif p1 != p2:
                 self.advise(_("Passwords don't match!"))
             else:
                 self.PASSWORD = self.main_password_lineEdit.text()
                 self.stackedWidget.setCurrentIndex(2)
 
-        elif i == 2:
+        elif i == 2:  # server_location
             self.stackedWidget.setCurrentIndex(3)
 
-        elif i == 3:
+        elif i == 3:  # choose database
             if self.createDemo_radioButton.isChecked():
-                self.stackedWidget.setCurrentIndex(5)
+                self.stackedWidget.setCurrentIndex(4)
                 self.rootPassword_lineEdit.setFocus()
             else:
-                self.stackedWidget.setCurrentIndex(4)
+                self.stackedWidget.setCurrentIndex(6)
                 self.go_pushButton.setFocus()
 
-        elif i == 4:
-            self.finish()
-            if self.checkBox.isChecked():
-                self.accept()
-            else:
-                self.reject()
+        elif i == 6:
+            self.completed = self.finish()
+            QtGui.QApplication.instance().closeAllWindows()
 
-        elif i == 5:
+        elif i == 4:
             self.snapshot()
             result = QtGui.QMessageBox.question(self,
                                                 _("Create Database"),
@@ -196,14 +196,15 @@ class newsetup(QtGui.QDialog, Ui_newSetup.Ui_Dialog):
                 QtGui.QMessageBox.Yes)
 
             if result == QtGui.QMessageBox.Yes:
-                self.stackedWidget.setCurrentIndex(6)
+                self.stackedWidget.setCurrentIndex(5)
                 if self.createDemoDatabase():
                     self.advise(_("Database Created Sucessfully"))
-                    self.stackedWidget.setCurrentIndex(4)
+                    self.stackedWidget.setCurrentIndex(6)
                     self.testDB_pushButton.setEnabled(True)
                     return
             else:
                 self.stackedWidget.setCurrentIndex(3)
+                return
 
             self.advise(_("Database NOT Created"))
             self.stackedWidget.setCurrentIndex(4)
@@ -437,18 +438,28 @@ please recheck your settings'''), True)
                 print '...ok'
                 localsettings.cflocation = localsettings.cflocation
 
-            self.accept()
+            if self.DB == "openmolar_demo":
+                f = open(localsettings.LOGIN_CONF, "w")
+                f.write("[login]\nPASSWORD=%s\nUSER1=NW" % self.PASSWORD)
+                f.close()
+
+            return True
 
         except Exception as e:
             print "error saving settings", e
             QtGui.QMessageBox.warning(self, _("FAILURE"), str(e))
 
+        return False
+
 
 def run():
-    dl = newsetup()
-    return dl.exec_()
-
+    app = QtGui.QApplication.instance()
+    if not app:
+        app = QtGui.QApplication(sys.argv)
+    mw = NewSetupMainWindow()
+    mw.show()
+    app.exec_()
+    return mw.completed
 
 if __name__ == "__main__":
-    app = QtGui.QApplication(sys.argv)
-    run()
+    print run()

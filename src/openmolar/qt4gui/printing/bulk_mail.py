@@ -77,7 +77,7 @@ try:
     PS_TEXT = f.read()
     f.close()
 except IOError:
-    LOGGER.exception("no recall ps found in %s" % filepath)
+    LOGGER.warning("no recall ps found in %s" % filepath)
     PS_TEXT = ""
 
 

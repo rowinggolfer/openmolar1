@@ -22,6 +22,7 @@
 # #                                                                          # #
 # ############################################################################ #
 
+import ConfigParser
 import datetime
 import hashlib
 import logging
@@ -159,6 +160,7 @@ else:
     localFileDirectory = os.path.join(os.environ.get("HOME"), ".openmolar")
 
 cflocation = os.path.join(localFileDirectory, "openmolar.conf")
+LOGIN_CONF = os.path.join(localFileDirectory, "autologin.conf")
 TEMP_PDF = os.path.join(localFileDirectory, "temp.pdf")
 DOCS_DIRECTORY = os.path.join(localFileDirectory, "documents")
 
@@ -694,6 +696,32 @@ def setOperator(u1, u2):
         operator = u1
     else:
         operator = "%s/%s" % (u1, u2)
+
+
+def autologin():
+    '''
+    look in ~/.openmolar/login.conf for login options
+    '''
+    PASSWORD, USER1, USER2 = "", "", ""
+    scp = ConfigParser.SafeConfigParser()
+    scp.read(LOGIN_CONF)
+    try:
+        try:
+            PASSWORD = scp.get("login", "PASSWORD")
+        except ConfigParser.NoOptionError:
+            PASSWORD = ""
+        try:
+            USER1 = scp.get("login", "USER1")
+        except ConfigParser.NoOptionError:
+            pass
+        try:
+            USER2 = scp.get("login", "USER2")
+        except ConfigParser.NoOptionError:
+            pass
+    except ConfigParser.NoSectionError:
+        LOGGER.exception("autologin")
+        pass
+    return PASSWORD, USER1, USER2
 
 
 def getLocalSettings():

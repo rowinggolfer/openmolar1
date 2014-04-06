@@ -123,8 +123,6 @@ def main():
 
     uninitiated = True
 
-    AUTOUSER = ""
-
     def autoreception(arg):  # arg is a QString
         '''
         check to see if the user is special user "rec"
@@ -174,12 +172,11 @@ def main():
         cf_Found = False
 
     if not cf_Found:
-        message = _('''<center><p>
-This appears to be your first running of openMolar<br />
-Before you run this application, we need to generate a settings file.<br />
-So that openmolar knows where your mysql server resides<hr />
-If you do not have a database, you will be prompted to create one<</p>
-Are you ready to proceed?</center>''')
+        message = "<center>%s<br />%s<hr /><em>%s</em></center>" % (
+            _("This appears to be your first running of OpenMolar."),
+            _("We need to generate a settings file."),
+            _("Are you ready to proceed?")
+        )
 
         result = QtGui.QMessageBox.question(None, _("First Run"),
                                             message,
@@ -191,8 +188,6 @@ Are you ready to proceed?</center>''')
             if not firstRun.run():
                 my_app.closeAllWindows()
                 sys.exit()
-            else:
-                AUTOUSER = "user"
         else:
             my_app.closeAllWindows()
             sys.exit()
@@ -203,26 +198,30 @@ Are you ready to proceed?</center>''')
             "system_password")[0].firstChild.data
 
         servernames = dom.getElementsByTagName("connection")
-        
+
         for i, server in enumerate(servernames):
             nameDict = server.attributes
             try:
                 localsettings.server_names.append(nameDict["name"].value)
             except KeyError:
-                localsettings.server_names.append("%d" % i+1)
+                localsettings.server_names.append("%d" % i + 1)
 
     except IOError as e:
-        print "still no settings... %s\nquitting politely" % e
+        LOGGER.warning("still no settings file. quitting politely")
         QtGui.QMessageBox.information(None, _("Unable to Run OpenMolar"),
                                       _("Good Bye!"))
 
-        my_app.closeAllWindows()
+        QtGui.QApplication.instance().closeAllWindows()
         sys.exit("unable to run - openMolar couldn't find a settings file")
 
     my_dialog = QtGui.QDialog()
     dl = Ui_startscreen.Ui_Dialog()
     dl.setupUi(my_dialog)
-    dl.user1_lineEdit.setText(AUTOUSER)
+
+    PASSWORD, USER1, USER2 = localsettings.autologin()
+    dl.password_lineEdit.setText(PASSWORD)
+    dl.user1_lineEdit.setText(USER1)
+    dl.user2_lineEdit.setText(USER2)
 
     servermenu = QtGui.QMenu()
     dl.chosenServer = 0
@@ -244,7 +243,8 @@ Are you ready to proceed?</center>''')
                            QtCore.SIGNAL("textEdited (const QString&)"), autoreception)
 
     while True:
-        if my_dialog.exec_():
+        if (PASSWORD != "" and USER1 != "") or my_dialog.exec_():
+            PASSWORD = ""
 
             changedServer = localsettings.chosenserver != dl.chosenServer
 
@@ -314,7 +314,7 @@ Are you ready to proceed?</center>''')
                 break
         else:
             break
-    my_app.closeAllWindows()
+    QtGui.QApplication.instance().closeAllWindows()
 
 
 def setup(argv):
@@ -331,12 +331,14 @@ def usage():
     called by --help, bad arguments, or no arguments
     simply importing the localsettings will display some system info
     '''
-    from openmolar.settings import localsettings
-    print '''command line options are as follows
---help    \tshow this text
---firstrun\toffer the firstrun config and demodatabase generation
---setup   \ttakes you to the admin page
---version \tshow the versioning and exit'''
+    print '''
+command line options are as follows
+--help               \t : show this text
+--firstrun           \t : offer the firstrun config and demodatabase generation
+--ignore-schema-check\t : proceed even if client and database versions clash (NOT ADVISABLE!)
+--setup              \t : takes you to the admin page
+--version            \t : show the versioning and exit
+'''
 
 
 def version():
@@ -356,10 +358,10 @@ def run():
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], SHORTARGS, LONGARGS)
     except getopt.GetoptError as exc:
-        # print help information and exit:
-        LOGGER.exception("FATAL ERROR - config file not parseable!")
-        # above will print something like "option -foo not recognized"
-        sys.exit(2)
+        print
+        print exc
+        print
+        opts = (("--help", ""),)
 
     # some backward compatibility stuff here...
     if "setup" in sys.argv:
@@ -390,7 +392,7 @@ def run():
 
 if __name__ == "__main__":
     #-- put "openmolar" on the pyth path and go....
-    LOGGER.debug("starting openMolar.... using main.py as __main__")
+    LOGGER.info("starting openMolar.... using main.py as __main__")
 
     def determine_path():
         """Borrowed from wxglade.py"""
@@ -408,5 +410,4 @@ if __name__ == "__main__":
 
     wkdir = determine_path()
     sys.path.insert(0, os.path.dirname(wkdir))
-    print sys.path
     run()
