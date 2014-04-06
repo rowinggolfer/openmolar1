@@ -6,7 +6,7 @@ USAGE
 
 TARGETS
    version
-   git-tag
+   git_tag
    tarball
    
 EXAMPLES
@@ -30,13 +30,13 @@ EXAMPLES
 usual steps for a release would be as follows.
 	make NEW_VERSION=0.5.1 version
 	git commit -a
+	git push
 	make git-tag
 	make tarball
 
 endef
 	
 export USEAGE
-export EXAMPLES
 
 PACKAGE=openmolar
 CURRENT_MAKEFILE_LIST := $(MAKEFILE_LIST)
@@ -59,7 +59,6 @@ endif
 
 
 TARBALL = $(PACKAGE)-$(VERSION).tar.gz
-TARBALL_DIR=$(HEAD)builds/tarballs/
 
 TMP_DIR=$(HEAD)tmp/
 
@@ -102,15 +101,15 @@ tarball:
 	cd $(HEAD) ;\
 		python setup.py sdist ;\
 	echo "tarball created!"
-	mkdir -p $(TARBALL_DIR)
-	echo "moving tarball to $(TARBALL_DIR)"
-	cp -av $(DIST_DIR)$(TARBALL) $(TARBALL_DIR);
-	@echo "tarball is located $(TARBALL_DIR)$(TARBALL)"
+	mkdir -p $(BUILDS_DIR)
+	echo "moving tarball to $(BUILDS_DIR)"
+	cp -av $(DIST_DIR)$(TARBALL) $(BUILDS_DIR);
+	@echo "tarball is located $(BUILDS_DIR)$(TARBALL)"
 
-	@if [ -e "$(TARBALL_DIR)$(TARBALL)" ]; then echo "SUCCESS!"; fi
+	@if [ -e "$(BUILDS_DIR)$(TARBALL)" ]; then echo "SUCCESS!"; fi
 	
 sign_tarball:
-	cd $(TARBALL_DIR) ;\
+	cd $(BUILDS_DIR) ;\
 	gpg --armor --sign --detach-sig -u rowinggolfer@googlemail.com $(TARBALL) ;\
 	md5sum $(TARBALL) | sed "s/ .*//" > $(PACKAGE)-$(VERSION)_md5.txt 	
 	
