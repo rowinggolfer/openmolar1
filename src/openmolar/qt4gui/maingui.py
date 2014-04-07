@@ -1077,11 +1077,10 @@ class OpenmolarGui(QtGui.QMainWindow):
         cycle forwards through the list of recently visited records
         '''
         desiredPos = localsettings.recent_sno_index + 1
-        if len(localsettings.recent_snos) > desiredPos:
+        try:
             self.getrecord(localsettings.recent_snos[desiredPos],
                            addToRecentSnos=False)
-            localsettings.recent_sno_index = desiredPos
-        else:
+        except IndexError:
             self.advise(_("Reached end of the List"))
 
     def last_patient(self):
@@ -1095,7 +1094,6 @@ class OpenmolarGui(QtGui.QMainWindow):
         if len(localsettings.recent_snos) > desiredPos >= 0:
             self.getrecord(localsettings.recent_snos[desiredPos],
                            addToRecentSnos=False)
-            localsettings.recent_sno_index = desiredPos
         else:
             self.advise(_("Reached Start of the List"))
 
@@ -1152,6 +1150,19 @@ class OpenmolarGui(QtGui.QMainWindow):
         if self.enteringNewPatient() or serialno in (0, None):
             return
 
+        if addToRecentSnos:
+            try:
+                localsettings.recent_snos.remove(serialno)
+            except ValueError:
+                pass
+            localsettings.recent_snos.append(serialno)
+        localsettings.recent_sno_index = localsettings.recent_snos.index(
+            serialno)
+
+        self.ui.backButton.setEnabled(localsettings.recent_sno_index > 0)
+        self.ui.nextButton.setEnabled(
+            localsettings.recent_sno_index < len(localsettings.recent_snos) - 1)
+
         if (self.pt and serialno == self.pt.serialno and not newPatientReload):
             self.ui.main_tabWidget.setCurrentIndex(0)
             self.advise(_("Patient already loaded"))
@@ -1159,10 +1170,6 @@ class OpenmolarGui(QtGui.QMainWindow):
             print "not loading"
             self.advise(_("Not loading patient"))
         else:
-            if addToRecentSnos:
-                localsettings.recent_snos.append(serialno)
-                localsettings.recent_sno_index = len(
-                    localsettings.recent_snos) - 1
             try:
                 self.pt = patient_class.patient(serialno)
                 self.pt_diary_widget.set_patient(self.pt)
