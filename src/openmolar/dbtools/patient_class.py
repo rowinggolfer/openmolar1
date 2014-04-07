@@ -94,7 +94,7 @@ patientTableVals = (
 bpeTableAtts = ('bpedate', 'bpe')
 bpeTableVals = (nullDate, '', ())
 
-perioTableAtts = ('chartdate', 'bpe', 'chartdata', 'flag')
+perioTableAtts = ('chartdate', 'chartdata')
 
 mnhistTableAtts = ('chgdate', 'ix', 'note')
 
@@ -686,6 +686,9 @@ class patient(object):
         self.money2 = 0
         self.money3 = 0
         self.money8 = 0
+
+        self.dbstate.money0 = 0
+        self.dbstate.money1 = 0
 
     def nhs_claims(self, completed_only=True):
         claims = []
