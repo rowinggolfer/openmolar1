@@ -24,8 +24,11 @@
 
 import logging
 import re
+import socket
 import urllib2
 from xml.dom import minidom
+from xml.parsers.expat import ExpatError
+
 from PyQt4 import QtGui, QtCore
 
 if __name__ == "__main__":
@@ -99,6 +102,8 @@ class ChildSmileDialog(BaseDialog):
 
         self.pcde_le.textEdited.connect(self.check_pcde)
 
+        self._simd = None
+
     @property
     def pcde(self):
         try:
@@ -122,67 +127,81 @@ class ChildSmileDialog(BaseDialog):
             self.simd_label.setText("")
             self.enableApply(False)
 
-    def check_hung(self):
-        '''
-        this is called by a timout of the web polling
-        '''
-        if self.is_checking_website:
-            QtGui.QApplication.instance().restoreOverrideCursor()
-            QtGui.QMessageBox.warning(self, "error",
-                                      "unable to poll NHS website")
-            self.reject()
-            return
-
     def simd_lookup(self):
         '''
         poll the server for a simd for a postcode
         '''
+        QtGui.QApplication.instance().processEvents()
         global TODAYS_LOOKUPS
         try:
             self.result = TODAYS_LOOKUPS[self.pcde]
-            self.simd_label.setText(self.result)
+            self.simd_label.setText("%s %s" % (_("KNOWN SIMD"), self.result))
             self.enableApply(True)
             LOGGER.debug("simd_lookup unnecessary, value known")
             return
         except KeyError:
             pass
-        try:
-            self.is_checking_website = True
-            QtCore.QTimer.singleShot(15000, self.check_hung)
 
-            self.header_label.setText(_("Polling website with Postcode"))
+        self.header_label.setText(_("Polling website with Postcode"))
+
+        pcde = self.pcde.replace(" ", "%20")
+
+        url = "%s?pCode=%s" % (LOOKUP_URL, pcde)
+
+        try:
             QtGui.QApplication.instance().setOverrideCursor(
                 QtCore.Qt.WaitCursor)
-
-            pcde = self.pcde.replace(" ", "%20")
-
-            url = "%s?pCode=%s" % (LOOKUP_URL, pcde)
-
             req = urllib2.Request(url)
-            response = urllib2.urlopen(req)
+            response = urllib2.urlopen(req, timeout=10)
             result = response.read()
             self.result = self._parse_result(result)
-            TODAYS_LOOKUPS[self.pcde] = self.result
-            self.simd_label.setText(self.result)
+        except urllib2.URLError as exc:
+            raise socket.timeout(exc)
+            LOGGER.error("url error polling NHS website?")
+            self.result = _("Error polling website")
+        except socket.timeout as e:
+            LOGGER.error("timeout error polling NHS website?")
+            self.result = _("Timeout polling website")
+        finally:
+            QtGui.QApplication.instance().restoreOverrideCursor()
 
-            self.enableApply(True)
-            self.is_checking_website = False
-            QtGui.QApplication.instance().restoreOverrideCursor()
-        except Exception as exc:
-            LOGGER.exception("error polling NHS website?")
-            QtGui.QApplication.instance().restoreOverrideCursor()
-            QtGui.QMessageBox.warning(self, "error",
-                                      "unable to poll NHS website")
-            self.reject()
+        self.simd_label.setText("%s = %s" % (_("RESULT"), self.result))
+        QtGui.QApplication.instance().processEvents()
+
+        TODAYS_LOOKUPS[self.pcde] = "SIMD: %s" % self.simd_number
+        self.enableApply(self.simd_number is not None)
+
+        self.header_label.setText("SIMD %d" % self.simd_number)
 
     def _parse_result(self, result):
-        dom = minidom.parseString(result)
-        e = dom.getElementsByTagName("span")[0]
-        return e.firstChild.data
+        try:
+            dom = minidom.parseString(result)
+            e = dom.getElementsByTagName("span")[0]
+            return e.firstChild.data
+        except ExpatError:
+            return "UNDECIPHERABLE REPLY"
+
+    def manual_entry(self):
+        simd, result = QtGui.QInputDialog.getInteger(self,
+                                                     _(
+                                                     "Manual Input Required"),
+                                                     _(
+                                                     "Online lookup has failed, please enter the SIMD manually"),
+                                                     4, 1, 4)
+        if not result:
+            self.reject()
+        return simd
 
     @property
     def simd_number(self):
-        return int(re.search("(\d+)", self.result).groups()[0])
+        if self._simd is None:
+            m = re.search("(\d+)", self.result)
+            if m:
+                self._simd = int(m.groups()[0])
+            else:
+                self._simd = 4
+                self._simd = self.manual_entry()
+        return self._simd
 
     @property
     def tbi_performed(self):
@@ -227,8 +246,8 @@ class ChildSmileDialog(BaseDialog):
                 yield ("other", "CSFL")
 
     def exec_(self):
-        self.check_pcde()
-        QtCore.QTimer.singleShot(100, self.postcode_warning)
+        QtCore.QTimer.singleShot(100, self.check_pcde)
+        QtCore.QTimer.singleShot(500, self.postcode_warning)
 
         if BaseDialog.exec_(self):
             if self.valid_postcode:
