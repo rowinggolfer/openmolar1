@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/main.ui'
 #
-# Created: Wed Mar 26 16:50:07 2014
+# Created: Tue Apr  8 13:30:28 2014
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -283,7 +283,7 @@ class Ui_MainWindow(object):
         self.scrollArea_4.setObjectName(_fromUtf8("scrollArea_4"))
         self.scrollAreaWidgetContents_7 = QtGui.QWidget()
         self.scrollAreaWidgetContents_7.setGeometry(
-            QtCore.QRect(0, 0, 469, 462))
+            QtCore.QRect(0, -188, 743, 601))
         self.scrollAreaWidgetContents_7.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_7"))
         self.verticalLayout_6 = QtGui.QVBoxLayout(
@@ -607,9 +607,39 @@ class Ui_MainWindow(object):
         self.tel2Edit.setMaxLength(30)
         self.tel2Edit.setObjectName(_fromUtf8("tel2Edit"))
         self.gridLayout_2.addWidget(self.tel2Edit, 1, 5, 1, 2)
-        self.highlighted_fields_label = QtGui.QLabel(self.patientEdit_groupBox)
+        self.verticalLayout_6.addWidget(self.patientEdit_groupBox)
+        self.new_patient_frame = QtGui.QFrame(self.scrollAreaWidgetContents_7)
+        self.new_patient_frame.setFrameShape(QtGui.QFrame.NoFrame)
+        self.new_patient_frame.setFrameShadow(QtGui.QFrame.Raised)
+        self.new_patient_frame.setObjectName(_fromUtf8("new_patient_frame"))
+        self.gridLayout_12 = QtGui.QGridLayout(self.new_patient_frame)
+        self.gridLayout_12.setObjectName(_fromUtf8("gridLayout_12"))
+        self.abort_new_patient_pushButton = QtGui.QPushButton(
+            self.new_patient_frame)
         sizePolicy = QtGui.QSizePolicy(
             QtGui.QSizePolicy.Expanding,
+            QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.abort_new_patient_pushButton.sizePolicy(
+            ).hasHeightForWidth(
+            ))
+        self.abort_new_patient_pushButton.setSizePolicy(sizePolicy)
+        self.abort_new_patient_pushButton.setMinimumSize(QtCore.QSize(0, 100))
+        icon = QtGui.QIcon.fromTheme(_fromUtf8("window-close"))
+        self.abort_new_patient_pushButton.setIcon(icon)
+        self.abort_new_patient_pushButton.setObjectName(
+            _fromUtf8("abort_new_patient_pushButton"))
+        self.gridLayout_12.addWidget(
+            self.abort_new_patient_pushButton,
+            2,
+            0,
+            1,
+            1)
+        self.highlighted_fields_label = QtGui.QLabel(self.new_patient_frame)
+        sizePolicy = QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Preferred,
             QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -619,8 +649,46 @@ class Ui_MainWindow(object):
         self.highlighted_fields_label.setAlignment(QtCore.Qt.AlignCenter)
         self.highlighted_fields_label.setObjectName(
             _fromUtf8("highlighted_fields_label"))
-        self.gridLayout_2.addWidget(self.highlighted_fields_label, 10, 0, 1, 8)
-        self.verticalLayout_6.addWidget(self.patientEdit_groupBox)
+        self.gridLayout_12.addWidget(self.highlighted_fields_label, 0, 0, 1, 3)
+        self.save_new_patient_pushButton = QtGui.QPushButton(
+            self.new_patient_frame)
+        sizePolicy = QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Expanding,
+            QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.save_new_patient_pushButton.sizePolicy().hasHeightForWidth())
+        self.save_new_patient_pushButton.setSizePolicy(sizePolicy)
+        self.save_new_patient_pushButton.setMinimumSize(QtCore.QSize(0, 100))
+        self.save_new_patient_pushButton.setToolTip(_fromUtf8(""))
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(
+            QtGui.QPixmap(_fromUtf8(":/save_all.png")),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
+        self.save_new_patient_pushButton.setIcon(icon9)
+        self.save_new_patient_pushButton.setObjectName(
+            _fromUtf8("save_new_patient_pushButton"))
+        self.gridLayout_12.addWidget(
+            self.save_new_patient_pushButton,
+            2,
+            2,
+            1,
+            1)
+        spacerItem = QtGui.QSpacerItem(
+            20,
+            40,
+            QtGui.QSizePolicy.Minimum,
+            QtGui.QSizePolicy.Expanding)
+        self.gridLayout_12.addItem(spacerItem, 1, 0, 1, 1)
+        spacerItem1 = QtGui.QSpacerItem(
+            20,
+            40,
+            QtGui.QSizePolicy.Minimum,
+            QtGui.QSizePolicy.Expanding)
+        self.gridLayout_12.addItem(spacerItem1, 3, 0, 1, 3)
+        self.verticalLayout_6.addWidget(self.new_patient_frame)
         self.family_groupBox = QtGui.QGroupBox(self.scrollAreaWidgetContents_7)
         sizePolicy = QtGui.QSizePolicy(
             QtGui.QSizePolicy.Preferred,
@@ -672,12 +740,12 @@ class Ui_MainWindow(object):
         self.cseType_comboBox.setMaximumSize(QtCore.QSize(50, 16777215))
         self.cseType_comboBox.setObjectName(_fromUtf8("cseType_comboBox"))
         self.gridLayout_13.addWidget(self.cseType_comboBox, 0, 4, 1, 1)
-        spacerItem = QtGui.QSpacerItem(
+        spacerItem2 = QtGui.QSpacerItem(
             368,
             20,
             QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Minimum)
-        self.gridLayout_13.addItem(spacerItem, 0, 5, 1, 1)
+        self.gridLayout_13.addItem(spacerItem2, 0, 5, 1, 1)
         self.frame_19 = QtGui.QFrame(self.tab_patient_contract)
         self.frame_19.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame_19.setFrameShadow(QtGui.QFrame.Raised)
@@ -690,12 +758,12 @@ class Ui_MainWindow(object):
         self.status_comboBox = QtGui.QComboBox(self.frame_19)
         self.status_comboBox.setObjectName(_fromUtf8("status_comboBox"))
         self.verticalLayout_17.addWidget(self.status_comboBox)
-        spacerItem1 = QtGui.QSpacerItem(
+        spacerItem3 = QtGui.QSpacerItem(
             20,
             242,
             QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_17.addItem(spacerItem1)
+        self.verticalLayout_17.addItem(spacerItem3)
         self.badDebt_pushButton = QtGui.QPushButton(self.frame_19)
         self.badDebt_pushButton.setEnabled(False)
         self.badDebt_pushButton.setObjectName(_fromUtf8("badDebt_pushButton"))
@@ -719,12 +787,12 @@ class Ui_MainWindow(object):
         self.label_38.setAlignment(QtCore.Qt.AlignCenter)
         self.label_38.setObjectName(_fromUtf8("label_38"))
         self.gridLayout_26.addWidget(self.label_38, 0, 1, 1, 1)
-        spacerItem2 = QtGui.QSpacerItem(
+        spacerItem4 = QtGui.QSpacerItem(
             147,
             281,
             QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Expanding)
-        self.gridLayout_26.addItem(spacerItem2, 1, 1, 1, 1)
+        self.gridLayout_26.addItem(spacerItem4, 1, 1, 1, 1)
         self.editPriv_pushButton = QtGui.QPushButton(self.tab_18)
         self.editPriv_pushButton.setMaximumSize(QtCore.QSize(150, 16777215))
         self.editPriv_pushButton.setObjectName(
@@ -740,12 +808,12 @@ class Ui_MainWindow(object):
         self.contractHDP_label.setWordWrap(True)
         self.contractHDP_label.setObjectName(_fromUtf8("contractHDP_label"))
         self.gridLayout_25.addWidget(self.contractHDP_label, 0, 0, 2, 1)
-        spacerItem3 = QtGui.QSpacerItem(
+        spacerItem5 = QtGui.QSpacerItem(
             108,
             162,
             QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Expanding)
-        self.gridLayout_25.addItem(spacerItem3, 1, 1, 1, 1)
+        self.gridLayout_25.addItem(spacerItem5, 1, 1, 1, 1)
         self.editHDP_pushButton = QtGui.QPushButton(self.tab_19)
         self.editHDP_pushButton.setMaximumSize(QtCore.QSize(150, 16777215))
         self.editHDP_pushButton.setObjectName(_fromUtf8("editHDP_pushButton"))
@@ -779,12 +847,12 @@ class Ui_MainWindow(object):
         self.nhsclaims_pushButton.setObjectName(
             _fromUtf8("nhsclaims_pushButton"))
         self.verticalLayout_26.addWidget(self.nhsclaims_pushButton)
-        spacerItem4 = QtGui.QSpacerItem(
+        spacerItem6 = QtGui.QSpacerItem(
             20,
             40,
             QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_26.addItem(spacerItem4)
+        self.verticalLayout_26.addItem(spacerItem6)
         self.editNHS_pushButton = QtGui.QPushButton(self.tab_20)
         self.editNHS_pushButton.setMaximumSize(QtCore.QSize(150, 16777215))
         self.editNHS_pushButton.setObjectName(_fromUtf8("editNHS_pushButton"))
@@ -819,12 +887,12 @@ class Ui_MainWindow(object):
         self.contractHDP_label_3.setObjectName(
             _fromUtf8("contractHDP_label_3"))
         self.gridLayout_27.addWidget(self.contractHDP_label_3, 0, 0, 2, 1)
-        spacerItem5 = QtGui.QSpacerItem(
+        spacerItem7 = QtGui.QSpacerItem(
             147,
             281,
             QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Expanding)
-        self.gridLayout_27.addItem(spacerItem5, 1, 1, 1, 1)
+        self.gridLayout_27.addItem(spacerItem7, 1, 1, 1, 1)
         self.editRegDent_pushButton = QtGui.QPushButton(self.tab_21)
         self.editRegDent_pushButton.setMaximumSize(QtCore.QSize(150, 16777215))
         self.editRegDent_pushButton.setObjectName(
@@ -845,7 +913,7 @@ class Ui_MainWindow(object):
         self.scrollArea_5.setObjectName(_fromUtf8("scrollArea_5"))
         self.scrollAreaWidgetContents_8 = QtGui.QWidget()
         self.scrollAreaWidgetContents_8.setGeometry(
-            QtCore.QRect(0, 0, 423, 421))
+            QtCore.QRect(0, 0, 725, 421))
         self.scrollAreaWidgetContents_8.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_8"))
         self.gridLayout = QtGui.QGridLayout(self.scrollAreaWidgetContents_8)
@@ -998,12 +1066,12 @@ class Ui_MainWindow(object):
             _fromUtf8("importDoc_pushButton"))
         self.verticalLayout_21.addWidget(self.importDoc_pushButton)
         self.gridLayout.addWidget(self.groupBox_3, 0, 2, 6, 1)
-        spacerItem6 = QtGui.QSpacerItem(
+        spacerItem8 = QtGui.QSpacerItem(
             20,
             40,
             QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem6, 3, 0, 2, 2)
+        self.gridLayout.addItem(spacerItem8, 3, 0, 2, 2)
         self.groupBox_9 = QtGui.QGroupBox(self.scrollAreaWidgetContents_8)
         self.groupBox_9.setObjectName(_fromUtf8("groupBox_9"))
         self.verticalLayout_19 = QtGui.QVBoxLayout(self.groupBox_9)
@@ -1038,7 +1106,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setObjectName(_fromUtf8("scrollArea_2"))
         self.scrollAreaWidgetContents_5 = QtGui.QWidget()
         self.scrollAreaWidgetContents_5.setGeometry(
-            QtCore.QRect(0, 0, 283, 470))
+            QtCore.QRect(0, 0, 745, 470))
         self.scrollAreaWidgetContents_5.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_5"))
         self.horizontalLayout_26 = QtGui.QHBoxLayout(
@@ -1098,12 +1166,12 @@ class Ui_MainWindow(object):
             self.reception_groupBox)
         self.printAccount_pushButton.setMaximumSize(
             QtCore.QSize(16777215, 16777215))
-        icon9 = QtGui.QIcon()
-        icon9.addPixmap(
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(
             QtGui.QPixmap(_fromUtf8(":/ps.png")),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.printAccount_pushButton.setIcon(icon9)
+        self.printAccount_pushButton.setIcon(icon10)
         self.printAccount_pushButton.setObjectName(
             _fromUtf8("printAccount_pushButton"))
         self.gridLayout_3.addWidget(self.printAccount_pushButton, 5, 1, 1, 1)
@@ -1111,12 +1179,12 @@ class Ui_MainWindow(object):
             self.reception_groupBox)
         self.takePayment_pushButton.setMaximumSize(
             QtCore.QSize(16777215, 16777215))
-        icon10 = QtGui.QIcon()
-        icon10.addPixmap(
+        icon11 = QtGui.QIcon()
+        icon11.addPixmap(
             QtGui.QPixmap(_fromUtf8(":/vcard.png")),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.takePayment_pushButton.setIcon(icon10)
+        self.takePayment_pushButton.setIcon(icon11)
         self.takePayment_pushButton.setObjectName(
             _fromUtf8("takePayment_pushButton"))
         self.gridLayout_3.addWidget(self.takePayment_pushButton, 6, 1, 1, 1)
@@ -1139,16 +1207,16 @@ class Ui_MainWindow(object):
         self.printEst_pushButton = QtGui.QPushButton(self.reception_groupBox)
         self.printEst_pushButton.setMaximumSize(
             QtCore.QSize(16777215, 16777215))
-        self.printEst_pushButton.setIcon(icon9)
+        self.printEst_pushButton.setIcon(icon10)
         self.printEst_pushButton.setObjectName(
             _fromUtf8("printEst_pushButton"))
         self.gridLayout_3.addWidget(self.printEst_pushButton, 4, 1, 1, 1)
-        spacerItem7 = QtGui.QSpacerItem(
+        spacerItem9 = QtGui.QSpacerItem(
             20,
             40,
             QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Expanding)
-        self.gridLayout_3.addItem(spacerItem7, 2, 1, 1, 1)
+        self.gridLayout_3.addItem(spacerItem9, 2, 1, 1, 1)
         self.horizontalLayout_32.addLayout(self.gridLayout_3)
         self.groupBox_recnotes = QtGui.QGroupBox(self.splitter_2)
         sizePolicy = QtGui.QSizePolicy(
@@ -1335,22 +1403,22 @@ class Ui_MainWindow(object):
         self.closeCourse_pushButton.setObjectName(
             _fromUtf8("closeCourse_pushButton"))
         self.horizontalLayout_13.addWidget(self.closeCourse_pushButton)
-        spacerItem8 = QtGui.QSpacerItem(
+        spacerItem10 = QtGui.QSpacerItem(
             28,
             17,
             QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_13.addItem(spacerItem8)
+        self.horizontalLayout_13.addItem(spacerItem10)
         self.childsmile_button = QtGui.QPushButton(
             self.scrollAreaWidgetContents_9)
         self.childsmile_button.setObjectName(_fromUtf8("childsmile_button"))
         self.horizontalLayout_13.addWidget(self.childsmile_button)
-        spacerItem9 = QtGui.QSpacerItem(
+        spacerItem11 = QtGui.QSpacerItem(
             40,
             20,
             QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_13.addItem(spacerItem9)
+        self.horizontalLayout_13.addItem(spacerItem11)
         self.medNotes_pushButton = QtGui.QPushButton(
             self.scrollAreaWidgetContents_9)
         self.medNotes_pushButton.setMinimumSize(QtCore.QSize(200, 0))
@@ -1399,12 +1467,12 @@ class Ui_MainWindow(object):
             _fromUtf8("notes_includeMetadata_checkBox"))
         self.horizontalLayout_35.addWidget(self.notes_includeMetadata_checkBox)
         self.gridLayout_6.addLayout(self.horizontalLayout_35, 3, 0, 1, 1)
-        spacerItem10 = QtGui.QSpacerItem(
+        spacerItem12 = QtGui.QSpacerItem(
             40,
             20,
             QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Minimum)
-        self.gridLayout_6.addItem(spacerItem10, 3, 1, 1, 1)
+        self.gridLayout_6.addItem(spacerItem12, 3, 1, 1, 1)
         self.summary_notes_checkBox = QtGui.QCheckBox(self.tab_patient_notes)
         self.summary_notes_checkBox.setObjectName(
             _fromUtf8("summary_notes_checkBox"))
@@ -1580,7 +1648,7 @@ class Ui_MainWindow(object):
             _fromUtf8("estimate_scrollArea"))
         self.scrollAreaWidgetContents_11 = QtGui.QWidget()
         self.scrollAreaWidgetContents_11.setGeometry(
-            QtCore.QRect(0, 0, 98, 200))
+            QtCore.QRect(0, 0, 532, 383))
         self.scrollAreaWidgetContents_11.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_11"))
         self.horizontalLayout_19 = QtGui.QHBoxLayout(
@@ -1603,7 +1671,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_4 = QtGui.QWidget()
         self.scrollAreaWidgetContents_4.setGeometry(
-            QtCore.QRect(0, 0, 139, 212))
+            QtCore.QRect(0, 0, 198, 383))
         self.scrollAreaWidgetContents_4.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_4"))
         self.verticalLayout_9 = QtGui.QVBoxLayout(
@@ -1630,12 +1698,12 @@ class Ui_MainWindow(object):
         self.apply_exemption_pushButton.setObjectName(
             _fromUtf8("apply_exemption_pushButton"))
         self.verticalLayout_9.addWidget(self.apply_exemption_pushButton)
-        spacerItem11 = QtGui.QSpacerItem(
+        spacerItem13 = QtGui.QSpacerItem(
             20,
             40,
             QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_9.addItem(spacerItem11)
+        self.verticalLayout_9.addItem(spacerItem13)
         self.label_22 = QtGui.QLabel(self.scrollAreaWidgetContents_4)
         self.label_22.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.label_22.setAlignment(QtCore.Qt.AlignCenter)
@@ -1664,7 +1732,7 @@ class Ui_MainWindow(object):
             _fromUtf8("perioCharts_scrollArea"))
         self.scrollAreaWidgetContents_6 = QtGui.QWidget()
         self.scrollAreaWidgetContents_6.setGeometry(
-            QtCore.QRect(0, 0, 252, 374))
+            QtCore.QRect(0, 0, 740, 385))
         self.scrollAreaWidgetContents_6.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_6"))
         self.gridLayout_15 = QtGui.QGridLayout(self.scrollAreaWidgetContents_6)
@@ -1851,16 +1919,16 @@ class Ui_MainWindow(object):
             ).hasHeightForWidth(
             ))
         self.historyPrint_pushButton.setSizePolicy(sizePolicy)
-        self.historyPrint_pushButton.setIcon(icon9)
+        self.historyPrint_pushButton.setIcon(icon10)
         self.historyPrint_pushButton.setObjectName(
             _fromUtf8("historyPrint_pushButton"))
         self.verticalLayout_25.addWidget(self.historyPrint_pushButton)
-        spacerItem12 = QtGui.QSpacerItem(
+        spacerItem14 = QtGui.QSpacerItem(
             20,
             123,
             QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_25.addItem(spacerItem12)
+        self.verticalLayout_25.addItem(spacerItem14)
         self.line_3 = QtGui.QFrame(self.frame_3)
         self.line_3.setFrameShape(QtGui.QFrame.HLine)
         self.line_3.setFrameShadow(QtGui.QFrame.Sunken)
@@ -1887,16 +1955,16 @@ class Ui_MainWindow(object):
         self.verticalLayout_25.addWidget(self.ptAtts_checkBox)
         self.horizontalLayout_29.addWidget(self.frame_3)
         self.tabWidget.addTab(self.tab_patient_history, _fromUtf8(""))
-        self.frame = QtGui.QFrame(self.splitter_patient)
-        self.frame.setMinimumSize(QtCore.QSize(0, 80))
-        self.frame.setFrameShape(QtGui.QFrame.NoFrame)
-        self.frame.setFrameShadow(QtGui.QFrame.Raised)
-        self.frame.setObjectName(_fromUtf8("frame"))
-        self.gridLayout_7 = QtGui.QGridLayout(self.frame)
+        self.new_notes_frame = QtGui.QFrame(self.splitter_patient)
+        self.new_notes_frame.setMinimumSize(QtCore.QSize(0, 80))
+        self.new_notes_frame.setFrameShape(QtGui.QFrame.NoFrame)
+        self.new_notes_frame.setFrameShadow(QtGui.QFrame.Raised)
+        self.new_notes_frame.setObjectName(_fromUtf8("new_notes_frame"))
+        self.gridLayout_7 = QtGui.QGridLayout(self.new_notes_frame)
         self.gridLayout_7.setMargin(0)
         self.gridLayout_7.setSpacing(3)
         self.gridLayout_7.setObjectName(_fromUtf8("gridLayout_7"))
-        self.line = QtGui.QFrame(self.frame)
+        self.line = QtGui.QFrame(self.new_notes_frame)
         sizePolicy = QtGui.QSizePolicy(
             QtGui.QSizePolicy.Fixed,
             QtGui.QSizePolicy.Preferred)
@@ -1909,7 +1977,7 @@ class Ui_MainWindow(object):
         self.line.setFrameShadow(QtGui.QFrame.Sunken)
         self.line.setObjectName(_fromUtf8("line"))
         self.gridLayout_7.addWidget(self.line, 0, 1, 3, 1)
-        self.scrollArea_8 = QtGui.QScrollArea(self.frame)
+        self.scrollArea_8 = QtGui.QScrollArea(self.new_notes_frame)
         sizePolicy = QtGui.QSizePolicy(
             QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Preferred)
@@ -1951,7 +2019,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_20.addWidget(self.hiddenNotes_label)
         self.scrollArea_8.setWidget(self.scrollAreaWidgetContents_13)
         self.gridLayout_7.addWidget(self.scrollArea_8, 0, 2, 3, 1)
-        self.label_39 = QtGui.QLabel(self.frame)
+        self.label_39 = QtGui.QLabel(self.new_notes_frame)
         sizePolicy = QtGui.QSizePolicy(
             QtGui.QSizePolicy.Preferred,
             QtGui.QSizePolicy.Preferred)
@@ -1962,7 +2030,7 @@ class Ui_MainWindow(object):
         self.label_39.setSizePolicy(sizePolicy)
         self.label_39.setObjectName(_fromUtf8("label_39"))
         self.gridLayout_7.addWidget(self.label_39, 0, 4, 1, 1)
-        self.line_2 = QtGui.QFrame(self.frame)
+        self.line_2 = QtGui.QFrame(self.new_notes_frame)
         sizePolicy = QtGui.QSizePolicy(
             QtGui.QSizePolicy.Fixed,
             QtGui.QSizePolicy.Preferred)
@@ -1975,17 +2043,17 @@ class Ui_MainWindow(object):
         self.line_2.setFrameShadow(QtGui.QFrame.Sunken)
         self.line_2.setObjectName(_fromUtf8("line_2"))
         self.gridLayout_7.addWidget(self.line_2, 0, 5, 3, 1)
-        self.phraseBook_pushButton = QtGui.QPushButton(self.frame)
-        icon11 = QtGui.QIcon()
-        icon11.addPixmap(
+        self.phraseBook_pushButton = QtGui.QPushButton(self.new_notes_frame)
+        icon12 = QtGui.QIcon()
+        icon12.addPixmap(
             QtGui.QPixmap(_fromUtf8(":/txt.png")),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.phraseBook_pushButton.setIcon(icon11)
+        self.phraseBook_pushButton.setIcon(icon12)
         self.phraseBook_pushButton.setObjectName(
             _fromUtf8("phraseBook_pushButton"))
         self.gridLayout_7.addWidget(self.phraseBook_pushButton, 2, 4, 1, 1)
-        self.saveButton = QtGui.QPushButton(self.frame)
+        self.saveButton = QtGui.QPushButton(self.new_notes_frame)
         sizePolicy = QtGui.QSizePolicy(
             QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Preferred)
@@ -1995,15 +2063,10 @@ class Ui_MainWindow(object):
             self.saveButton.sizePolicy().hasHeightForWidth())
         self.saveButton.setSizePolicy(sizePolicy)
         self.saveButton.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        icon12 = QtGui.QIcon()
-        icon12.addPixmap(
-            QtGui.QPixmap(_fromUtf8(":/save_all.png")),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
-        self.saveButton.setIcon(icon12)
+        self.saveButton.setIcon(icon9)
         self.saveButton.setObjectName(_fromUtf8("saveButton"))
         self.gridLayout_7.addWidget(self.saveButton, 0, 6, 3, 1)
-        self.notesEnter_textEdit = QtGui.QTextEdit(self.frame)
+        self.notesEnter_textEdit = QtGui.QTextEdit(self.new_notes_frame)
         sizePolicy = QtGui.QSizePolicy(
             QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Preferred)
@@ -2020,7 +2083,7 @@ class Ui_MainWindow(object):
         self.notesEnter_textEdit.setObjectName(
             _fromUtf8("notesEnter_textEdit"))
         self.gridLayout_7.addWidget(self.notesEnter_textEdit, 0, 3, 3, 1)
-        self.memos_pushButton = QtGui.QPushButton(self.frame)
+        self.memos_pushButton = QtGui.QPushButton(self.new_notes_frame)
         sizePolicy = QtGui.QSizePolicy(
             QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Preferred)
@@ -2039,8 +2102,9 @@ class Ui_MainWindow(object):
         self.memos_pushButton.setIcon(icon13)
         self.memos_pushButton.setObjectName(_fromUtf8("memos_pushButton"))
         self.gridLayout_7.addWidget(self.memos_pushButton, 0, 0, 3, 1)
-        self.clinician_phrasebook_pushButton = QtGui.QPushButton(self.frame)
-        self.clinician_phrasebook_pushButton.setIcon(icon11)
+        self.clinician_phrasebook_pushButton = QtGui.QPushButton(
+            self.new_notes_frame)
+        self.clinician_phrasebook_pushButton.setIcon(icon12)
         self.clinician_phrasebook_pushButton.setObjectName(
             _fromUtf8("clinician_phrasebook_pushButton"))
         self.gridLayout_7.addWidget(
@@ -2114,7 +2178,7 @@ class Ui_MainWindow(object):
         self.cashbookPrintButton.setSizePolicy(sizePolicy)
         self.cashbookPrintButton.setMaximumSize(
             QtCore.QSize(16777215, 16777215))
-        self.cashbookPrintButton.setIcon(icon9)
+        self.cashbookPrintButton.setIcon(icon10)
         self.cashbookPrintButton.setIconSize(QtCore.QSize(32, 24))
         self.cashbookPrintButton.setObjectName(
             _fromUtf8("cashbookPrintButton"))
@@ -2151,12 +2215,12 @@ class Ui_MainWindow(object):
         self.cashbookDentComboBox.setObjectName(
             _fromUtf8("cashbookDentComboBox"))
         self.gridLayout_5.addWidget(self.cashbookDentComboBox, 1, 2, 1, 1)
-        spacerItem13 = QtGui.QSpacerItem(
+        spacerItem15 = QtGui.QSpacerItem(
             389,
             20,
             QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Minimum)
-        self.gridLayout_5.addItem(spacerItem13, 1, 5, 1, 1)
+        self.gridLayout_5.addItem(spacerItem15, 1, 5, 1, 1)
         self.all_payments_radioButton = QtGui.QRadioButton(self.tab_cashbook)
         self.all_payments_radioButton.setChecked(True)
         self.all_payments_radioButton.setObjectName(
@@ -2192,7 +2256,7 @@ class Ui_MainWindow(object):
             0,
             1,
             9)
-        self.main_tabWidget.addTab(self.tab_cashbook, icon10, _fromUtf8(""))
+        self.main_tabWidget.addTab(self.tab_cashbook, icon11, _fromUtf8(""))
         self.tab_daybook = QtGui.QWidget()
         self.tab_daybook.setObjectName(_fromUtf8("tab_daybook"))
         self.gridlayout = QtGui.QGridLayout(self.tab_daybook)
@@ -2236,16 +2300,16 @@ class Ui_MainWindow(object):
         self.daybookPrintButton.setSizePolicy(sizePolicy)
         self.daybookPrintButton.setMaximumSize(
             QtCore.QSize(16777215, 16777215))
-        self.daybookPrintButton.setIcon(icon9)
+        self.daybookPrintButton.setIcon(icon10)
         self.daybookPrintButton.setIconSize(QtCore.QSize(32, 32))
         self.daybookPrintButton.setObjectName(_fromUtf8("daybookPrintButton"))
         self.gridlayout.addWidget(self.daybookPrintButton, 0, 5, 2, 1)
-        spacerItem14 = QtGui.QSpacerItem(
+        spacerItem16 = QtGui.QSpacerItem(
             654,
             20,
             QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Minimum)
-        self.gridlayout.addItem(spacerItem14, 0, 6, 2, 1)
+        self.gridlayout.addItem(spacerItem16, 0, 6, 2, 1)
         self.daybookStartDateEdit = QtGui.QDateEdit(self.tab_daybook)
         sizePolicy = QtGui.QSizePolicy(
             QtGui.QSizePolicy.Preferred,
@@ -2286,7 +2350,7 @@ class Ui_MainWindow(object):
         self.daybookTextBrowser = QtGui.QTextBrowser(self.tab_daybook)
         self.daybookTextBrowser.setObjectName(_fromUtf8("daybookTextBrowser"))
         self.gridlayout.addWidget(self.daybookTextBrowser, 2, 0, 1, 7)
-        self.main_tabWidget.addTab(self.tab_daybook, icon11, _fromUtf8(""))
+        self.main_tabWidget.addTab(self.tab_daybook, icon12, _fromUtf8(""))
         self.tab_accounts = QtGui.QWidget()
         self.tab_accounts.setObjectName(_fromUtf8("tab_accounts"))
         self.gridLayout_9 = QtGui.QGridLayout(self.tab_accounts)
@@ -2323,15 +2387,15 @@ class Ui_MainWindow(object):
             _fromUtf8("loadAccountsTable_pushButton"))
         self.horizontalLayout_28.addWidget(self.loadAccountsTable_pushButton)
         self.gridLayout_9.addLayout(self.horizontalLayout_28, 0, 0, 1, 1)
-        spacerItem15 = QtGui.QSpacerItem(
+        spacerItem17 = QtGui.QSpacerItem(
             206,
             20,
             QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Minimum)
-        self.gridLayout_9.addItem(spacerItem15, 0, 1, 1, 1)
+        self.gridLayout_9.addItem(spacerItem17, 0, 1, 1, 1)
         self.printAccountsTable_pushButton = QtGui.QPushButton(
             self.tab_accounts)
-        self.printAccountsTable_pushButton.setIcon(icon9)
+        self.printAccountsTable_pushButton.setIcon(icon10)
         self.printAccountsTable_pushButton.setObjectName(
             _fromUtf8("printAccountsTable_pushButton"))
         self.gridLayout_9.addWidget(
@@ -2342,7 +2406,7 @@ class Ui_MainWindow(object):
             2)
         self.printSelectedAccounts_pushButton = QtGui.QPushButton(
             self.tab_accounts)
-        self.printSelectedAccounts_pushButton.setIcon(icon9)
+        self.printSelectedAccounts_pushButton.setIcon(icon10)
         self.printSelectedAccounts_pushButton.setObjectName(
             _fromUtf8("printSelectedAccounts_pushButton"))
         self.gridLayout_9.addWidget(
@@ -2363,12 +2427,12 @@ class Ui_MainWindow(object):
         self.accounts_tableWidget.setColumnCount(0)
         self.accounts_tableWidget.setRowCount(0)
         self.gridLayout_9.addWidget(self.accounts_tableWidget, 1, 0, 1, 5)
-        spacerItem16 = QtGui.QSpacerItem(
+        spacerItem18 = QtGui.QSpacerItem(
             746,
             20,
             QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Minimum)
-        self.gridLayout_9.addItem(spacerItem16, 2, 0, 1, 2)
+        self.gridLayout_9.addItem(spacerItem18, 2, 0, 1, 2)
         self.label_43 = QtGui.QLabel(self.tab_accounts)
         self.label_43.setObjectName(_fromUtf8("label_43"))
         self.gridLayout_9.addWidget(self.label_43, 2, 2, 1, 1)
@@ -2408,7 +2472,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_18.addWidget(self.recallLoad_pushButton)
         self.gridLayout_10.addLayout(self.horizontalLayout_18, 1, 0, 1, 1)
         self.bulkMailPrint_pushButton = QtGui.QPushButton(self.tab_bulk_mail)
-        self.bulkMailPrint_pushButton.setIcon(icon9)
+        self.bulkMailPrint_pushButton.setIcon(icon10)
         self.bulkMailPrint_pushButton.setIconSize(QtCore.QSize(24, 24))
         self.bulkMailPrint_pushButton.setObjectName(
             _fromUtf8("bulkMailPrint_pushButton"))
@@ -2437,12 +2501,12 @@ class Ui_MainWindow(object):
             4,
             1,
             1)
-        spacerItem17 = QtGui.QSpacerItem(
+        spacerItem19 = QtGui.QSpacerItem(
             40,
             20,
             QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Minimum)
-        self.gridLayout_10.addItem(spacerItem17, 1, 1, 1, 1)
+        self.gridLayout_10.addItem(spacerItem19, 1, 1, 1, 1)
         self.main_tabWidget.addTab(self.tab_bulk_mail, _fromUtf8(""))
         self.tab_feescales = QtGui.QWidget()
         self.tab_feescales.setObjectName(_fromUtf8("tab_feescales"))
@@ -2479,12 +2543,12 @@ class Ui_MainWindow(object):
         self.chooseFeescale_comboBox.setObjectName(
             _fromUtf8("chooseFeescale_comboBox"))
         self.verticalLayout_10.addWidget(self.chooseFeescale_comboBox)
-        spacerItem18 = QtGui.QSpacerItem(
+        spacerItem20 = QtGui.QSpacerItem(
             20,
             40,
             QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_10.addItem(spacerItem18)
+        self.verticalLayout_10.addItem(spacerItem20)
         self.frame_6 = QtGui.QFrame(self.frame_5)
         self.frame_6.setEnabled(True)
         self.frame_6.setFrameShape(QtGui.QFrame.StyledPanel)
@@ -2542,12 +2606,12 @@ class Ui_MainWindow(object):
             _fromUtf8("feesearch_results_label"))
         self.gridLayout_16.addWidget(self.feesearch_results_label, 4, 0, 1, 2)
         self.verticalLayout_10.addWidget(self.frame_6)
-        spacerItem19 = QtGui.QSpacerItem(
+        spacerItem21 = QtGui.QSpacerItem(
             20,
             40,
             QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_10.addItem(spacerItem19)
+        self.verticalLayout_10.addItem(spacerItem21)
         self.hide_rare_feescale_codes_checkBox = QtGui.QCheckBox(self.frame_5)
         self.hide_rare_feescale_codes_checkBox.setChecked(True)
         self.hide_rare_feescale_codes_checkBox.setObjectName(
@@ -2565,12 +2629,12 @@ class Ui_MainWindow(object):
         self.feeCompress_radioButton.setObjectName(
             _fromUtf8("feeCompress_radioButton"))
         self.verticalLayout_10.addWidget(self.feeCompress_radioButton)
-        spacerItem20 = QtGui.QSpacerItem(
+        spacerItem22 = QtGui.QSpacerItem(
             20,
             40,
             QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_10.addItem(spacerItem20)
+        self.verticalLayout_10.addItem(spacerItem22)
         self.groupBox = QtGui.QGroupBox(self.frame_5)
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.verticalLayout_13 = QtGui.QVBoxLayout(self.groupBox)
@@ -2578,17 +2642,17 @@ class Ui_MainWindow(object):
         self.verticalLayout_13.setMargin(3)
         self.verticalLayout_13.setObjectName(_fromUtf8("verticalLayout_13"))
         self.documents_pushButton = QtGui.QPushButton(self.groupBox)
-        self.documents_pushButton.setIcon(icon11)
+        self.documents_pushButton.setIcon(icon12)
         self.documents_pushButton.setObjectName(
             _fromUtf8("documents_pushButton"))
         self.verticalLayout_13.addWidget(self.documents_pushButton)
         self.verticalLayout_10.addWidget(self.groupBox)
-        spacerItem21 = QtGui.QSpacerItem(
+        spacerItem23 = QtGui.QSpacerItem(
             20,
             40,
             QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_10.addItem(spacerItem21)
+        self.verticalLayout_10.addItem(spacerItem23)
         self.feeadjuster_groupBox = QtGui.QGroupBox(self.frame_5)
         self.feeadjuster_groupBox.setEnabled(True)
         self.feeadjuster_groupBox.setToolTip(_fromUtf8(""))
@@ -2705,12 +2769,12 @@ class Ui_MainWindow(object):
         self.feeSearch_lineEdit_2.setObjectName(
             _fromUtf8("feeSearch_lineEdit_2"))
         self.gridLayout_30.addWidget(self.feeSearch_lineEdit_2, 1, 0, 1, 2)
-        spacerItem22 = QtGui.QSpacerItem(
+        spacerItem24 = QtGui.QSpacerItem(
             67,
             20,
             QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Minimum)
-        self.gridLayout_30.addItem(spacerItem22, 2, 0, 1, 1)
+        self.gridLayout_30.addItem(spacerItem24, 2, 0, 1, 1)
         self.feeSearch_pushButton_2 = QtGui.QPushButton(self.frame_9)
         self.feeSearch_pushButton_2.setEnabled(False)
         sizePolicy = QtGui.QSizePolicy(
@@ -2919,9 +2983,9 @@ class Ui_MainWindow(object):
         self.actionDocuments_Dialog = QtGui.QAction(MainWindow)
         self.actionDocuments_Dialog.setObjectName(
             _fromUtf8("actionDocuments_Dialog"))
-        self.menuMenu.addAction(self.action_save_patient)
         self.menuMenu.addAction(self.action_Open_Patient)
         self.menuMenu.addSeparator()
+        self.menuMenu.addAction(self.action_save_patient)
         self.menuMenu.addAction(self.actionPrint_Daylists)
         self.menuMenu.addSeparator()
         self.menuMenu.addAction(self.action_Quit)
@@ -3150,8 +3214,10 @@ class Ui_MainWindow(object):
         self.label_4.setText(_("Address1"))
         self.label_2.setText(_("First Name"))
         self.label_13.setText(_("Tel (work)"))
+        self.abort_new_patient_pushButton.setText(_("Abort New Patient Entry"))
         self.highlighted_fields_label.setText(
             _("Higlighted Fields are Mandatory for New Patients"))
+        self.save_new_patient_pushButton.setText(_("Save New Patient"))
         self.family_groupBox.setTitle(_("Family Groups"))
         self.family_button.setToolTip(
             _("Raise a dialog to edit the patients family grouping"))

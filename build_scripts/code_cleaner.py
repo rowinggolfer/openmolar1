@@ -116,10 +116,11 @@ class CodeCleaner(object):
         so some regex work is required to pull the filename.
         '''
         files = self.repo.git.status("--porcelain")
+        LOGGER.debug(files)
         for info in files.split("\n"):
-            operation = info[:3]
+            operation = info[:3].strip(" ")
             file_ = info[3:]
-            if operation in (" M ", " A ") and self._valid_file(file_):
+            if operation in ("M", "A") and self._valid_file(file_):
                 yield os.path.join(self.root_path, file_)
 
     def _all_files(self):

@@ -28,9 +28,49 @@ from gettext import gettext as _
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
-from openmolar.dbtools import writeNewPatient
+from openmolar.dbtools import writeNewPatient, families
 
 LOGGER = logging.getLogger("openmolar")
+
+
+def check_use_family(om_gui):
+    if localsettings.LAST_ADDRESS == ("",) * 8:
+        return
+    result = QtGui.QMessageBox.question(om_gui,
+                                        _("Question"),
+                                        _(
+                                        "Use details from the previous record?"),
+                                        QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                                        QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes
+    if result:
+        dup_tup = localsettings.LAST_ADDRESS
+        om_gui.ui.addr1Edit.setText(dup_tup[1])
+        om_gui.ui.addr2Edit.setText(dup_tup[2])
+        om_gui.ui.addr3Edit.setText(dup_tup[3])
+        om_gui.ui.townEdit.setText(dup_tup[4])
+        om_gui.ui.countyEdit.setText(dup_tup[5])
+        om_gui.ui.pcdeEdit.setText(dup_tup[6])
+        om_gui.ui.tel1Edit.setText(dup_tup[7])
+        om_gui.ui.snameEdit.setText(dup_tup[0])
+    else:
+        return
+
+    if localsettings.last_family_no is None:
+        if QtGui.QMessageBox.question(om_gui,
+                                      _("Question"),
+                                      _("Start a new family group?"),
+                                      QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                                      QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+            om_gui.pt.familyno = families.new_group(
+                localsettings.previous_sno())
+    else:
+        if QtGui.QMessageBox.question(om_gui,
+                                      _("Question"),
+                                      _(
+                                      "Add the new patient to this family group?"),
+                                      QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                                      QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+            om_gui.pt.familyno = localsettings.last_family_no
 
 
 def enterNewPatient(om_gui):
@@ -44,10 +84,12 @@ def enterNewPatient(om_gui):
             "not entering new patient - still editing current record")
         return
 
-    #--disable the newPatient Button
-    #--THE STATE OF THIS BUTTON IS USED TO MONITOR USER ACTIONS
-    #--DO NOT CHANGE THIS LINE
-    om_gui.ui.newPatientPushButton.setEnabled(False)
+    #--make the ui dialog like
+    om_gui.entering_new_patient = True
+    om_gui.ui.new_notes_frame.hide()
+    om_gui.ui.details_frame.hide()
+    om_gui.ui.new_patient_frame.show()
+    om_gui.ui.family_groupBox.hide()
 
     #--disable the tabs which are normally enabled by default
     om_gui.ui.tabWidget.setTabEnabled(4, False)
@@ -55,10 +97,10 @@ def enterNewPatient(om_gui):
 
     #--clear any current record
     om_gui.clearRecord()
+    om_gui.pt.familyno = None
 
     #--disable the majority of widgets
     om_gui.enableEdit(False)
-    om_gui.changeSaveButtonforNewPatient()
 
     #--move to the edit patient details page
     om_gui.ui.tabWidget.setTabEnabled(0, True)
@@ -69,14 +111,7 @@ def enterNewPatient(om_gui):
     om_gui.ui.sexEdit.setCurrentIndex(0)
     om_gui.ui.titleEdit.setFocus()
 
-    #--give some help
-    om_gui.ui.detailsBrowser.setHtml(
-        '<div align="center"><h2>%s</h2>%s<hr /><em>%s</em></div>' % (
-            _("New Patient Mode"),
-            _("Please enter at least the required fields."),
-            _("Use the Save Changes button to commit to the database, "
-              "or the home button to leave this page")
-        ))
+    check_use_family(om_gui)
 
 
 def checkNewPatient(om_gui):
@@ -88,29 +123,25 @@ def checkNewPatient(om_gui):
     atts = []
     allfields_entered = True
 
-    #-- check these widgets for entered text.
+    # check these widgets for entered text.
     for widg in (om_gui.ui.snameEdit, om_gui.ui.titleEdit, om_gui.ui.fnameEdit,
                  om_gui.ui.addr1Edit, om_gui.ui.pcdeEdit):
         if len(widg.text()) == 0:
             allfields_entered = False
 
     if allfields_entered:
-        #--update 'pt'
+        # update 'pt'
         om_gui.apply_editpage_changes()
         om_gui.pt.cset = localsettings.DEFAULT_COURSETYPE
         sno = writeNewPatient.commit(om_gui.pt)
         if sno == -1:
             om_gui.advise(_("Error saving new patient, sorry!"), 2)
         else:
-            #--sucessful save
-            #--reset the gui
+            # successful save so reset the gui and continue
             finishedNewPatientInput(om_gui)
-            #--set that serialno
-            # om_gui.pt.serialno = sno
-            # om_gui.clearRecord()
             om_gui.getrecord(sno, newPatientReload=True)
     else:
-        #-- prompt user for more info
+        # prompt user for more info
         om_gui.advise(_(
                       "insufficient data to create a new record."
                       "please fill in all highlighted fields"
@@ -127,16 +158,19 @@ def finishedNewPatientInput(om_gui):
     and restore the save button text
     '''
     LOGGER.debug("restoring gui to normal state (after entering new patient)")
-    om_gui.ui.detailsBrowser.setText("")
-    om_gui.ui.newPatientPushButton.setEnabled(True)
+
+    om_gui.entering_new_patient = False
+
+    om_gui.ui.new_notes_frame.show()
+    om_gui.ui.details_frame.show()
+    om_gui.ui.new_patient_frame.hide()
+    om_gui.ui.family_groupBox.show()
 
     om_gui.ui.tabWidget.setTabEnabled(4, True)
     om_gui.ui.tabWidget.setTabEnabled(3, True)
     om_gui.gotoDefaultTab()
 
     om_gui.ui.tabWidget.setTabEnabled(0, False)
-
-    om_gui.restoreSaveButtonAfterNewPatient()
 
 
 def abortNewPatientEntry(om_gui):

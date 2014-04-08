@@ -235,7 +235,7 @@ class patient(object):
         self.pf20 = 0
         self.money11 = 0
         self.pf13 = 0
-        self.familyno = 0
+        self.familyno = localsettings.last_family_no
         self.memo = ''
         self.town = ''
         self.county = ''
@@ -306,6 +306,8 @@ class patient(object):
             value = values[0][i]
             if value is not None:
                 self.__dict__[att] = value
+            elif att == "familyno":
+                self.familyno = 0
 
         query = '''select exemption, exempttext from exemptions
         where serialno=%s'''

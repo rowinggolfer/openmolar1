@@ -161,6 +161,7 @@ class OpenmolarGui(QtGui.QMainWindow):
     fee_table_editor = None
     fee_table_tester = None
     phrasebook_editor = None
+    entering_new_patient = False
 
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
@@ -725,7 +726,9 @@ class OpenmolarGui(QtGui.QMainWindow):
                 # print "blanking edit page fields"
                 self.load_editpage()
                 self.editPageVisited = False
-            self.update_family_label()
+        else:
+            self.pt.familyno = None
+        self.update_family_label()
 
     def gotoDefaultTab(self):
         '''
@@ -855,45 +858,10 @@ class OpenmolarGui(QtGui.QMainWindow):
         and return True. otherwise, will return False.
         '''
         LOGGER.debug("enteringNewPatient")
-        if not self.ui.newPatientPushButton.isEnabled():
+        if self.entering_new_patient:
             self.ui.main_tabWidget.setCurrentIndex(0)
             self.ui.tabWidget.setCurrentIndex(0)
             return not new_patient_gui.abortNewPatientEntry(self)
-
-    def changeSaveButtonforNewPatient(self):
-        '''
-        the save button is returned to normal after a new patient entry
-        '''
-        #--change the function of the save button
-        QtCore.QObject.disconnect(self.ui.saveButton,
-                                  QtCore.SIGNAL("clicked()"), self.save_changes)
-
-        QtCore.QObject.connect(self.ui.saveButton,
-                               QtCore.SIGNAL("clicked()"), self.checkNewPatient)
-
-        self.ui.saveButton.setEnabled(True)
-        self.ui.saveButton.setText(_("SAVE NEW PATIENT"))
-        self.ui.saveButton.setStyleSheet("background-color:yellow;")
-
-    def restoreSaveButtonAfterNewPatient(self):
-        '''
-        the save button is returned to normal after a new patient entry
-        '''
-        QtCore.QObject.disconnect(self.ui.saveButton,
-                                  QtCore.SIGNAL("clicked()"), self.checkNewPatient)
-
-        QtCore.QObject.connect(self.ui.saveButton,
-                               QtCore.SIGNAL("clicked()"), self.save_changes)
-
-        self.ui.saveButton.setText(_("SAVE CHANGES"))
-        self.ui.saveButton.setStyleSheet("")
-
-    def defaultNP(self):
-        '''
-        default NP has been pressed - so apply the address and surname
-        from the previous patient
-        '''
-        new_patient_gui.defaultNP(self)
 
     def docsPrintedInit(self):
         '''
@@ -1065,7 +1033,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         looks for patients with similar name, family or address
         to the current pt
         '''
-        if self.pt.serialno == 0:
+        if not (self.pt.serialno or self.pt.familyno):
             self.advise("No patient to compare to", 2)
             return
         dl = LoadRelativesDialog(self)
@@ -1101,8 +1069,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         apply any changes made on the edit patient page
         '''
-        if self.pt.serialno == 0 and \
-                self.ui.newPatientPushButton.isEnabled():
+        if self.pt.serialno == 0 and not self.entering_new_patient:
             #- firstly.. don't apply edit page changes if there
             #- iss no patient loaded,
             #- and no new patient to apply
@@ -1147,7 +1114,10 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         a record has been called by one of several means
         '''
-        if self.enteringNewPatient() or serialno in (0, None):
+        if self.enteringNewPatient():
+            return
+        if serialno in (0, None):
+            self.update_family_label()
             return
 
         if addToRecentSnos:
@@ -1159,7 +1129,8 @@ class OpenmolarGui(QtGui.QMainWindow):
         localsettings.recent_sno_index = localsettings.recent_snos.index(
             serialno)
 
-        self.ui.backButton.setEnabled(localsettings.recent_sno_index > 0)
+        can_go_back = localsettings.recent_sno_index > 0
+        self.ui.backButton.setEnabled(can_go_back)
         self.ui.nextButton.setEnabled(
             localsettings.recent_sno_index < len(localsettings.recent_snos) - 1)
 
@@ -1270,8 +1241,9 @@ class OpenmolarGui(QtGui.QMainWindow):
             pos = localsettings.CSETYPES.index(self.pt.cset)
         except ValueError:
             if not newPatientReload:
-                QtGui.QMessageBox.information(self, "Advisory",
-                                              "Please set a Valid Course Type for this patient")
+                message = _("Please set a Valid Course Type for this patient")
+                QtGui.QMessageBox.information(self, _("Advisory"), message)
+
             pos = -1
         self.ui.cseType_comboBox.setCurrentIndex(pos)
         self.ui.contract_tabWidget.setCurrentIndex(pos)
@@ -1801,7 +1773,7 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.ui.summaryChartWidget,
             self.ui.printEst_pushButton,
             self.ui.printAccount_pushButton,
-            self.ui.relatedpts_pushButton,
+            # self.ui.relatedpts_pushButton,
             self.ui.saveButton,
             self.ui.phraseBook_pushButton,
             self.ui.clinician_phrasebook_pushButton,
@@ -3039,6 +3011,9 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.auto_address_button.clicked.connect(self.raise_address_dialog)
         self.ui.titleEdit.editingFinished.connect(self.check_sex)
         self.ui.family_button.clicked.connect(self.raise_family_dialog)
+        self.ui.save_new_patient_pushButton.clicked.connect(
+            self.checkNewPatient)
+        self.ui.abort_new_patient_pushButton.clicked.connect(self.home)
 
     def signals_notesPage(self):
         # notes page
@@ -3203,13 +3178,16 @@ class OpenmolarGui(QtGui.QMainWindow):
                 _("Member(s)")
             )
             message_2 += " (%d)" % (self.pt.n_family_members - 1)
-
+            localsettings.last_family_no = self.pt.familyno
+        elif self.pt.serialno == 0:
+            message = _("No Patient Loaded")
         else:
             message = _("Not a member of a known family")
 
         self.ui.family_group_label.setText(message)
-
         self.ui.relatedpts_pushButton.setText(message_2)
+
+        LOGGER.debug("updating family label '%s' '%s'"% (message, message_2))
 
     def send_email(self):
         if self.sender == self.ui.email2_button:

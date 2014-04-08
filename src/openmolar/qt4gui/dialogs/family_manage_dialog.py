@@ -23,17 +23,19 @@
 # ############################################################################ #
 
 import datetime
+import logging
 import re
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
-from openmolar.connect import connect
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 from openmolar.qt4gui.dialogs.find_patient_dialog import FindPatientDialog
 from openmolar.qt4gui.dialogs.address_match_dialog import AddressMatchDialog
 
 from openmolar.ptModules import patientDetails
+
+from openmolar.dbtools import families
 
 QUERY = '''select serialno, title, fname, sname,
 addr1, addr2, addr3, town, county, pcde, dob, status, tel1 from patients
@@ -54,6 +56,9 @@ HEADERS = (
     _("Address 1"), _("Address 2"), _("Address 3"),
     _("TOWN"), _("County"), _("Postcode")
 )
+
+
+LOGGER = logging.getLogger("openmolar")
 
 
 class _DuckPatient(object):
@@ -120,11 +125,7 @@ class _ConfirmDialog(BaseDialog):
         self.enableApply()
 
     def load(self, serialno):
-        db = connect()
-        cursor = db.cursor()
-        cursor.execute(QUERY.replace("familyno", "serialno"), (serialno,))
-        member = cursor.fetchone()
-        cursor.close()
+        member = families.get_patient_details(serialno)
         pt = _DuckPatient(member)
         self.browser.setText(patientDetails.header(pt))
 
@@ -249,13 +250,9 @@ class FamilyManageDialog(ExtendableDialog):
 
     def load_values(self, mes1=_("Unlink"), mes2=_("from group")):
         self.family_no = self.om_gui.pt.familyno
+        LOGGER.debug("FamilyManage loading family number %d" % self.family_no)
         self.member_dict = {}
-
-        db = connect()
-        cursor = db.cursor()
-        cursor.execute(QUERY, (self.family_no,))
-        members = cursor.fetchall()
-        cursor.close()
+        members = families.get_members(self.family_no)
         for widget in self.widgets:
             self.frame_layout.removeWidget(widget)
             widget.setParent(None)
@@ -310,11 +307,7 @@ class FamilyManageDialog(ExtendableDialog):
                                       QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
                                       QtGui.QMessageBox.Ok) == QtGui.QMessageBox.Cancel:
             return
-
-        db = connect()
-        cursor = db.cursor()
-        cursor.execute(LINK_QUERY, (None, pt.serialno,))
-        cursor.close()
+        families.remove_member(pt.serialno)
         self.load_values()
 
     def confirm_add(self, serialno):
@@ -331,10 +324,7 @@ class FamilyManageDialog(ExtendableDialog):
 
     def add_member(self, serialno):
         if self.confirm_add(serialno):
-            db = connect()
-            cursor = db.cursor()
-            cursor.execute(LINK_QUERY, (self.family_no, serialno))
-            cursor.close()
+            families.add_member(self.family_no, serialno)
         self.load_values()
 
     def sync_addresses(self):
@@ -357,11 +347,7 @@ class FamilyManageDialog(ExtendableDialog):
 
         dl = _ChooseAddressDialog(address_set, self)
         if dl.exec_():
-            db = connect()
-            cursor = db.cursor()
-            values = tuple(dl.chosen_address) + (self.family_no,)
-            count = cursor.execute(SYNC_QUERY, values)
-            cursor.close()
+            count = families.sync_addresses(self.family_no, dl.chosen_address)
             QtGui.QMessageBox.information(self, _("Information"),
                                           u"%d %s" % (count, _("Address(es) updated")))
             self.load_values()
@@ -380,13 +366,8 @@ class FamilyManageDialog(ExtendableDialog):
         dl.exec_()
 
     def new_family_group(self):
-        db = connect()
-        cursor = db.cursor()
-        cursor.execute(NEXT_FAMILYNO_QUERY)
-        familyno = cursor.fetchone()[0]
-        cursor.execute(NEW_GROUP_QUERY, (familyno, self.om_gui.pt.serialno,))
-        cursor.close()
-        self.om_gui.pt.familyno = familyno
+        self.om_gui.pt.familyno = familes.new_family_group(
+            self.om_gui.pt.serialno)
         self.load_values()
 
     def delete_group(self):
@@ -395,10 +376,7 @@ class FamilyManageDialog(ExtendableDialog):
                                       QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
                                       QtGui.QMessageBox.Ok) == QtGui.QMessageBox.Cancel:
             return
-
-        db = connect()
-        cursor = db.cursor()
-        cursor.execute(DELETE_FAMILYNO_QUERY, (self.family_no,))
+        families.delete_group(self.family_no)
         self.load_values()
 
 

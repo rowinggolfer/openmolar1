@@ -256,6 +256,7 @@ allowed_logins = []
 #-- this list is used for navigating back and forth through the list
 recent_snos = []
 recent_sno_index = 0
+last_family_no = 0
 
 #-- update whenever a manual search is made
 #-- sname,fname dob... etc
@@ -425,6 +426,13 @@ def formatMoney(m):
         except Exception as e:
             LOGGER.exception("formatMoney error")
             return val
+
+
+def previous_sno():
+    try:
+        return recent_snos[recent_sno_index]
+    except IndexError:
+        return None
 
 
 def reverseFormatMoney(m):
