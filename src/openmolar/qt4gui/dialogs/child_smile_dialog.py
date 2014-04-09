@@ -187,7 +187,7 @@ class ChildSmileDialog(BaseDialog):
                                                      "Manual Input Required"),
                                                      _(
                                                      "Online lookup has failed, please enter the SIMD manually"),
-                                                     4, 1, 4)
+                                                     4, 1, 5)
         if not result:
             self.reject()
         return simd

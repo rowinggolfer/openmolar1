@@ -30,23 +30,8 @@ from openmolar.settings import localsettings
 from openmolar.connect import connect
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
-QUERY = '''select
-    case when addr1 = %s then 4 else 0 end +
-    case when addr1 like %s then 3 else 0 end +
-    case when addr2 like %s then 3 else 0 end +
-    case when addr3 like %s then 1 else 0 end +
-    case when town like %s then 1 else 0 end +
-    case when pcde = %s then 5 else 0 end as matches ,
-    serialno, title, fname, sname, dob, addr1, addr2, addr3, town, pcde
-from patients
-where
-addr1 like %s or
-((addr2 != "" and addr2 is not NULL) and addr2 like %s) or
-((town != "" and town is not NULL) and town like %s)or
-(pcde=%s and pcde != "")
-order by matches desc
-limit 12
-'''
+from openmolar.dbtools import families
+
 
 HEADERS = ['score', 'serialno', _('Title'), _('Forename'), _('Surname'),
            _('dob'), _('Address1'), _('Address2'), _('Address3'), _('Town'),
@@ -69,13 +54,25 @@ class AddressMatchDialog(BaseDialog):
         self.table_widget.setAlternatingRowColors(True)
         self.table_widget.setSortingEnabled(True)
 
+        if self.om_gui.pt.serialno == 0:
+            self.address = localsettings.LAST_ADDRESS[1:]
+        else:
+            self.address = (self.om_gui.pt.addr1,
+                            self.om_gui.pt.addr2,
+                            self.om_gui.pt.addr3,
+                            self.om_gui.pt.town,
+                            self.om_gui.pt.county,
+                            self.om_gui.pt.pcde,
+                            )
+
         addr = "%s, %s, %s, %s, %s, %s" % (
-            self.om_gui.pt.addr1,
-            self.om_gui.pt.addr2,
-            self.om_gui.pt.addr3,
-            self.om_gui.pt.town,
-            self.om_gui.pt.county,
-            self.om_gui.pt.pcde)
+            self.address[0],
+            self.address[1],
+            self.address[2],
+            self.address[3],
+            self.address[4],
+            self.address[5],
+        )
 
         while re.search(", *,", addr):
             addr = re.sub(", *,", ", ", addr)
@@ -97,24 +94,7 @@ class AddressMatchDialog(BaseDialog):
         return QtCore.QSize(1000, 600)
 
     def load_values(self):
-        db = connect()
-        cursor = db.cursor()
-        values = (
-            self.om_gui.pt.addr1,
-            self.om_gui.pt.addr1[:10],
-            self.om_gui.pt.addr2[:10],
-            self.om_gui.pt.addr3[:10],
-            self.om_gui.pt.town[:10],
-            self.om_gui.pt.pcde,
-            self.om_gui.pt.addr1[:10],
-            self.om_gui.pt.addr2[:10],
-            self.om_gui.pt.town[:10],
-            self.om_gui.pt.pcde[:10],
-        )
-
-        cursor.execute(QUERY, (values))
-        rows = cursor.fetchall()
-        cursor.close()
+        rows = families.get_address_matches(self.address)
 
         self.table_widget.clear()
         self.table_widget.setSortingEnabled(False)

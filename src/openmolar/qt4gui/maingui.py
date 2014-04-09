@@ -196,6 +196,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.loadDentistComboboxes()
         self.feestableLoaded = False
         self.forum_parenting_mode = (False, None)
+        self.ui.new_patient_frame.hide()
 
         self.ui.plan_listView.setModel(PlannedTreatmentListModel(self))
         self.ui.plan_listView.setContextMenuPolicy(
@@ -3187,7 +3188,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.family_group_label.setText(message)
         self.ui.relatedpts_pushButton.setText(message_2)
 
-        LOGGER.debug("updating family label '%s' '%s'"% (message, message_2))
+        LOGGER.debug("updating family label '%s' '%s'" % (message, message_2))
 
     def send_email(self):
         if self.sender == self.ui.email2_button:

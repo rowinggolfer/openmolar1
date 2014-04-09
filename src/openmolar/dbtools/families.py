@@ -42,6 +42,24 @@ NEW_GROUP_QUERY = "update patients set familyno=%s where serialno=%s"
 
 DELETE_FAMILYNO_QUERY = "update patients set familyno=NULL where familyno=%s"
 
+ADDRESS_MATCH_QUERY = '''select
+    case when addr1 = %s then 4 else 0 end +
+    case when addr1 like %s then 3 else 0 end +
+    case when addr2 like %s then 3 else 0 end +
+    case when addr3 like %s then 1 else 0 end +
+    case when town like %s then 1 else 0 end +
+    case when pcde = %s then 5 else 0 end as matches ,
+    serialno, title, fname, sname, dob, addr1, addr2, addr3, town, pcde
+from patients
+where
+addr1 like %s or
+((addr2 != "" and addr2 is not NULL) and addr2 like %s) or
+((town != "" and town is not NULL) and town like %s)or
+(pcde=%s and pcde != "")
+order by matches desc
+limit 12
+'''
+
 
 def new_group(serialno):
     '''
@@ -115,6 +133,40 @@ def get_patient_details(serialno):
     member = cursor.fetchone()
     cursor.close()
     return member
+
+
+def get_address_matches(address):
+    '''
+    find possible address matches for the address used.
+    '''
+
+    addr1 = address[0]
+    addr2 = address[1]
+    addr3 = address[2]
+    town = address[3]
+    county = address[4]
+    pcde = address[5]
+
+    db = connect()
+    cursor = db.cursor()
+    values = (
+        addr1,
+        addr1[:10],
+        addr2[:10],
+        addr3[:10],
+        town[:10],
+        pcde,
+        addr1[:10],
+        addr2[:10],
+        town[:10],
+        pcde[:10],
+    )
+
+    cursor.execute(ADDRESS_MATCH_QUERY, (values))
+    rows = cursor.fetchall()
+    cursor.close()
+
+    return rows
 
 if __name__ == "__main__":
     print new_family_group(1)

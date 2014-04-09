@@ -37,20 +37,6 @@ from openmolar.ptModules import patientDetails
 
 from openmolar.dbtools import families
 
-QUERY = '''select serialno, title, fname, sname,
-addr1, addr2, addr3, town, county, pcde, dob, status, tel1 from patients
-where familyno = %s order by dob'''
-
-LINK_QUERY = 'update patients set familyno=%s where serialno=%s'
-
-SYNC_QUERY = '''update patients set
-addr1=%s, addr2=%s, addr3=%s, town=%s, county=%s, pcde=%s
-where familyno=%s'''
-
-NEXT_FAMILYNO_QUERY = "select max(familyno)+1 from patients"
-NEW_GROUP_QUERY = "update patients set familyno=%s where serialno=%s"
-
-DELETE_FAMILYNO_QUERY = "update patients set familyno=NULL where familyno=%s"
 
 HEADERS = (
     _("Address 1"), _("Address 2"), _("Address 3"),
