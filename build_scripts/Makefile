@@ -28,11 +28,13 @@ EXAMPLES
 		needn't be a tagged (or even clean repo) for this
 
 usual steps for a release would be as follows.
-	make NEW_VERSION=0.5.1 version
+	export NEW_VERION=0.5.1
+	make version
 	git commit -a
 	git push
-	make git-tag
+	make git_tag
 	make tarball
+	make sign_tarball
 
 endef
 	
