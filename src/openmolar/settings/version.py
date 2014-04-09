@@ -31,7 +31,7 @@ LOGGER = logging.getLogger("openmolar")
 # this is a fallback version, which will be used if
 # openmolar is not run from a git repository
 # or ig git is not installed.
-VERSION = "0.5.0-beta25"
+VERSION = "0.5.1-beta26"
 
 try:
     p = subprocess.Popen(
