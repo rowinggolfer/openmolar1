@@ -83,28 +83,24 @@ from openmolar.qt4gui.dialogs import select_language
 from openmolar.qt4gui.dialogs.choose_tooth_dialog import ChooseToothDialog
 from openmolar.qt4gui.dialogs import clinician_select_dialog
 from openmolar.qt4gui.dialogs import assistant_select_dialog
-from openmolar.qt4gui.phrasebook.phrasebook_dialog import PhraseBookDialog
-from openmolar.qt4gui.phrasebook.phrasebook_dialog import PHRASEBOOKS
-from openmolar.qt4gui.phrasebook.phrasebook_editor import PhrasebookEditor
 from openmolar.qt4gui.dialogs.recall_dialog import RecallDialog
 from openmolar.qt4gui.dialogs.child_smile_dialog import ChildSmileDialog
-from openmolar.qt4gui.dialogs.alter_todays_notes \
-    import AlterTodaysNotesDialog
+from openmolar.qt4gui.dialogs.alter_todays_notes import AlterTodaysNotesDialog
 from openmolar.qt4gui.dialogs.find_patient_dialog import FindPatientDialog
 from openmolar.qt4gui.dialogs.family_manage_dialog import LoadRelativesDialog
-
 from openmolar.qt4gui.dialogs import duplicate_receipt_dialog
 from openmolar.qt4gui.dialogs.auto_address_dialog import AutoAddressDialog
 from openmolar.qt4gui.dialogs.family_manage_dialog import FamilyManageDialog
-
-from openmolar.qt4gui.dialogs.nhs_forms_config_dialog \
-    import NHSFormsConfigDialog
-from openmolar.qt4gui.dialogs.advanced_tx_planning_dialog \
-    import AdvancedTxPlanningDialog
+from openmolar.qt4gui.dialogs.nhs_forms_config_dialog import NHSFormsConfigDialog
+from openmolar.qt4gui.dialogs.advanced_tx_planning_dialog import AdvancedTxPlanningDialog
 from openmolar.qt4gui.dialogs.document_dialog import DocumentDialog
+from openmolar.qt4gui.dialogs.account_severity_dialog import AccountSeverityDialog
+
+from openmolar.qt4gui.phrasebook.phrasebook_dialog import PhraseBookDialog
+from openmolar.qt4gui.phrasebook.phrasebook_dialog import PHRASEBOOKS
+from openmolar.qt4gui.phrasebook.phrasebook_editor import PhrasebookEditor
 
 # secondary applications
-from openmolar.qt4gui.tools import new_setup
 from openmolar.qt4gui.tools import recordtools
 
 #--database modules
@@ -2398,12 +2394,9 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         user has requested an account printing
         '''
-        if self.ui.accountB_radioButton.isChecked():
-            om_printing.printaccount(self, "B")  # print a medium letter
-        elif self.ui.accountC_radioButton.isChecked():
-            om_printing.printaccount(self, "C")  # print "harsh letter"
-        else:
-            om_printing.printaccount(self)  # print default account
+        dl = AccountSeverityDialog(self)
+        if dl.exec_():
+            om_printing.printaccount(self, dl.severity)
 
     def printmultiDayList(self, args):
         '''prints the multiday pages'''
