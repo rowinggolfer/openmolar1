@@ -222,6 +222,8 @@ def main():
     dl.password_lineEdit.setText(PASSWORD)
     dl.user1_lineEdit.setText(USER1)
     dl.user2_lineEdit.setText(USER2)
+    autoreception(QtCore.QString(USER1))
+    autoreception(QtCore.QString(USER2))
 
     servermenu = QtGui.QMenu()
     dl.chosenServer = 0
