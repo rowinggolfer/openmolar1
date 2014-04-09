@@ -130,6 +130,8 @@ class FeescaleParser(object):
         '''
         self.message_handler.reset()
 
+        LOGGER.debug("checking phrasebook xml against %s"% STYLESHEET)
+
         f = QtCore.QFile(STYLESHEET)
         f.open(QtCore.QIODevice.ReadOnly)
         schema = QXmlSchema()
@@ -140,8 +142,7 @@ class FeescaleParser(object):
         result = validator.validate(xml)
 
         if result:
-            LOGGER.debug(
-                "Feescale complies with stylesheet!")
+            LOGGER.debug("Feescale complies with stylesheet!")
         else:
             LOGGER.warning(
                 "Feescale does not comply with stylesheet %s" % STYLESHEET)

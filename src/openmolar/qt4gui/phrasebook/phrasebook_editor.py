@@ -305,6 +305,7 @@ class PhrasebookEditor(QtGui.QMainWindow):
     def check_xml_validity(self, xml):
         message_handler = MessageHandler()
 
+        LOGGER.debug("checking phrasebook xml against %s"% STYLESHEET)
         f = QtCore.QFile(STYLESHEET)
         f.open(QtCore.QIODevice.ReadOnly)
         schema = QXmlSchema()
