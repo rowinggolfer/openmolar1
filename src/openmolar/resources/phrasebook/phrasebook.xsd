@@ -10,10 +10,15 @@
   <xs:element name="section">
     <xs:complexType>
       <xs:choice maxOccurs="unbounded">
-        <xs:element name="header" type="xs:string"/>
-        <xs:element ref="phrase"/>
+        <xs:element ref="header" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="phrase" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="widget" type="xs:string"/>
       </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="header">
+    <xs:complexType mixed="true">
+      <xs:attribute name="icon" type="xs:string" use="optional"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="phrase">

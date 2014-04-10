@@ -68,6 +68,59 @@ class shadePicker(QtGui.QFrame):
         return _("Shade") + " - " + self.comboBox.currentText()
 
 
+class ListModel(QtCore.QAbstractListModel):
+
+    '''
+    A simple model to provide "tabs" for the phrasebook
+    '''
+
+    def __init__(self, parent=None):
+        QtCore.QAbstractListModel.__init__(self, parent)
+        self.tabs = []
+        self.icons = []
+
+    def rowCount(self, parent=QtCore.QModelIndex()):
+        return len(self.tabs)
+
+    def data(self, index, role):
+        if not index.isValid():
+            pass
+        elif role == QtCore.Qt.DisplayRole:
+            return self.tabs[index.row()]
+        elif role == QtCore.Qt.DecorationRole:
+            return self.icons[index.row()]
+
+    def add_item(self, label, icon):
+        self.beginResetModel()
+        self.tabs.append(label)
+        self.icons.append(icon)
+        self.endResetModel()
+
+
+class MockTabWidget(QtGui.QWidget):
+
+    def __init__(self, parent=None):
+        QtGui.QWidget.__init__(self, parent)
+        self.stacked_widget = QtGui.QStackedWidget()
+        self.list_view = QtGui.QListView()
+        self.list_model = ListModel()
+        self.list_view.setModel(self.list_model)
+        layout = QtGui.QHBoxLayout(self)
+        layout.addWidget(self.list_view)
+        layout.addWidget(self.stacked_widget)
+        self.list_view.pressed.connect(self.select_tab)
+
+    def select_tab(self, index):
+        self.stacked_widget.setCurrentIndex(index.row())
+
+    def addTab(self, widget, icon, label):
+        self.stacked_widget.addWidget(widget)
+        self.list_model.add_item(label, icon)
+        if self.list_view.currentIndex().row() == -1:
+            index = self.list_model.createIndex(0, 0)
+            self.list_view.setCurrentIndex(index)
+
+
 class PhraseBookDialog(QtGui.QDialog):
 
     def __init__(self, parent=None, id=0):
@@ -75,7 +128,8 @@ class PhraseBookDialog(QtGui.QDialog):
         self.setWindowTitle(_("Phrase Book"))
 
         layout = QtGui.QVBoxLayout(self)
-        self.tabWidget = QtGui.QTabWidget()
+        self.tabWidget = MockTabWidget()
+
         self.buttonBox = QtGui.QDialogButtonBox(self)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(
@@ -91,10 +145,15 @@ class PhraseBookDialog(QtGui.QDialog):
 
         self.xml = minidom.parseString(PHRASEBOOKS.book(id).xml)
         sections = self.xml.getElementsByTagName("section")
-        icon = QtGui.QIcon(":icons/expand.svg")
 
         for section in sections:
-            header = section.getElementsByTagName("header")
+            header = section.getElementsByTagName("header")[0]
+            header_text = header.firstChild.data
+            icon_loc = header.getAttribute("icon")
+            if icon_loc:
+                icon = QtGui.QIcon(icon_loc)
+            else:
+                icon = QtGui.QIcon(":icons/pencil.png")
             page = QtGui.QWidget(self)
             layout = QtGui.QVBoxLayout(page)
             phrases = section.getElementsByTagName("phrase")
@@ -123,7 +182,7 @@ class PhraseBookDialog(QtGui.QDialog):
                                            QtGui.QSizePolicy.Expanding)
             layout.addItem(spacerItem)
 
-            self.tabWidget.addTab(page, icon, header[0].firstChild.data)
+            self.tabWidget.addTab(page, icon, header_text)
 
     def sizeHint(self):
         return QtCore.QSize(800, 400)
@@ -141,7 +200,6 @@ class PhraseBookDialog(QtGui.QDialog):
         return retlist
 
 if __name__ == "__main__":
-    import time
     from openmolar.qt4gui import resources_rc
     app = QtGui.QApplication([])
     dl = PhraseBookDialog()
