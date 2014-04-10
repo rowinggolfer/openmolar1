@@ -1,4 +1,4 @@
-include COPYING MANIFEST MANIFEST.in README openmolar INSTALL.txt
+include LICENSE MANIFEST MANIFEST.in README openmolar INSTALL.txt
 recursive-include bin *.svg *.desktop
 recursive-include src/openmolar/schema_upgrades *.py
 recursive-include src/openmolar/dbtools *.py
