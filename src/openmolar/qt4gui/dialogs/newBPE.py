@@ -27,16 +27,21 @@ from openmolar.qt4gui.compiled_uis import Ui_newBPE
 from openmolar.settings import localsettings
 
 
-class Ui_Dialog(Ui_newBPE.Ui_Dialog):
+class BPE_Dialog(QtGui.QDialog, Ui_newBPE.Ui_Dialog):
 
-    def __init__(self, dialog, parent=None):
-        self.setupUi(dialog)
-        self.dialog = dialog
-        for cb in (self.bpe_comboBox, self.bpe2_comboBox, self.bpe3_comboBox, self.bpe4_comboBox, self.bpe5_comboBox, self.bpe6_comboBox):
+    def __init__(self, parent=None):
+        QtGui.QDialog.__init__(self, parent)
+        self.setupUi(self)
+        for cb in (self.bpe_comboBox,
+        self.bpe2_comboBox,
+        self.bpe3_comboBox,
+         self.bpe4_comboBox,
+         self.bpe5_comboBox,
+        self.bpe6_comboBox):
             cb.setCurrentIndex(-1)
 
     def getInput(self):
-        if self.dialog.exec_():
+        if QtGui.QDialog.exec_(self):
             return (True, self.getBPE())
         else:
             return (False, None)
@@ -56,8 +61,7 @@ class Ui_Dialog(Ui_newBPE.Ui_Dialog):
 if __name__ == "__main__":
     import sys
     app = QtGui.QApplication(sys.argv)
-    Dialog = QtGui.QDialog()
-    ui = Ui_Dialog(Dialog)
+    ui = BPE_Dialog()
     print str(ui.getInput())
     # if Dialog.exec_():
     #        print "accepted"

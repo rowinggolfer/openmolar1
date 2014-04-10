@@ -72,29 +72,11 @@ from openmolar.qt4gui.compiled_uis import Ui_showMemo
 
 
 #--custom dialog modules
-from openmolar.qt4gui.dialogs.exam_wizard import ExamWizard
-from openmolar.qt4gui.dialogs.hygTreatWizard import HygTreatWizard
-from openmolar.qt4gui.dialogs import medNotes
-from openmolar.qt4gui.dialogs import saveDiscardCancel
-from openmolar.qt4gui.dialogs import newBPE
 from openmolar.qt4gui.dialogs import saveMemo
 from openmolar.qt4gui.dialogs import permissions
 from openmolar.qt4gui.dialogs import select_language
-from openmolar.qt4gui.dialogs.choose_tooth_dialog import ChooseToothDialog
-from openmolar.qt4gui.dialogs import clinician_select_dialog
-from openmolar.qt4gui.dialogs import assistant_select_dialog
-from openmolar.qt4gui.dialogs.recall_dialog import RecallDialog
-from openmolar.qt4gui.dialogs.child_smile_dialog import ChildSmileDialog
-from openmolar.qt4gui.dialogs.alter_todays_notes import AlterTodaysNotesDialog
-from openmolar.qt4gui.dialogs.find_patient_dialog import FindPatientDialog
-from openmolar.qt4gui.dialogs.family_manage_dialog import LoadRelativesDialog
-from openmolar.qt4gui.dialogs import duplicate_receipt_dialog
-from openmolar.qt4gui.dialogs.auto_address_dialog import AutoAddressDialog
-from openmolar.qt4gui.dialogs.family_manage_dialog import FamilyManageDialog
-from openmolar.qt4gui.dialogs.nhs_forms_config_dialog import NHSFormsConfigDialog
-from openmolar.qt4gui.dialogs.advanced_tx_planning_dialog import AdvancedTxPlanningDialog
-from openmolar.qt4gui.dialogs.document_dialog import DocumentDialog
-from openmolar.qt4gui.dialogs.account_severity_dialog import AccountSeverityDialog
+
+from openmolar.qt4gui.dialogs import *
 
 from openmolar.qt4gui.phrasebook.phrasebook_dialog import PhraseBookDialog
 from openmolar.qt4gui.phrasebook.phrasebook_dialog import PHRASEBOOKS
@@ -420,14 +402,14 @@ class OpenmolarGui(QtGui.QMainWindow):
         layout.addWidget(self.ui.cashbookTextBrowser)
 
     def setClinician(self):
-        result, selected = clinician_select_dialog.Dialog(self).result()
+        result, selected = ClinicianSelectDialog(self).result()
         if result:
             self.advise(_("changed clinician to") + " " + selected)
             self.load_todays_patients_combobox()
             self.set_operator_label()
 
     def setAssistant(self):
-        result, selected = assistant_select_dialog.Dialog(self).result()
+        result, selected = AssistantSelectDialog(self).result()
         if result:
             self.advise(_("changed assistant to") + " " + selected)
             self.set_operator_label()
@@ -550,26 +532,27 @@ class OpenmolarGui(QtGui.QMainWindow):
 
         #--check pt against the original loaded state
         #--this returns a LIST of changes ie [] if none.
-        uc = self.unsavedChanges()
-        if uc == []:
+        changes = self.unsavedChanges()
+        if changes == []:
             LOGGER.debug("   okToLeaveRecord - no changes")
         else:
             #--raise a custom dialog to get user input
-            Dialog = QtGui.QDialog(self)
-            dl = saveDiscardCancel.sdcDialog(Dialog)
-            dl.setPatient("%s %s (%s)" % (
-                          self.pt.fname, self.pt.sname, self.pt.serialno))
-            dl.setChanges(uc)
-            dl.allowDiscard(not cont)
-            if Dialog.exec_():
-                if dl.result == "discard":
-                    LOGGER.info(
-                        "   okToLeaveRecord - user discarding changes")
-                    course_module.delete_new_course(self)
-                elif dl.result == "save":
-                    LOGGER.debug("   okToLeaveRecord - user is saving")
-                    self.save_changes(False)
-            else:
+            message = "%s<br />%s %s (%s)" % (
+                _("You have unsaved changes to the record of"),
+                self.pt.fname, self.pt.sname, self.pt.serialno)
+            dl = SaveDiscardCancelDialog(message, changes, self)
+            # dl.setPatient()
+            # dl.setChanges(uc)
+            dl.discard_but.setVisible(not cont)
+            dl.exec_()
+            if dl.result == dl.DISCARD:
+                LOGGER.info(
+                    "   okToLeaveRecord - user discarding changes")
+                course_module.delete_new_course(self)
+            elif dl.result == dl.SAVE:
+                LOGGER.debug("   okToLeaveRecord - user is saving")
+                self.save_changes(False)
+            else:  # dl.result = dl.CANCEL
                 LOGGER.debug("okToLeaveRecord - continue editing")
                 return False
         return True
@@ -1633,8 +1616,10 @@ class OpenmolarGui(QtGui.QMainWindow):
         if self.pt.serialno == 0:
             self.advise("no patient selected", 1)
             return
-        Dialog = QtGui.QDialog(self)
-        if medNotes.showDialog(Dialog, self.pt):
+
+        dl = MedNotesDialog(self.pt, self)
+        if dl.exec_():
+            dl.apply()
             self.advise("Updated Medical Notes", 1)
             self.medalert()
 
@@ -1645,8 +1630,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         if self.pt.serialno == 0:
             self.advise("no patient selected", 1)
             return
-        Dialog = QtGui.QDialog(self)
-        dl = newBPE.Ui_Dialog(Dialog)
+        dl = BPE_Dialog(self)
         result = dl.getInput()
         if result[0]:
             self.pt.bpe.append((localsettings.currentDay(), result[1]), )
@@ -2348,7 +2332,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         prints a duplicate receipt
         '''
-        dl = duplicate_receipt_dialog.DuplicateReceiptDialog(self.pt, self)
+        dl = DuplicateReceiptDialog(self.pt, self)
         if dl.exec_() and dl.duplicate_printed:
             om_printing.commitPDFtoDB(self, "dup receipt")
             self.updateHiddenNotesLabel()

@@ -23,15 +23,14 @@
 # ############################################################################ #
 
 from PyQt4 import QtGui, QtCore
-import types
+
 from openmolar.settings import localsettings
-from xml.dom import minidom
 
 
-class Dialog(QtGui.QDialog):
+class ClinicianSelectDialog(QtGui.QDialog):
 
     def __init__(self, parent=None):
-        super(Dialog, self).__init__(parent)
+        QtGui.QDialog.__init__(self, parent)
         self.setWindowTitle(_("Select a Clinician"))
 
         layout = QtGui.QVBoxLayout(self)
@@ -93,9 +92,8 @@ class Dialog(QtGui.QDialog):
         return (False, None)
 
 if __name__ == "__main__":
-    from openmolar.qt4gui import resources_rc
     localsettings.initiate()
     app = QtGui.QApplication([])
-    ui = Dialog()
-    print ui.result()
+    dl = ClinicianSelectDialog()
+    print dl.result()
     app.closeAllWindows()

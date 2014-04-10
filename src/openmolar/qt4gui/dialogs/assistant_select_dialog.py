@@ -23,15 +23,14 @@
 # ############################################################################ #
 
 from PyQt4 import QtGui, QtCore
-import types
+
 from openmolar.settings import localsettings
-from xml.dom import minidom
 
 
-class Dialog(QtGui.QDialog):
+class AssistantSelectDialog(QtGui.QDialog):
 
     def __init__(self, parent=None):
-        super(Dialog, self).__init__(parent)
+        QtGui.QDialog.__init__(self, parent)
         self.setWindowTitle(_("Select an Assitant"))
 
         layout = QtGui.QVBoxLayout(self)
@@ -41,7 +40,7 @@ class Dialog(QtGui.QDialog):
         self.listwidget.setSelectionMode(
             QtGui.QAbstractItemView.SingleSelection)
 
-        assistants = [_("NONE")] + localsettings.allowed_logins
+        assistants = [_("No Assistant")] + localsettings.allowed_logins
         self.listwidget.addItems(assistants)
 
         self.listwidget.setCurrentRow(0)
@@ -72,9 +71,8 @@ class Dialog(QtGui.QDialog):
         return (False, None)
 
 if __name__ == "__main__":
-    from openmolar.qt4gui import resources_rc
     localsettings.initiateUsers()
     app = QtGui.QApplication([])
-    ui = Dialog()
-    print ui.result()
+    dl = AssistantSelectDialog()
+    print dl.result()
     app.closeAllWindows()
