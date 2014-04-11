@@ -61,5 +61,5 @@ if lang:
         gettext.install('openmolar', unicode=True)
 else:
     #-- on windows.. os.environ.get("LANG") is None
-    LOGGER("no language environment found")
+    LOGGER.warning("no language environment found (windows?)")
     gettext.install('openmolar', unicode=True)

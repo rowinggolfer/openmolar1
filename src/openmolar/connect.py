@@ -58,7 +58,7 @@ for command_node in command_nodes:
     for command in commands:
         command_list.append(command.firstChild.data)
     if command_list:
-        LOGGER.info("executing" % str(command_list))
+        LOGGER.info("executing %s" % str(command_list))
         subprocess.Popen(command_list)
 
 myHost = xmlnode.getElementsByTagName("location")[0].firstChild.data
