@@ -538,7 +538,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         if result:
             self.advise(_("feescale is valid"), 1)
         else:
-            self.advise(_(message), 1)
+            self.advise(message, 1)
 
     def find_item(self, index):
         item_count = 0

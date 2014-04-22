@@ -29,25 +29,25 @@ requires pygettext available on the command line - i.e. NOT windows friendly.
 
 import os
 import subprocess
+from get_git_branch import module_path
+
+def source_files():
+
+    for root, dir_, files in os.walk(module_path):
+        for file_ in files:
+            if file_.endswith('.py'):
+                yield os.path.abspath(os.path.join(root, file_))
 
 
-def source_files(PATH):
-    retarg = []
-    for root, dir, files in os.walk(os.path.dirname(PATH)):
-        for name in files:
-            if name.endswith('.py'):
-                retarg.append(os.path.abspath(os.path.join(root, name)))
-    return retarg
-
-
-def main(PATH):
-    files = source_files(os.path.dirname(PATH))
+def main():
+    files = list(source_files())
     print "%d py files found" % len(files)
-    print "using pygettext to create a messages.pot.....",
-    pr = subprocess.Popen(["pygettext"] + files)
+    outdir = os.path.join(module_path, "openmolar", "locale")
+    print "using pygettext to create messages.pot in directory %s"% outdir
+    pr = subprocess.Popen(["pygettext", "-p", outdir] + files)
     pr.wait()
-    print "finished"
+    print "ALL DONE!"
 
 if __name__ == "__main__":
 
-    main(os.getcwd())
+    main()
