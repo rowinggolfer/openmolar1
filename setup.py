@@ -22,66 +22,113 @@
 # #                                                                          # #
 # ############################################################################ #
 
+'''
+distutils script for openmolar1.
+see https://docs.python.org/2/distutils/configfile.html for explanation
+'''
+
 from distutils.command.install_data import install_data
+from distutils.command.sdist import sdist as _sdist
 from distutils.core import setup
 from distutils.dep_util import newer
 from distutils.log import info
 
 import glob
 import os
-import re
+import shutil
 import sys
-
 
 OM_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "src")
 sys.path.insert(0, OM_PATH)
-# quieten down the logger!
-sys.argv.append("-q")
-from openmolar.settings.localsettings import VERSION
+
+from openmolar.settings import version
+
+VERSION = version.VERSION
+
+
+class sdist(_sdist):
+
+    '''
+    overwrite distutils standard source code builder to remove
+    extraneous code from version.py
+    '''
+    version_filepath = version.__file__
+    backup_version_filepath = version_filepath + "_orig"
+
+    def run(self, *args, **kwargs):
+        self.tear_down()
+        _sdist.run(self, *args, **kwargs)
+        self.clean_up()
+
+    def tear_down(self):
+        print "rewriting version"
+        f = open(self.version_filepath, "r")
+        new_data = ""
+        add_line = True
+        for line in f:
+            print line
+            if line.startswith("VERSION ="):
+                print "MATCH"
+                new_data += "VERSION = %s\n\n\n" % VERSION
+                add_line = False
+            elif line.startswith("if __name__"):
+                add_line = True
+            if add_line:
+                new_data += line
+
+        shutil.move(self.version_filepath, self.backup_version_filepath)
+        f = open(self.version_filepath, "w")
+        f.write(new_data)
+        f.close()
+
+    def clean_up(self):
+        os.remove(self.version_filepath)
+        shutil.move(self.backup_version_filepath, self.version_filepath)
 
 
 class InstallData(install_data):
 
-    def run(self):
-        self.data_files.extend(self._compile_po_files())
-        install_data.run(self)
+    '''
+    re-implement class distutils.install_data install_data
+    compile binary translation files for gettext
+    '''
 
-    def _compile_po_files(self):
+    def run(self):
         print "COMPILING PO FILES"
         i18nfiles = []
         if not os.path.isdir("src/openmolar/locale/"):
             print "WARNING - language files are missing!"
-        for po in glob.glob("src/openmolar/locale/*.po"):
-            directory, file = os.path.split(po)
-            lang = file.replace(".po", "")
-            mo = os.path.join(directory, lang)
+        for po_file in glob.glob("src/openmolar/locale/*.po"):
+            directory, file_ = os.path.split(po_file)
+            lang = file_.replace(".po", "")
+            mo_dir = os.path.join(directory, lang)
             try:
-                os.mkdir(mo)
+                os.mkdir(mo_dir)
             except OSError:
                 pass
-            mo = os.path.join(mo, "openmolar.mo")
-            if not os.path.exists(mo) or newer(po, mo):
-                cmd = 'msgfmt -o %s %s' % (mo, po)
-                info('compiling %s -> %s' % (po, mo))
+            mo_file = os.path.join(mo_dir, "openmolar.mo")
+            if not os.path.exists(mo_file) or newer(po_file, mo_file):
+                cmd = 'msgfmt -o %s %s' % (mo_file, po_file)
+                info('compiling %s -> %s' % (po_file, mo_file))
                 if os.system(cmd) != 0:
-                    info('Error while running msgfmt on %s' % po)
+                    info('Error while running msgfmt on %s' % po_file)
 
             destdir = os.path.join("/usr", "share", "locale", lang,
                                    "LC_MESSAGES")
 
-            i18nfiles.append((destdir, [mo]))
-        return i18nfiles
+            i18nfiles.append((destdir, [mo_file]))
 
-if os.path.isfile("MANIFEST"):
-    os.unlink("MANIFEST")
+        self.data_files.extend(i18nfiles)
+        install_data.run(self)
+
 
 setup(
     name='openmolar',
     version=VERSION,
     description='Open Source Dental Practice Management Software',
     author='Neil Wallace',
-    author_email='rowinggolfer@googlemail.com',
-    url='https://launchpad.net/openmolar',
+    author_email='neil@openmolar.com',
+    url='https://www.openmolar.com',
     license='GPL v3',
     package_dir={'openmolar': 'src/openmolar'},
     packages=['openmolar',
@@ -118,6 +165,7 @@ setup(
         ('/usr/share/man/man1', ['bin/openmolar.1']),
         ('/usr/share/icons/hicolor/scalable/apps', ['bin/openmolar.svg']),
         ('/usr/share/applications', ['bin/openmolar.desktop']), ],
-    cmdclass={'install_data': InstallData},
+    cmdclass={'sdist': sdist,
+              'install_data': InstallData},
     scripts=['openmolar'],
 )
