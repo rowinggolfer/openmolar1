@@ -61,15 +61,14 @@ class sdist(_sdist):
         self.clean_up()
 
     def tear_down(self):
-        print "rewriting version"
+        print "rewriting version.py"
         f = open(self.version_filepath, "r")
         new_data = ""
         add_line = True
         for line in f:
-            print line
             if line.startswith("VERSION ="):
-                print "MATCH"
-                new_data += "VERSION = %s\n\n\n" % VERSION
+                print "Forcing version number of '%s'"% VERSION
+                new_data += 'VERSION = "%s"\n\n\n' % VERSION
                 add_line = False
             elif line.startswith("if __name__"):
                 add_line = True
