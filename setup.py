@@ -35,6 +35,7 @@ from distutils.log import info
 
 import glob
 import os
+import re
 import shutil
 import sys
 
@@ -52,7 +53,7 @@ class sdist(_sdist):
     overwrite distutils standard source code builder to remove
     extraneous code from version.py
     '''
-    version_filepath = version.__file__
+    version_filepath = re.sub("\.pyc$", ".py", version.__file__)
     backup_version_filepath = version_filepath + "_orig"
 
     def run(self, *args, **kwargs):
@@ -65,15 +66,15 @@ class sdist(_sdist):
         f = open(self.version_filepath, "r")
         new_data = ""
         add_line = True
-        for line in f:
-            if line.startswith("VERSION ="):
-                print "Forcing version number of '%s'"% VERSION
+        for line_ in f:
+            if line_.startswith("VERSION ="):
+                print "Forcing version number of '%s'" % VERSION
                 new_data += 'VERSION = "%s"\n\n\n' % VERSION
                 add_line = False
-            elif line.startswith("if __name__"):
+            elif line_.startswith("if __name__"):
                 add_line = True
             if add_line:
-                new_data += line
+                new_data += line_
 
         shutil.move(self.version_filepath, self.backup_version_filepath)
         f = open(self.version_filepath, "w")
