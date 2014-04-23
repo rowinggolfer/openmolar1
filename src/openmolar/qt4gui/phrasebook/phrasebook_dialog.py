@@ -185,7 +185,7 @@ class PhraseBookDialog(QtGui.QDialog):
             self.tabWidget.addTab(page, icon, header_text)
 
     def sizeHint(self):
-        return QtCore.QSize(800, 400)
+        return QtCore.QSize(1000, 400)
 
     @property
     def selectedPhrases(self):
