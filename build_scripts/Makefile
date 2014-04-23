@@ -92,9 +92,9 @@ git_tag:
 
 version:
 	@echo "modding version.py"
-	echo "sed -i s/VERSION = \".*\"/VERSION = \"$(NEW_VERSION)\"/ src/openmolar/settings/version.py"
+	echo "sed -i  0,/VERSION/s/VERSION = \".*\"/VERSION = \"$(NEW_VERSION)\"/ src/openmolar/settings/version.py"
 	cd $(HEAD) ;\
-		sed -i s/VERSION\ =\ \".*\"/VERSION\ =\ \"$(NEW_VERSION)\"/ src/openmolar/settings/version.py
+		sed -i  0,/VERSION/s/VERSION\ =\ \".*\"/VERSION\ =\ \"$(NEW_VERSION)\"/ src/openmolar/settings/version.py
 	@echo "version updated"
 
 tarball:
