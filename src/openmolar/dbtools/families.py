@@ -71,7 +71,7 @@ def new_group(serialno):
     family_no = cursor.fetchone()[0]
     cursor.execute(NEW_GROUP_QUERY, (family_no, serialno))
     cursor.close()
-    return familyno
+    return family_no
 
 
 def delete_group(family_no):
@@ -169,4 +169,4 @@ def get_address_matches(address):
     return rows
 
 if __name__ == "__main__":
-    print new_family_group(1)
+    print new_group(1)

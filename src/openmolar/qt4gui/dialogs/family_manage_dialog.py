@@ -352,8 +352,7 @@ class FamilyManageDialog(ExtendableDialog):
         dl.exec_()
 
     def new_family_group(self):
-        self.om_gui.pt.familyno = families.new_family_group(
-            self.om_gui.pt.serialno)
+        self.om_gui.pt.familyno = families.new_group(self.om_gui.pt.serialno)
         self.load_values()
 
     def delete_group(self):
