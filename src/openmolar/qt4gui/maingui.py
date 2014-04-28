@@ -187,6 +187,10 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.setWindowTitle("OpenMolar - %s '%s'" % (
             _("connected to"), database_name()))
 
+        # reimplement these functions to catch "clicked links"
+        self.ui.debugBrowser.setSource = self.set_browser_source
+        self.ui.daybookTextBrowser.setSource = self.set_browser_source
+
         QtCore.QTimer.singleShot(500, self.set_operator_label)
         QtCore.QTimer.singleShot(500, self.load_pt_statuses)
         QtCore.QTimer.singleShot(1000, self.load_todays_patients_combobox)
@@ -3292,6 +3296,23 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.phrasebook_editor = PhrasebookEditor(self)
             self.phrasebook_editor.show()
             self.phrasebook_editor.closed_signal.connect(editor_closed)
+
+    def set_browser_source(self, url):
+        '''
+        A function to re-implement QTextBrowser.setUrl
+        this will catch "edit links"
+        '''
+        m = re.match("daybook_id\?(\d+)feesa=(\d+)feesb=(\d+)",
+                     str(url.toString().toAscii()))
+        if not m:
+            return
+        id = int(m.groups()[0])
+        fee = int(m.groups()[1])
+        ptfee = int(m.groups()[2])
+
+        self.advise("inspect daybook id %d" % id)
+        dl = DaybookItemDialog(id, fee, ptfee, self)
+        dl.exec_()
 
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''

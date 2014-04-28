@@ -26,6 +26,12 @@ from __future__ import division
 from openmolar.settings import localsettings
 from openmolar.connect import connect
 
+QUERY = '''select DATE_FORMAT(date, '%s'), coursetype,
+    dntid, trtid, concat(diagn,perio,anaes,misc,ndu,ndl,odu,odl),
+    other,chart,feesa,feesb, id from daybook
+    where serialno = %%s order by date desc, id desc
+    ''' % localsettings.OM_DATE_FORMAT.replace("%", "%%")
+
 
 def details(sno):
     '''
@@ -33,16 +39,7 @@ def details(sno):
     '''
     db = connect()
     cursor = db.cursor()
-
-    query = '''select DATE_FORMAT(date,'%s'), coursetype,
-    dntid, trtid, concat(diagn,perio,anaes,misc,ndu,ndl,odu,odl),
-    other,chart,feesa,feesb from daybook
-    where serialno = %s order by date desc, id desc''' % (
-        localsettings.OM_DATE_FORMAT, sno)
-
-    # can't use the preffered query, values
-    # here as the dateformat of %d/%m/%Y stuffs it up!
-    cursor.execute(query)
+    cursor.execute(QUERY, (sno,))
     rows = cursor.fetchall()
     cursor.close()
 
@@ -51,58 +48,55 @@ def details(sno):
     if claimNo == 0:
         return retarg
     headers = ("Date", "Csetype", "Dentist", "Clinician",
-               "Treatment", "Chart", "Fee", "PtCharge")
+               "Treatment", "Chart", "", "Fee", "PtCharge")
 
     retarg += '<table width="100%" border="1"><tr>'
     for header in headers:
         retarg += "<th>%s</th>" % header
     retarg += '</tr>'
 
-    odd = True
     fee_total, ptfee_total = 0, 0
-    for row in rows:
-        if odd:
-            retarg += '<tr bgcolor="#eeeeee">'
-            odd = False
-        else:
-            retarg += '<tr>'
-            odd = True
+    for i, (
+            date_, cset, dnt, trt, tx, tx1, tx2, fee, ptfee, id) in enumerate(rows):
 
-        retarg += '<td>%s</td><td>%s</td>' % (row[0], row[1])
-        retarg += '<td>%s</td><td>%s</td>' % (
-            localsettings.ops.get(row[2]), localsettings.ops.get(row[3]))
-        treatment = row[4]
-        if row[5] is not None:
-            #-- the "other" column allows nulls, which stuffs up the sql concat
-            treatment += row[5]
-        retarg += '<td>%s</td>' % treatment
-        treatment = row[6]
-        retarg += '<td>%s</td>' % treatment.strip("\x00")
+        if tx1 is not None:
+            #-- the "other treatment" column allows nulls,
+            #-- which stuffs up the sql concat
+            tx += tx1
+        retarg += '    <tr>' if i % 2 else '    <tr bgcolor="#eeeeee">'
 
-        fee = row[7]
-        retarg += '<td align="right">%s</td>' % (
-            localsettings.formatMoney(fee))
-
-        ptfee = row[8]
-        retarg += '<td align="right">%s</td>' % (
-            localsettings.formatMoney(ptfee))
+        retarg += '''\n        <td>%s</td>
+        <td>%s</td>
+        <td>%s</td>
+        <td>%s</td>
+        <td>%s</td>
+        <td>%s</td>
+        <td align="center"><a href="daybook_id?%sfeesa=%sfeesb=%s">%s</td>
+        <td align="right">%s</td><td align="right">%s</td>\n</tr>\n''' % (
+            date_, cset,
+            localsettings.ops.get(dnt),
+            localsettings.ops.get(trt),
+            tx, tx2.strip("\x00"),
+            id, fee, ptfee, _("details"),
+            localsettings.formatMoney(fee),
+            localsettings.formatMoney(ptfee)
+        )
 
         fee_total += fee
         ptfee_total += ptfee
-        retarg += '</tr>\n'
 
-    retarg += '''<tr><td colspan="5"></td>
-    <td><b>TOTALS</b></td><td align="right"><b>%s</b></td>
-    <td align="right"><b>%s</b></td></tr>''' % (
+    retarg += '''<tr>
+    <td colspan="6"></td>
+    <td align="right"><b>TOTALS</b></td>
+    <td align="right"><b>%s</b></td>
+    <td align="right"><b>%s</b></td>\n</tr>\n</table>''' % (
         localsettings.formatMoney(fee_total),
         localsettings.formatMoney(ptfee_total))
-
-    retarg += '</table>'
 
     return retarg
 
 if __name__ == "__main__":
     localsettings.initiate()
     print'<html><body>'
-    print details(17322)
+    print details(17322).encode("ascii", errors="replace")
     print "</body></html>"

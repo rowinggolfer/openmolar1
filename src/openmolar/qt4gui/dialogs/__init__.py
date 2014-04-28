@@ -1,26 +1,26 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-#
-#
-# Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-#
-# This file is part of OpenMolar.                                          # #
-#
-# OpenMolar is free software: you can redistribute it and/or modify        # #
-# it under the terms of the GNU General Public License as published by     # #
-# the Free Software Foundation, either version 3 of the License, or        # #
-# (at your option) any later version.                                      # #
-#
-# OpenMolar is distributed in the hope that it will be useful,             # #
-# but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# GNU General Public License for more details.                             # #
-#
-# You should have received a copy of the GNU General Public License        # #
-# along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-#
-#
+# ############################################################################ #
+# #                                                                          # #
+# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# #                                                                          # #
+# # This file is part of OpenMolar.                                          # #
+# #                                                                          # #
+# # OpenMolar is free software: you can redistribute it and/or modify        # #
+# # it under the terms of the GNU General Public License as published by     # #
+# # the Free Software Foundation, either version 3 of the License, or        # #
+# # (at your option) any later version.                                      # #
+# #                                                                          # #
+# # OpenMolar is distributed in the hope that it will be useful,             # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
+# # GNU General Public License for more details.                             # #
+# #                                                                          # #
+# # You should have received a copy of the GNU General Public License        # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
+# #                                                                          # #
+# ############################################################################ #
 
 from openmolar.qt4gui.dialogs import saveMemo
 from openmolar.qt4gui.dialogs import permissions
@@ -46,16 +46,18 @@ from openmolar.qt4gui.dialogs.nhs_forms_config_dialog import NHSFormsConfigDialo
 from openmolar.qt4gui.dialogs.advanced_tx_planning_dialog import AdvancedTxPlanningDialog
 from openmolar.qt4gui.dialogs.document_dialog import DocumentDialog
 from openmolar.qt4gui.dialogs.account_severity_dialog import AccountSeverityDialog
+from openmolar.qt4gui.dialogs.daybook_item_dialog import DaybookItemDialog
 
 __all__ = ['AccountSeverityDialog',
            'AdvancedTxPlanningDialog',
            'AlterTodaysNotesDialog',
            'AssistantSelectDialog',
            'AutoAddressDialog',
-        'BPE_Dialog',
+           'BPE_Dialog',
            'ChildSmileDialog',
            'ChooseToothDialog',
-        'ClinicianSelectDialog',
+           'ClinicianSelectDialog',
+           'DaybookItemDialog',
            'DocumentDialog',
            'DuplicateReceiptDialog',
            'ExamWizard',

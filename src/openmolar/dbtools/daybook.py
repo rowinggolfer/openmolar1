@@ -42,6 +42,23 @@ values (DATE(NOW()),%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
 
 HASH_QUERY = 'insert into daybook_link (daybook_id, tx_hash) values (%s, %s)'
 
+INSPECT_QUERY = '''select description, fee, ptfee
+from newestimates join est_link2 on newestimates.ix = est_link2.est_id
+where tx_hash in
+(select tx_hash from daybook join daybook_link on daybook.id = daybook_link.daybook_id where id=%s)'''
+
+DETAILS_QUERY = '''select DATE_FORMAT(date,'%s'), serialno, coursetype, dntid,
+        trtid, diagn, perio, anaes, misc, ndu, ndl, odu, odl, other, chart,
+        feesa, feesb, feesc, id from daybook
+        where {{DENT CONDITIONS}}
+        date >= %%s and date <= %%s order by date''' % (
+    localsettings.OM_DATE_FORMAT.replace("%", "%%"))
+
+UPDATE_ROW_FEES_QUERY = "update daybook set feesa=%s, feesb=%s where id=%s"
+UPDATE_ROW_FEE_QUERY = "update daybook set feesa=%s where id=%s"
+UPDATE_ROW_PTFEE_QUERY = "update daybook set feesb=%s where id=%s"
+DELETE_ROW_QUERY = "delete from daybook where id=%s"
+
 
 def add(sno, cset, dent, trtid, t_dict, fee, ptfee, tx_hashes):
     '''
@@ -74,12 +91,15 @@ def details(regdent, trtdent, startdate, enddate):
     '''
     returns an html table, for regdent, trtdent,startdate,enddate
     '''
-    cond1, cond2 = "", ""
+    dent_conditions = ""
+    dents = []
     try:
         if regdent != "*ALL*":
-            cond1 = 'dntid=%s and' % localsettings.ops_reverse[regdent]
+            dent_conditions = 'dntid=%s and '
+            dents.append(localsettings.ops_reverse[regdent])
         if trtdent != "*ALL*":
-            cond2 = 'trtid=%s and' % localsettings.ops_reverse[trtdent]
+            dent_conditions += 'trtid=%s and '
+            dents.append(localsettings.ops_reverse[trtdent])
     except KeyError:
         print "Key Error - %s or %s unregconised" % (regdent, trtdent)
         return '<html><body>%s</body></html>' % _(
@@ -89,8 +109,6 @@ def details(regdent, trtdent, startdate, enddate):
 
     iterDate = QDate(startdate.year(), startdate.month(), 1)
 
-    db = connect()
-    cursor = db.cursor()
     retarg = '''<html><body>
     <h3>Patients of %s treated by %s between %s and %s (inclusive)</h3>''' % (
         regdent, trtdent,
@@ -99,7 +117,13 @@ def details(regdent, trtdent, startdate, enddate):
 
     retarg += '''<table width="100%" border="1"><tr><th>DATE</th>
     <th>Dents</th><th>Serial Number</th><th>Name</th>
-    <th>Pt Type</th><th>Treatment</th><th>Gross Fee</th><th>Net Fee</th>'''
+    <th>Pt Type</th><th>Treatment</th><th></th>
+    <th>Gross Fee</th><th>Net Fee</th>'''
+
+    db = connect()
+    cursor = db.cursor()
+
+    query = DETAILS_QUERY.replace("{{DENT CONDITIONS}}", dent_conditions)
 
     while enddate >= iterDate:
         monthtotal, monthnettotal = 0, 0
@@ -113,28 +137,17 @@ def details(regdent, trtdent, startdate, enddate):
         if enddate < queryEndDate:
             queryEndDate = enddate
 
-        #-- note - mysqldb doesn't play nice with DATE_FORMAT
-        #-- hence the string is formatted entirely using python formatting
-        query = '''select DATE_FORMAT(date,'%s'), serialno, coursetype, dntid,
-        trtid, diagn, perio, anaes, misc, ndu, ndl, odu, odl, other, chart,
-        feesa, feesb, feesc, id from daybook
-        where %s %s date >= '%s' and date <= '%s' order by date''' % (
-            localsettings.OM_DATE_FORMAT, cond1, cond2,
-            queryStartDate.toPyDate(), queryEndDate.toPyDate())
+        values = tuple(
+            dents + [queryStartDate.toPyDate(), queryEndDate.toPyDate()])
 
-        cursor.execute(query)
+        cursor.execute(query, (values))
 
         rows = cursor.fetchall()
 
-        odd = True
-        for row in rows:
-            if odd:
-                retarg += '<tr bgcolor="#eeeeee">'
-                odd = False
-            else:
-                retarg += '<tr>'
-                odd = True
-            retarg += "<td>'%s' %s</td>" % (row[18], row[0])
+        for i, row in enumerate(rows):
+            retarg += '<tr>' if i % 2 else '<tr bgcolor="#eeeeee">'
+
+            retarg += "<td>%s</td>" % row[0]
             try:
                 retarg += '<td> %s / ' % localsettings.ops[row[3]]
             except KeyError:
@@ -162,8 +175,11 @@ def details(regdent, trtdent, startdate, enddate):
                 if row[item] is not None and row[item] != "":
                     tx += "%s " % row[item]
 
-            retarg += '''<td>%s</td><td align="right">%s</td>
+            retarg += '''<td>%s</td>
+            <td><a href="daybook_id?%sfeesa=%sfeesb=%s">details</a></td>
+            <td align="right">%s</td>
             <td align="right">%s</td></tr>''' % (tx.strip("%s " % chr(0)),
+                                                 row[18], row[15], row[16],
                                                  localsettings.formatMoney(
                                                  row[15]),
                                                  localsettings.formatMoney(row[16]))
@@ -173,7 +189,7 @@ def details(regdent, trtdent, startdate, enddate):
 
             nettotal += int(row[16])
             monthnettotal += int(row[16])
-        retarg += '''<tr><td colspan="5"></td><td><b>%s TOTAL</b></td>
+        retarg += '''<tr><td colspan="6"></td><td><b>%s TOTAL</b></td>
         <td align="right"><b>%s</b></td>
         <td align="right"><b>%s</b></td></tr>''' % (
             localsettings.monthName(iterDate.toPyDate()),
@@ -183,12 +199,58 @@ def details(regdent, trtdent, startdate, enddate):
     cursor.close()
     # db.close()
 
-    retarg += '''<tr><td colspan="5"></td><td><b>GRAND TOTAL</b></td>
+    retarg += '''<tr><td colspan="6"></td><td><b>GRAND TOTAL</b></td>
     <td align="right"><b>%s</b></td>
     <td align="right"><b>%s</b></td></tr></table></body></html>''' % (
         localsettings.formatMoney(total), localsettings.formatMoney(nettotal))
 
     return retarg
+
+
+def inspect_item(id):
+    '''
+    get more detailed information (by polling the newestimates table
+    '''
+    db = connect()
+    cursor = db.cursor()
+
+    cursor.execute(INSPECT_QUERY, (id, ))
+    rows = cursor.fetchall()
+    cursor.close()
+    return rows
+
+
+def update_row_fees(id, feesa, feesb):
+    db = connect()
+    cursor = db.cursor()
+    result = cursor.execute(UPDATE_ROW_FEES_QUERY, (feesa, feesb, id))
+    cursor.close()
+    return result
+
+
+def update_row_fee(id, feesa):
+    db = connect()
+    cursor = db.cursor()
+    result = cursor.execute(UPDATE_ROW_FEE_QUERY, (feesa, id))
+    cursor.close()
+    return result
+
+
+def update_row_ptfee(id, feesb):
+    db = connect()
+    cursor = db.cursor()
+    result = cursor.execute(UPDATE_ROW_PTFEE_QUERY, (feesb, id))
+    cursor.close()
+    return result
+
+
+def delete_row(id):
+    db = connect()
+    cursor = db.cursor()
+    result = cursor.execute(DELETE_ROW_QUERY, (id,))
+    cursor.close()
+    return result
+
 
 if __name__ == "__main__":
     localsettings.initiate()
