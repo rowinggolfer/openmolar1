@@ -58,12 +58,18 @@ def getFeesFromEst(om_gui, hash_):
     iterate through the ests... find this item
     '''
     LOGGER.debug("getting a daybook fee for treatment id %s" % hash_)
+    fee, ptfee = 0, 0
+    found = False
     for est in om_gui.pt.estimates:
         for tx_hash in est.tx_hashes:
             if hash_ == tx_hash.hash:
-                return (est.interim_fee, est.interim_pt_fee)
-    LOGGER.debug("NO MATCH!")
-    return None
+                found = True
+                fee += est.interim_fee
+                ptfee += est.interim_pt_fee
+    if not found:
+        LOGGER.debug("NO MATCH!")
+        return None
+    return fee, ptfee
 
 
 def takePayment(om_gui):

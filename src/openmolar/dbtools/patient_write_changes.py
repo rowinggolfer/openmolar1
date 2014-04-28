@@ -53,9 +53,63 @@ EST_LINK_INS_QUERY = (
 EST_DEL_QUERY = "delete from newestimates where ix=%s"
 EST_LINK_DEL_QUERY = "delete from est_link2 where est_id=%s"
 
+
+# too risky not to check these are unique before updating.
+EST_DAYBOOK_ALTERATION_QUERIES = [
+    'select daybook_id from daybook_link where tx_hash = %s',
+    '''select sum(fee), sum(ptfee) from newestimates join est_link2 on newestimates.ix = est_link2.est_id
+where tx_hash in (select tx_hash from daybook join daybook_link on daybook.id = daybook_link.daybook_id where id=%s)''',
+    'update daybook set feesa = %s, feesb = %s where serialno=%s and id=%s'
+]
+
+
 SYNOPSIS_INS_QUERY = '''
 insert into clinical_memos (serialno, synopsis, author, datestamp)
 values (%s, %s, %s, NOW())'''
+
+
+def update_daybook_after_estimate_change(values):
+    '''
+    if the value of a treatment item has been changed after completion,
+    update the daybook.
+    most common example of this is when an exemption is applied to a course of
+    treatment at reception (altering the charges put into the system in the
+    surgery)
+    note - use of serialno here is purely for precautionary reasons.
+    Hash collisions shouldn't occur... but easy to be cautious here.
+    '''
+    serialno, tx_hash = values
+    result = True
+    db = connect()
+    cursor = db.cursor()
+    try:
+        query = EST_DAYBOOK_ALTERATION_QUERIES[0]
+        cursor.execute(query, (tx_hash.hash,))
+        rows = cursor.fetchall()
+        if len(rows) != 1:
+            LOGGER.warning(
+                "unable to update daybook after estimate change - abandoning")
+            return True
+        daybook_id = rows[0][0]
+        LOGGER.debug("updating daybook row %s" % daybook_id)
+
+        query = EST_DAYBOOK_ALTERATION_QUERIES[1]
+        cursor.execute(query, (daybook_id,))
+        feesa, feesb = cursor.fetchone()
+
+        LOGGER.debug(
+            "updating row with feesa, feesb = %s and %s" %
+            (feesa, feesb))
+        query = EST_DAYBOOK_ALTERATION_QUERIES[2]
+        rows_changed = cursor.execute(
+            query, (feesa, feesb, serialno, daybook_id))
+        LOGGER.info("changes applied = %s" % bool(rows_changed))
+
+    except Exception as exc:
+        LOGGER.exception("error executing query %s" % query)
+        result = False
+
+    return result
 
 
 def all_changes(pt, changes):
@@ -82,6 +136,8 @@ def all_changes(pt, changes):
         estimate_commands = {}
         patchanges, patvalues = "", []
         trtchanges, trtvalues = "", []
+        post_cleanup_commands = []
+
         for change in changes:
             if change == "courseno":
                 pass  # these values should never get munged.
@@ -119,6 +175,7 @@ def all_changes(pt, changes):
                 estimate_commands["insertions"] = []
                 estimate_commands["updates"] = []
                 sqlcommands["estimate_deletions"] = []
+                sqlcommands["estimate_daybook_alterations"] = []
 
                 oldEstDict = {}
 
@@ -180,6 +237,10 @@ def all_changes(pt, changes):
 
                             estimate_commands["updates"].append(
                                 (query, tuple(values), est))
+                            for tx_hash in est.tx_hashes:
+                                values = (pt.serialno, tx_hash)
+                                post_cleanup_commands.append(
+                                    (update_daybook_after_estimate_change, values))
 
                         oldEstDict.pop(est.ix)
 
@@ -193,6 +254,10 @@ def all_changes(pt, changes):
                         deletions = sqlcommands["estimate_deletions"]
                         deletions.append((EST_DEL_QUERY, values))
                         deletions.append((EST_LINK_DEL_QUERY, values))
+                        for tx_hash in old_est.tx_hashes:
+                            values = (pt.serialno, tx_hash)
+                            post_cleanup_commands.append(
+                                (update_daybook_after_estimate_change, values))
 
             elif change == "treatment_course":  # patient.CURRTRT_ATTS:
                 for trt_att in CURRTRT_ATTS:
@@ -271,6 +336,10 @@ def all_changes(pt, changes):
                 result = False
 
         cursor.close()
+
+        for func, values in post_cleanup_commands:
+            func.__call__(values)
+
         db.commit()
 
     return result
