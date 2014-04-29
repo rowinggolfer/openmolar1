@@ -3302,17 +3302,21 @@ class OpenmolarGui(QtGui.QMainWindow):
         A function to re-implement QTextBrowser.setUrl
         this will catch "edit links"
         '''
-        m = re.match("daybook_id\?(\d+)feesa=(\d+)feesb=(\d+)",
-                     str(url.toString().toAscii()))
-        if not m:
-            return
-        id = int(m.groups()[0])
-        fee = int(m.groups()[1])
-        ptfee = int(m.groups()[2])
+        url = str(url.toString().toAscii())
+        m = re.match("daybook_id\?(\d+)feesa=(\d+)feesb=(\d+)", url)
+        n = re.match("daybook_id_edit\?(\d+)", url)
+        if m:
+            id = int(m.groups()[0])
+            fee = int(m.groups()[1])
+            ptfee = int(m.groups()[2])
 
-        self.advise("inspect daybook id %d" % id)
-        dl = DaybookItemDialog(id, fee, ptfee, self)
-        dl.exec_()
+            dl = DaybookItemDialog(id, fee, ptfee, self)
+            dl.exec_()
+        if n:
+            id = int(n.groups()[0])
+            dl = DaybookEditDialog(id, self)
+            if dl.exec_():
+                dl.update_treatments()
 
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''

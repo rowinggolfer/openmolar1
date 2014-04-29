@@ -115,7 +115,7 @@ class DaybookItemDialog(ExtendableDialog):
         QtGui.QMessageBox.information(self, _("message"), message)
 
     def sizeHint(self):
-        return QtCore.QSize(400, 300)
+        return QtCore.QSize(400, 400)
 
     def get_data(self):
         rows = daybook.inspect_item(self.daybook_id)
@@ -180,5 +180,5 @@ if __name__ == "__main__":
 
     app = QtGui.QApplication([])
     LOGGER.setLevel(logging.DEBUG)
-    dl = DaybookItemDialog(341301, 5700, 1300)
+    dl = DaybookItemDialog(337646, 5700, 1300)
     dl.exec_()

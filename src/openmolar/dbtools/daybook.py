@@ -59,6 +59,13 @@ UPDATE_ROW_FEE_QUERY = "update daybook set feesa=%s where id=%s"
 UPDATE_ROW_PTFEE_QUERY = "update daybook set feesb=%s where id=%s"
 DELETE_ROW_QUERY = "delete from daybook where id=%s"
 
+TREATMENTS_QUERY = ('select diagn, perio, anaes, misc, ndu, ndl, '
+                    'odu, odl, other, chart from daybook where id = %s')
+
+UPDATE_TREATMENTS_QUERY = ('update daybook '
+                           'set diagn=%s, perio=%s, anaes=%s, misc=%s, ndu=%s, ndl=%s, '
+                           'odu=%s, odl=%s, other=%s, chart=%s where id = %s')
+
 
 def add(sno, cset, dent, trtid, t_dict, fee, ptfee, tx_hashes):
     '''
@@ -176,10 +183,13 @@ def details(regdent, trtdent, startdate, enddate):
                     tx += "%s " % row[item]
 
             retarg += '''<td>%s</td>
-            <td><a href="daybook_id?%sfeesa=%sfeesb=%s">details</a></td>
+            <td><a href="daybook_id?%sfeesa=%sfeesb=%s">%s</a> /
+            <a href="daybook_id_edit?%s">%s</a></td>
             <td align="right">%s</td>
             <td align="right">%s</td></tr>''' % (tx.strip("%s " % chr(0)),
                                                  row[18], row[15], row[16],
+                                                 _("Ests"),
+                                                 row[18], _("Edit Tx"),
                                                  localsettings.formatMoney(
                                                  row[15]),
                                                  localsettings.formatMoney(row[16]))
@@ -213,11 +223,31 @@ def inspect_item(id):
     '''
     db = connect()
     cursor = db.cursor()
-
     cursor.execute(INSPECT_QUERY, (id, ))
     rows = cursor.fetchall()
     cursor.close()
     return rows
+
+
+def get_treatments(id):
+    '''
+    get more detailed information (by polling the newestimates table
+    '''
+    db = connect()
+    cursor = db.cursor()
+    cursor.execute(TREATMENTS_QUERY, (id, ))
+    row = cursor.fetchone()
+    cursor.close()
+    return row
+
+
+def update_treatments(id, treatments):
+    values = list(treatments) + [id]
+    db = connect()
+    cursor = db.cursor()
+    result = cursor.execute(UPDATE_TREATMENTS_QUERY, values)
+    cursor.close()
+    return result
 
 
 def update_row_fees(id, feesa, feesb):

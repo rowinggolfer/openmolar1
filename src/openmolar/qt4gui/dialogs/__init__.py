@@ -47,6 +47,7 @@ from openmolar.qt4gui.dialogs.advanced_tx_planning_dialog import AdvancedTxPlann
 from openmolar.qt4gui.dialogs.document_dialog import DocumentDialog
 from openmolar.qt4gui.dialogs.account_severity_dialog import AccountSeverityDialog
 from openmolar.qt4gui.dialogs.daybook_item_dialog import DaybookItemDialog
+from openmolar.qt4gui.dialogs.daybook_edit_dialog import DaybookEditDialog
 
 __all__ = ['AccountSeverityDialog',
            'AdvancedTxPlanningDialog',
@@ -58,6 +59,7 @@ __all__ = ['AccountSeverityDialog',
            'ChooseToothDialog',
            'ClinicianSelectDialog',
            'DaybookItemDialog',
+           'DaybookEditDialog',
            'DocumentDialog',
            'DuplicateReceiptDialog',
            'ExamWizard',

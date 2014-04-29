@@ -32,15 +32,14 @@ def getHistory(pt, tooth):
     '''
     tooth = tooth.upper()
     hist = ""
-    for tdate, apptix, item in pt.dayBookHistory:
-        regex = "%s (.*)\n?" % tooth
-        m = re.search(regex, item.replace("  ", "\n"))
-        if m:
-            for group in m.groups():
+    for tdate, apptix, items in pt.dayBookHistory:
+        regex = "%s (.*)" % tooth
+        for item in items.split("  "):
+            for tx in re.findall(regex, item):
                 hist += "<li>%s - %s - %s</li>" % (
                     localsettings.formatDate(tdate),
                     localsettings.ops.get(int(apptix)),
-                    group)
+                    tx)
     if hist == "":
         hist = "None Found"
     else:

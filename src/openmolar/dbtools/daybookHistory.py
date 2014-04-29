@@ -71,13 +71,17 @@ def details(sno):
         <td>%s</td>
         <td>%s</td>
         <td>%s</td>
-        <td align="center"><a href="daybook_id?%sfeesa=%sfeesb=%s">%s</td>
+        <td align="center">
+        <a href="daybook_id?%sfeesa=%sfeesb=%s">%s</a> /
+        <a href="daybook_id_edit?%s">%s</a>
+        </td>
         <td align="right">%s</td><td align="right">%s</td>\n</tr>\n''' % (
             date_, cset,
             localsettings.ops.get(dnt),
             localsettings.ops.get(trt),
             tx, tx2.strip("\x00"),
-            id, fee, ptfee, _("details"),
+            id, fee, ptfee, _("Ests"),
+            id, _("Edit Tx"),
             localsettings.formatMoney(fee),
             localsettings.formatMoney(ptfee)
         )
