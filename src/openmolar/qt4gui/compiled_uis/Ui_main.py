@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/main.ui'
 #
-# Created: Wed Apr  9 09:53:13 2014
+# Created: Wed Apr 30 15:50:23 2014
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -283,7 +283,7 @@ class Ui_MainWindow(object):
         self.scrollArea_4.setObjectName(_fromUtf8("scrollArea_4"))
         self.scrollAreaWidgetContents_7 = QtGui.QWidget()
         self.scrollAreaWidgetContents_7.setGeometry(
-            QtCore.QRect(0, 0, 743, 644))
+            QtCore.QRect(0, 0, 469, 644))
         self.scrollAreaWidgetContents_7.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_7"))
         self.verticalLayout_6 = QtGui.QVBoxLayout(
@@ -919,7 +919,7 @@ class Ui_MainWindow(object):
         self.scrollArea_5.setObjectName(_fromUtf8("scrollArea_5"))
         self.scrollAreaWidgetContents_8 = QtGui.QWidget()
         self.scrollAreaWidgetContents_8.setGeometry(
-            QtCore.QRect(0, 0, 725, 421))
+            QtCore.QRect(0, 0, 423, 421))
         self.scrollAreaWidgetContents_8.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_8"))
         self.gridLayout = QtGui.QGridLayout(self.scrollAreaWidgetContents_8)
@@ -1112,7 +1112,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setObjectName(_fromUtf8("scrollArea_2"))
         self.scrollAreaWidgetContents_5 = QtGui.QWidget()
         self.scrollAreaWidgetContents_5.setGeometry(
-            QtCore.QRect(0, 0, 745, 470))
+            QtCore.QRect(0, 0, 283, 470))
         self.scrollAreaWidgetContents_5.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_5"))
         self.horizontalLayout_26 = QtGui.QHBoxLayout(
@@ -1654,7 +1654,7 @@ class Ui_MainWindow(object):
             _fromUtf8("estimate_scrollArea"))
         self.scrollAreaWidgetContents_11 = QtGui.QWidget()
         self.scrollAreaWidgetContents_11.setGeometry(
-            QtCore.QRect(0, 0, 532, 383))
+            QtCore.QRect(0, 0, 98, 200))
         self.scrollAreaWidgetContents_11.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_11"))
         self.horizontalLayout_19 = QtGui.QHBoxLayout(
@@ -1677,7 +1677,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_4 = QtGui.QWidget()
         self.scrollAreaWidgetContents_4.setGeometry(
-            QtCore.QRect(0, 0, 198, 383))
+            QtCore.QRect(0, 0, 139, 212))
         self.scrollAreaWidgetContents_4.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_4"))
         self.verticalLayout_9 = QtGui.QVBoxLayout(
@@ -1738,7 +1738,7 @@ class Ui_MainWindow(object):
             _fromUtf8("perioCharts_scrollArea"))
         self.scrollAreaWidgetContents_6 = QtGui.QWidget()
         self.scrollAreaWidgetContents_6.setGeometry(
-            QtCore.QRect(0, 0, 740, 385))
+            QtCore.QRect(0, 0, 252, 374))
         self.scrollAreaWidgetContents_6.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_6"))
         self.gridLayout_15 = QtGui.QGridLayout(self.scrollAreaWidgetContents_6)
@@ -2903,6 +2903,8 @@ class Ui_MainWindow(object):
         self.menuMode.setObjectName(_fromUtf8("menuMode"))
         self.menuCashbook = QtGui.QMenu(self.menu_Prefences)
         self.menuCashbook.setObjectName(_fromUtf8("menuCashbook"))
+        self.menuDaybook = QtGui.QMenu(self.menu_Prefences)
+        self.menuDaybook.setObjectName(_fromUtf8("menuDaybook"))
         self.menuTools = QtGui.QMenu(self.menubar)
         self.menuTools.setObjectName(_fromUtf8("menuTools"))
         MainWindow.setMenuBar(self.menubar)
@@ -2989,6 +2991,9 @@ class Ui_MainWindow(object):
         self.actionDocuments_Dialog = QtGui.QAction(MainWindow)
         self.actionDocuments_Dialog.setObjectName(
             _fromUtf8("actionDocuments_Dialog"))
+        self.actionAllow_Edit = QtGui.QAction(MainWindow)
+        self.actionAllow_Edit.setCheckable(True)
+        self.actionAllow_Edit.setObjectName(_fromUtf8("actionAllow_Edit"))
         self.menuMenu.addAction(self.action_Open_Patient)
         self.menuMenu.addSeparator()
         self.menuMenu.addAction(self.action_save_patient)
@@ -3006,6 +3011,8 @@ class Ui_MainWindow(object):
         self.menuCharts.addAction(self.actionTable_View_For_Charting)
         self.menuMode.addAction(self.actionSurgery_Mode)
         self.menuCashbook.addAction(self.actionAllow_Full_Edit)
+        self.menuDaybook.addSeparator()
+        self.menuDaybook.addAction(self.actionAllow_Edit)
         self.menu_Prefences.addAction(self.actionChange_Language)
         self.menu_Prefences.addSeparator()
         self.menu_Prefences.addAction(self.menuView.menuAction())
@@ -3013,6 +3020,7 @@ class Ui_MainWindow(object):
         self.menu_Prefences.addAction(self.menuAppointments.menuAction())
         self.menu_Prefences.addAction(self.menuForum.menuAction())
         self.menu_Prefences.addAction(self.menuCashbook.menuAction())
+        self.menu_Prefences.addAction(self.menuDaybook.menuAction())
         self.menu_Prefences.addAction(self.menuPrinting.menuAction())
         self.menu_Prefences.addSeparator()
         self.menu_Prefences.addAction(self.menuMode.menuAction())
@@ -3525,13 +3533,14 @@ class Ui_MainWindow(object):
         self.menuMenu.setTitle(_("&File"))
         self.menu_Help.setTitle(_("&Help"))
         self.menu_Prefences.setTitle(_("&Preferences"))
-        self.menuView.setTitle(_("View"))
-        self.menuAppointments.setTitle(_("Appointments"))
-        self.menuPrinting.setTitle(_("Printing"))
-        self.menuForum.setTitle(_("Forum"))
-        self.menuCharts.setTitle(_("Charts"))
-        self.menuMode.setTitle(_("Mode (reception or surgery)"))
-        self.menuCashbook.setTitle(_("Cashbook"))
+        self.menuView.setTitle(_("&View"))
+        self.menuAppointments.setTitle(_("&Appointments"))
+        self.menuPrinting.setTitle(_("&Printing"))
+        self.menuForum.setTitle(_("&Forum"))
+        self.menuCharts.setTitle(_("&Charts"))
+        self.menuMode.setTitle(_("&Mode (reception or surgery)"))
+        self.menuCashbook.setTitle(_("&Cashbook"))
+        self.menuDaybook.setTitle(_("&Daybook"))
         self.menuTools.setTitle(_("Tools"))
         self.action_save_patient.setText(_("&Export Patient to disk"))
         self.action_Open_Patient.setText(_("&Import Patient from disk"))
@@ -3566,6 +3575,7 @@ class Ui_MainWindow(object):
             _("Set Surgery Number (used so other applications can see which record is loaded)"))
         self.actionEdit_Phrasebooks.setText(_("Edit Phrasebooks"))
         self.actionDocuments_Dialog.setText(_("Documents Dialog"))
+        self.actionAllow_Edit.setText(_("Allow &Edit"))
 
 from PyQt4 import QtWebKit
 from openmolar.qt4gui import resources_rc

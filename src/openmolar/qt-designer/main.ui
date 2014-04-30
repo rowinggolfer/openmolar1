@@ -463,7 +463,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>743</width>
+                      <width>469</width>
                       <height>644</height>
                      </rect>
                     </property>
@@ -1797,7 +1797,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>725</width>
+                      <width>423</width>
                       <height>421</height>
                      </rect>
                     </property>
@@ -2090,7 +2090,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>745</width>
+                      <width>283</width>
                       <height>470</height>
                      </rect>
                     </property>
@@ -3032,8 +3032,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>532</width>
-                      <height>383</height>
+                      <width>98</width>
+                      <height>200</height>
                      </rect>
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_19"/>
@@ -3062,8 +3062,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>198</width>
-                      <height>383</height>
+                      <width>139</width>
+                      <height>212</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -3179,8 +3179,8 @@ Note - this will not remove items which are currently there. </string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>740</width>
-                      <height>385</height>
+                      <width>252</width>
+                      <height>374</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_15">
@@ -5089,47 +5089,54 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     </property>
     <widget class="QMenu" name="menuView">
      <property name="title">
-      <string>View</string>
+      <string>&amp;View</string>
      </property>
      <addaction name="actionFull_Screen_Mode_Ctrl_Alt_F"/>
      <addaction name="separator"/>
     </widget>
     <widget class="QMenu" name="menuAppointments">
      <property name="title">
-      <string>Appointments</string>
+      <string>&amp;Appointments</string>
      </property>
      <addaction name="actionSet_Font_Size"/>
     </widget>
     <widget class="QMenu" name="menuPrinting">
      <property name="title">
-      <string>Printing</string>
+      <string>&amp;Printing</string>
      </property>
      <addaction name="actionNHS_Form_Settings"/>
      <addaction name="actionTest_Print_a_GP17"/>
     </widget>
     <widget class="QMenu" name="menuForum">
      <property name="title">
-      <string>Forum</string>
+      <string>&amp;Forum</string>
      </property>
      <addaction name="action_forum_show_advanced_options"/>
     </widget>
     <widget class="QMenu" name="menuCharts">
      <property name="title">
-      <string>Charts</string>
+      <string>&amp;Charts</string>
      </property>
      <addaction name="actionTable_View_For_Charting"/>
     </widget>
     <widget class="QMenu" name="menuMode">
      <property name="title">
-      <string>Mode (reception or surgery)</string>
+      <string>&amp;Mode (reception or surgery)</string>
      </property>
      <addaction name="actionSurgery_Mode"/>
     </widget>
     <widget class="QMenu" name="menuCashbook">
      <property name="title">
-      <string>Cashbook</string>
+      <string>&amp;Cashbook</string>
      </property>
      <addaction name="actionAllow_Full_Edit"/>
+    </widget>
+    <widget class="QMenu" name="menuDaybook">
+     <property name="title">
+      <string>&amp;Daybook</string>
+     </property>
+     <addaction name="separator"/>
+     <addaction name="actionAllow_Edit"/>
     </widget>
     <addaction name="actionChange_Language"/>
     <addaction name="separator"/>
@@ -5138,6 +5145,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <addaction name="menuAppointments"/>
     <addaction name="menuForum"/>
     <addaction name="menuCashbook"/>
+    <addaction name="menuDaybook"/>
     <addaction name="menuPrinting"/>
     <addaction name="separator"/>
     <addaction name="menuMode"/>
@@ -5308,6 +5316,14 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <action name="actionDocuments_Dialog">
    <property name="text">
     <string>Documents Dialog</string>
+   </property>
+  </action>
+  <action name="actionAllow_Edit">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Allow &amp;Edit</string>
    </property>
   </action>
  </widget>

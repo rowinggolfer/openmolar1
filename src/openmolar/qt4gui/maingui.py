@@ -101,6 +101,7 @@ from openmolar.dbtools import paymentHistory
 from openmolar.dbtools import courseHistory
 from openmolar.dbtools import estimatesHistory
 from openmolar.dbtools import est_logger
+from openmolar.dbtools import daybook
 from openmolar.dbtools.distinct_statuses import DistinctStatuses
 
 
@@ -2647,64 +2648,38 @@ class OpenmolarGui(QtGui.QMainWindow):
 
     def signals_menu(self):
         # menu
-        QtCore.QObject.connect(self.ui.action_save_patient,
-                               QtCore.SIGNAL("triggered()"), self.save_patient_tofile)
-
-        QtCore.QObject.connect(self.ui.action_Open_Patient,
-                               QtCore.SIGNAL("triggered()"), self.open_patient_fromfile)
-
-        QtCore.QObject.connect(self.ui.actionSet_Clinician,
-                               QtCore.SIGNAL("triggered()"), self.setClinician)
-
-        QtCore.QObject.connect(self.ui.actionSet_Assistant,
-                               QtCore.SIGNAL("triggered()"), self.setAssistant)
-
-        QtCore.QObject.connect(self.ui.actionChange_Language,
-                               QtCore.SIGNAL("triggered()"), self.changeLanguage)
-
-        QtCore.QObject.connect(self.ui.action_About,
-                               QtCore.SIGNAL("triggered()"), self.aboutOM)
-
-        QtCore.QObject.connect(self.ui.action_About_QT,
-                               QtCore.SIGNAL("triggered()"), QtGui.qApp, QtCore.SLOT("aboutQt()"))
-
-        QtCore.QObject.connect(self.ui.action_Quit,
-                               QtCore.SIGNAL("triggered()"), self.quit)
-
-        QtCore.QObject.connect(self.ui.actionFull_Screen_Mode_Ctrl_Alt_F,
-                               QtCore.SIGNAL("triggered()"), self.fullscreen)
-
+        self.ui.action_save_patient.triggered.connect(self.save_patient_tofile)
+        self.ui.action_Open_Patient.triggered.connect(
+            self.open_patient_fromfile)
+        self.ui.actionSet_Clinician.triggered.connect(self.setClinician)
+        self.ui.actionSet_Assistant.triggered.connect(self.setAssistant)
+        self.ui.actionChange_Language.triggered.connect(self.changeLanguage)
+        self.ui.action_About.triggered.connect(self.aboutOM)
+        self.ui.action_About_QT.triggered.connect(
+            QtGui.QApplication.instance().aboutQt)
+        self.ui.action_Quit.triggered.connect(self.quit)
+        self.ui.actionFull_Screen_Mode_Ctrl_Alt_F.triggered.connect(
+            self.fullscreen)
         self.ui.actionTable_View_For_Charting.toggled.connect(
             self.showChartTable)
-
         self.ui.actionClear_Today_s_Emergency_Slots.triggered.connect(
             self.diary_widget.clearTodaysEmergencyTime)
-
-        QtCore.QObject.connect(self.ui.actionTest_Print_a_GP17,
-                               QtCore.SIGNAL("triggered()"), self.testGP17)
-
-        QtCore.QObject.connect(self.ui.actionNHS_Form_Settings,
-                               QtCore.SIGNAL("triggered()"), self.nhsformOptionsDialog)
-
-        QtCore.QObject.connect(self.ui.actionAppointment_Tools,
-                               QtCore.SIGNAL("triggered()"), self.diary_widget.appointmentTools)
-
-        QtCore.QObject.connect(self.ui.actionPrint_Daylists,
-                               QtCore.SIGNAL("triggered()"), self.daylistPrintWizard)
-
-        QtCore.QObject.connect(self.ui.actionAdvanced_Record_Management,
-                               QtCore.SIGNAL("triggered()"), self.advancedRecordTools)
-
+        self.ui.actionTest_Print_a_GP17.triggered.connect(self.testGP17)
+        self.ui.actionNHS_Form_Settings.triggered.connect(
+            self.nhsformOptionsDialog)
+        self.ui.actionAppointment_Tools.triggered.connect(
+            self.diary_widget.appointmentTools)
+        self.ui.actionPrint_Daylists.triggered.connect(self.daylistPrintWizard)
+        self.ui.actionAdvanced_Record_Management.triggered.connect(
+            self.advancedRecordTools)
         self.ui.actionFix_Locked_New_Course_of_Treatment.triggered.connect(
             self.fix_zombied_course)
-
         self.ui.actionAllow_Full_Edit.triggered.connect(
             self.ui.cashbookTextBrowser.allow_full_edit)
-
         self.ui.actionSet_Surgery_Number.triggered.connect(
             self.set_surgery_number)
-        self.ui.actionEdit_Phrasebooks.triggered.connect(
-            self.edit_phrasebooks)
+        self.ui.actionEdit_Phrasebooks.triggered.connect(self.edit_phrasebooks)
+        self.ui.actionAllow_Edit.triggered.connect(self.allow_edit_daybook)
 
     def signals_estimates(self):
         # Estimates and course ManageMent
@@ -3284,6 +3259,9 @@ class OpenmolarGui(QtGui.QMainWindow):
             return True
         return False
 
+    def allow_edit_daybook(self, bool_value):
+        daybook.ALLOW_TX_EDITS = bool_value
+
     def edit_phrasebooks(self):
         def editor_closed():
             self.phrasebook_editor.setParent(None)
@@ -3312,7 +3290,7 @@ class OpenmolarGui(QtGui.QMainWindow):
 
             dl = DaybookItemDialog(id, fee, ptfee, self)
             dl.exec_()
-        if n:
+        if n and permissions.granted():
             id = int(n.groups()[0])
             dl = DaybookEditDialog(id, self)
             if dl.exec_():

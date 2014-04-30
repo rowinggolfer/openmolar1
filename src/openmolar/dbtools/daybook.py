@@ -33,6 +33,8 @@ from PyQt4.QtCore import QDate
 from openmolar.settings import localsettings
 from openmolar.connect import connect
 
+ALLOW_TX_EDITS = False
+
 LOGGER = logging.getLogger("openmolar")
 
 QUERY = '''insert into daybook
@@ -182,14 +184,19 @@ def details(regdent, trtdent, startdate, enddate):
                 if row[item] is not None and row[item] != "":
                     tx += "%s " % row[item]
 
+            if ALLOW_TX_EDITS:
+                extra_link = ' / <a href="daybook_id_edit?%s">%s</a>' % (
+                    row[18], _("Edit Tx"))
+            else:
+                extra_link = ""
+
             retarg += '''<td>%s</td>
-            <td><a href="daybook_id?%sfeesa=%sfeesb=%s">%s</a> /
-            <a href="daybook_id_edit?%s">%s</a></td>
+            <td><a href="daybook_id?%sfeesa=%sfeesb=%s">%s</a>%s</td>
             <td align="right">%s</td>
             <td align="right">%s</td></tr>''' % (tx.strip("%s " % chr(0)),
                                                  row[18], row[15], row[16],
                                                  _("Ests"),
-                                                 row[18], _("Edit Tx"),
+                                                 extra_link,
                                                  localsettings.formatMoney(
                                                  row[15]),
                                                  localsettings.formatMoney(row[16]))
