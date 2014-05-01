@@ -31,7 +31,7 @@ import logging
 from PyQt4.QtCore import QDate
 
 from openmolar.settings import localsettings
-from openmolar.connect import connect
+from openmolar import connect
 
 ALLOW_TX_EDITS = False
 
@@ -49,12 +49,20 @@ from newestimates join est_link2 on newestimates.ix = est_link2.est_id
 where tx_hash in
 (select tx_hash from daybook join daybook_link on daybook.id = daybook_link.daybook_id where id=%s)'''
 
-DETAILS_QUERY = '''select DATE_FORMAT(date,'%s'), serialno, coursetype, dntid,
+DETAILS_QUERY = '''select DATE_FORMAT(date,'%s'), daybook.serialno,
+        concat (fname, " ", sname), coursetype, dntid,
         trtid, diagn, perio, anaes, misc, ndu, ndl, odu, odl, other, chart,
-        feesa, feesb, feesc, id from daybook
+        feesa, feesb, feesc, id
+        from daybook join patients on daybook.serialno = patients.serialno
         where {{DENT CONDITIONS}}
-        date >= %%s and date <= %%s order by date''' % (
+        date >= %%s and date <= %%s {{FILTERS}} order by date''' % (
     localsettings.OM_DATE_FORMAT.replace("%", "%%"))
+
+FIELD_NAMES_QUERY = '''
+SELECT concat(table_name, ".", column_name) as fieldname FROM
+information_schema.columns
+WHERE table_name='patients' or table_name="daybook" order by fieldname'''
+
 
 UPDATE_ROW_FEES_QUERY = "update daybook set feesa=%s, feesb=%s where id=%s"
 UPDATE_ROW_FEE_QUERY = "update daybook set feesa=%s where id=%s"
@@ -73,7 +81,7 @@ def add(sno, cset, dent, trtid, t_dict, fee, ptfee, tx_hashes):
     '''
     add a row to the daybook table
     '''
-    db = connect()
+    db = connect.connect()
     cursor = db.cursor()
 
     values = (sno, cset, dent, trtid, t_dict["diagn"], t_dict["perio"],
@@ -96,7 +104,7 @@ def add(sno, cset, dent, trtid, t_dict, fee, ptfee, tx_hashes):
     cursor.close()
 
 
-def details(regdent, trtdent, startdate, enddate):
+def details(regdent, trtdent, startdate, enddate, filters=""):
     '''
     returns an html table, for regdent, trtdent,startdate,enddate
     '''
@@ -118,21 +126,22 @@ def details(regdent, trtdent, startdate, enddate):
 
     iterDate = QDate(startdate.year(), startdate.month(), 1)
 
-    retarg = '''<html><body>
-    <h3>Patients of %s treated by %s between %s and %s (inclusive)</h3>''' % (
-        regdent, trtdent,
-        localsettings.formatDate(startdate.toPyDate()),
-        localsettings.formatDate(enddate.toPyDate()))
+    retarg = '''
+    <html><body><h4>%s %s %s %s %s %s %s %s %s</h4>''' % (
+        _("Patients of"), regdent, _("treated by"), trtdent, _("between"),
+        localsettings.formatDate(startdate.toPyDate()), _("and"),
+        localsettings.formatDate(enddate.toPyDate()), filters)
 
     retarg += '''<table width="100%" border="1"><tr><th>DATE</th>
     <th>Dents</th><th>Serial Number</th><th>Name</th>
     <th>Pt Type</th><th>Treatment</th><th></th>
     <th>Gross Fee</th><th>Net Fee</th>'''
 
-    db = connect()
+    db = connect.connect()
     cursor = db.cursor()
 
     query = DETAILS_QUERY.replace("{{DENT CONDITIONS}}", dent_conditions)
+    query = query.replace("{{FILTERS}}", filters)
 
     while enddate >= iterDate:
         monthtotal, monthnettotal = 0, 0
@@ -158,29 +167,18 @@ def details(regdent, trtdent, startdate, enddate):
 
             retarg += "<td>%s</td>" % row[0]
             try:
-                retarg += '<td> %s / ' % localsettings.ops[row[3]]
+                retarg += '<td> %s / ' % localsettings.ops[row[4]]
             except KeyError:
                 retarg += "<td>?? / "
             try:
-                retarg += localsettings.ops[row[4]]
+                retarg += localsettings.ops[row[5]]
             except KeyError:
                 retarg += "??"
 
-            retarg += '</td><td>%s</td>' % row[1]
-
-            cursor.execute(
-                'select fname,sname from patients where serialno=%s' % row[1])
-
-            names = cursor.fetchall()
-            if names != ():
-                name = names[0]
-                retarg += '<td>%s %s</td>' % (name[0].title(), name[1].title())
-            else:
-                retarg += "<td>NOT FOUND</td>"
-            retarg += '<td>%s</td>' % row[2]
+            retarg += '</td><td>%s</td><td>%s</td><td>%s</td>' % (row[1:4])
 
             tx = ""
-            for item in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14):
+            for item in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15):
                 if row[item] is not None and row[item] != "":
                     tx += "%s " % row[item]
 
@@ -194,22 +192,23 @@ def details(regdent, trtdent, startdate, enddate):
             <td><a href="daybook_id?%sfeesa=%sfeesb=%s">%s</a>%s</td>
             <td align="right">%s</td>
             <td align="right">%s</td></tr>''' % (tx.strip("%s " % chr(0)),
-                                                 row[18], row[15], row[16],
+                                                 row[19], row[16], row[17],
                                                  _("Ests"),
                                                  extra_link,
                                                  localsettings.formatMoney(
-                                                 row[15]),
-                                                 localsettings.formatMoney(row[16]))
+                                                 row[16]),
+                                                 localsettings.formatMoney(row[17]))
 
-            total += int(row[15])
-            monthtotal += int(row[15])
+            total += int(row[16])
+            monthtotal += int(row[16])
 
-            nettotal += int(row[16])
-            monthnettotal += int(row[16])
-        retarg += '''<tr><td colspan="6"></td><td><b>%s TOTAL</b></td>
+            nettotal += int(row[17])
+            monthnettotal += int(row[17])
+        retarg += '''<tr><td colspan="6"></td><td><b>SUBTOTAL - %s %s</b></td>
         <td align="right"><b>%s</b></td>
         <td align="right"><b>%s</b></td></tr>''' % (
             localsettings.monthName(iterDate.toPyDate()),
+            iterDate.year(),
             localsettings.formatMoney(monthtotal),
             localsettings.formatMoney(monthnettotal))
         iterDate = iterDate.addMonths(1)
@@ -228,7 +227,7 @@ def inspect_item(id):
     '''
     get more detailed information (by polling the newestimates table
     '''
-    db = connect()
+    db = connect.connect()
     cursor = db.cursor()
     cursor.execute(INSPECT_QUERY, (id, ))
     rows = cursor.fetchall()
@@ -240,7 +239,7 @@ def get_treatments(id):
     '''
     get more detailed information (by polling the newestimates table
     '''
-    db = connect()
+    db = connect.connect()
     cursor = db.cursor()
     cursor.execute(TREATMENTS_QUERY, (id, ))
     row = cursor.fetchone()
@@ -250,7 +249,7 @@ def get_treatments(id):
 
 def update_treatments(id, treatments):
     values = list(treatments) + [id]
-    db = connect()
+    db = connect.connect()
     cursor = db.cursor()
     result = cursor.execute(UPDATE_TREATMENTS_QUERY, values)
     cursor.close()
@@ -258,7 +257,7 @@ def update_treatments(id, treatments):
 
 
 def update_row_fees(id, feesa, feesb):
-    db = connect()
+    db = connect.connect()
     cursor = db.cursor()
     result = cursor.execute(UPDATE_ROW_FEES_QUERY, (feesa, feesb, id))
     cursor.close()
@@ -266,7 +265,7 @@ def update_row_fees(id, feesa, feesb):
 
 
 def update_row_fee(id, feesa):
-    db = connect()
+    db = connect.connect()
     cursor = db.cursor()
     result = cursor.execute(UPDATE_ROW_FEE_QUERY, (feesa, id))
     cursor.close()
@@ -274,7 +273,7 @@ def update_row_fee(id, feesa):
 
 
 def update_row_ptfee(id, feesb):
-    db = connect()
+    db = connect.connect()
     cursor = db.cursor()
     result = cursor.execute(UPDATE_ROW_PTFEE_QUERY, (feesb, id))
     cursor.close()
@@ -282,12 +281,53 @@ def update_row_ptfee(id, feesb):
 
 
 def delete_row(id):
-    db = connect()
+    db = connect.connect()
     cursor = db.cursor()
     result = cursor.execute(DELETE_ROW_QUERY, (id,))
     cursor.close()
     return result
 
+
+class FilterHelp(object):
+    _field_names = None
+
+    @property
+    def field_names(self):
+        if self._field_names is None:
+            db = connect.connect()
+            cursor = db.cursor()
+            cursor.execute(FIELD_NAMES_QUERY)
+            self._field_names = cursor.fetchall()
+            cursor.close()
+        return self._field_names
+
+    def help_text(self):
+        '''
+        text to be shown in user clicks on the "filter help button"
+        '''
+        html = "<html><body><h4>%s</h4>%s<br />%s<table>" % (
+            _("Filter your results"),
+            _("If this text box is left blank, then results from the daybook are "
+              "returned dependent on the dates and clinicians entered."),
+            _("You can filter using the following fields.")
+        )
+        for i, field in enumerate(self.field_names):
+            if i == 0:
+                html += "<tr>"
+            elif i % 5 == 0:
+                html += "</tr><tr>"
+            html += "<td>%s</td>" % field
+
+        html += "</tr></table><h5>%s</h5><pre>%s</pre></body></html>" % (
+            _("Examples"),
+            'patients.serialno=1 AND chart REGEXP ".*MOD,CO.*"\n'
+            'ndu="SR/F"\nexmpt="M"\n')
+        return html
+
+_filter_help = FilterHelp()
+
+def filter_help_text():
+    return _filter_help.help_text()
 
 if __name__ == "__main__":
     localsettings.initiate()
@@ -295,3 +335,6 @@ if __name__ == "__main__":
     for combo in (("*ALL*", "NW"), ("NW", "AH"), ("NW", "NW")):
         r = details(combo[0], combo[1], QDate(
             2008, 10, 31), QDate(2008, 11, 11))
+        print r.encode("ascii", "replace")
+
+    print filter_help_text()

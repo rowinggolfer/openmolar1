@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/main.ui'
 #
-# Created: Wed Apr 30 15:50:23 2014
+# Created: Thu May  1 15:04:57 2014
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -1868,6 +1868,8 @@ class Ui_MainWindow(object):
         self.tab_patient_history.setObjectName(
             _fromUtf8("tab_patient_history"))
         self.horizontalLayout_29 = QtGui.QHBoxLayout(self.tab_patient_history)
+        self.horizontalLayout_29.setSpacing(3)
+        self.horizontalLayout_29.setMargin(3)
         self.horizontalLayout_29.setObjectName(
             _fromUtf8("horizontalLayout_29"))
         self.debugBrowser = QtGui.QTextBrowser(self.tab_patient_history)
@@ -1879,6 +1881,8 @@ class Ui_MainWindow(object):
         self.frame_3.setFrameShadow(QtGui.QFrame.Raised)
         self.frame_3.setObjectName(_fromUtf8("frame_3"))
         self.verticalLayout_25 = QtGui.QVBoxLayout(self.frame_3)
+        self.verticalLayout_25.setSpacing(3)
+        self.verticalLayout_25.setMargin(3)
         self.verticalLayout_25.setObjectName(_fromUtf8("verticalLayout_25"))
         self.pastPayments_pushButton = QtGui.QPushButton(self.frame_3)
         self.pastPayments_pushButton.setObjectName(
@@ -1999,7 +2003,7 @@ class Ui_MainWindow(object):
         self.scrollArea_8.setObjectName(_fromUtf8("scrollArea_8"))
         self.scrollAreaWidgetContents_13 = QtGui.QWidget()
         self.scrollAreaWidgetContents_13.setGeometry(
-            QtCore.QRect(0, 0, 118, 110))
+            QtCore.QRect(0, 0, 118, 118))
         self.scrollAreaWidgetContents_13.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_13"))
         self.verticalLayout_20 = QtGui.QVBoxLayout(
@@ -2265,71 +2269,12 @@ class Ui_MainWindow(object):
         self.main_tabWidget.addTab(self.tab_cashbook, icon11, _fromUtf8(""))
         self.tab_daybook = QtGui.QWidget()
         self.tab_daybook.setObjectName(_fromUtf8("tab_daybook"))
-        self.gridlayout = QtGui.QGridLayout(self.tab_daybook)
-        self.gridlayout.setObjectName(_fromUtf8("gridlayout"))
-        self.label_29 = QtGui.QLabel(self.tab_daybook)
-        self.label_29.setObjectName(_fromUtf8("label_29"))
-        self.gridlayout.addWidget(self.label_29, 0, 0, 1, 1)
-        self.label_30 = QtGui.QLabel(self.tab_daybook)
-        self.label_30.setObjectName(_fromUtf8("label_30"))
-        self.gridlayout.addWidget(self.label_30, 0, 1, 1, 1)
-        self.label_28 = QtGui.QLabel(self.tab_daybook)
-        self.label_28.setObjectName(_fromUtf8("label_28"))
-        self.gridlayout.addWidget(self.label_28, 0, 2, 1, 1)
-        self.label_31 = QtGui.QLabel(self.tab_daybook)
-        self.label_31.setObjectName(_fromUtf8("label_31"))
-        self.gridlayout.addWidget(self.label_31, 0, 3, 1, 1)
-        self.daybookGoPushButton = QtGui.QPushButton(self.tab_daybook)
-        sizePolicy = QtGui.QSizePolicy(
-            QtGui.QSizePolicy.Preferred,
-            QtGui.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.daybookGoPushButton.sizePolicy(
-            ).hasHeightForWidth(
-            ))
-        self.daybookGoPushButton.setSizePolicy(sizePolicy)
-        self.daybookGoPushButton.setIcon(icon8)
-        self.daybookGoPushButton.setIconSize(QtCore.QSize(24, 24))
-        self.daybookGoPushButton.setObjectName(
-            _fromUtf8("daybookGoPushButton"))
-        self.gridlayout.addWidget(self.daybookGoPushButton, 0, 4, 2, 1)
-        self.daybookPrintButton = QtGui.QPushButton(self.tab_daybook)
-        sizePolicy = QtGui.QSizePolicy(
-            QtGui.QSizePolicy.Preferred,
-            QtGui.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.daybookPrintButton.sizePolicy().hasHeightForWidth())
-        self.daybookPrintButton.setSizePolicy(sizePolicy)
-        self.daybookPrintButton.setMaximumSize(
-            QtCore.QSize(16777215, 16777215))
-        self.daybookPrintButton.setIcon(icon10)
-        self.daybookPrintButton.setIconSize(QtCore.QSize(32, 32))
-        self.daybookPrintButton.setObjectName(_fromUtf8("daybookPrintButton"))
-        self.gridlayout.addWidget(self.daybookPrintButton, 0, 5, 2, 1)
-        spacerItem17 = QtGui.QSpacerItem(
-            654,
-            20,
-            QtGui.QSizePolicy.Expanding,
-            QtGui.QSizePolicy.Minimum)
-        self.gridlayout.addItem(spacerItem17, 0, 6, 2, 1)
-        self.daybookStartDateEdit = QtGui.QDateEdit(self.tab_daybook)
-        sizePolicy = QtGui.QSizePolicy(
-            QtGui.QSizePolicy.Preferred,
-            QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.daybookStartDateEdit.sizePolicy().hasHeightForWidth())
-        self.daybookStartDateEdit.setSizePolicy(sizePolicy)
-        self.daybookStartDateEdit.setMinimumSize(QtCore.QSize(100, 0))
-        self.daybookStartDateEdit.setCalendarPopup(True)
-        self.daybookStartDateEdit.setObjectName(
-            _fromUtf8("daybookStartDateEdit"))
-        self.gridlayout.addWidget(self.daybookStartDateEdit, 1, 0, 1, 1)
+        self.verticalLayout_5 = QtGui.QVBoxLayout(self.tab_daybook)
+        self.verticalLayout_5.setMargin(3)
+        self.verticalLayout_5.setObjectName(_fromUtf8("verticalLayout_5"))
+        self.gridLayout_17 = QtGui.QGridLayout()
+        self.gridLayout_17.setVerticalSpacing(0)
+        self.gridLayout_17.setObjectName(_fromUtf8("gridLayout_17"))
         self.daybookEndDateEdit = QtGui.QDateEdit(self.tab_daybook)
         sizePolicy = QtGui.QSizePolicy(
             QtGui.QSizePolicy.Preferred,
@@ -2341,21 +2286,124 @@ class Ui_MainWindow(object):
             ).hasHeightForWidth(
             ))
         self.daybookEndDateEdit.setSizePolicy(sizePolicy)
-        self.daybookEndDateEdit.setMinimumSize(QtCore.QSize(100, 0))
+        self.daybookEndDateEdit.setMinimumSize(QtCore.QSize(0, 0))
         self.daybookEndDateEdit.setCalendarPopup(True)
         self.daybookEndDateEdit.setObjectName(_fromUtf8("daybookEndDateEdit"))
-        self.gridlayout.addWidget(self.daybookEndDateEdit, 1, 1, 1, 1)
+        self.gridLayout_17.addWidget(self.daybookEndDateEdit, 1, 1, 1, 1)
+        self.label_29 = QtGui.QLabel(self.tab_daybook)
+        self.label_29.setObjectName(_fromUtf8("label_29"))
+        self.gridLayout_17.addWidget(self.label_29, 0, 0, 1, 1)
         self.daybookDent1ComboBox = QtGui.QComboBox(self.tab_daybook)
+        self.daybookDent1ComboBox.setMaximumSize(QtCore.QSize(100, 16777215))
         self.daybookDent1ComboBox.setObjectName(
             _fromUtf8("daybookDent1ComboBox"))
-        self.gridlayout.addWidget(self.daybookDent1ComboBox, 1, 2, 1, 1)
+        self.gridLayout_17.addWidget(self.daybookDent1ComboBox, 1, 2, 1, 1)
+        self.daybookGoPushButton = QtGui.QPushButton(self.tab_daybook)
+        sizePolicy = QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Minimum,
+            QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.daybookGoPushButton.sizePolicy(
+            ).hasHeightForWidth(
+            ))
+        self.daybookGoPushButton.setSizePolicy(sizePolicy)
+        self.daybookGoPushButton.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.daybookGoPushButton.setIcon(icon8)
+        self.daybookGoPushButton.setIconSize(QtCore.QSize(24, 24))
+        self.daybookGoPushButton.setObjectName(
+            _fromUtf8("daybookGoPushButton"))
+        self.gridLayout_17.addWidget(self.daybookGoPushButton, 0, 5, 2, 1)
         self.daybookDent2ComboBox = QtGui.QComboBox(self.tab_daybook)
+        self.daybookDent2ComboBox.setMaximumSize(QtCore.QSize(100, 16777215))
         self.daybookDent2ComboBox.setObjectName(
             _fromUtf8("daybookDent2ComboBox"))
-        self.gridlayout.addWidget(self.daybookDent2ComboBox, 1, 3, 1, 1)
+        self.gridLayout_17.addWidget(self.daybookDent2ComboBox, 1, 3, 1, 1)
+        self.label_31 = QtGui.QLabel(self.tab_daybook)
+        self.label_31.setObjectName(_fromUtf8("label_31"))
+        self.gridLayout_17.addWidget(self.label_31, 0, 3, 1, 1)
+        self.label_30 = QtGui.QLabel(self.tab_daybook)
+        self.label_30.setObjectName(_fromUtf8("label_30"))
+        self.gridLayout_17.addWidget(self.label_30, 0, 1, 1, 1)
+        self.daybookStartDateEdit = QtGui.QDateEdit(self.tab_daybook)
+        sizePolicy = QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Preferred,
+            QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.daybookStartDateEdit.sizePolicy().hasHeightForWidth())
+        self.daybookStartDateEdit.setSizePolicy(sizePolicy)
+        self.daybookStartDateEdit.setMinimumSize(QtCore.QSize(0, 0))
+        self.daybookStartDateEdit.setCalendarPopup(True)
+        self.daybookStartDateEdit.setObjectName(
+            _fromUtf8("daybookStartDateEdit"))
+        self.gridLayout_17.addWidget(self.daybookStartDateEdit, 1, 0, 1, 1)
+        self.daybookPrintButton = QtGui.QPushButton(self.tab_daybook)
+        sizePolicy = QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Minimum,
+            QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.daybookPrintButton.sizePolicy().hasHeightForWidth())
+        self.daybookPrintButton.setSizePolicy(sizePolicy)
+        self.daybookPrintButton.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.daybookPrintButton.setIcon(icon10)
+        self.daybookPrintButton.setIconSize(QtCore.QSize(32, 32))
+        self.daybookPrintButton.setObjectName(_fromUtf8("daybookPrintButton"))
+        self.gridLayout_17.addWidget(self.daybookPrintButton, 0, 6, 2, 1)
+        self.label_28 = QtGui.QLabel(self.tab_daybook)
+        self.label_28.setObjectName(_fromUtf8("label_28"))
+        self.gridLayout_17.addWidget(self.label_28, 0, 2, 1, 1)
+        self.daybook_filters_frame = QtGui.QFrame(self.tab_daybook)
+        sizePolicy = QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Expanding,
+            QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.daybook_filters_frame.sizePolicy(
+            ).hasHeightForWidth(
+            ))
+        self.daybook_filters_frame.setSizePolicy(sizePolicy)
+        self.daybook_filters_frame.setFrameShape(QtGui.QFrame.NoFrame)
+        self.daybook_filters_frame.setFrameShadow(QtGui.QFrame.Raised)
+        self.daybook_filters_frame.setObjectName(
+            _fromUtf8("daybook_filters_frame"))
+        self.gridLayout_18 = QtGui.QGridLayout(self.daybook_filters_frame)
+        self.gridLayout_18.setMargin(0)
+        self.gridLayout_18.setSpacing(0)
+        self.gridLayout_18.setObjectName(_fromUtf8("gridLayout_18"))
+        self.label_7 = QtGui.QLabel(self.daybook_filters_frame)
+        self.label_7.setObjectName(_fromUtf8("label_7"))
+        self.gridLayout_18.addWidget(self.label_7, 0, 0, 1, 1)
+        self.daybook_filters_pushButton = QtGui.QPushButton(
+            self.daybook_filters_frame)
+        self.daybook_filters_pushButton.setMaximumSize(
+            QtCore.QSize(40, 16777215))
+        self.daybook_filters_pushButton.setText(_fromUtf8(""))
+        icon = QtGui.QIcon.fromTheme(_fromUtf8("help"))
+        self.daybook_filters_pushButton.setIcon(icon)
+        self.daybook_filters_pushButton.setObjectName(
+            _fromUtf8("daybook_filters_pushButton"))
+        self.gridLayout_18.addWidget(
+            self.daybook_filters_pushButton,
+            0,
+            1,
+            1,
+            1)
+        self.daybook_filters_lineEdit = QtGui.QLineEdit(
+            self.daybook_filters_frame)
+        self.daybook_filters_lineEdit.setObjectName(
+            _fromUtf8("daybook_filters_lineEdit"))
+        self.gridLayout_18.addWidget(self.daybook_filters_lineEdit, 1, 0, 1, 2)
+        self.gridLayout_17.addWidget(self.daybook_filters_frame, 0, 4, 2, 1)
+        self.verticalLayout_5.addLayout(self.gridLayout_17)
         self.daybookTextBrowser = QtGui.QTextBrowser(self.tab_daybook)
         self.daybookTextBrowser.setObjectName(_fromUtf8("daybookTextBrowser"))
-        self.gridlayout.addWidget(self.daybookTextBrowser, 2, 0, 1, 7)
+        self.verticalLayout_5.addWidget(self.daybookTextBrowser)
         self.main_tabWidget.addTab(self.tab_daybook, icon12, _fromUtf8(""))
         self.tab_accounts = QtGui.QWidget()
         self.tab_accounts.setObjectName(_fromUtf8("tab_accounts"))
@@ -2393,12 +2441,12 @@ class Ui_MainWindow(object):
             _fromUtf8("loadAccountsTable_pushButton"))
         self.horizontalLayout_28.addWidget(self.loadAccountsTable_pushButton)
         self.gridLayout_9.addLayout(self.horizontalLayout_28, 0, 0, 1, 1)
-        spacerItem18 = QtGui.QSpacerItem(
+        spacerItem17 = QtGui.QSpacerItem(
             206,
             20,
             QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Minimum)
-        self.gridLayout_9.addItem(spacerItem18, 0, 1, 1, 1)
+        self.gridLayout_9.addItem(spacerItem17, 0, 1, 1, 1)
         self.printAccountsTable_pushButton = QtGui.QPushButton(
             self.tab_accounts)
         self.printAccountsTable_pushButton.setIcon(icon10)
@@ -2433,12 +2481,12 @@ class Ui_MainWindow(object):
         self.accounts_tableWidget.setColumnCount(0)
         self.accounts_tableWidget.setRowCount(0)
         self.gridLayout_9.addWidget(self.accounts_tableWidget, 1, 0, 1, 5)
-        spacerItem19 = QtGui.QSpacerItem(
+        spacerItem18 = QtGui.QSpacerItem(
             746,
             20,
             QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Minimum)
-        self.gridLayout_9.addItem(spacerItem19, 2, 0, 1, 2)
+        self.gridLayout_9.addItem(spacerItem18, 2, 0, 1, 2)
         self.label_43 = QtGui.QLabel(self.tab_accounts)
         self.label_43.setObjectName(_fromUtf8("label_43"))
         self.gridLayout_9.addWidget(self.label_43, 2, 2, 1, 1)
@@ -2507,12 +2555,12 @@ class Ui_MainWindow(object):
             4,
             1,
             1)
-        spacerItem20 = QtGui.QSpacerItem(
+        spacerItem19 = QtGui.QSpacerItem(
             40,
             20,
             QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Minimum)
-        self.gridLayout_10.addItem(spacerItem20, 1, 1, 1, 1)
+        self.gridLayout_10.addItem(spacerItem19, 1, 1, 1, 1)
         self.main_tabWidget.addTab(self.tab_bulk_mail, _fromUtf8(""))
         self.tab_feescales = QtGui.QWidget()
         self.tab_feescales.setObjectName(_fromUtf8("tab_feescales"))
@@ -2549,12 +2597,12 @@ class Ui_MainWindow(object):
         self.chooseFeescale_comboBox.setObjectName(
             _fromUtf8("chooseFeescale_comboBox"))
         self.verticalLayout_10.addWidget(self.chooseFeescale_comboBox)
-        spacerItem21 = QtGui.QSpacerItem(
+        spacerItem20 = QtGui.QSpacerItem(
             20,
             40,
             QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_10.addItem(spacerItem21)
+        self.verticalLayout_10.addItem(spacerItem20)
         self.frame_6 = QtGui.QFrame(self.frame_5)
         self.frame_6.setEnabled(True)
         self.frame_6.setFrameShape(QtGui.QFrame.StyledPanel)
@@ -2612,12 +2660,12 @@ class Ui_MainWindow(object):
             _fromUtf8("feesearch_results_label"))
         self.gridLayout_16.addWidget(self.feesearch_results_label, 4, 0, 1, 2)
         self.verticalLayout_10.addWidget(self.frame_6)
-        spacerItem22 = QtGui.QSpacerItem(
+        spacerItem21 = QtGui.QSpacerItem(
             20,
             40,
             QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_10.addItem(spacerItem22)
+        self.verticalLayout_10.addItem(spacerItem21)
         self.hide_rare_feescale_codes_checkBox = QtGui.QCheckBox(self.frame_5)
         self.hide_rare_feescale_codes_checkBox.setChecked(True)
         self.hide_rare_feescale_codes_checkBox.setObjectName(
@@ -2635,12 +2683,12 @@ class Ui_MainWindow(object):
         self.feeCompress_radioButton.setObjectName(
             _fromUtf8("feeCompress_radioButton"))
         self.verticalLayout_10.addWidget(self.feeCompress_radioButton)
-        spacerItem23 = QtGui.QSpacerItem(
+        spacerItem22 = QtGui.QSpacerItem(
             20,
             40,
             QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_10.addItem(spacerItem23)
+        self.verticalLayout_10.addItem(spacerItem22)
         self.groupBox = QtGui.QGroupBox(self.frame_5)
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.verticalLayout_13 = QtGui.QVBoxLayout(self.groupBox)
@@ -2653,12 +2701,12 @@ class Ui_MainWindow(object):
             _fromUtf8("documents_pushButton"))
         self.verticalLayout_13.addWidget(self.documents_pushButton)
         self.verticalLayout_10.addWidget(self.groupBox)
-        spacerItem24 = QtGui.QSpacerItem(
+        spacerItem23 = QtGui.QSpacerItem(
             20,
             40,
             QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_10.addItem(spacerItem24)
+        self.verticalLayout_10.addItem(spacerItem23)
         self.feeadjuster_groupBox = QtGui.QGroupBox(self.frame_5)
         self.feeadjuster_groupBox.setEnabled(True)
         self.feeadjuster_groupBox.setToolTip(_fromUtf8(""))
@@ -2775,12 +2823,12 @@ class Ui_MainWindow(object):
         self.feeSearch_lineEdit_2.setObjectName(
             _fromUtf8("feeSearch_lineEdit_2"))
         self.gridLayout_30.addWidget(self.feeSearch_lineEdit_2, 1, 0, 1, 2)
-        spacerItem25 = QtGui.QSpacerItem(
+        spacerItem24 = QtGui.QSpacerItem(
             67,
             20,
             QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Minimum)
-        self.gridLayout_30.addItem(spacerItem25, 2, 0, 1, 1)
+        self.gridLayout_30.addItem(spacerItem24, 2, 0, 1, 1)
         self.feeSearch_pushButton_2 = QtGui.QPushButton(self.frame_9)
         self.feeSearch_pushButton_2.setEnabled(False)
         sizePolicy = QtGui.QSizePolicy(
@@ -2994,6 +3042,10 @@ class Ui_MainWindow(object):
         self.actionAllow_Edit = QtGui.QAction(MainWindow)
         self.actionAllow_Edit.setCheckable(True)
         self.actionAllow_Edit.setObjectName(_fromUtf8("actionAllow_Edit"))
+        self.actionEnable_Filters = QtGui.QAction(MainWindow)
+        self.actionEnable_Filters.setCheckable(True)
+        self.actionEnable_Filters.setObjectName(
+            _fromUtf8("actionEnable_Filters"))
         self.menuMenu.addAction(self.action_Open_Patient)
         self.menuMenu.addSeparator()
         self.menuMenu.addAction(self.action_save_patient)
@@ -3013,6 +3065,7 @@ class Ui_MainWindow(object):
         self.menuCashbook.addAction(self.actionAllow_Full_Edit)
         self.menuDaybook.addSeparator()
         self.menuDaybook.addAction(self.actionAllow_Edit)
+        self.menuDaybook.addAction(self.actionEnable_Filters)
         self.menu_Prefences.addAction(self.actionChange_Language)
         self.menu_Prefences.addSeparator()
         self.menu_Prefences.addAction(self.menuView.menuAction())
@@ -3083,9 +3136,6 @@ class Ui_MainWindow(object):
             self.cashbookDentComboBox)
         MainWindow.setTabOrder(
             self.cashbookDentComboBox,
-            self.daybookGoPushButton)
-        MainWindow.setTabOrder(
-            self.daybookGoPushButton,
             self.daybookPrintButton)
         MainWindow.setTabOrder(
             self.daybookPrintButton,
@@ -3440,12 +3490,13 @@ class Ui_MainWindow(object):
             self.main_tabWidget.indexOf(self.tab_cashbook),
             _("Cashbook"))
         self.label_29.setText(_("Start Date"))
-        self.label_30.setText(_("End Date"))
-        self.label_28.setText(_("Registered Dentist"))
-        self.label_31.setText(_("Treating Dentist / Hygenist"))
         self.daybookGoPushButton.setText(_("Go"))
+        self.label_31.setText(_("Treating Clinician"))
+        self.label_30.setText(_("End Date"))
         self.daybookPrintButton.setToolTip(_("Print the Data"))
         self.daybookPrintButton.setText(_("Print"))
+        self.label_28.setText(_("Dentist"))
+        self.label_7.setText(_("Extra Filters"))
         self.main_tabWidget.setTabText(
             self.main_tabWidget.indexOf(self.tab_daybook),
             _("Daybook"))
@@ -3541,7 +3592,7 @@ class Ui_MainWindow(object):
         self.menuMode.setTitle(_("&Mode (reception or surgery)"))
         self.menuCashbook.setTitle(_("&Cashbook"))
         self.menuDaybook.setTitle(_("&Daybook"))
-        self.menuTools.setTitle(_("Tools"))
+        self.menuTools.setTitle(_("&Tools"))
         self.action_save_patient.setText(_("&Export Patient to disk"))
         self.action_Open_Patient.setText(_("&Import Patient from disk"))
         self.action_About.setText(_("About &OpenMolar"))
@@ -3576,6 +3627,7 @@ class Ui_MainWindow(object):
         self.actionEdit_Phrasebooks.setText(_("Edit Phrasebooks"))
         self.actionDocuments_Dialog.setText(_("Documents Dialog"))
         self.actionAllow_Edit.setText(_("Allow &Edit"))
+        self.actionEnable_Filters.setText(_("Enable &Filters"))
 
 from PyQt4 import QtWebKit
 from openmolar.qt4gui import resources_rc

@@ -136,8 +136,24 @@ def daybookView(om_gui, print_=False):
     if sdate > edate:
         om_gui.advise(_("bad date sequence"), 1)
         return False
-    html = daybook.details(dent1, dent2, sdate, edate)
+    filters = str(om_gui.ui.daybook_filters_lineEdit.text().toAscii())
+    if filters:
+        filters = "AND %s" % filters.replace("%", "%%")
+    om_gui.wait()
+    om_gui.ui.daybookTextBrowser.setHtml(_("polling database..."))
+    try:
+        html = daybook.details(dent1, dent2, sdate, edate, filters)
+    except daybook.connect.ProgrammingError as exc:
+        LOGGER.exception("Bad Query")
+        html = "<h1>%s</h1><pre>%s</pre>" % (_("Bad Query"), str(exc))
+    except daybook.connect.OperationalError as exc:
+        LOGGER.exception("Bad Query")
+        html = "<h1>%s</h1><pre>%s</pre>" % (_("Bad Query"), str(exc))
+    except Exception as exc:
+        LOGGER.exception("Unknown Error")
+        html = "<h1>%s</h1><pre>%s</pre>" % (_("Unknown Error"), str(exc))
     om_gui.ui.daybookTextBrowser.setHtml(html)
     if print_:
         myclass = bookprint.printBook(html)
         myclass.printpage()
+    om_gui.wait(False)

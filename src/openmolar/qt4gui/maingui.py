@@ -189,6 +189,7 @@ class OpenmolarGui(QtGui.QMainWindow):
             _("connected to"), database_name()))
 
         # reimplement these functions to catch "clicked links"
+        self.ui.daybook_filters_frame.setEnabled(False)
         self.ui.debugBrowser.setSource = self.set_browser_source
         self.ui.daybookTextBrowser.setSource = self.set_browser_source
 
@@ -2680,6 +2681,8 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.set_surgery_number)
         self.ui.actionEdit_Phrasebooks.triggered.connect(self.edit_phrasebooks)
         self.ui.actionAllow_Edit.triggered.connect(self.allow_edit_daybook)
+        self.ui.actionEnable_Filters.triggered.connect(
+            self.enable_daybook_filters)
 
     def signals_estimates(self):
         # Estimates and course ManageMent
@@ -2810,6 +2813,8 @@ class OpenmolarGui(QtGui.QMainWindow):
 
         self.ui.daybookGoPushButton.clicked.connect(self.daybookView)
         self.ui.daybookPrintButton.clicked.connect(self.daybookPrint)
+        self.ui.daybook_filters_pushButton.clicked.connect(
+            self.show_daybook_filter_help)
 
         self.ui.cashbookGoPushButton.clicked.connect(self.cashbookView)
         self.ui.cashbookPrintButton.clicked.connect(self.cashbookPrint)
@@ -3261,6 +3266,7 @@ class OpenmolarGui(QtGui.QMainWindow):
 
     def allow_edit_daybook(self, bool_value):
         daybook.ALLOW_TX_EDITS = bool_value
+        daybookHistory.ALLOW_TX_EDITS = bool_value
 
     def edit_phrasebooks(self):
         def editor_closed():
@@ -3274,6 +3280,14 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.phrasebook_editor = PhrasebookEditor(self)
             self.phrasebook_editor.show()
             self.phrasebook_editor.closed_signal.connect(editor_closed)
+
+    def enable_daybook_filters(self, bool_value):
+        self.ui.daybook_filters_frame.setEnabled(bool_value)
+        if bool_value == False:
+            self.ui.daybook_filters_lineEdit.setText("")
+
+    def show_daybook_filter_help(self):
+        self.advise(daybook.filter_help_text(), 1)
 
     def set_browser_source(self, url):
         '''

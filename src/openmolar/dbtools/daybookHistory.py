@@ -32,6 +32,8 @@ QUERY = '''select DATE_FORMAT(date, '%s'), coursetype,
     where serialno = %%s order by date desc, id desc
     ''' % localsettings.OM_DATE_FORMAT.replace("%", "%%")
 
+ALLOW_TX_EDITS = False
+
 
 def details(sno):
     '''
@@ -65,6 +67,12 @@ def details(sno):
             tx += tx1
         retarg += '    <tr>' if i % 2 else '    <tr bgcolor="#eeeeee">'
 
+        if ALLOW_TX_EDITS:
+            extra_link = ' / <a href="daybook_id_edit?%s">%s</a>' % (
+                id, _("Edit Tx"))
+        else:
+            extra_link = ""
+
         retarg += '''\n        <td>%s</td>
         <td>%s</td>
         <td>%s</td>
@@ -72,8 +80,7 @@ def details(sno):
         <td>%s</td>
         <td>%s</td>
         <td align="center">
-        <a href="daybook_id?%sfeesa=%sfeesb=%s">%s</a> /
-        <a href="daybook_id_edit?%s">%s</a>
+        <a href="daybook_id?%sfeesa=%sfeesb=%s">%s</a>%s
         </td>
         <td align="right">%s</td><td align="right">%s</td>\n</tr>\n''' % (
             date_, cset,
@@ -81,7 +88,7 @@ def details(sno):
             localsettings.ops.get(trt),
             tx, tx2.strip("\x00"),
             id, fee, ptfee, _("Ests"),
-            id, _("Edit Tx"),
+            extra_link,
             localsettings.formatMoney(fee),
             localsettings.formatMoney(ptfee)
         )
