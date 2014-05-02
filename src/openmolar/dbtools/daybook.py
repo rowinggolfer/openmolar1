@@ -184,10 +184,9 @@ def details(regdent, trtdent, startdate, enddate, filters=""):
 
             if ALLOW_TX_EDITS:
                 extra_link = ' / <a href="daybook_id_edit?%s">%s</a>' % (
-                    row[18], _("Edit Tx"))
+                    row[19], _("Edit Tx"))
             else:
                 extra_link = ""
-
             retarg += '''<td>%s</td>
             <td><a href="daybook_id?%sfeesa=%sfeesb=%s">%s</a>%s</td>
             <td align="right">%s</td>
