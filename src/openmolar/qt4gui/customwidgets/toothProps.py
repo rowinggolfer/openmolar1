@@ -225,24 +225,30 @@ class chartLineEdit(QtGui.QLineEdit):
 
     def keyPressEvent(self, event):
         '''
-        overrides QWidget's keypressEvent
+        overrides QWidget's keypressEvent.
+        Catch special keys, and disable lower case
         '''
         if event.key() == QtCore.Qt.Key_Up:
             self.specialKeyPressed("up")
-        elif event.key() in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Down):
+            return
+        if event.key() in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Down):
             self.specialKeyPressed("down")
-        elif event.key() == QtCore.Qt.Key_Space:
-            QtGui.QLineEdit.keyPressEvent(self, event)
+            return
+        if event.text().toAscii() == "!" and not self.om_gui.is_Static:
+            # don't allow comments if not in static:
+            return
+
+        if event.key() == QtCore.Qt.Key_Space:
             self.specialKeyPressed("space")
-        else:
-            inputT = event.text().toAscii()
-            if re.match("[a-z]", inputT):
-                #-- catch and overwrite any lower case
-                event = QtGui.QKeyEvent(event.type(), event.key(),
-                                        event.modifiers(), event.text().toUpper())
-            if not (inputT == "!" and not self.om_gui.is_Static):
-                # don't allow comments if not in static
-                QtGui.QLineEdit.keyPressEvent(self, event)
+        elif 65 <= event.key() <= 90:
+            event = QtGui.QKeyEvent(
+                event.type(),
+                event.key(),
+                event.modifiers(),
+                event.text().toUpper()
+            )
+
+        QtGui.QLineEdit.keyPressEvent(self, event)
 
 
 class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):

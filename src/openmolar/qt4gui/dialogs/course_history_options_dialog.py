@@ -22,30 +22,57 @@
 # #                                                                          # #
 # ############################################################################ #
 
+import logging
+
 from PyQt4 import QtGui, QtCore
+from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
+
+LOGGER = logging.getLogger("openmolar")
 
 
-class UpperCaseLineEdit(QtGui.QLineEdit):
+class CourseHistoryOptionsDialog(BaseDialog):
 
-    '''
-    A custom line edit that accepts only BLOCK LETTERS.
-    '''
+    include_estimates = False
+    include_daybook = False
 
-    def setText(self, text):
-        QtGui.QLineEdit.setText(self, QtCore.QString(text).toUpper())
+    def __init__(self, parent=None):
+        BaseDialog.__init__(self, parent)
+        self.setWindowTitle(_("Options Dialog"))
+        label = QtGui.QLabel("<b>%s</b>" % _("What do you wish to show?"))
+        label.setAlignment(QtCore.Qt.AlignCenter)
 
-    def keyPressEvent(self, event):
-        '''
-        convert the text to upper case, and pass the signal on to the
-        base widget
-        '''
-        if 65 <= event.key() <= 90:
-            event = QtGui.QKeyEvent(event.type(), event.key(),
-                                    event.modifiers(), event.text().toUpper())
-        QtGui.QLineEdit.keyPressEvent(self, event)
+        self.estimates_checkbox = QtGui.QCheckBox(_("Include Estimates"))
+        self.estimates_checkbox.setChecked(self.include_estimates)
+        self.estimates_checkbox.toggled.connect(self.toggle_estimates)
+
+        self.daybook_checkbox = QtGui.QCheckBox(_("Include Daybook"))
+        self.daybook_checkbox.setChecked(self.include_daybook)
+        self.daybook_checkbox.toggled.connect(self.toggle_daybook)
+
+        help_label = QtGui.QLabel(_("Leave both unchecked for courses only"))
+        help_label.setAlignment(QtCore.Qt.AlignCenter)
+
+        self.insertWidget(label)
+        self.insertWidget(self.estimates_checkbox)
+        self.insertWidget(self.daybook_checkbox)
+        self.insertWidget(help_label)
+
+        self.enableApply()
+
+    def sizeHint(self):
+        return QtCore.QSize(200, 150)
+
+    def toggle_estimates(self, value):
+        CourseHistoryOptionsDialog.include_estimates = value
+
+    def toggle_daybook(self, value):
+        CourseHistoryOptionsDialog.include_daybook = value
+
 
 if __name__ == "__main__":
+    LOGGER.setLevel(logging.DEBUG)
     app = QtGui.QApplication([])
-    te = UpperCaseLineEdit()
-    te.show()
-    app.exec_()
+
+    dl = CourseHistoryOptionsDialog()
+    if dl.exec_():
+        print dl.include_estimates, dl.include_daybook

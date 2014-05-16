@@ -48,6 +48,12 @@ from openmolar.qt4gui.dialogs.document_dialog import DocumentDialog
 from openmolar.qt4gui.dialogs.account_severity_dialog import AccountSeverityDialog
 from openmolar.qt4gui.dialogs.daybook_item_dialog import DaybookItemDialog
 from openmolar.qt4gui.dialogs.daybook_edit_dialog import DaybookEditDialog
+from openmolar.qt4gui.dialogs.course_edit_dialog import CourseEditDialog
+from openmolar.qt4gui.dialogs.course_merge_dialog import CourseMergeDialog
+from openmolar.qt4gui.dialogs.estimate_edit_dialog import EstimateEditDialog
+from openmolar.qt4gui.dialogs.course_history_options_dialog import CourseHistoryOptionsDialog
+from openmolar.qt4gui.dialogs.course_consistency_dialog import CourseConsistencyDialog
+from openmolar.qt4gui.dialogs.edit_treatment_dialog import EditTreatmentDialog
 
 __all__ = ['AccountSeverityDialog',
            'AdvancedTxPlanningDialog',
@@ -58,10 +64,16 @@ __all__ = ['AccountSeverityDialog',
            'ChildSmileDialog',
            'ChooseToothDialog',
            'ClinicianSelectDialog',
+           'CourseConsistencyDialog',
+           'CourseEditDialog',
+           'CourseMergeDialog',
+           'CourseHistoryOptionsDialog',
            'DaybookItemDialog',
            'DaybookEditDialog',
            'DocumentDialog',
            'DuplicateReceiptDialog',
+           'EditTreatmentDialog',
+           'EstimateEditDialog',
            'ExamWizard',
            'FamilyManageDialog',
            'FindPatientDialog',

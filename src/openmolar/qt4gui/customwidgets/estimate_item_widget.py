@@ -238,6 +238,13 @@ class EstimateItemWidget(QtGui.QWidget):
         self.completed_checkBox.new_state_signal.connect(
             self.completed_state_changed)
 
+        for le in (self.description_lineEdit,
+                   self.cset_lineEdit,
+                   self.fee_lineEdit,
+                   self.ptFee_lineEdit
+                   ):
+            le.editingFinished.connect(self.edited_signal.emit)
+
     def update_cset(self, arg):
         '''
         csetype has been altered, alter ALL underying data
@@ -415,11 +422,14 @@ class EstimateItemWidget(QtGui.QWidget):
         '''
         LOGGER.debug("EstimateItemWidget.check_first")
         if self.est_items[0].is_exam:
-            if QtGui.QMessageBox.question(self, _("confirm"),
-                                          _(
-                                          "Delete examination from this treatment plan and estimate?"),
-                                          QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
-                                          QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok:
+            if QtGui.QMessageBox.question(
+                self,
+                _("confirm"),
+                _("Delete examination from this "
+                  "treatment plan and estimate?"),
+                QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
+                QtGui.QMessageBox.Cancel
+            ) == QtGui.QMessageBox.Ok:
                 self.deleteItem()
             return
 

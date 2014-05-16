@@ -2221,23 +2221,17 @@ class OpenmolarGui(QtGui.QMainWindow):
         show all past treatment plans for a patient
         (including treatment that was never carried out)
         '''
-        html = courseHistory.details(self.pt.serialno)
-        self.ui.debugBrowser.setText(html)
+        dl = CourseHistoryOptionsDialog(self)
+        if dl.exec_():
+            html = courseHistory.details(
+                self.pt.serialno, dl.include_estimates, dl.include_daybook)
+            self.ui.debugBrowser.setText(html)
 
     def pastEstimates_clicked(self):
         '''
         show all past estimates for a patient
         '''
         html = estimatesHistory.details(self.pt.serialno)
-        self.ui.debugBrowser.setText(html)
-
-    def past_course_estimates_clicked(self):
-        '''
-        show all past treatment plans for a patient
-        (including treatment that was never carried out)
-        and include the estimate for that course
-        '''
-        html = courseHistory.all_details(self.pt.serialno)
         self.ui.debugBrowser.setText(html)
 
     def NHSClaims_clicked(self):
@@ -2675,14 +2669,20 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.advancedRecordTools)
         self.ui.actionFix_Locked_New_Course_of_Treatment.triggered.connect(
             self.fix_zombied_course)
+        self.ui.action_all_history_edits.triggered.connect(
+            self.allow_all_history_edits)
         self.ui.actionAllow_Full_Edit.triggered.connect(
             self.ui.cashbookTextBrowser.allow_full_edit)
         self.ui.actionSet_Surgery_Number.triggered.connect(
             self.set_surgery_number)
         self.ui.actionEdit_Phrasebooks.triggered.connect(self.edit_phrasebooks)
         self.ui.actionAllow_Edit.triggered.connect(self.allow_edit_daybook)
+        self.ui.actionAllow_Edit_Treatment.triggered.connect(
+            self.allow_edit_daybook)
         self.ui.actionEnable_Filters.triggered.connect(
             self.enable_daybook_filters)
+        self.ui.actionEdit_Courses.triggered.connect(self.edit_currtrtmt2)
+        self.ui.actionEdit_Estimates.triggered.connect(self.edit_estimates)
 
     def signals_estimates(self):
         # Estimates and course ManageMent
@@ -2708,9 +2708,8 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.customTx_pushButton.clicked.connect(self.addCustomItem)
 
         self.ui.estWidget.updated_fees_signal.connect(self.updateDetails)
-
-        QtCore.QObject.connect(self.ui.estWidget,
-                               QtCore.SIGNAL("deleteItem"), self.estwidget_deleteTxItem)
+        self.ui.estWidget.delete_estimate_item.connect(
+            self.estwidget_deleteTxItem)
 
     def signals_plan(self):
         self.ui.advanced_tx_planning_button.clicked.connect(
@@ -2797,9 +2796,6 @@ class OpenmolarGui(QtGui.QMainWindow):
 
         QtCore.QObject.connect(self.ui.pastEstimates_pushButton,
                                QtCore.SIGNAL("clicked()"), self.pastEstimates_clicked)
-
-        QtCore.QObject.connect(self.ui.past_course_estimates_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.past_course_estimates_clicked)
 
         QtCore.QObject.connect(self.ui.NHSClaims_pushButton,
                                QtCore.SIGNAL("clicked()"), self.NHSClaims_clicked)
@@ -3264,10 +3260,6 @@ class OpenmolarGui(QtGui.QMainWindow):
             return True
         return False
 
-    def allow_edit_daybook(self, bool_value):
-        daybook.ALLOW_TX_EDITS = bool_value
-        daybookHistory.ALLOW_TX_EDITS = bool_value
-
     def edit_phrasebooks(self):
         def editor_closed():
             self.phrasebook_editor.setParent(None)
@@ -3289,26 +3281,78 @@ class OpenmolarGui(QtGui.QMainWindow):
     def show_daybook_filter_help(self):
         self.advise(daybook.filter_help_text(), 1)
 
+    def allow_all_history_edits(self, bool_value):
+        self.edit_currtrtmt2(bool_value)
+        self.ui.actionEdit_Courses.setChecked(bool_value)
+        self.edit_estimates(bool_value)
+        self.ui.actionEdit_Estimates.setChecked(bool_value)
+        self.allow_edit_daybook(bool_value)
+
+    def edit_currtrtmt2(self, bool_value):
+        courseHistory.ALLOW_EDIT = bool_value
+
+    def allow_edit_daybook(self, bool_value):
+        self.ui.actionAllow_Edit_Treatment.setChecked(bool_value)
+        self.ui.actionAllow_Edit.setChecked(bool_value)
+        daybook.ALLOW_TX_EDITS = bool_value
+        daybookHistory.ALLOW_TX_EDITS = bool_value
+
+    def edit_estimates(self, bool_value):
+        estimatesHistory.ALLOW_EDIT = bool_value
+
     def set_browser_source(self, url):
         '''
         A function to re-implement QTextBrowser.setUrl
         this will catch "edit links"
         '''
         url = str(url.toString().toAscii())
-        m = re.match("daybook_id\?(\d+)feesa=(\d+)feesb=(\d+)", url)
-        n = re.match("daybook_id_edit\?(\d+)", url)
-        if m:
-            id = int(m.groups()[0])
-            fee = int(m.groups()[1])
-            ptfee = int(m.groups()[2])
+        m1 = re.match("daybook_id\?(\d+)feesa=(\d+)feesb=(\d+)", url)
+        m2 = re.match("daybook_id_edit\?(\d+)", url)
+        m3 = re.match("edit_courseno\?(\d+)", url)
+        m4 = re.match("edit_estimate\?(\d+)", url)
+        m5 = re.match("merge_courses\?(\d+)\+(\d+)", url)
+        m6 = re.match("consistent_courseno\?(\d+)", url)
+        m7 = re.match("edit_tx_courseno\?(\d+)", url)
 
+        if m1:
+            id = int(m1.groups()[0])
+            fee = int(m1.groups()[1])
+            ptfee = int(m1.groups()[2])
             dl = DaybookItemDialog(id, fee, ptfee, self)
             dl.exec_()
-        if n and permissions.granted():
-            id = int(n.groups()[0])
+        elif m2 and permissions.granted():
+            id = int(m2.groups()[0])
             dl = DaybookEditDialog(id, self)
             if dl.exec_():
                 dl.update_treatments()
+        elif m3 and permissions.granted():
+            courseno = int(m3.groups()[0])
+            dl = CourseEditDialog(courseno, self)
+            if dl.exec_():
+                dl.update_db()
+        elif m4 and permissions.granted():
+            courseno = int(m4.groups()[0])
+            dl = EstimateEditDialog(self.pt.serialno, courseno, self)
+            if dl.exec_():
+                dl.update_db()
+        elif m5 and permissions.granted():
+            courseno1, courseno2 = m5.groups()
+            dl = CourseMergeDialog(self.pt.serialno,
+                                   int(courseno1), int(courseno2), self)
+            if dl.exec_():
+                dl.update_db()
+        elif m6 and permissions.granted():
+            courseno = int(m6.groups()[0])
+            dl = CourseConsistencyDialog(self.pt.serialno, courseno, self)
+            if dl.exec_():
+                dl.update_db()
+        elif m7 and permissions.granted():
+            courseno = int(m7.groups()[0])
+            dl = EditTreatmentDialog(self.pt.serialno, courseno, self)
+            if dl.exec_():
+                dl.update_db()
+        else:
+            LOGGER.info("Not editing %s" % url)
 
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''

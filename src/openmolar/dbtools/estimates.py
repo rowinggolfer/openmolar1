@@ -22,30 +22,60 @@
 # #                                                                          # #
 # ############################################################################ #
 
-from PyQt4 import QtGui, QtCore
+from openmolar import connect
+from openmolar.dbtools.queries import ESTS_QUERY
+from openmolar.ptModules.estimates import TXHash, Estimate
 
 
-class UpperCaseLineEdit(QtGui.QLineEdit):
-
+def get_ests(serialno, courseno):
     '''
-    A custom line edit that accepts only BLOCK LETTERS.
+    get estimate data
     '''
+    db = connect.connect()
+    cursor = db.cursor()
 
-    def setText(self, text):
-        QtGui.QLineEdit.setText(self, QtCore.QString(text).toUpper())
+    cursor.execute(ESTS_QUERY, (serialno, courseno))
 
-    def keyPressEvent(self, event):
-        '''
-        convert the text to upper case, and pass the signal on to the
-        base widget
-        '''
-        if 65 <= event.key() <= 90:
-            event = QtGui.QKeyEvent(event.type(), event.key(),
-                                    event.modifiers(), event.text().toUpper())
-        QtGui.QLineEdit.keyPressEvent(self, event)
+    rows = cursor.fetchall()
+    ests = []
+
+    for row in rows:
+        hash_ = row[10]
+        completed = bool(row[9])
+
+        tx_hash = TXHash(hash_, completed)
+
+        ix = row[0]
+
+        found = False
+        # use existing est if one relates to multiple treatments
+        for existing_est in ests:
+            if existing_est.ix == ix:
+                existing_est.tx_hashes.append(tx_hash)
+                found = True
+                break
+        if found:
+            continue
+
+        # initiate a custom data class
+        est = Estimate()
+
+        est.ix = ix
+        est.courseno = row[11]
+        est.number = row[1]
+        est.itemcode = row[2]
+        est.description = row[3]
+        est.fee = row[4]
+        est.ptfee = row[5]
+        est.feescale = row[6]
+        est.csetype = row[7]
+        est.dent = row[8]
+
+        est.tx_hashes = [tx_hash]
+        ests.append(est)
+
+    cursor.close()
+    return ests
 
 if __name__ == "__main__":
-    app = QtGui.QApplication([])
-    te = UpperCaseLineEdit()
-    te.show()
-    app.exec_()
+    print get_ests(11956, 29749)

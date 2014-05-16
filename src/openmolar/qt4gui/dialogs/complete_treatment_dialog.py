@@ -30,8 +30,6 @@ from functools import partial
 from PyQt4 import QtCore, QtGui
 
 from openmolar.dbtools.treatment_course import CURRTRT_ROOT_ATTS
-from openmolar.qt4gui.customwidgets.upper_case_line_edit \
-    import UpperCaseLineEdit
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 
 LOGGER = logging.getLogger("openmolar")

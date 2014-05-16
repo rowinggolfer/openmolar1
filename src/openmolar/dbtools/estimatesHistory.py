@@ -31,15 +31,26 @@ fee, ptfee, feescale, csetype, dent, est_link2.completed, tx_hash, courseno
 from newestimates right join est_link2 on newestimates.ix = est_link2.est_id
 where serialno=%s order by courseno desc, itemcode, ix'''
 
+COURSE_QUERY = QUERY.replace(
+    "order by courseno desc,", "and courseno = %s order by")
 
-def getEsts(sno):
+ALLOW_EDIT = False
+
+EDIT_STRING = '<a href="edit_estimate?%%s">%s</a>' % _("Edit this Estimate")
+
+
+def getEsts(sno, courseno=None):
     db = connect()
     cursor = db.cursor()
-    cursor.execute(QUERY, (sno,))
+
+    if courseno is None:
+        cursor.execute(QUERY, (sno,))
+    else:
+        cursor.execute(COURSE_QUERY, (sno, courseno))
     rows = cursor.fetchall()
     cursor.close()
 
-    estimates = []
+    estimates = {}
 
     for row in rows:
         hash_ = row[10]
@@ -49,19 +60,7 @@ def getEsts(sno):
 
         ix = row[0]
 
-        found = False
-        # use existing est if one relates to multiple treatments
-        for existing_est in estimates:
-            if existing_est.ix == ix:
-                existing_est.tx_hashes.append(tx_hash)
-                found = True
-                break
-        if found:
-            continue
-
-        # initiate a custom data class
-        est = Estimate()
-
+        est = estimates.get(ix, Estimate())
         est.ix = ix
         est.courseno = row[11]
         est.number = row[1]
@@ -72,42 +71,46 @@ def getEsts(sno):
         est.feescale = row[6]
         est.csetype = row[7]
         est.dent = row[8]
+        try:
+            est.tx_hashes.append(tx_hash)
+        except AttributeError:
+            est.tx_hashes = [tx_hash]
 
-        # est.category = "TODO"
-        # est.type_ = "TODO"
+        estimates[ix] = est
 
-        est.tx_hashes = [tx_hash]
-        estimates.append(est)
-
-        cursor.close()
-
-    return estimates
-
+    return estimates.values()
 
 def details(sno):
     '''
     returns an html page showing pt's old estimates
     '''
-    estimatesList = getEsts(sno)
-    claimNo = len(estimatesList)
-    retarg = "<h2>Past Estimates - %d rows found</h2>" % claimNo
+    estimates = getEsts(sno)
+    claimNo = len(estimates)
+    html = "<h2>%s - %d %s</h2>" % (
+        _("Past Estimates"),
+        claimNo,
+        _("found")
+    )
     if claimNo == 0:
-        return retarg
-    courseno = -1
-    firstRow = True
-    for est in estimatesList:
-        if est.courseno != courseno:
-            if not firstRow:
-                retarg += "</table>"
-                firstRow = False
-            retarg += '''</table><h3>Estimate for course number %d</h3>
-            <table width="100%%" border="1">''' % est.courseno
-            retarg += est.htmlHeader()
-            courseno = est.courseno
-        retarg += est.toHtmlRow()
-    retarg += '</table>\n'
+        return html
+    courseno = None
 
-    return retarg
+    for i, est in enumerate(estimates):
+        if est.courseno != courseno:
+            header = est.htmlHeader()
+            if ALLOW_EDIT:
+                header = header.replace("<!--editlink-->",
+                    EDIT_STRING % est.courseno)
+
+            if i > 0:
+                html += "</table><hr />"
+            html += '<table width="100%%" border="1">%s' % header
+            courseno = est.courseno
+
+        html += est.toHtmlRow()
+    html += '</table>\n'
+
+    return html
 
 if __name__ == "__main__":
     localsettings.initiate()

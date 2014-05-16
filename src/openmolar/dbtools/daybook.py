@@ -26,6 +26,7 @@
 this module provides read/write tools for the daybook database table
 '''
 
+from collections import namedtuple
 import logging
 
 from PyQt4.QtCore import QDate
@@ -58,6 +59,11 @@ DETAILS_QUERY = '''select DATE_FORMAT(date,'%s'), daybook.serialno,
         date >= %%s and date <= %%s {{FILTERS}} order by date''' % (
     localsettings.OM_DATE_FORMAT.replace("%", "%%"))
 
+DAYBOOK_QUERY = '''select date, coursetype, dntid,
+        trtid, diagn, perio, anaes, misc, ndu, ndl, odu, odl, other, chart,
+        feesa, feesb, feesc, id
+        from daybook where serialno=%s order by date'''
+
 FIELD_NAMES_QUERY = '''
 SELECT concat(table_name, ".", column_name) as fieldname FROM
 information_schema.columns
@@ -76,6 +82,12 @@ UPDATE_TREATMENTS_QUERY = ('update daybook '
                            'set diagn=%s, perio=%s, anaes=%s, misc=%s, ndu=%s, ndl=%s, '
                            'odu=%s, odl=%s, other=%s, chart=%s where id = %s')
 
+#custom class for daybook data
+DaybookEntry = namedtuple('DaybookEntry',
+    ('date', 'coursetype', 'dntid', 'trtid', 'diagn', 'perio',
+     'anaes', 'misc', 'ndu', 'ndl', 'odu', 'odl', 'other', 'chart',
+     'feesa', 'feesb', 'feesc', 'id')
+    )
 
 def add(sno, cset, dent, trtid, t_dict, fee, ptfee, tx_hashes):
     '''
@@ -285,6 +297,35 @@ def delete_row(id):
     result = cursor.execute(DELETE_ROW_QUERY, (id,))
     cursor.close()
     return result
+
+
+def all_data(serialno):
+    db = connect.connect()
+    cursor = db.cursor()
+    cursor.execute(DAYBOOK_QUERY, (serialno,))
+    rows = cursor.fetchall()
+    cursor.close()
+    for row in rows:
+        yield DaybookEntry(*row)
+
+def all_data_header():
+    color_string = ' bgcolor="#ffff99"'
+
+    return '''
+    <tr>
+    <th%s colspan="14">%s</th><th%s colspan="3"><!--gap--></th>
+    </tr>
+    <tr><th%s>%s</th></tr>
+    ''' % (color_string,
+        _("Daybook Items during this Period"),
+        color_string, color_string,
+        ("</th><th%s>" % color_string).join(
+            ("date", "cset", "dntid", "trtid",
+            "diagn", "perio", "anaes", "misc",
+            "ndu", "ndl", "odu", "odl", "other",
+            "chart", "feesa", "feesb", "id")
+            )
+            )
 
 
 class FilterHelp(object):

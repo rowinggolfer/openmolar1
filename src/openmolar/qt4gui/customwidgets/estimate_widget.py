@@ -48,6 +48,8 @@ class EstimateWidget(QtGui.QWidget):
     '''
     separate_codes = set([])
     updated_fees_signal = QtCore.pyqtSignal()
+    delete_estimate_item = QtCore.pyqtSignal(object)
+    edited_signal = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
@@ -98,15 +100,14 @@ class EstimateWidget(QtGui.QWidget):
         self.interim_fees_total_le = QtGui.QLineEdit()
         self.interim_charges_total_le = QtGui.QLineEdit()
 
-        for le in (
-            self.planned_fees_total_le,
-            self.completed_fees_total_le,
-            self.fees_total_le,
-            self.charges_total_le,
-            self.planned_charges_total_le,
-            self.completed_charges_total_le,
-            self.interim_fees_total_le,
-                self.interim_charges_total_le):
+        for le in (self.planned_fees_total_le,
+                   self.completed_fees_total_le,
+                   self.fees_total_le,
+                   self.charges_total_le,
+                   self.planned_charges_total_le,
+                   self.completed_charges_total_le,
+                   self.interim_fees_total_le,
+                   self.interim_charges_total_le):
             le.setFixedWidth(EstimateItemWidget.MONEY_WIDTH)
             le.setAlignment(QtCore.Qt.AlignRight)
 
@@ -203,6 +204,7 @@ class EstimateWidget(QtGui.QWidget):
             widg.setVisible(interim_in_use)
 
         self.updated_fees_signal.emit()
+        self.edited_signal.emit()
 
     def set_expand_mode(self, expand=False):
         self.expandAll = expand
@@ -246,6 +248,7 @@ class EstimateWidget(QtGui.QWidget):
             LOGGER.warning("called when patient is None!")
             return
         self.setEstimate(self.pt.estimates)
+        self.edited_signal.emit()
 
     def setEstimate(self, ests):
         '''
@@ -358,29 +361,15 @@ class EstimateWidget(QtGui.QWidget):
         self.set_expand_mode(self.expandAll)
         # self.updateTotals()
 
-    def deleteItemWidget(self, item_widget, confirm_first=True):
+    def deleteItemWidget(self, item_widget):
         '''
         deletes a widget when delete button pressed.
         such an item will ALWAYS have only one treatment.
         '''
         LOGGER.debug("EstimateWidget.deleteItemWidget")
-
-        if not confirm_first:
-            message = u"<p>%s %s %s<br />%s?</p>" % (
-                _("Delete"),
-                item_widget.number_label.text(),
-                item_widget.description_lineEdit.text(),
-                _("from treatment plan and estimate")
-            )
-
-            if QtGui.QMessageBox.question(self, "confirm",
-                                          message, QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                                          QtGui.QMessageBox.Yes) == QtGui.QMessageBox.No:
-                return False
-
         assert len(item_widget.est_items) == 1, "bad est item passed"
         est = item_widget.est_items[0]
-        self.emit(QtCore.SIGNAL("deleteItem"), est)
+        self.delete_estimate_item.emit(est)
         self.resetEstimate()
 
     def expandItems(self):

@@ -22,45 +22,101 @@
 # #                                                                          # #
 # ############################################################################ #
 
-from copy import deepcopy
 import logging
-import re
 
 from openmolar import connect
 from openmolar.settings import localsettings
 
 LOGGER = logging.getLogger("openmolar")
 
-CURRTRT_NON_TOOTH_ATTS = ('xray', 'perio', 'anaes',
-                          'other', 'ndu', 'ndl', 'odu', 'odl', 'custom')
+CURRTRT_NON_TOOTH_ATTS = (
+    'xray', 'perio', 'anaes', 'other', 'ndu', 'ndl', 'odu', 'odl', 'custom')
 
-CURRTRT_ROOT_ATTS = CURRTRT_NON_TOOTH_ATTS + (
-    'ur8', 'ur7', 'ur6', 'ur5', 'ur4', 'ur3', 'ur2', 'ur1', 'ul1',
-    'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8', 'll8', 'll7', 'll6', 'll5',
-    'll4', 'll3', 'll2', 'll1', 'lr1', 'lr2', 'lr3', 'lr4', 'lr5', 'lr6', 'lr7',
-    'lr8')
+UPPERS = ('ur8', 'ur7', 'ur6', 'ur5', 'ur4', 'ur3', 'ur2', 'ur1',
+          'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8')
 
-CURRTRT_ATTS = ('courseno', 'xraypl', 'periopl', 'anaespl', 'otherpl',
-                'ndupl', 'ndlpl', 'odupl', 'odlpl', "custompl",
-                'xraycmp', 'periocmp', 'anaescmp', 'othercmp', 'nducmp', 'ndlcmp',
-                'oducmp', 'odlcmp', "customcmp", 'ur8pl', 'ur7pl',
-                'ur6pl', 'ur5pl', 'ur4pl', 'ur3pl', 'ur2pl', 'ur1pl', 'ul1pl', 'ul2pl', 'ul3pl',
-                'ul4pl', 'ul5pl', 'ul6pl', 'ul7pl',
-                'ul8pl', 'll8pl', 'll7pl', 'll6pl', 'll5pl', 'll4pl', 'll3pl', 'll2pl', 'll1pl',
-                'lr1pl', 'lr2pl', 'lr3pl', 'lr4pl',
-                'lr5pl', 'lr6pl', 'lr7pl', 'lr8pl', 'ur8cmp', 'ur7cmp', 'ur6cmp', 'ur5cmp',
-                'ur4cmp', 'ur3cmp', 'ur2cmp', 'ur1cmp',
-                'ul1cmp', 'ul2cmp', 'ul3cmp', 'ul4cmp', 'ul5cmp', 'ul6cmp', 'ul7cmp', 'ul8cmp',
-                'll8cmp', 'll7cmp', 'll6cmp', 'll5cmp',
-                'll4cmp', 'll3cmp', 'll2cmp', 'll1cmp', 'lr1cmp', 'lr2cmp', 'lr3cmp', 'lr4cmp',
-                'lr5cmp', 'lr6cmp', 'lr7cmp', 'lr8cmp',
-                'examt', 'examd', 'accd', 'cmpd')
+LOWERS = ('lr8', 'lr7', 'lr6', 'lr5', 'lr4', 'lr3', 'lr2', 'lr1',
+          'll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8')
+
+CURRTRT_ROOT_ATTS = CURRTRT_NON_TOOTH_ATTS + UPPERS + LOWERS
+
+CURRTRT_ATTS = (
+    'courseno', 'xraypl', 'periopl', 'anaespl', 'otherpl',
+    'ndupl', 'ndlpl', 'odupl', 'odlpl', "custompl", 'xraycmp',
+    'periocmp', 'anaescmp', 'othercmp', 'nducmp', 'ndlcmp',
+    'oducmp', 'odlcmp', "customcmp",
+    'ur8pl', 'ur7pl', 'ur6pl', 'ur5pl', 'ur4pl', 'ur3pl', 'ur2pl', 'ur1pl',
+    'ul1pl', 'ul2pl', 'ul3pl', 'ul4pl', 'ul5pl', 'ul6pl', 'ul7pl', 'ul8pl',
+    'll8pl', 'll7pl', 'll6pl', 'll5pl', 'll4pl', 'll3pl', 'll2pl', 'll1pl',
+    'lr1pl', 'lr2pl', 'lr3pl', 'lr4pl', 'lr5pl', 'lr6pl', 'lr7pl', 'lr8pl',
+    'ur8cmp', 'ur7cmp', 'ur6cmp', 'ur5cmp',
+    'ur4cmp', 'ur3cmp', 'ur2cmp', 'ur1cmp',
+    'ul1cmp', 'ul2cmp', 'ul3cmp', 'ul4cmp',
+    'ul5cmp', 'ul6cmp', 'ul7cmp', 'ul8cmp',
+    'll8cmp', 'll7cmp', 'll6cmp', 'll5cmp',
+    'll4cmp', 'll3cmp', 'll2cmp', 'll1cmp',
+    'lr1cmp', 'lr2cmp', 'lr3cmp', 'lr4cmp',
+    'lr5cmp', 'lr6cmp', 'lr7cmp', 'lr8cmp',
+    'examt', 'examd', 'accd', 'cmpd')
 
 QUERY = "SELECT "
 for field in CURRTRT_ATTS:
     QUERY += "%s, " % field
 QUERY = QUERY.rstrip(", ")
 QUERY += " from currtrtmt2 where serialno=%s and courseno=%s"
+
+MAX_COURSE_QUERY = "select max(courseno) from currtrtmt2 where serialno=%s"
+DATE_QUERY = "select accd, cmpd, examd from currtrtmt2 where courseno=%s"
+UPDATE_DATES_QUERY = "update currtrtmt2 set accd=%s, cmpd=%s where courseno=%s"
+
+UPDATE_CURRTTMT2_QUERY = (
+    'UPDATE currtrtmt2 SET %s WHERE serialno=%%s and courseno=%%s')
+
+DELETE_CURRTTMT2_QUERY = (
+    'DELETE from currtrtmt2 WHERE serialno=%s and courseno=%s')
+
+UPDATE_ESTS_COURSENO_QUERY = (
+    'UPDATE newestimates SET courseno=%s WHERE courseno=%s')
+
+
+def get_course_dates(courseno):
+    db = connect.connect()
+    cursor = db.cursor()
+    cursor.execute(DATE_QUERY, (courseno, ))
+    row = cursor.fetchone()
+    cursor.close()
+    return row
+
+
+def update_course_dates(accd, cmpd, courseno):
+    db = connect.connect()
+    cursor = db.cursor()
+    cursor.execute(UPDATE_DATES_QUERY, (accd, cmpd, courseno, ))
+    cursor.close()
+
+
+def update_estimate_courseno(courseno_orig, courseno_new):
+    db = connect.connect()
+    cursor = db.cursor()
+    cursor.execute(UPDATE_ESTS_COURSENO_QUERY, (courseno_new, courseno_orig))
+    cursor.close()
+
+def update_course(query_insert, values, serialno, courseno):
+    assert len(values) == query_insert.count("=")
+    query = UPDATE_CURRTTMT2_QUERY % query_insert
+    values.append(serialno)
+    values.append(courseno)
+    db = connect.connect()
+    cursor = db.cursor()
+    result = cursor.execute(query, values)
+    cursor.close()
+    return result
+
+def delete_course(serialno, courseno):
+    db = connect.connect()
+    cursor = db.cursor()
+    cursor.execute(DELETE_CURRTTMT2_QUERY % (serialno, courseno))
+    cursor.close()
 
 
 class TreatmentCourse(object):
@@ -159,13 +215,11 @@ class TreatmentCourse(object):
         self.accd = None
         self.cmpd = None
 
+        #this next line gives me a way to create a Mock Instance of the class
         if self.courseno == 0:
             return
 
-        db = connect.connect()
-        cursor = db.cursor()
         self.getCurrtrt()
-        cursor.close()
 
     def __repr__(self):
         message = "TreatmentCourse for patient %s courseno %s\n" % (
@@ -206,26 +260,21 @@ class TreatmentCourse(object):
     def getCurrtrt(self):
         db = connect.connect()
         cursor = db.cursor()
-
         cursor.execute(QUERY, (self.serialno, self.courseno))
-
         for value in cursor.fetchall():
             for i, field in enumerate(CURRTRT_ATTS):
                 self.__dict__[field] = value[i]
-                # LOGGER.debug("getCurrtrt '%s' = '%s'"% (field, value[i]))
         cursor.close()
 
     @property
     def underTreatment(self):
-        return (not self.accd in ("", None) and self.cmpd in ("", None))
+        return not self.accd in ("", None) and self.cmpd in ("", None)
 
     @property
     def max_tx_courseno(self):
         db = connect.connect()
         cursor = db.cursor()
-        if cursor.execute(
-            "select max(courseno) from currtrtmt2 where serialno=%s",
-                (self.serialno,)):
+        if cursor.execute(MAX_COURSE_QUERY, (self.serialno,)):
             cno = cursor.fetchone()[0]
         else:
             cno = 0
@@ -356,26 +405,140 @@ class TreatmentCourse(object):
         '''
         return self.cmp_txs(att) + self.pl_txs(att)
 
+    @property
+    def course_duration(self):
+        if not self.cmpd:
+            return (_("still ongoing"))
+        else:
+            days = (self.cmpd - self.accd).days + 1
+            if days == 1:
+                return "1 %s" % _("day")
+            return "%s %s" % (days, _("days"))
+
+    def to_html(self, allow_edit=False, days_elapsed=None, completed_only=False):
+        def sorted_work(work):
+            items = work.split(" ")
+            return " ".join(sorted([item for item in items if item != ""]))
+
+        if allow_edit:
+            edit_str = '''<a href="edit_courseno?%s">%s</a><br />
+            <a href="edit_tx_courseno?%s">%s</a>
+            <!--merge-->''' % (
+                self.courseno, _("Edit Course Dates"),
+                self.courseno, _("Edit Treatments"))
+        else:
+            edit_str = ""
+
+        if days_elapsed is None:
+            days_str = ""
+        else:
+            days_str = " (%s %s)" %(days_elapsed, _("days earlier"))
+
+        html = '''
+        <h4>%s %s %s</h4>
+        <table width = "100%%" border = "1">
+        <tr>
+            <th width="20%%" colspan="1" bgcolor="#ffff99">%s</th>
+            <th width="20%%" colspan="1" bgcolor="#ffff99">
+                %s %s<br />%s %s
+            </th>
+            <th width="60%%" bgcolor="#ffff99">%s %s</th>
+        </tr>
+        ''' % (
+            _("Course Number"), self.courseno, days_str, edit_str,
+            _("Opened"), localsettings.formatDate(self.accd),
+            _("Closed"), localsettings.formatDate(self.cmpd),
+            _("Duration"), self.course_duration,
+        )
+
+        attributes = ("cmp",) if completed_only else ("pl", "cmp")
+
+        #-plan row.
+        for planned in attributes:
+            rows = []
+
+            if planned == "pl":
+                bgcolor = ' bgcolor = "#eeeeee"'
+                header = "%s<br />%s" % (_("Planned"), _("or incomplete"))
+            else:
+                bgcolor = ' bgcolor = "#ddeeee"'
+                header = _("Completed")
+                if self.examt != "":
+                    exam_details = self.examt
+                    if self.examd:
+                        exam_details += " %s - %s" % (
+                            _("dated"),
+                            localsettings.formatDate(self.examd))
+                    cells = "<th%s>%s</th>\n<td>%s</td>\n" % (
+                        bgcolor, _("Exam"), exam_details)
+                    rows.append(cells)
+
+            for att, con_att in (
+                ("perio", _("perio")),
+                ("xray", _('xray')),
+                ("anaes", _('anaes')),
+                ("other", _('other')),
+                ("custom", _("custom")),
+                ('ndu', _("New Denture (upper)")),
+                ('ndl', _("New Denture (lower)")),
+                ('odu', _("Other Denture (upper)")),
+                ('odl', _("Other Denture (lower)")),
+            ):
+                work = self.__dict__[att + planned]
+                if work.strip(" ") != "":
+                    cells = "<th%s>%s</th>\n<td>%s</td>\n" % (
+                        bgcolor, con_att, sorted_work(work))
+                    rows.append(cells)
+
+            show_chart = False
+            row1, row2, row3, row4 = "<tr>", "<tr>", "<tr>", "<tr>"
+
+            for att in UPPERS:
+                work = self.__dict__[att + planned]
+                row1 += '<td>%s</td>\n' % sorted_work(work)
+                row2 += '<td align="center"%s>%s</td>\n' % (
+                    bgcolor, att.upper())
+                show_chart = show_chart or work.strip(" ") != ""
+
+            for att in LOWERS:
+                work = self.__dict__[att + planned]
+                row3 += '<td align="center"%s>%s</td>\n' % (
+                    bgcolor, att.upper())
+                row4 += '<td>%s</td>\n' % sorted_work(work)
+                show_chart = show_chart or work.strip(" ") != ""
+
+            if show_chart:
+                chart_cells = '''<td colspan="2">
+                    <table width = "100%%" border = "1">
+                    %s</tr>\n%s</tr>\n%s</tr>\n%s</tr>\n</table></td>
+                    ''' % (row1, row2, row3, row4)
+                rows.append(chart_cells)
+
+            row_span = len(rows)
+
+            if rows != []:
+                html += '<tr>\n<th rowspan = "%s"%s>%s</th>\n' % (
+                    row_span, bgcolor, header)
+            for row in rows:
+                if row == rows[0]:
+                    html += "%s</tr>\n" % row
+                else:
+                    html += "<tr>%s</tr>\n" % row
+
+        html += '</table>\n'
+        return html
+
 if __name__ == "__main__":
     '''
     testing stuff
     '''
-
-    TEST_SNO = 11956
-    db = connect.connect()
-    cursor = db.cursor()
-    cursor.execute("select courseno0 from patients where serialno = %s",
-                  (TEST_SNO,))
-    courseno = cursor.fetchone()[0]
-    cursor.close()
-
-    tc = TreatmentCourse(TEST_SNO, 0)
-    print tc
-    print tc.underTreatment
-
-    tc = TreatmentCourse(TEST_SNO, courseno)
+    tc = TreatmentCourse(14469, 45869)
     print tc
 
     print tc.non_tooth_plan_items
     print tc.non_tooth_cmp_items
     print tc.all_txs("ur5")
+
+    f = open("/home/neil/out.html", "w")
+    f.write(tc.to_html())
+    f.close()

@@ -32,6 +32,7 @@ from openmolar.connect import connect
 from openmolar.settings import localsettings
 from openmolar.dbtools import patient_class
 from openmolar.dbtools.treatment_course import CURRTRT_ATTS
+from openmolar.dbtools.treatment_course import UPDATE_CURRTTMT2_QUERY
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -57,8 +58,12 @@ EST_LINK_DEL_QUERY = "delete from est_link2 where est_id=%s"
 # too risky not to check these are unique before updating.
 EST_DAYBOOK_ALTERATION_QUERIES = [
     'select daybook_id from daybook_link where tx_hash = %s',
-    '''select sum(fee), sum(ptfee) from newestimates join est_link2 on newestimates.ix = est_link2.est_id
-where tx_hash in (select tx_hash from daybook join daybook_link on daybook.id = daybook_link.daybook_id where id=%s)''',
+
+    '''select sum(fee), sum(ptfee) from newestimates join est_link2
+on newestimates.ix = est_link2.est_id where tx_hash in
+(select tx_hash from daybook join daybook_link
+on daybook.id = daybook_link.daybook_id where id=%s)''',
+
     'update daybook set feesa = %s, feesb = %s where serialno=%s and id=%s'
 ]
 
@@ -285,8 +290,7 @@ def all_changes(pt, changes):
         trtvalues.append(pt.treatment_course.courseno)
         values = tuple(trtvalues)
 
-        query = ('update currtrtmt2 SET '
-                 '%s where serialno=%%s and courseno=%%s' % (trtchanges.strip(",")))
+        query = UPDATE_CURRTTMT2_QUERY % (trtchanges.strip(","))
         sqlcommands['currtrtmt'] = ((query, values),)
 
     if sqlcommands != {} or estimate_commands != {}:

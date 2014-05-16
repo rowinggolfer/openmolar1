@@ -51,6 +51,7 @@ class DaybookEditDialog(ExtendableDialog):
             self.line_edits[key] = QtGui.QLineEdit()
 
         self.chart_edit = QtGui.QTextEdit()
+        self.chart_edit.setWordWrapMode(QtGui.QTextOption.NoWrap)
 
         form.addRow(_("Diagnosis"), self.line_edits[KEYS[0]])
         form.addRow(_("Perio"), self.line_edits[KEYS[1]])

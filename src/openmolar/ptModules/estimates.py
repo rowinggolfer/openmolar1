@@ -191,10 +191,25 @@ class Estimate(object):
             hash_string)
 
     def htmlHeader(self):
-        return '''<tr><th>Dentist</th><th>number</th><th>code</th>
-        <th>Description</th><th>fee</th>
-        <th>pt fee</th><th>feescale</th><th>cset</th><th>completed</th>
-        <th>Hashes</th></tr>'''
+        color_string = ' bgcolor="#ffff99"'
+        sub_values = (color_string, _("Estimates for Course Number"),
+        self.courseno) + (color_string,) * 10
+        return '''
+        <tr>
+        <th%s colspan="10">%s %s <!--editlink--></th>
+        </tr>
+        <tr>
+        <th%s>Dentist</th>
+        <th%s>number</th>
+        <th%s>code</th>
+        <th%s>Description</th>
+        <th%s>fee</th>
+        <th%s>pt fee</th>
+        <th%s>feescale</th>
+        <th%s>cset</th>
+        <th%s>completed</th>
+        <th%s>Hashes</th>
+        </tr>''' % sub_values
 
     def filteredDescription(self):
         '''

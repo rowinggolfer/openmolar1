@@ -29,15 +29,16 @@ import re
 import sys
 
 from openmolar import connect
-from openmolar.ptModules import perio, dec_perm, estimates, notes, formatted_notes
+from openmolar.ptModules import perio, dec_perm, formatted_notes
 from openmolar.settings import localsettings
 
 from openmolar.dbtools.appt_prefs import ApptPrefs
 from openmolar.dbtools.treatment_course import TreatmentCourse
 from openmolar.dbtools.plan_data import PlanData
 from openmolar.dbtools.est_logger import EstLogger
+from openmolar.dbtools import estimates as db_estimates
 
-from openmolar.dbtools.queries import ESTS_QUERY, PATIENT_QUERY
+from openmolar.dbtools.queries import PATIENT_QUERY
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -502,51 +503,7 @@ class patient(object):
         '''
         get estimate data
         '''
-        db = connect.connect()
-        cursor = db.cursor()
-
-        cursor.execute(ESTS_QUERY, (self.serialno, self.courseno0))
-
-        rows = cursor.fetchall()
-        self.estimates = []
-
-        for row in rows:
-            hash_ = row[10]
-            completed = bool(row[9])
-
-            tx_hash = estimates.TXHash(hash_, completed)
-
-            ix = row[0]
-
-            found = False
-            # use existing est if one relates to multiple treatments
-            for existing_est in self.estimates:
-                if existing_est.ix == ix:
-                    existing_est.tx_hashes.append(tx_hash)
-                    found = True
-                    break
-            if found:
-                continue
-
-            # initiate a custom data class
-            est = estimates.Estimate()
-
-            est.ix = ix
-            est.courseno = row[11]
-            est.number = row[1]
-            est.itemcode = row[2]
-            est.description = row[3]
-            est.fee = row[4]
-            est.ptfee = row[5]
-            est.feescale = row[6]
-            est.csetype = row[7]
-            est.dent = row[8]
-
-            est.tx_hashes = [tx_hash]
-            self.estimates.append(est)
-
-        cursor.close()
-
+        self.estimates = db_estimates.get_ests(self.serialno, self.courseno0)
         self.est_logger = EstLogger(self.courseno0)
 
     def getSynopsis(self):
@@ -697,7 +654,7 @@ class patient(object):
         for est in self.estimates:
             if (est.csetype.startswith("N") and
                (not completed_only or est.completed == 2)
-                ):
+                    ):
                 # yield est
                 claims.append(est)
         return claims

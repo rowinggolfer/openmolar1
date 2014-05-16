@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/main.ui'
 #
-# Created: Thu May  1 15:04:57 2014
+# Created: Tue May  6 12:04:10 2014
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -283,7 +283,7 @@ class Ui_MainWindow(object):
         self.scrollArea_4.setObjectName(_fromUtf8("scrollArea_4"))
         self.scrollAreaWidgetContents_7 = QtGui.QWidget()
         self.scrollAreaWidgetContents_7.setGeometry(
-            QtCore.QRect(0, 0, 469, 644))
+            QtCore.QRect(0, 0, 743, 644))
         self.scrollAreaWidgetContents_7.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_7"))
         self.verticalLayout_6 = QtGui.QVBoxLayout(
@@ -919,7 +919,7 @@ class Ui_MainWindow(object):
         self.scrollArea_5.setObjectName(_fromUtf8("scrollArea_5"))
         self.scrollAreaWidgetContents_8 = QtGui.QWidget()
         self.scrollAreaWidgetContents_8.setGeometry(
-            QtCore.QRect(0, 0, 423, 421))
+            QtCore.QRect(0, 0, 725, 421))
         self.scrollAreaWidgetContents_8.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_8"))
         self.gridLayout = QtGui.QGridLayout(self.scrollAreaWidgetContents_8)
@@ -1112,7 +1112,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setObjectName(_fromUtf8("scrollArea_2"))
         self.scrollAreaWidgetContents_5 = QtGui.QWidget()
         self.scrollAreaWidgetContents_5.setGeometry(
-            QtCore.QRect(0, 0, 283, 470))
+            QtCore.QRect(0, 0, 745, 470))
         self.scrollAreaWidgetContents_5.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_5"))
         self.horizontalLayout_26 = QtGui.QHBoxLayout(
@@ -1654,7 +1654,7 @@ class Ui_MainWindow(object):
             _fromUtf8("estimate_scrollArea"))
         self.scrollAreaWidgetContents_11 = QtGui.QWidget()
         self.scrollAreaWidgetContents_11.setGeometry(
-            QtCore.QRect(0, 0, 98, 200))
+            QtCore.QRect(0, 0, 532, 375))
         self.scrollAreaWidgetContents_11.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_11"))
         self.horizontalLayout_19 = QtGui.QHBoxLayout(
@@ -1677,7 +1677,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_4 = QtGui.QWidget()
         self.scrollAreaWidgetContents_4.setGeometry(
-            QtCore.QRect(0, 0, 139, 212))
+            QtCore.QRect(0, 0, 198, 375))
         self.scrollAreaWidgetContents_4.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_4"))
         self.verticalLayout_9 = QtGui.QVBoxLayout(
@@ -1738,7 +1738,7 @@ class Ui_MainWindow(object):
             _fromUtf8("perioCharts_scrollArea"))
         self.scrollAreaWidgetContents_6 = QtGui.QWidget()
         self.scrollAreaWidgetContents_6.setGeometry(
-            QtCore.QRect(0, 0, 252, 374))
+            QtCore.QRect(0, 0, 740, 377))
         self.scrollAreaWidgetContents_6.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_6"))
         self.gridLayout_15 = QtGui.QGridLayout(self.scrollAreaWidgetContents_6)
@@ -1892,10 +1892,6 @@ class Ui_MainWindow(object):
         self.pastTreatment_pushButton.setObjectName(
             _fromUtf8("pastTreatment_pushButton"))
         self.verticalLayout_25.addWidget(self.pastTreatment_pushButton)
-        self.past_course_estimates_pushButton = QtGui.QPushButton(self.frame_3)
-        self.past_course_estimates_pushButton.setObjectName(
-            _fromUtf8("past_course_estimates_pushButton"))
-        self.verticalLayout_25.addWidget(self.past_course_estimates_pushButton)
         self.pastCourses_pushButton = QtGui.QPushButton(self.frame_3)
         self.pastCourses_pushButton.setObjectName(
             _fromUtf8("pastCourses_pushButton"))
@@ -1918,21 +1914,6 @@ class Ui_MainWindow(object):
         self.memo_history_pushButton.setObjectName(
             _fromUtf8("memo_history_pushButton"))
         self.verticalLayout_25.addWidget(self.memo_history_pushButton)
-        self.historyPrint_pushButton = QtGui.QPushButton(self.frame_3)
-        sizePolicy = QtGui.QSizePolicy(
-            QtGui.QSizePolicy.Preferred,
-            QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.historyPrint_pushButton.sizePolicy(
-            ).hasHeightForWidth(
-            ))
-        self.historyPrint_pushButton.setSizePolicy(sizePolicy)
-        self.historyPrint_pushButton.setIcon(icon10)
-        self.historyPrint_pushButton.setObjectName(
-            _fromUtf8("historyPrint_pushButton"))
-        self.verticalLayout_25.addWidget(self.historyPrint_pushButton)
         spacerItem15 = QtGui.QSpacerItem(
             20,
             123,
@@ -1963,6 +1944,33 @@ class Ui_MainWindow(object):
         self.ptAtts_checkBox = QtGui.QCheckBox(self.frame_3)
         self.ptAtts_checkBox.setObjectName(_fromUtf8("ptAtts_checkBox"))
         self.verticalLayout_25.addWidget(self.ptAtts_checkBox)
+        spacerItem16 = QtGui.QSpacerItem(
+            20,
+            40,
+            QtGui.QSizePolicy.Minimum,
+            QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_25.addItem(spacerItem16)
+        spacerItem17 = QtGui.QSpacerItem(
+            20,
+            40,
+            QtGui.QSizePolicy.Minimum,
+            QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_25.addItem(spacerItem17)
+        self.historyPrint_pushButton = QtGui.QPushButton(self.frame_3)
+        sizePolicy = QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Preferred,
+            QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.historyPrint_pushButton.sizePolicy(
+            ).hasHeightForWidth(
+            ))
+        self.historyPrint_pushButton.setSizePolicy(sizePolicy)
+        self.historyPrint_pushButton.setIcon(icon10)
+        self.historyPrint_pushButton.setObjectName(
+            _fromUtf8("historyPrint_pushButton"))
+        self.verticalLayout_25.addWidget(self.historyPrint_pushButton)
         self.horizontalLayout_29.addWidget(self.frame_3)
         self.tabWidget.addTab(self.tab_patient_history, _fromUtf8(""))
         self.new_notes_frame = QtGui.QFrame(self.splitter_patient)
@@ -2225,12 +2233,12 @@ class Ui_MainWindow(object):
         self.cashbookDentComboBox.setObjectName(
             _fromUtf8("cashbookDentComboBox"))
         self.gridLayout_5.addWidget(self.cashbookDentComboBox, 1, 2, 1, 1)
-        spacerItem16 = QtGui.QSpacerItem(
+        spacerItem18 = QtGui.QSpacerItem(
             389,
             20,
             QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Minimum)
-        self.gridLayout_5.addItem(spacerItem16, 1, 5, 1, 1)
+        self.gridLayout_5.addItem(spacerItem18, 1, 5, 1, 1)
         self.all_payments_radioButton = QtGui.QRadioButton(self.tab_cashbook)
         self.all_payments_radioButton.setChecked(True)
         self.all_payments_radioButton.setObjectName(
@@ -2441,12 +2449,12 @@ class Ui_MainWindow(object):
             _fromUtf8("loadAccountsTable_pushButton"))
         self.horizontalLayout_28.addWidget(self.loadAccountsTable_pushButton)
         self.gridLayout_9.addLayout(self.horizontalLayout_28, 0, 0, 1, 1)
-        spacerItem17 = QtGui.QSpacerItem(
+        spacerItem19 = QtGui.QSpacerItem(
             206,
             20,
             QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Minimum)
-        self.gridLayout_9.addItem(spacerItem17, 0, 1, 1, 1)
+        self.gridLayout_9.addItem(spacerItem19, 0, 1, 1, 1)
         self.printAccountsTable_pushButton = QtGui.QPushButton(
             self.tab_accounts)
         self.printAccountsTable_pushButton.setIcon(icon10)
@@ -2481,12 +2489,12 @@ class Ui_MainWindow(object):
         self.accounts_tableWidget.setColumnCount(0)
         self.accounts_tableWidget.setRowCount(0)
         self.gridLayout_9.addWidget(self.accounts_tableWidget, 1, 0, 1, 5)
-        spacerItem18 = QtGui.QSpacerItem(
+        spacerItem20 = QtGui.QSpacerItem(
             746,
             20,
             QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Minimum)
-        self.gridLayout_9.addItem(spacerItem18, 2, 0, 1, 2)
+        self.gridLayout_9.addItem(spacerItem20, 2, 0, 1, 2)
         self.label_43 = QtGui.QLabel(self.tab_accounts)
         self.label_43.setObjectName(_fromUtf8("label_43"))
         self.gridLayout_9.addWidget(self.label_43, 2, 2, 1, 1)
@@ -2555,12 +2563,12 @@ class Ui_MainWindow(object):
             4,
             1,
             1)
-        spacerItem19 = QtGui.QSpacerItem(
+        spacerItem21 = QtGui.QSpacerItem(
             40,
             20,
             QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Minimum)
-        self.gridLayout_10.addItem(spacerItem19, 1, 1, 1, 1)
+        self.gridLayout_10.addItem(spacerItem21, 1, 1, 1, 1)
         self.main_tabWidget.addTab(self.tab_bulk_mail, _fromUtf8(""))
         self.tab_feescales = QtGui.QWidget()
         self.tab_feescales.setObjectName(_fromUtf8("tab_feescales"))
@@ -2597,12 +2605,12 @@ class Ui_MainWindow(object):
         self.chooseFeescale_comboBox.setObjectName(
             _fromUtf8("chooseFeescale_comboBox"))
         self.verticalLayout_10.addWidget(self.chooseFeescale_comboBox)
-        spacerItem20 = QtGui.QSpacerItem(
+        spacerItem22 = QtGui.QSpacerItem(
             20,
             40,
             QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_10.addItem(spacerItem20)
+        self.verticalLayout_10.addItem(spacerItem22)
         self.frame_6 = QtGui.QFrame(self.frame_5)
         self.frame_6.setEnabled(True)
         self.frame_6.setFrameShape(QtGui.QFrame.StyledPanel)
@@ -2660,12 +2668,12 @@ class Ui_MainWindow(object):
             _fromUtf8("feesearch_results_label"))
         self.gridLayout_16.addWidget(self.feesearch_results_label, 4, 0, 1, 2)
         self.verticalLayout_10.addWidget(self.frame_6)
-        spacerItem21 = QtGui.QSpacerItem(
+        spacerItem23 = QtGui.QSpacerItem(
             20,
             40,
             QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_10.addItem(spacerItem21)
+        self.verticalLayout_10.addItem(spacerItem23)
         self.hide_rare_feescale_codes_checkBox = QtGui.QCheckBox(self.frame_5)
         self.hide_rare_feescale_codes_checkBox.setChecked(True)
         self.hide_rare_feescale_codes_checkBox.setObjectName(
@@ -2683,12 +2691,12 @@ class Ui_MainWindow(object):
         self.feeCompress_radioButton.setObjectName(
             _fromUtf8("feeCompress_radioButton"))
         self.verticalLayout_10.addWidget(self.feeCompress_radioButton)
-        spacerItem22 = QtGui.QSpacerItem(
+        spacerItem24 = QtGui.QSpacerItem(
             20,
             40,
             QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_10.addItem(spacerItem22)
+        self.verticalLayout_10.addItem(spacerItem24)
         self.groupBox = QtGui.QGroupBox(self.frame_5)
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.verticalLayout_13 = QtGui.QVBoxLayout(self.groupBox)
@@ -2701,12 +2709,12 @@ class Ui_MainWindow(object):
             _fromUtf8("documents_pushButton"))
         self.verticalLayout_13.addWidget(self.documents_pushButton)
         self.verticalLayout_10.addWidget(self.groupBox)
-        spacerItem23 = QtGui.QSpacerItem(
+        spacerItem25 = QtGui.QSpacerItem(
             20,
             40,
             QtGui.QSizePolicy.Minimum,
             QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_10.addItem(spacerItem23)
+        self.verticalLayout_10.addItem(spacerItem25)
         self.feeadjuster_groupBox = QtGui.QGroupBox(self.frame_5)
         self.feeadjuster_groupBox.setEnabled(True)
         self.feeadjuster_groupBox.setToolTip(_fromUtf8(""))
@@ -2823,12 +2831,12 @@ class Ui_MainWindow(object):
         self.feeSearch_lineEdit_2.setObjectName(
             _fromUtf8("feeSearch_lineEdit_2"))
         self.gridLayout_30.addWidget(self.feeSearch_lineEdit_2, 1, 0, 1, 2)
-        spacerItem24 = QtGui.QSpacerItem(
+        spacerItem26 = QtGui.QSpacerItem(
             67,
             20,
             QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Minimum)
-        self.gridLayout_30.addItem(spacerItem24, 2, 0, 1, 1)
+        self.gridLayout_30.addItem(spacerItem26, 2, 0, 1, 1)
         self.feeSearch_pushButton_2 = QtGui.QPushButton(self.frame_9)
         self.feeSearch_pushButton_2.setEnabled(False)
         sizePolicy = QtGui.QSizePolicy(
@@ -2953,6 +2961,8 @@ class Ui_MainWindow(object):
         self.menuCashbook.setObjectName(_fromUtf8("menuCashbook"))
         self.menuDaybook = QtGui.QMenu(self.menu_Prefences)
         self.menuDaybook.setObjectName(_fromUtf8("menuDaybook"))
+        self.menu_History = QtGui.QMenu(self.menu_Prefences)
+        self.menu_History.setObjectName(_fromUtf8("menu_History"))
         self.menuTools = QtGui.QMenu(self.menubar)
         self.menuTools.setObjectName(_fromUtf8("menuTools"))
         MainWindow.setMenuBar(self.menubar)
@@ -3046,6 +3056,21 @@ class Ui_MainWindow(object):
         self.actionEnable_Filters.setCheckable(True)
         self.actionEnable_Filters.setObjectName(
             _fromUtf8("actionEnable_Filters"))
+        self.actionEdit_Courses = QtGui.QAction(MainWindow)
+        self.actionEdit_Courses.setCheckable(True)
+        self.actionEdit_Courses.setObjectName(_fromUtf8("actionEdit_Courses"))
+        self.actionEdit_Estimates = QtGui.QAction(MainWindow)
+        self.actionEdit_Estimates.setCheckable(True)
+        self.actionEdit_Estimates.setObjectName(
+            _fromUtf8("actionEdit_Estimates"))
+        self.actionAllow_Edit_Treatment = QtGui.QAction(MainWindow)
+        self.actionAllow_Edit_Treatment.setCheckable(True)
+        self.actionAllow_Edit_Treatment.setObjectName(
+            _fromUtf8("actionAllow_Edit_Treatment"))
+        self.action_all_history_edits = QtGui.QAction(MainWindow)
+        self.action_all_history_edits.setCheckable(True)
+        self.action_all_history_edits.setObjectName(
+            _fromUtf8("action_all_history_edits"))
         self.menuMenu.addAction(self.action_Open_Patient)
         self.menuMenu.addSeparator()
         self.menuMenu.addAction(self.action_save_patient)
@@ -3066,6 +3091,10 @@ class Ui_MainWindow(object):
         self.menuDaybook.addSeparator()
         self.menuDaybook.addAction(self.actionAllow_Edit)
         self.menuDaybook.addAction(self.actionEnable_Filters)
+        self.menu_History.addAction(self.action_all_history_edits)
+        self.menu_History.addAction(self.actionEdit_Courses)
+        self.menu_History.addAction(self.actionEdit_Estimates)
+        self.menu_History.addAction(self.actionAllow_Edit_Treatment)
         self.menu_Prefences.addAction(self.actionChange_Language)
         self.menu_Prefences.addSeparator()
         self.menu_Prefences.addAction(self.menuView.menuAction())
@@ -3074,6 +3103,7 @@ class Ui_MainWindow(object):
         self.menu_Prefences.addAction(self.menuForum.menuAction())
         self.menu_Prefences.addAction(self.menuCashbook.menuAction())
         self.menu_Prefences.addAction(self.menuDaybook.menuAction())
+        self.menu_Prefences.addAction(self.menu_History.menuAction())
         self.menu_Prefences.addAction(self.menuPrinting.menuAction())
         self.menu_Prefences.addSeparator()
         self.menu_Prefences.addAction(self.menuMode.menuAction())
@@ -3435,13 +3465,10 @@ class Ui_MainWindow(object):
             _("Perio Charts"))
         self.pastPayments_pushButton.setToolTip(
             _("See all payments in the database made by this patient"))
-        self.pastPayments_pushButton.setText(_("Past Payments"))
+        self.pastPayments_pushButton.setText(_("Payments"))
         self.pastTreatment_pushButton.setToolTip(
             _("View treatments completed, by date order"))
-        self.pastTreatment_pushButton.setText(_("Past Treatment"))
-        self.past_course_estimates_pushButton.setToolTip(
-            _("display a combination of courses and estimates."))
-        self.past_course_estimates_pushButton.setText(_("Courses / Estimates"))
+        self.pastTreatment_pushButton.setText(_("Treatment"))
         self.pastCourses_pushButton.setToolTip(
             _("View all Courses of treatment. This includes treatment that was planned but not completed."))
         self.pastCourses_pushButton.setText(_("Courses"))
@@ -3451,14 +3478,14 @@ class Ui_MainWindow(object):
         self.current_est_versioning_pushButton.setText(_("Current Estimate"))
         self.NHSClaims_pushButton.setText(_("NHS Claims"))
         self.memo_history_pushButton.setText(_("Memos"))
-        self.historyPrint_pushButton.setToolTip(
-            _("Print the text displayed on this page."))
-        self.historyPrint_pushButton.setText(_("Print"))
         self.debug_toolButton.setToolTip(_("Advanced options for developer use. Don\'t expect this to make much sense!\n"
                                            "\n"
                                            "If the \"changes only\" checkbox is checked, only data which has been changed will be displayed."))
         self.debug_toolButton.setText(_("debug tools"))
         self.ptAtts_checkBox.setText(_("changes only"))
+        self.historyPrint_pushButton.setToolTip(
+            _("Print the text displayed on this page."))
+        self.historyPrint_pushButton.setText(_("Print"))
         self.tabWidget.setTabText(
             self.tabWidget.indexOf(self.tab_patient_history),
             _("History"))
@@ -3592,6 +3619,7 @@ class Ui_MainWindow(object):
         self.menuMode.setTitle(_("&Mode (reception or surgery)"))
         self.menuCashbook.setTitle(_("&Cashbook"))
         self.menuDaybook.setTitle(_("&Daybook"))
+        self.menu_History.setTitle(_("&History"))
         self.menuTools.setTitle(_("&Tools"))
         self.action_save_patient.setText(_("&Export Patient to disk"))
         self.action_Open_Patient.setText(_("&Import Patient from disk"))
@@ -3628,6 +3656,10 @@ class Ui_MainWindow(object):
         self.actionDocuments_Dialog.setText(_("Documents Dialog"))
         self.actionAllow_Edit.setText(_("Allow &Edit"))
         self.actionEnable_Filters.setText(_("Enable &Filters"))
+        self.actionEdit_Courses.setText(_("Allow Edit &Courses"))
+        self.actionEdit_Estimates.setText(_("Allow Edit &Estimates"))
+        self.actionAllow_Edit_Treatment.setText(_("Allow Edit &Treatment"))
+        self.action_all_history_edits.setText(_("Allow &ALL Edits"))
 
 from PyQt4 import QtWebKit
 from openmolar.qt4gui import resources_rc
