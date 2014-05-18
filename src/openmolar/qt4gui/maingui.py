@@ -2012,15 +2012,14 @@ class OpenmolarGui(QtGui.QMainWindow):
                 hash_ = localsettings.hash_func(
                     "%s%s%s%s" % (courseno, tooth, n_txs + 1, tx))
                 tx_hash = estimates.TXHash(hash_)
+                self.advise(
+                    _("Moving existing treatment from plan to completed."))
                 manipulate_plan.tx_hash_complete(self, tx_hash)
-            elif not completed and n_txs:
-                hash_ = localsettings.hash_func(
-                    "%s%s%s%s" % (courseno, tooth, n_txs, tx))
-                tx_hash = estimates.TXHash(hash_)
-                manipulate_plan.tx_hash_reverse(self, tx_hash)
             else:
-                manipulate_plan.add_treatments_to_plan(self,
-                                                      ((tooth, tx),), completed)
+                manipulate_plan.add_treatments_to_plan(
+                    self,
+                    ((tooth, tx),),
+                    completed)
 
         if removals:
             manipulate_plan.remove_treatments_from_plan_and_est(
