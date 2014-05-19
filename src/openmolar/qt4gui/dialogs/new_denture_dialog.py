@@ -181,8 +181,8 @@ class PageThree(_OptionPage):
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
         self.dl = parent
-        self.label.setText(_(
-                           "Please select teeth which this denture is to replace"))
+        self.label.setText(
+            _("Please select teeth which this denture is to replace"))
         self.chartwidg = SimpleChartWidg(self, auto_ctrl_key=True)
         layout = QtGui.QVBoxLayout(self.frame)
         layout.addWidget(self.chartwidg)
@@ -223,8 +223,8 @@ class PageFour(_OptionPage):
 
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
-        self.label.setText(_(
-                           "You may wish to add the following optional items"))
+        self.label.setText(
+            _("You may wish to add the following optional items"))
 
         self.st_checkBox = QtGui.QCheckBox(_("Special Tray"))
         self.sl_checkBox = QtGui.QCheckBox(_("Soft Lining"))
@@ -244,7 +244,7 @@ class PageFour(_OptionPage):
 
     @property
     def return_text(self):
-        if self.dialog.ndu_le.text() != "":
+        if self.dialog.default_lineedit.text() != "":
             return self._additional_text
         return ""
 
@@ -374,8 +374,10 @@ class NewDentureDialog(ExtendableDialog):
                 if re.match(input_, ndu):
                     matched = True
             if not matched:
-                QtGui.QMessageBox.warning(self, _("Warning"),
-                                          _("Your upper denture input is invalid"))
+                QtGui.QMessageBox.warning(
+                    self,
+                    _("Warning"),
+                    _("Your upper denture input is invalid"))
                 return False
         for ndl in ndls.split(" "):
             LOGGER.debug("checking '%s'" % ndl)
@@ -384,8 +386,10 @@ class NewDentureDialog(ExtendableDialog):
                 if re.match(input_, ndl):
                     matched = True
             if not matched:
-                QtGui.QMessageBox.warning(self, _("Warning"),
-                                          _("Your lower denture input is invalid"))
+                QtGui.QMessageBox.warning(
+                    self,
+                    ("Warning"),
+                    _("Your lower denture input is invalid"))
                 return False
         return True
 
