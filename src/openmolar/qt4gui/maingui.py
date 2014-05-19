@@ -193,6 +193,11 @@ class OpenmolarGui(QtGui.QMainWindow):
         self.ui.debugBrowser.setSource = self.set_browser_source
         self.ui.daybookTextBrowser.setSource = self.set_browser_source
 
+        self.ui.backButton.setEnabled(False)
+        self.ui.nextButton.setEnabled(False)
+        self.ui.reloadButton.setEnabled(False)
+        self.ui.relatedpts_pushButton.setEnabled(False)
+
         QtCore.QTimer.singleShot(500, self.set_operator_label)
         QtCore.QTimer.singleShot(500, self.load_pt_statuses)
         QtCore.QTimer.singleShot(1000, self.load_todays_patients_combobox)
@@ -843,8 +848,8 @@ class OpenmolarGui(QtGui.QMainWindow):
         if they are, function will return the user to that part of the gui
         and return True. otherwise, will return False.
         '''
-        LOGGER.debug("enteringNewPatient")
         if self.entering_new_patient:
+            LOGGER.debug("enteringNewPatient")
             self.ui.main_tabWidget.setCurrentIndex(0)
             self.ui.tabWidget.setCurrentIndex(0)
             return not new_patient_gui.abortNewPatientEntry(self)
@@ -1030,12 +1035,13 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         cycle forwards through the list of recently visited records
         '''
-        desiredPos = localsettings.recent_sno_index + 1
+        offset = 0 if self.pt.serialno == 0 else 1
+        desiredPos = localsettings.recent_sno_index + offset
         try:
             self.getrecord(localsettings.recent_snos[desiredPos],
                            addToRecentSnos=False)
         except IndexError:
-            self.advise(_("Reached end of the List"))
+            self.advise(_("Reached End of Record History"))
 
     def last_patient(self):
         '''
@@ -1045,11 +1051,11 @@ class OpenmolarGui(QtGui.QMainWindow):
             desiredPos = localsettings.recent_sno_index
         else:
             desiredPos = localsettings.recent_sno_index - 1
-        if len(localsettings.recent_snos) > desiredPos >= 0:
+        try:
             self.getrecord(localsettings.recent_snos[desiredPos],
                            addToRecentSnos=False)
-        else:
-            self.advise(_("Reached Start of the List"))
+        except IndexError:
+            self.advise(_("Reached Start Record History"))
 
     def apply_editpage_changes(self):
         '''
@@ -1106,46 +1112,50 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.update_family_label()
             return
 
-        if addToRecentSnos:
+        if (self.pt and serialno == self.pt.serialno and not newPatientReload):
+            self.ui.main_tabWidget.setCurrentIndex(0)
+            self.advise(_("Patient already loaded"))
+            return
+        elif not checkedNeedToLeaveAlready and not self.okToLeaveRecord():
+            print "not loading"
+            self.advise(_("Not loading patient"))
+            return
+
+        try:
+            self.pt = patient_class.patient(serialno)
+            self.pt_diary_widget.set_patient(self.pt)
+
+            try:
+                self.loadpatient(newPatientReload=newPatientReload)
+            except Exception as e:
+                message = _("Error populating interface")
+                LOGGER.exception(message)
+                self.advise(u"<b>%s</b><hr /><pre>%s" % (message, e), 2)
+
+        except localsettings.PatientNotFoundError:
+            print "NOT FOUND ERROR"
+            self.advise(_("error getting serialno") + " %d - " % serialno +
+                        _("please check this number is correct?"), 1)
+        except Exception as exc:
+            LOGGER.exception(
+                "Unknown ERROR loading patient - serialno %d" % serialno)
+            self.advise("Unknown Error - Tell Neil<br />%s" % exc, 2)
+
+        if addToRecentSnos:  # add to end of list
             try:
                 localsettings.recent_snos.remove(serialno)
             except ValueError:
                 pass
             localsettings.recent_snos.append(serialno)
+            can_go_forwards = False
+        else:
+            can_go_forwards = serialno != localsettings.recent_snos[-1]
         localsettings.recent_sno_index = localsettings.recent_snos.index(
             serialno)
 
         can_go_back = localsettings.recent_sno_index > 0
         self.ui.backButton.setEnabled(can_go_back)
-        self.ui.nextButton.setEnabled(
-            localsettings.recent_sno_index < len(localsettings.recent_snos) - 1)
-
-        if (self.pt and serialno == self.pt.serialno and not newPatientReload):
-            self.ui.main_tabWidget.setCurrentIndex(0)
-            self.advise(_("Patient already loaded"))
-        elif not checkedNeedToLeaveAlready and not self.okToLeaveRecord():
-            print "not loading"
-            self.advise(_("Not loading patient"))
-        else:
-            try:
-                self.pt = patient_class.patient(serialno)
-                self.pt_diary_widget.set_patient(self.pt)
-
-                try:
-                    self.loadpatient(newPatientReload=newPatientReload)
-                except Exception as e:
-                    message = _("Error populating interface")
-                    LOGGER.exception(message)
-                    self.advise(u"<b>%s</b><hr /><pre>%s" % (message, e), 2)
-
-            except localsettings.PatientNotFoundError:
-                print "NOT FOUND ERROR"
-                self.advise(_("error getting serialno") + " %d - " % serialno +
-                            _("please check this number is correct?"), 1)
-            except Exception as exc:
-                LOGGER.exception(
-                    "Unknown ERROR loading patient - serialno %d" % serialno)
-                self.advise("Unknown Error - Tell Neil<br />%s" % exc, 2)
+        self.ui.nextButton.setEnabled(can_go_forwards)
 
     def reload_patient(self):
         '''
@@ -1760,7 +1770,6 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.ui.summaryChartWidget,
             self.ui.printEst_pushButton,
             self.ui.printAccount_pushButton,
-            # self.ui.relatedpts_pushButton,
             self.ui.saveButton,
             self.ui.phraseBook_pushButton,
             self.ui.clinician_phrasebook_pushButton,
@@ -1775,12 +1784,19 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.ui.memos_pushButton,
             self.pt_diary_widget,
             self.ui.childsmile_button,
+            self.ui.reloadButton,
         ):
 
             widg.setEnabled(arg)
 
         self.ui.closeCourse_pushButton.setEnabled(False)
         self.ui.actionFix_Locked_New_Course_of_Treatment.setEnabled(False)
+        if not arg:
+            self.ui.backButton.setEnabled(len(localsettings.recent_snos))
+            self.ui.nextButton.setEnabled(False)
+
+        self.ui.relatedpts_pushButton.setEnabled(
+            bool(self.pt.serialno or self.pt.familyno))
 
         for i in (0, 1, 2, 5, 6, 7, 8, 9):
             if self.ui.tabWidget.isTabEnabled(i) != arg:
@@ -2536,29 +2552,14 @@ class OpenmolarGui(QtGui.QMainWindow):
 
     def signals_admin(self):
         # admin frame
-        QtCore.QObject.connect(self.ui.home_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.home)
-
-        QtCore.QObject.connect(self.ui.newPatientPushButton,
-                               QtCore.SIGNAL("clicked()"), self.enterNewPatient)
-
-        QtCore.QObject.connect(self.ui.findButton,
-                               QtCore.SIGNAL("clicked()"), self.find_patient)
-
-        QtCore.QObject.connect(self.ui.reloadButton,
-                               QtCore.SIGNAL("clicked()"), self.reload_patient)
-
-        QtCore.QObject.connect(self.ui.backButton,
-                               QtCore.SIGNAL("clicked()"), self.last_patient)
-
-        QtCore.QObject.connect(self.ui.nextButton,
-                               QtCore.SIGNAL("clicked()"), self.next_patient)
-
-        QtCore.QObject.connect(self.ui.relatedpts_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.find_related)
-
-        QtCore.QObject.connect(self.ui.dayList_comboBox,
-                               QtCore.SIGNAL("currentIndexChanged(int)"), self.todays_pts)
+        self.ui.home_pushButton.clicked.connect(self.home)
+        self.ui.newPatientPushButton.clicked.connect(self.enterNewPatient)
+        self.ui.findButton.clicked.connect(self.find_patient)
+        self.ui.reloadButton.clicked.connect(self.reload_patient)
+        self.ui.backButton.clicked.connect(self.last_patient)
+        self.ui.nextButton.clicked.connect(self.next_patient)
+        self.ui.relatedpts_pushButton.clicked.connect(self.find_related)
+        self.ui.dayList_comboBox.currentIndexChanged.connect(self.todays_pts)
 
     def signals_reception(self):
         '''

@@ -255,7 +255,7 @@ allowed_logins = []
 
 #-- this list is used for navigating back and forth through the list
 recent_snos = []
-recent_sno_index = 0
+recent_sno_index = -1
 last_family_no = 0
 
 #-- update whenever a manual search is made

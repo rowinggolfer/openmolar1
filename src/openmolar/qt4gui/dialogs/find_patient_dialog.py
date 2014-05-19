@@ -71,7 +71,6 @@ class FindPatientDialog(QtGui.QDialog, Ui_patient_finder.Ui_Dialog):
 
             if serialno > 0:
                 self.chosen_sno = serialno
-                # self.getrecord(serialno, True)
             else:
                 candidates = search.getcandidates(dob, addr, tel, sname,
                                                   self.snameSoundex_checkBox.checkState(
