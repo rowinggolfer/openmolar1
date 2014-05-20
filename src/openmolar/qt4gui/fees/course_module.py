@@ -142,7 +142,7 @@ def apply_new_courseno(om_gui, new_courseno, accd=None):
             _("Using Feescale"),
             om_gui.pt.fee_table.briefName
         )
-        om_gui.advise(message, 1)
+        om_gui.advise(message)
         return True
 
 

@@ -91,7 +91,7 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
 
                 if QtGui.QMessageBox.question(
                     self,
-                    _("Confirm"), 
+                    _("Confirm"),
                     message,
                     QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
                         QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
@@ -123,6 +123,8 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
                 self.pt.dnt2 = localsettings.ops_reverse[examdent]
                 self.om_gui.updateDetails()
                 APPLIED = True
+            else:
+                APPLIED = False
 
         return APPLIED, examdent
 

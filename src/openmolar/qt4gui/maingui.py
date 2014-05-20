@@ -131,18 +131,21 @@ from openmolar.qt4gui.customwidgets import notification_widget
 from openmolar.qt4gui.customwidgets.static_control_panel \
     import StaticControlPanel
 
+from openmolar.backports.advisor import Advisor
+
 LOGGER = logging.getLogger("openmolar")
 LOGGER.setLevel(logging.INFO)
 
 
-class OpenmolarGui(QtGui.QMainWindow):
+class OpenmolarGui(QtGui.QMainWindow, Advisor):
     fee_table_editor = None
     fee_table_tester = None
     phrasebook_editor = None
     entering_new_patient = False
 
-    def __init__(self):
-        QtGui.QMainWindow.__init__(self)
+    def __init__(self, parent=None):
+        QtGui.QMainWindow.__init__(self, parent)
+        Advisor.__init__(self, parent)
         self.ui = Ui_main.Ui_MainWindow()
         self.ui.setupUi(self)
         self.diary_widget = DiaryWidget(self)
@@ -202,30 +205,25 @@ class OpenmolarGui(QtGui.QMainWindow):
         QtCore.QTimer.singleShot(1000, self.load_todays_patients_combobox)
         QtCore.QTimer.singleShot(2000, self.load_fee_tables)
 
-    def advise(self, arg, warning_level=0):
+    def resizeEvent(self, event):
         '''
-        inform the user of events -
-        warning level0 = status bar only.
-        warning level 1 advisory
-        warning level 2 critical (and logged)
+        this function is overwritten so that the advisor popup can be
+        put in the correct place
         '''
-        if warning_level == 0:
-            m = QtGui.QMessageBox(self)
-            m.setText(arg)
-            m.setStandardButtons(QtGui.QMessageBox.NoButton)
-            m.setWindowTitle(_("advisory"))
-            m.setModal(False)
-            QtCore.QTimer.singleShot(3 * 1000, m.accept)
-            m.show()
-            self.ui.statusbar.showMessage(arg, 5000)  # 5000 milliseconds=5secs
-        elif warning_level == 1:
-            QtGui.QMessageBox.information(self, _("Advisory"), arg)
-        elif warning_level == 2:
-            now = QtCore.QTime.currentTime()
-            QtGui.QMessageBox.warning(self, _("Error"), arg)
-            #--for logging purposes
-            print "%d:%02d ERROR MESSAGE" % (now.hour(), now.minute())
-            print arg
+        QtGui.QMainWindow.resizeEvent(self, event)
+        self.setBriefMessageLocation()
+
+    def setBriefMessageLocation(self):
+        '''
+        make the Advisor sub class aware of the windows geometry.
+        set it top right, and right_to_left
+        '''
+        widg = self.menuBar()
+        brief_pos_x = (widg.pos().x() + widg.width())
+        brief_pos_y = (widg.pos().y() + widg.height())
+
+        brief_pos = QtCore.QPoint(brief_pos_x, brief_pos_y)
+        self.setBriefMessagePosition(brief_pos, True)
 
     def wait(self, waiting=True):
         if waiting:
@@ -1639,7 +1637,7 @@ class OpenmolarGui(QtGui.QMainWindow):
         dl = MedNotesDialog(self.pt, self)
         if dl.exec_():
             dl.apply()
-            self.advise("Updated Medical Notes", 1)
+            self.advise("Updated Medical Notes")
             self.medalert()
 
     def newBPE_Dialog(self):
