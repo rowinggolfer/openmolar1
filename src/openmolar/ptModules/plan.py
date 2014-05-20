@@ -163,25 +163,46 @@ def completedFillsToStatic(pt):
     '''
     take completed items, and update the static chart
     '''
-    try:
-        items = completedItems(pt, teethOnly=True)
-        for tooth, prop in items:
-            tooth = tooth.lower()
-            if re.match("EX", prop):
-                pt.treatment_course.__dict__["%sst" % tooth] = "TM "
-            else:
-                existing = pt.__dict__.get("%sst" % tooth)
-                new = "%s %s " % (existing, prop)
-                # add the space just to be on the safe side.
-                new = new.replace("  ", " ")
-                # 34 characters is a database limit.
-                while len(new) > 34:
-                    new = new[new.index(" ") + 1:]
-                pt.__dict__["%sst" % tooth] = new
+    items = completedItems(pt, teethOnly=True)
+    for tooth, prop in items:
+        tooth = tooth.lower()
+        if re.match("EX", prop):
+            pt.__dict__["%sst" % tooth] = "TM "
+        elif len(prop) > 33:
+            pass
+        else:
+            existing = pt.__dict__.get("%sst" % tooth).split(" ")
+            existing.append(prop.strip(" "))
+            i = 0
+            correct = False
+            while not correct:
+                new = " ".join([s for s in existing[i:] if s != ""]) + " "
+                correct = len(new) < 34
+                i += 1
+            pt.__dict__["%sst" % tooth] = new
 
-    except Exception as e:
-        # shouldn't happen, but safety first.
-        LOGGER.exception("FAILED TO TRANSFER FILLS TO STATIC")
+
+def reverse_completedFillsToStatic(pt):
+    '''
+    undo above procedure if a course is "resumed"
+    take completed items, and update the static chart
+    '''
+    items = completedItems(pt, teethOnly=True)
+    for tooth, prop in items:
+        tooth = tooth.lower()
+        existing = pt.__dict__["%sst" % tooth].split(" ")
+        if re.match("EX", prop):
+            removal = "TM"
+        else:
+            removal = prop.strip(" ")
+        existing.reverse()
+        try:
+            existing.remove(removal)
+        except ValueError:
+            pass  # property not found
+        existing.reverse()
+        new = " ".join([s for s in existing if s != ""]) + " "
+        pt.__dict__["%sst" % tooth] = new
 
 
 if __name__ == "__main__":

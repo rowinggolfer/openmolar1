@@ -1926,13 +1926,12 @@ class OpenmolarGui(QtGui.QMainWindow):
         '''
         if self.pt.underTreatment:
             course_module.closeCourse(self)
-            # static items may have changed
-            charts_gui.chartsTable(self)
-            self.load_clinicalSummaryPage()
-            self.ui.summaryChartWidget.update()
-
         else:
             course_module.resumeCourse(self)
+        # static items may have changed
+        charts_gui.chartsTable(self)
+        self.load_clinicalSummaryPage()
+        self.ui.summaryChartWidget.update()
 
     def showExamDialog(self):
         '''
