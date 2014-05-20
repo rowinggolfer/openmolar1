@@ -49,6 +49,8 @@ class chartLineEdit(QtGui.QLineEdit):
     and is self aware when verification is needed
     override the keypress event for up and down arrow keys.
     '''
+    changed_properties_signal = QtCore.pyqtSignal(object)
+    deleted_comments_signal = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
         QtGui.QLineEdit.__init__(self, parent)
@@ -89,7 +91,7 @@ class chartLineEdit(QtGui.QLineEdit):
             if not re.match("..* $", props):
                 if props != "":
                     props = props + " "
-            self.emit(QtCore.SIGNAL("Changed_Properties"), props)
+            self.changed_properties_signal.emit(props)
 
     def additional(self, checkedAlready=False):
         '''
@@ -156,7 +158,7 @@ class chartLineEdit(QtGui.QLineEdit):
                 deleted = True
         if deleted:
             self.updateFromPropList(snapshotPropList)
-            self.emit(QtCore.SIGNAL("DeletedComments"))
+            self.deleted_comments_signal.emit()
 
     def addItem(self, item):
         if not item in ("", " "):
@@ -253,6 +255,7 @@ class chartLineEdit(QtGui.QLineEdit):
 
 class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
     static_chosen = QtCore.pyqtSignal(object)
+    next_tooth_signal = QtCore.pyqtSignal(object)
 
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
@@ -555,12 +558,12 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
     def prevTooth(self):
         if self.lineEdit.verifyProps():
             self.lineEdit.finishedEdit()
-            self.emit(QtCore.SIGNAL("NextTooth"), ("up"))
+            self.next_tooth_signal.emit("up")
 
     def nextTooth(self):
         if self.lineEdit.verifyProps():
             self.lineEdit.finishedEdit()
-            self.emit(QtCore.SIGNAL("NextTooth"), ("down"))
+            self.next_tooth_signal.emit("down")
 
     def static_input(self, value):
         self.lineEdit.addItem(value)
