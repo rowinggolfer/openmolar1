@@ -138,7 +138,7 @@ def apply_new_courseno(om_gui, new_courseno, accd=None):
         om_gui.pt.addHiddenNote("open_course")
         om_gui.updateHiddenNotesLabel()
         message = "%s<hr />%s <em>%s</em>" % (
-            _("Sucessfully started new course of treatment"),
+            _("Successfully started new course of treatment"),
             _("Using Feescale"),
             om_gui.pt.fee_table.briefName
         )

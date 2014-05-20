@@ -390,7 +390,7 @@ class PtDiaryWidget(QtGui.QWidget):
         '''
         def delete_appt():
             if appointments.delete_appt_from_apr(appt):
-                self.advise(_("Sucessfully removed appointment"))
+                self.advise(_("Successfully removed appointment"))
             else:
                 self.advise(_("Error removing proposed appointment"), 2)
 
@@ -438,7 +438,7 @@ class PtDiaryWidget(QtGui.QWidget):
                                               QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
                     # remove from the patients diary
                     if appointments.delete_appt_from_apr(appt):
-                        self.advise(_("Sucessfully removed appointment"))
+                        self.advise(_("Successfully removed appointment"))
                     else:
                         self.advise(_("Error removing from patient diary"), 2)
 

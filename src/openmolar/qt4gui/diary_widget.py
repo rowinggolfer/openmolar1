@@ -1410,7 +1410,7 @@ class DiaryWidget(QtGui.QWidget):
                                               QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
                     # remove from the patients diary
                     if appointments.delete_appt_from_apr(appt):
-                        self.advise(_("Sucessfully removed appointment"))
+                        self.advise(_("Successfully removed appointment"))
                         self.schedule_controller.get_data()
                     else:
                         self.advise(_("Error removing from patient diary"), 2)
