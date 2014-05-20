@@ -137,11 +137,11 @@ class SchemaUpdater(object):
             completed(False, ('Unexpected Error updating the schema '
                               'please file a bug at http:www.openmolar.com'))
 
-    def completed(self, sucess, message):
+    def completed(self, success, message):
         def accept():
             m.accept()
             self.pb.hide()
-        if sucess:
+        if success:
             m = QtGui.QMessageBox()
             m.setText(message)
             m.setStandardButtons(QtGui.QMessageBox.NoButton)

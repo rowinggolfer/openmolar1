@@ -211,7 +211,7 @@ class dbUpdater(QtCore.QThread):
 
                 self.progressSig(100)
                 self.completed = True
-                self.completeSig("ALL DONE - sucessfully moved db to 1,1")
+                self.completeSig("ALL DONE - successfully moved db to 1,1")
 
         except Exception as e:
             print "Exception caught", e
@@ -222,6 +222,6 @@ class dbUpdater(QtCore.QThread):
 if __name__ == "__main__":
     dbu = dbUpdater()
     if dbu.run():
-        print "ALL DONE, conversion sucessful"
+        print "ALL DONE, conversion successful"
     else:
         print "conversion failed"

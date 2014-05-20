@@ -217,7 +217,7 @@ class setup_gui(QtGui.QMainWindow):
         if filename != '':
             try:
                 self.template = minidom.parse(str(filename))
-                self.advise(_("template loaded sucessfully"), 1)
+                self.advise(_("template loaded successfully"), 1)
                 self.tab_navigated(self.ui.tabWidget.currentIndex(), False)
             except Exception as e:
                 self.advise(_("error parsing template file") + " - %s" % e, 2)

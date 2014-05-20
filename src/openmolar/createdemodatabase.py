@@ -58,7 +58,7 @@ def create_database(myhost, myport, myuser, mypassword, databaseName,
     cursor.close()
     db.commit()
     db.close()
-    print "db created sucessfully"
+    print "db created successfully"
     return True
 
 
@@ -82,6 +82,6 @@ if __name__ == "__main__":
     rootpass = raw_input("please enter your MySQL root users password :")
     if create_database("localhost", 3306, "OMuser", "password",
                        "openmolar_demo", rootpass):
-        print "New database created sucessfully"
+        print "New database created successfully"
 
     loadTables("localhost", 3306, "OMuser", "password", "openmolar_demo")

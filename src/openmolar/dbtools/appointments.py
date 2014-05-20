@@ -716,7 +716,7 @@ def alterDay(arg):
         result.setNumber(cursor.execute(query, values))
 
         if result.getNumber() == 1:
-            result.setMessage("Date sucessfully modified")
+            result.setMessage("Date successfully modified")
         else:
             result.setMessage(
                 "No changes applied - the values you supplied " +

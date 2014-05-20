@@ -143,7 +143,7 @@ class dbUpdater(QtCore.QThread):
 
                 self.progressSig(100, _("updating stored schema version"))
                 self.completed = True
-                self.completeSig(_("ALL DONE - sucessfully moved db to")
+                self.completeSig(_("ALL DONE - successfully moved db to")
                                  + " 1.2")
 
         except Exception as e:
@@ -155,6 +155,6 @@ class dbUpdater(QtCore.QThread):
 if __name__ == "__main__":
     dbu = dbUpdater()
     if dbu.run():
-        print "ALL DONE, conversion sucessful"
+        print "ALL DONE, conversion successful"
     else:
         print "conversion failed"

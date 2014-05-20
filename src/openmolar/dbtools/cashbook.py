@@ -72,7 +72,7 @@ class CashBookCodesDict(dict):
             rows = cursor.fetchall()
             for row in rows:
                 self[int(row[0])] = row[1]
-            LOGGER.debug("cashbook codes loaded sucessfully")
+            LOGGER.debug("cashbook codes loaded successfully")
         except Exception as exc:
             LOGGER.exception("error loading cashbook codes")
         finally:

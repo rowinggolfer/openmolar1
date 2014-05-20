@@ -113,7 +113,7 @@ class dbUpdater(QtCore.QThread):
         db = connect.connect()
         db.autocommit(False)
         cursor = db.cursor()
-        sucess = False
+        success = False
         try:
             i, commandNo = 0, len(sql_strings)
             for sql_string in sql_strings:
@@ -127,11 +127,11 @@ class dbUpdater(QtCore.QThread):
                 self.progressSig(
                     2 + 70 * i / commandNo,
                     sql_string[:40] + "...")
-            sucess = True
+            success = True
         except Exception as e:
             print "FAILURE in executing sql statements", e
             db.rollback()
-        if sucess:
+        if success:
             db.commit()
             db.autocommit(True)
         else:
@@ -157,7 +157,7 @@ class dbUpdater(QtCore.QThread):
 
             self.progressSig(100, _("updating stored schema version"))
             self.completed = True
-            self.completeSig(_("ALL DONE - sucessfully moved db to")
+            self.completeSig(_("ALL DONE - successfully moved db to")
                              + " 2.0")
 
         except UpdateException as e:
@@ -173,6 +173,6 @@ class dbUpdater(QtCore.QThread):
 if __name__ == "__main__":
     dbu = dbUpdater()
     if dbu.run():
-        print "ALL DONE, conversion sucessful"
+        print "ALL DONE, conversion successful"
     else:
         print "conversion failed"

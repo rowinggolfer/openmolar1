@@ -1716,7 +1716,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                 self.pt.est_logger.add_row(
                     self.pt.courseno0, self.pt.est_logger_text)
 
-            if result:  # True if sucessful
+            if result:  # True if successful
                 if not leavingRecord and "estimates" in uc:
                     #-- necessary to get index numbers for estimate data types
                     self.pt.getEsts()
@@ -1740,9 +1740,9 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             result = patient_write_changes.toNotes(
                 self.pt.serialno, notetuplets)
 
-            #--sucessful write to db?
+            #--successful write to db?
             if result:
-                #--result will be a "line number" or -1 if unsucessful write
+                #--result will be a "line number" or -1 if unsuccessful write
                 self.ui.notesEnter_textEdit.setText("")
                 self.ui.hiddenNotes_label.setText("")
                 self.pt.getNotesTuple()

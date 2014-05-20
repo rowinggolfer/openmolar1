@@ -198,7 +198,7 @@ class NewSetupMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if result == QtGui.QMessageBox.Yes:
                 self.stackedWidget.setCurrentIndex(5)
                 if self.createDemoDatabase():
-                    self.advise(_("Database Created Sucessfully"))
+                    self.advise(_("Database Created Successfully"))
                     self.stackedWidget.setCurrentIndex(6)
                     self.testDB_pushButton.setEnabled(True)
                     return
@@ -316,7 +316,7 @@ please recheck your settings'''), True)
             self.progressBar.setValue(10)
             if createdemodatabase.create_database(self.HOST, self.PORT,
                                                   self.MysqlUser, self.MysqlPassword, self.DB, self.rootpass):
-                print 'New database created sucessfully.'
+                print 'New database created successfully.'
             else:
                 print "error creating database"
                 raise IOError("error creating database")
@@ -399,7 +399,7 @@ please recheck your settings'''), True)
 
             settingsDir = os.path.dirname(localsettings.global_cflocation)
 
-            sucessful_save = False
+            successful_save = False
 
             try:
                 if not os.path.exists(settingsDir):
@@ -412,13 +412,13 @@ please recheck your settings'''), True)
                 f.close()
                 print '...ok'
                 localsettings.cflocation = localsettings.global_cflocation
-                sucessful_save = True
+                successful_save = True
             except OSError:
                 pass
             except IOError:
                 pass
 
-            if not sucessful_save:
+            if not successful_save:
                 print 'unable to write to %s...' % settingsDir,
                 print ' we need root privileges for that'
 

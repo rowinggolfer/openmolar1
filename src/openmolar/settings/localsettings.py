@@ -54,7 +54,7 @@ WIKIURL = ""
 locale.setlocale(locale.LC_ALL, '')
 
 try:
-    s = _("translation tools are installed sucessfully")
+    s = _("translation tools are installed successfully")
     LOGGER.debug(s)
 except NameError:
     LOGGER.error("installing gettext for translations")
