@@ -246,7 +246,9 @@ class FamilyManageDialog(ExtendableDialog):
             pt = _DuckPatient(member)
 
             browser = QtGui.QTextBrowser()
-            browser.setText(patientDetails.header(pt))
+            details = patientDetails.header(pt)
+            details = details.replace("<h1>DECEASED</h1>", "<h4>Deceased</h4>")
+            browser.setText(details)
 
             row = (i // 4) * 2
             column = i % 4

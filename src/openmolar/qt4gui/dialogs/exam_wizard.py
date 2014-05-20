@@ -89,10 +89,12 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
                     _("confirming this will remove reference to"),
                     localsettings.ops.get(self.pt.dnt2))
 
-                if QtGui.QMessageBox.question(self,
-                                              "Confirm", message,
-                                              QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                                              QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+                if QtGui.QMessageBox.question(
+                    self,
+                    _("Confirm"), 
+                    message,
+                    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                        QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
                     self.pt.dnt2 = 0
                     self.om_gui.updateDetails()
                     APPLIED = True
@@ -113,10 +115,11 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
                     examdent,
                     _("the registered dentist"))
 
-            if QtGui.QMessageBox.question(self,
-                                          _("Confirm"), message,
-                                          QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                                          QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+            if QtGui.QMessageBox.question(
+                self,
+                _("Confirm"), message,
+                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                    QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
                 self.pt.dnt2 = localsettings.ops_reverse[examdent]
                 self.om_gui.updateDetails()
                 APPLIED = True
@@ -131,10 +134,11 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
             om_gui.advise("no patient selected", 1)
             return
         if self.pt.treatment_course.has_exam:
-            self.om_gui.advise(u"<p>%s</p><hr /><p>%s</p>" % (
-                               _(
-                               'You already have a completed exam on this course of treatment'),
-                               _("Unable to perform exam")), 1)
+            message = u"<p>%s</p><hr /><p>%s</p>" % (
+                _('You already have a completed exam '
+                  'on this course of treatment'),
+                _("Unable to perform exam"))
+            self.om_gui.advise(message, 1)
             return
 
         APPLIED = False
@@ -184,11 +188,13 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
 
     def update_recall_date(self):
         if not self.pt.appt_prefs.recall_active:
-            self.om_gui.advise(
-                _("WARNING - Not updating recall due to patients recall settings"), 1)
+            message = "%s<hr />%s" % (
+                _("WARNING"),
+                _("Not updating recall due to patient's recall settings"))
+            self.om_gui.advise(message, 1)
         else:
             date_ = localsettings.formatDate(self.pt.appt_prefs.new_recdent)
-            self.om_gui.advise("updating recall date to %s" % date_, 1)
+            self.om_gui.advise("updating recall date to %s" % date_)
             self.pt.appt_prefs.update_recdent()
 
 
@@ -200,7 +206,6 @@ if __name__ == "__main__":
     localsettings.station = "reception"
 
     from openmolar.qt4gui import maingui
-    from openmolar.dbtools import patient_class
 
     app = QtGui.QApplication([])
     mw = maingui.OpenmolarGui()

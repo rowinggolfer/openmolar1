@@ -424,7 +424,7 @@ class OpenmolarGui(QtGui.QMainWindow):
             self.set_operator_label()
 
     def saveButtonClicked(self):
-        self.okToLeaveRecord(cont=True)
+        self.okToLeaveRecord(discard_possible=False)
 
     def bpe_table(self, arg):
         '''
@@ -522,17 +522,14 @@ class OpenmolarGui(QtGui.QMainWindow):
         dl = ChooseToothDialog(self)
         return dl.getInput()
 
-    def okToLeaveRecord(self, cont=False):
+    def okToLeaveRecord(self, discard_possible=True):
         '''
         leaving a pt record - has state changed?
         '''
         if self.pt.serialno == 0:
             return True
-        #--a debug print statement
-        if not cont:
-            LOGGER.debug(
-                "leaving record checking to see if save is required...")
-            course_module.prompt_close_course(self)
+
+        course_module.prompt_close_course(self)
 
         #--apply changes to patient details
         self.pt.synopsis = str(self.ui.synopsis_lineEdit.text().toAscii())
@@ -552,7 +549,7 @@ class OpenmolarGui(QtGui.QMainWindow):
             dl = SaveDiscardCancelDialog(message, changes, self)
             # dl.setPatient()
             # dl.setChanges(uc)
-            dl.discard_but.setVisible(not cont)
+            dl.discard_but.setVisible(discard_possible)
             dl.exec_()
             if dl.result == dl.DISCARD:
                 LOGGER.info(
@@ -1929,6 +1926,9 @@ class OpenmolarGui(QtGui.QMainWindow):
         else:
             course_module.resumeCourse(self)
         # static items may have changed
+        self.refresh_charts()
+
+    def refresh_charts(self):
         charts_gui.chartsTable(self)
         self.load_clinicalSummaryPage()
         self.ui.summaryChartWidget.update()

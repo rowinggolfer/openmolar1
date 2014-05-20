@@ -116,33 +116,40 @@ def details(pt, Saved=True):
         if pt.memo != '':
             retarg += '<h4>Memo</h4>%s<hr />' % pt.memo
 
-        retarg += '''<table border="1">'
-        <tr><td>Last IO Xrays</td><td>%s</td></tr>
-        <tr><td>Last OPG</td><td>%s</td></tr>
-        <tr><td>Last Sp</td><td>%s</td></tr>
-        ''' % (localsettings.formatDate(pt.pd9),
-               localsettings.formatDate(pt.pd8), localsettings.formatDate(pt.pd10))
+        tx_dates = [
+            (_("Treatment"), pt.last_treatment_date),
+            (_("IO xrays"), pt.pd9),
+            (_("Panoral"), pt.pd8),
+            (_("Scaling"), pt.pd10)
+        ]
 
-        letype = ""
-        lastexam = datetime.date(1, 1, 1)
-        i = 0
-        for date in (pt.pd5, pt.pd6, pt.pd7):
-            if date and date > lastexam:
-                lastexam = date
+        letype, le_date = "", datetime.date(1, 1, 1)
+        for i, date_ in enumerate((pt.pd5, pt.pd6, pt.pd7)):
+            if date_ and date_ > le_date:
+                le_date = date_
                 letype = ("(CE)", "(ECE)", "(FCA)")[i]
-            i += 1
-        if lastexam == datetime.date(1, 1, 1):
-            lastexam = None
+        if le_date == datetime.date(1, 1, 1):
+            le_date = None
         if letype != "":
-            retarg += '<tr><td>Last Exam %s</td><td>%s</td></tr>' % (
-                letype, localsettings.formatDate(lastexam))
+            tx_dates.append(('%s %s' % (_("Exam"), letype), le_date))
 
-        if pt.recall_active:
-            retarg += '''<tr><td>Recall Date</td><td>%s</td></tr>
-            </table>''' % localsettings.formatDate(pt.recd)
-        else:
-            retarg += '<tr><td colspan="2">%s</td></tr></table>' % _(
+        retarg += '<h4>%s</h4><table width="100%%" border="1">' % _("History")
+        for i, (att, val) in enumerate(tx_dates):
+
+            retarg += '''<tr><td align="center">%s</td>
+            <td align="center">%s%s%s</td></tr>''' % (
+                att,
+                "<b>" if i in (0, 4) else "",
+                localsettings.formatDate(val),
+                "</b>" if i in (0, 4) else "")
+
+        retarg += "</table>"
+
+        retarg += "<h4>%s</h4>%s" % (
+            _("Recall"),
+            localsettings.formatDate(pt.recd) if pt.recall_active else _(
                 "DO NOT RECALL")
+        )
 
         if not Saved:
             alert = "<br />NOT SAVED"

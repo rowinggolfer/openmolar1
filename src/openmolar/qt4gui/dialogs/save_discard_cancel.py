@@ -70,11 +70,12 @@ class SaveDiscardCancelDialog(ExtendableDialog):
         ExtendableDialog._clicked(self, but)
 
     def discard(self):
-        if QtGui.QMessageBox.question(self, _("Confirm"),
-                                      _(
-                                      "Are you sure you want to discard these changes?"),
-                                      QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                                      QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
+        if QtGui.QMessageBox.question(
+            self,
+            _("Confirm"),
+            _("Are you sure you want to discard these changes?"),
+            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
             self.result = self.DISCARD
             self.accept()
 

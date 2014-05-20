@@ -285,6 +285,7 @@ class patient(object):
         self._dayBookHistory = None
         self.treatment_course = None
         self.est_logger = None
+        self._most_recent_daybook_entry = None
 
         if self.serialno == 0:
             return
@@ -394,6 +395,22 @@ class patient(object):
             cursor.close()
         return self._dayBookHistory
 
+    @property
+    def last_treatment_date(self):
+        max_date = localsettings.currentDay()
+        if (self.treatment_course.cmp_txs !=
+        self.dbstate.treatment_course.cmp_txs):
+            return max_date
+        if self._most_recent_daybook_entry is None:
+            db = connect.connect()
+            cursor = db.cursor()
+            query = 'select max(date) from daybook where serialno=%s'
+            if cursor.execute(query, self.serialno):
+                max_date = cursor.fetchone()[0]
+            cursor.close()
+            self._most_recent_daybook_entry = max_date
+        return self._most_recent_daybook_entry
+
     def __repr__(self):
         return "'Patient_class instance - serialno %d'" % self.serialno
 
@@ -478,7 +495,7 @@ class patient(object):
                 cse_accd = localsettings.currentDay()
             else:
                 cse_accd = self.treatment_course.accd
-            for table in localsettings.FEETABLES.tables.values():
+            for table in reversed(localsettings.FEETABLES.tables.values()):
                 LOGGER.debug(
                     "checking feescale %s to see if suitable a feetable" % (
                         table))

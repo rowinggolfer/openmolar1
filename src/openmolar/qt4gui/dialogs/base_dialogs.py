@@ -61,7 +61,7 @@ class BaseDialog(QtGui.QDialog):
         self.dirty = False
         self.enableApply(False)
 
-        self.spacer = QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Expanding,
+        self.spacer = QtGui.QSpacerItem(0, 100, QtGui.QSizePolicy.Expanding,
                                         QtGui.QSizePolicy.Expanding)
         self.layout_.addItem(self.spacer)
         self.layout_.addWidget(self.button_box)
