@@ -528,6 +528,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             return True
 
         course_module.prompt_close_course(self)
+        if not course_module.recall_check(self):
+            return False
 
         #--apply changes to patient details
         self.pt.synopsis = str(self.ui.synopsis_lineEdit.text().toAscii())

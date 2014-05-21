@@ -22,60 +22,29 @@
 # #                                                                          # #
 # ############################################################################ #
 
-import logging
-
 from PyQt4 import QtGui, QtCore
-from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
-from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
-LOGGER = logging.getLogger("openmolar")
+class WarningLabel(QtGui.QWidget):
+    def __init__(self, text, parent=None):
+        QtGui.QWidget.__init__(self, parent)
 
+        icon = QtGui.QIcon(":/openmolar.svg")
 
-class CloseCourseDialog(BaseDialog):
+        icon_label = QtGui.QLabel()
+        icon_label.setPixmap(icon.pixmap(48,48))
 
-    def __init__(self, parent=None):
-        BaseDialog.__init__(self, parent)
-        self.setWindowTitle(_("Close Course Dialog"))
+        self.label = QtGui.QLabel(text)
+        self.label.setAlignment(QtCore.Qt.AlignCenter)
+        self.label.setWordWrap(True)
 
-        self.patient_label = QtGui.QLabel()
-        self.patient_label.setAlignment(QtCore.Qt.AlignCenter)
-        f = self.patient_label.font()
-        f.setBold(True)
-        self.patient_label.setFont(f)
-
-        self.tx_complete_label = WarningLabel(
-            _('You have no further treatment proposed for this patient, '
-              'yet they are deemed to be "under treatment".'))
-        self.tx_complete_label.setMaximumHeight(120)
-
-        self.date_edit = QtGui.QDateEdit()
-        self.date_edit.setDate(QtCore.QDate.currentDate())
-        self.date_edit.setMaximumDate(QtCore.QDate().currentDate())
-        self.date_edit.setCalendarPopup(True)
-
-        frame = QtGui.QFrame(self)
-        layout = QtGui.QFormLayout(frame)
-        layout.addRow(_("Suggested Completion Date"), self.date_edit)
-
-        self.insertWidget(self.patient_label)
-        self.insertWidget(self.tx_complete_label)
-        self.insertWidget(frame)
-
-        self.enableApply()
-
-    def set_minimum_date(self, date_):
-        self.date_edit.setMinimumDate(date_)
-
-    def set_date(self, date_):
-        self.date_edit.setDate(date_)
+        layout = QtGui.QHBoxLayout(self)
+        layout.addWidget(icon_label)
+        layout.addWidget(self.label)
+        layout.setStretch(1,9)
 
 if __name__ == "__main__":
-    LOGGER.setLevel(logging.DEBUG)
     app = QtGui.QApplication([])
-
-    dl = CloseCourseDialog()
-    dl.patient_label.setText("test")
-    # dl.tx_complete_label.hide()
-    dl.set_minimum_date(QtCore.QDate().currentDate().addMonths(-1))
-
-    dl.exec_()
+    from openmolar.qt4gui import resources_rc
+    wl = WarningLabel("hello world!")
+    wl.show()
+    app.exec_()

@@ -43,78 +43,77 @@ def getAge(pt):
     '''
     ageYears, months, isToday = pt.getAge()
     if isToday:
-        return "<h5> %s TODAY!</h5>" % ageYears
+        return "<h5> %s %s</h5>" % (ageYears, _("TODAY!"))
     if ageYears > 18:
-        return "(%syo)<hr />" % ageYears
+        return "(%syo)" % ageYears
     else:
-        retarg = "<br />%s years" % ageYears
-        if ageYears == 1:
-            retarg = retarg.strip("s")
-        retarg += " %s months" % months
-        if months == 1:
-            retarg = retarg.strip("s")
-        return retarg + "<hr />"
+
+        html = "<br />%s %s" % (ageYears,
+            _("years") if ageYears == 1 else _("year"))
+        html += " %s %s" % (months,
+            _("months") if months == 1 else _("month"))
+        return html
 
 
 def header(pt):
-    retarg = '''<html>
-<head><link rel="stylesheet" href="%s" type="text/css"></head>
-<body><div align = "center">
-<h4>Patient %d</h4>
-<h3>%s %s %s</h3>
+    html = '''
+    <html>
+    <head><link rel="stylesheet" href="%s" type="text/css"></head>
+    <body><div align = "center">
+    <h4>Patient %d</h4>
+    <h3>%s %s %s</h3>
+    %s %s<hr />
         ''' % (
         localsettings.stylesheet, pt.serialno, pt.title.title(),
-        pt.fname.title(), pt.sname.title())
+        pt.fname.title(), pt.sname.title(),
+        localsettings.formatDate(pt.dob), getAge(pt))
 
-    retarg += '%s %s' % (localsettings.formatDate(pt.dob), getAge(pt))
-    for line in (pt.addr1, pt.addr2, pt.addr3, pt.town, pt.county):
-        if str(line) != '':
-            retarg += "%s <br />" % line
+    address = (pt.addr1, pt.addr2, pt.addr3, pt.town, pt.county, pt.pcde)
+    html += "<br />".join([l for l in  address if l != ""])
     if pt.pcde == "":
-        retarg += "<b>!UNKNOWN POSTCODE!</b>"
-    else:
-        retarg += "%s" % pt.pcde
+        html += "<b>%s</b>" % _("!UNKNOWN POSTCODE!")
 
     if not pt.status in ("Active", "", None):
-        retarg += "<hr /><h1>%s</h1>" % pt.status
+        html += "<hr /><h1>%s</h1>" % pt.status
 
-    return retarg
+    return html
 
 
 def details(pt, Saved=True):
     '''returns an html set showing pt name etc...'''
 
     try:
-        retarg = header(pt) + '<hr />'
+        html = header(pt) + '<hr />'
         if "N" in pt.cset:
-            retarg += '''<img src="%s/nhs_scot.png" alt="NHS" />
+            html += '''<img src="%s/nhs_scot.png" alt="NHS" />
             <br />''' % localsettings.resources_path
 
             if pt.exemption != "":
-                retarg += " exemption=%s" % str(pt.exemption)
+                html += "%s=%s" % (_("exemption"), pt.exemption)
             else:
-                retarg += "NOT EXEMPT"
-            retarg += "<br />"
+                html += _("NOT EXEMPT")
+            html += "<br />"
         elif "I" in pt.cset:
-            retarg += '''<img src="%s/hdp_small.png" alt="HDP" />
+            html += '''<img src="%s/hdp_small.png" alt="HDP" />
             <br />''' % localsettings.resources_path
 
         elif "P" in pt.cset:
-            retarg += '''<img src="%s/private.png" alt="PRIVATE" />
+            html += '''<img src="%s/private.png" alt="PRIVATE" />
             <br />''' % localsettings.resources_path
 
         else:
-            retarg += 'UNKNOWN COURSETYPE = %s <br />' % str(pt.cset)
+            html += '%s = %s <br />' % (_("UNKNOWN COURSETYPE", pt.cset))
 
-        retarg += "%s<br />" % pt.fee_table.briefName
+        html += "%s<br />" % pt.fee_table.briefName
         try:
-            retarg += 'dentist      = %s' % localsettings.ops[pt.dnt1]
+            html += 'dentist      = %s' % localsettings.ops[pt.dnt1]
             if pt.dnt2 != 0 and pt.dnt1 != pt.dnt2:
-                retarg += '/%s' % localsettings.ops[pt.dnt2]
+                html += '/%s' % localsettings.ops[pt.dnt2]
         except KeyError as e:
-            retarg += '<h4>Please Set a Dentist for this patient!</h4><hr />'
+            html += '<h4>%s</h4><hr />' % _(
+                "Please Set a Dentist for this patient!")
         if pt.memo != '':
-            retarg += '<h4>Memo</h4>%s<hr />' % pt.memo
+            html += '<h4>%s</h4>%s<hr />' % (_("Memo"), pt.memo)
 
         tx_dates = [
             (_("Treatment"), pt.last_treatment_date),
@@ -133,40 +132,42 @@ def details(pt, Saved=True):
         if letype != "":
             tx_dates.append(('%s %s' % (_("Exam"), letype), le_date))
 
-        retarg += '<h4>%s</h4><table width="100%%" border="1">' % _("History")
+        html += '<h4>%s</h4><table width="100%%" border="1">' % _("History")
         for i, (att, val) in enumerate(tx_dates):
 
-            retarg += '''<tr><td align="center">%s</td>
+            html += '''<tr><td align="center">%s</td>
             <td align="center">%s%s%s</td></tr>''' % (
                 att,
                 "<b>" if i in (0, 4) else "",
                 localsettings.formatDate(val),
                 "</b>" if i in (0, 4) else "")
 
-        retarg += "</table>"
-
-        retarg += "<h4>%s</h4>%s" % (
-            _("Recall"),
-            localsettings.formatDate(pt.recd) if pt.recall_active else _(
-                "DO NOT RECALL")
-        )
+        html += "</table>"
+        html += "<h4>%s</h4>" % _("Recall")
+        if pt.recall_active:
+            if pt.recd > localsettings.currentDay():
+                html += "%s" % localsettings.formatDate(pt.recd)
+            else:
+                html += '<div style="color:red;">%s</div>' % (
+                    localsettings.formatDate(pt.recd))
+        else:
+            html +=  '<div style="color:red;">%s</div>' % _("DO NOT RECALL")
 
         if not Saved:
-            alert = "<br />NOT SAVED"
+            alert = "<hr />NOT SAVED"
         else:
             alert = ""
         if pt.fees > 0:
             amount = localsettings.formatMoney(pt.fees)
-            retarg += '<hr /><h3 class="debt">Account = %s %s</h3>' % (
-                amount, alert)
+            html += '<hr /><h3 class="debt">%s = %s %s</h3>' % (
+                _("Account"), amount, alert)
         if pt.fees < 0:
             amount = localsettings.formatMoney(-pt.fees)
-            retarg += '<hr /><h3>%s in credit %s</h3>' % (amount, alert)
-
+            html += '<hr /><h3>%s %s %s</h3>' % (amount, _("in credit"), alert)
         if pt.underTreatment:
-            retarg += '<hr /><h2 class="ut_label">UNDER TREATMENT</h2><hr />'
-
-        return '''%s\n</div></body></html>''' % retarg
+            html += '<hr /><h2 class="ut_label">%s</h2><hr />' % _(
+                "UNDER TREATMENT")
+        return '''%s\n</div></body></html>''' % html
     except Exception as exc:
         LOGGER.exception("error in patientDetails.details")
         return "error displaying details, sorry <br />%s" % exc
@@ -178,8 +179,4 @@ if __name__ == '__main__':
         serialno = int(sys.argv[len(sys.argv) - 1])
     except:
         serialno = 4792
-    if '-v' in sys.argv:
-        verbose = True
-    else:
-        verbose = False
     print details(patient_class.patient(serialno))

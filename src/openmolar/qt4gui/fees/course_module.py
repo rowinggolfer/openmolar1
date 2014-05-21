@@ -33,6 +33,8 @@ from openmolar.settings import localsettings
 from openmolar.dbtools import writeNewCourse
 from openmolar.qt4gui.dialogs.close_course_dialog import CloseCourseDialog
 from openmolar.qt4gui.dialogs.newCourse import NewCourseDialog
+from openmolar.qt4gui.dialogs.appt_prefs_dialog import ApptPrefsDialog
+from openmolar.qt4gui.dialogs.recall_prompt_dialog import RecallPromptDialog
 from openmolar.qt4gui.printing import om_printing
 from openmolar.qt4gui import contract_gui_module
 from openmolar.ptModules import plan
@@ -155,6 +157,22 @@ def prompt_close_course(om_gui):
         if not om_gui.pt.treatmentOutstanding():
             closeCourse(om_gui, True)
 
+def recall_check(om_gui):
+    if (not om_gui.pt.recall_active or
+    om_gui.pt.recd > localsettings.currentDay()):
+        return True
+    dl = RecallPromptDialog(om_gui.pt, om_gui)
+    if dl.exec_():
+        if dl.result == dl.IGNORE:
+            return True
+        else:
+            dl = ApptPrefsDialog(om_gui.pt, om_gui)
+            if dl.exec_():
+                om_gui.pt.appt_prefs.commit_changes()
+                om_gui.updateDetails()
+                om_gui.advise(_("Appointment Preferences Applied"))
+                return True
+    return False
 
 def delete_new_course(om_gui):
     '''

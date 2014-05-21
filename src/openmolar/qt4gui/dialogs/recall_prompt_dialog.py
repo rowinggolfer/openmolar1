@@ -30,52 +30,59 @@ from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
 LOGGER = logging.getLogger("openmolar")
 
+class RecallPromptDialog(BaseDialog):
+    APPLY = 0
+    IGNORE = 1
+    CANCEL = 2
+    result = APPLY
 
-class CloseCourseDialog(BaseDialog):
-
-    def __init__(self, parent=None):
+    def __init__(self, pt, parent=None):
         BaseDialog.__init__(self, parent)
-        self.setWindowTitle(_("Close Course Dialog"))
+        self.setWindowTitle(_("Recall Prompt Dialog"))
 
-        self.patient_label = QtGui.QLabel()
+        pt_details = "<b>%s %s %s</b>" % (pt.title, pt.fname, pt.sname)
+        self.patient_label = QtGui.QLabel(pt_details)
         self.patient_label.setAlignment(QtCore.Qt.AlignCenter)
-        f = self.patient_label.font()
-        f.setBold(True)
-        self.patient_label.setFont(f)
 
-        self.tx_complete_label = WarningLabel(
-            _('You have no further treatment proposed for this patient, '
-              'yet they are deemed to be "under treatment".'))
-        self.tx_complete_label.setMaximumHeight(120)
+        message = _("There is a problem with the recall date of this patient.")
+        action = _("Would you like to fix this now?")
 
-        self.date_edit = QtGui.QDateEdit()
-        self.date_edit.setDate(QtCore.QDate.currentDate())
-        self.date_edit.setMaximumDate(QtCore.QDate().currentDate())
-        self.date_edit.setCalendarPopup(True)
+        self.warning_label = WarningLabel("%s<hr />%s"% (message, action))
 
-        frame = QtGui.QFrame(self)
-        layout = QtGui.QFormLayout(frame)
-        layout.addRow(_("Suggested Completion Date"), self.date_edit)
+        self.apply_but.setText(_("Fix"))
+
+        self.ignore_but = self.button_box.addButton(
+            QtGui.QDialogButtonBox.Discard)
+        self.ignore_but.setText(_("Ignore"))
+        self.ignore_but.setToolTip(_("Ignore this for now."))
+
+        self.cancel_but.setToolTip(_("Cancel and Continue Editing"))
 
         self.insertWidget(self.patient_label)
-        self.insertWidget(self.tx_complete_label)
-        self.insertWidget(frame)
+        self.insertWidget(self.warning_label)
 
         self.enableApply()
 
-    def set_minimum_date(self, date_):
-        self.date_edit.setMinimumDate(date_)
+    def sizeHint(self):
+        return QtCore.QSize(400, 200)
 
-    def set_date(self, date_):
-        self.date_edit.setDate(date_)
+    def _clicked(self, but):
+        if but == self.ignore_but:
+            self.result = self.IGNORE
+            self.accept()
+            return
+        BaseDialog._clicked(self, but)
+
+    def reject(self):
+        self.result = self.CANCEL
+        BaseDialog.reject(self)
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
     app = QtGui.QApplication([])
+    from openmolar.dbtools.patient_class import patient
 
-    dl = CloseCourseDialog()
-    dl.patient_label.setText("test")
-    # dl.tx_complete_label.hide()
-    dl.set_minimum_date(QtCore.QDate().currentDate().addMonths(-1))
+    dl = RecallPromptDialog(patient(11932))
 
     dl.exec_()
+    print dl.result

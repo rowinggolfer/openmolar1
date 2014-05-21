@@ -24,6 +24,7 @@
 
 from PyQt4 import QtCore, QtGui
 
+from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 
 
@@ -44,8 +45,7 @@ class SaveDiscardCancelDialog(ExtendableDialog):
         self.enableApply()
         self.save_on_exit = True
 
-        label = QtGui.QLabel(message)
-        label.setAlignment(QtCore.Qt.AlignCenter)
+        label = WarningLabel(message)
         self.insertWidget(label)
 
         self.discard_but = self.button_box.addButton(
