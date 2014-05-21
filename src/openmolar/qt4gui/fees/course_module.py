@@ -157,9 +157,11 @@ def prompt_close_course(om_gui):
         if not om_gui.pt.treatmentOutstanding():
             closeCourse(om_gui, True)
 
+
 def recall_check(om_gui):
     if (not om_gui.pt.recall_active or
-    om_gui.pt.recd > localsettings.currentDay()):
+       om_gui.pt.recd > localsettings.currentDay() or
+       om_gui.pt.has_exam_booked):
         return True
     dl = RecallPromptDialog(om_gui.pt, om_gui)
     if dl.exec_():

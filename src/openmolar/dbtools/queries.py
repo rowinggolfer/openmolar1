@@ -41,3 +41,7 @@ pf20, money11, pf13, familyno, memo, town, county, mobile, fax, email1,
 email2, status, source, enrolled, archived, initaccept, lastreaccept,
 lastclaim, expiry, cstatus, transfer, pstatus, courseno2
 from patients where serialno = %s'''
+
+FUTURE_EXAM_QUERY = '''select count(*) from aslot
+where serialno=%s
+and (code0="EXAM" or code1="EXAM" or code2="EXAM") and adate >= CURDATE()'''

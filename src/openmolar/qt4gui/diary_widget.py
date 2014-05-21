@@ -55,7 +55,6 @@ from openmolar.qt4gui.customwidgets.schedule_control \
 from openmolar.qt4gui.customwidgets.diary_view_controller \
     import DiaryViewController
 
-
 from openmolar.qt4gui.customwidgets.appointment_overviewwidget \
     import AppointmentOverviewWidget
 
@@ -1350,17 +1349,20 @@ class DiaryWidget(QtGui.QWidget):
     def edit_appointment_memo_clicked(self, list_of_snos, start, dentist):
         if len(list_of_snos) != 1:
             self.advise(
-                "multiple appointments selected, unable to edit memo", 2)
+                _("multiple appointments selected, unable to edit memo"), 2)
             return
         sno = list_of_snos[0]
         adate = self.selected_date().toPyDate()
         atime = int(start.replace(":", ""))
         note, result = appointments.get_appt_note(sno, adate, atime, dentist)
         if not result:
-            self.advise("unable to locate appointment memo, sorry", 2)
+            self.advise(_("unable to locate appointment memo, sorry"), 2)
         else:
-            new_note, result = QtGui.QInputDialog.getText(self,
-                                                          "New Memo", "Please enter Memo for this appointment", text=note)
+            new_note, result = QtGui.QInputDialog.getText(
+                self,
+                _("New Memo"),
+                _("Please enter Memo for this appointment"),
+                text=note)
             if result and new_note != note:
                 appointments.set_appt_note(
                     sno, adate, atime, dentist, new_note)
@@ -1403,11 +1405,13 @@ class DiaryWidget(QtGui.QWidget):
 
                 #--keep in the patient's diary?
 
-                if QtGui.QMessageBox.question(self, _("Question"),
-                                              _(
-                                              "Removed from appointment book - keep for rescheduling?"),
-                                              QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                                              QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
+                if QtGui.QMessageBox.question(
+                    self,
+                    _("Question"),
+                    _("Removed from appointment book - "
+                      "keep for rescheduling?"),
+                    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                        QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
                     # remove from the patients diary
                     if appointments.delete_appt_from_apr(appt):
                         self.advise(_("Successfully removed appointment"))
@@ -1436,9 +1440,12 @@ class DiaryWidget(QtGui.QWidget):
         message += "%s<br />" % localsettings.readableDate(adate)
         message += "with %s?" % localsettings.ops.get(arg[2])
 
-        if QtGui.QMessageBox.question(self, "Confirm", message,
-                                      QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                                      QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+        if QtGui.QMessageBox.question(
+                self,
+                _("Confirm"),
+                message,
+            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
             appt = appointments.APR_Appointment()
             appt.atime = localsettings.humanTimetoWystime(arg[0])
             appt.date = adate
@@ -1460,7 +1467,8 @@ class DiaryWidget(QtGui.QWidget):
         if not appointments.block_appt(adate, dent, start, end,
                                        adjstart, adjend, reason):
             self.advise(
-                _("unable to block - has the book been altered elsewhere?"), 1)
+                _("unable to block - "
+                  "has the book been altered elsewhere?"), 1)
         self.layout_dayView()
 
     def fillEmptySlot(self, tup):
@@ -1478,8 +1486,8 @@ class DiaryWidget(QtGui.QWidget):
         if not appointments.fill_appt(adate, dent, start, end,
                                       adjstart, adjend, reason, pt):
             self.advise(
-                _(
-                    "unable to make appointment - has the book been altered elsewhere?"), 1)
+                _("unable to make appointment - "
+                  "has the book been altered elsewhere?"), 1)
         self.layout_dayView()
 
         self.pt_diary_changed.emit(pt.serialno)
@@ -1704,7 +1712,8 @@ class DiaryWidget(QtGui.QWidget):
         self.signals_calendar()
 
         QtCore.QObject.connect(self.ui.weekCalendar,
-                               QtCore.SIGNAL("weekChanged"), self.ui.dayCalendar.setSelectedDate)
+                               QtCore.SIGNAL("weekChanged"),
+                               self.ui.dayCalendar.setSelectedDate)
 
         for cal in (self.ui.yearView, self.ui.monthView):
             QtCore.QObject.connect(cal, QtCore.SIGNAL("selectedDate"),
@@ -1740,10 +1749,12 @@ class DiaryWidget(QtGui.QWidget):
 
         for control in self.ui.apptoverviewControls:
             self.connect(control,
-                         QtCore.SIGNAL("clicked"), self.aptOVlabelClicked)
+                         QtCore.SIGNAL("clicked"),
+                         self.aptOVlabelClicked)
 
             self.connect(control,
-                         QtCore.SIGNAL("right-clicked"), self.aptOVlabelRightClicked)
+                         QtCore.SIGNAL("right-clicked"),
+                         self.aptOVlabelRightClicked)
 
 
 class _testDiary(QtGui.QMainWindow):

@@ -49,6 +49,7 @@ class PtDiaryWidget(QtGui.QWidget):
     find_appt = QtCore.pyqtSignal(object)
     appointment_selected = QtCore.pyqtSignal(object)
     preferences_changed = QtCore.pyqtSignal()
+    # also inherits a signal from the model "appointments_changed_signal"
 
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
@@ -63,6 +64,8 @@ class PtDiaryWidget(QtGui.QWidget):
             QtGui.QSizePolicy(
                 QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
         )
+        self.appointments_changed_signal = \
+            self.diary_model.appointments_changed_signal
 
     def sizeHint(self):
         return QtCore.QSize(800, 200)

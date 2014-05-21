@@ -38,7 +38,7 @@ from openmolar.dbtools.plan_data import PlanData
 from openmolar.dbtools.est_logger import EstLogger
 from openmolar.dbtools import estimates as db_estimates
 
-from openmolar.dbtools.queries import PATIENT_QUERY
+from openmolar.dbtools.queries import PATIENT_QUERY, FUTURE_EXAM_QUERY
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -286,6 +286,7 @@ class patient(object):
         self.treatment_course = None
         self.est_logger = None
         self._most_recent_daybook_entry = None
+        self._has_exam_booked = None
 
         if self.serialno == 0:
             return
@@ -410,6 +411,20 @@ class patient(object):
             cursor.close()
             self._most_recent_daybook_entry = max_date
         return self._most_recent_daybook_entry
+
+    def forget_exam_booked(self):
+        self._has_exam_booked = None
+
+    @property
+    def has_exam_booked(self):
+        if self._has_exam_booked is None:
+            db = connect.connect()
+            cursor = db.cursor()
+            cursor.execute(FUTURE_EXAM_QUERY, self.serialno)
+            self._has_exam_booked = bool(cursor.fetchone()[0])
+            cursor.close()
+
+        return self._has_exam_booked
 
     def __repr__(self):
         return "'Patient_class instance - serialno %d'" % self.serialno
@@ -671,8 +686,7 @@ class patient(object):
         for est in self.estimates:
             if (est.csetype.startswith("N") and
                (not completed_only or est.completed == 2)
-                    ):
-                # yield est
+                ):
                 claims.append(est)
         return claims
 

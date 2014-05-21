@@ -48,9 +48,11 @@ def getAge(pt):
         return "(%syo)" % ageYears
     else:
 
-        html = "<br />%s %s" % (ageYears,
+        html = "<br />%s %s" % (
+            ageYears,
             _("years") if ageYears == 1 else _("year"))
-        html += " %s %s" % (months,
+        html += " %s %s" % (
+            months,
             _("months") if months == 1 else _("month"))
         return html
 
@@ -69,7 +71,7 @@ def header(pt):
         localsettings.formatDate(pt.dob), getAge(pt))
 
     address = (pt.addr1, pt.addr2, pt.addr3, pt.town, pt.county, pt.pcde)
-    html += "<br />".join([l for l in  address if l != ""])
+    html += "<br />".join([l for l in address if l != ""])
     if pt.pcde == "":
         html += "<b>%s</b>" % _("!UNKNOWN POSTCODE!")
 
@@ -145,18 +147,16 @@ def details(pt, Saved=True):
         html += "</table>"
         html += "<h4>%s</h4>" % _("Recall")
         if pt.recall_active:
-            if pt.recd > localsettings.currentDay():
-                html += "%s" % localsettings.formatDate(pt.recd)
+            if pt.recd > localsettings.currentDay() or pt.has_exam_booked:
+                html += "%s " % localsettings.formatDate(pt.recd)
+                html += _("(exam booked)") if pt.has_exam_booked else ""
             else:
                 html += '<div style="color:red;">%s</div>' % (
                     localsettings.formatDate(pt.recd))
         else:
-            html +=  '<div style="color:red;">%s</div>' % _("DO NOT RECALL")
+            html += '<div style="color:red;">%s</div>' % _("DO NOT RECALL")
 
-        if not Saved:
-            alert = "<hr />NOT SAVED"
-        else:
-            alert = ""
+        alert = _("NOT SAVED") if not Saved else ""
         if pt.fees > 0:
             amount = localsettings.formatMoney(pt.fees)
             html += '<hr /><h3 class="debt">%s = %s %s</h3>' % (

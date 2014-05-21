@@ -137,8 +137,12 @@ class SimpleListModel(QtCore.QAbstractListModel):
             if app.flag == -128:
                 info = "%s (%s)" % (app.name, app.length)
             elif app.unscheduled:
-                info = "%s %s - %s" % (app.length,
-                                       app.trt1, app.dent_inits)
+                info = "%s %s - %s" % (
+                    app.length,
+                    " ".join(
+                        [tx for tx in (
+                            app.trt1, app.trt2, app.trt3) if tx != ""]),
+                    app.dent_inits)
             else:
                 info = "%s %s with %s" % (app.readableDate,
                                           app.readableTime, app.dent_inits)

@@ -103,6 +103,7 @@ class treeModel(QtCore.QAbstractItemModel):
     '''
     a model to display a feetables data
     '''
+    appointments_changed_signal = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
         super(treeModel, self).__init__(parent)
@@ -123,6 +124,7 @@ class treeModel(QtCore.QAbstractItemModel):
             self.clear()
             self.appointments = appointments
             self.setupModelData()
+            self.appointments_changed_signal.emit()
 
     def setSelectedAppt(self, appt):
         if appt and self.om_gui:

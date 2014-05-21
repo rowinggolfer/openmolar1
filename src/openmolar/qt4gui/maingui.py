@@ -2890,7 +2890,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.diary_widget.bring_to_front.connect(self.show_diary)
         self.diary_widget.patient_card_request.connect(self.getrecord)
         self.diary_widget.schedule_controller.appointment_selected.connect(
-            self.pt_diary_widget.update_pt_diary_selection)
+            self.diary_widget_schedule_controller_appointment_selected)
         self.diary_widget.pt_diary_changed.connect(
             self.pt_diary_widget.refresh_ptDiary)
         self.diary_widget.print_mh_signal.connect(self.print_mh_forms)
@@ -2900,6 +2900,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.diary_widget.schedule_controller.update_appt_selection)
         self.pt_diary_widget.preferences_changed.connect(
             self.appt_prefs_changed)
+        self.pt_diary_widget.appointments_changed_signal.connect(
+            self.handle_pt_diary_update)
 
     def start_scheduling(self):
         self.diary_widget.schedule_controller.set_patient(self.pt)
@@ -2908,6 +2910,18 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.main_tabWidget.setCurrentIndex(1)  # appointmenttab
         self.signals_tabs()
         self.diary_widget.start_scheduling(self.pt)
+        self.updateDetails()
+
+    def handle_pt_diary_update(self):
+        LOGGER.debug("handle_pt_diary_update")
+        self.pt.forget_exam_booked()
+        self.updateDetails()
+
+    def diary_widget_schedule_controller_appointment_selected(self, appt):
+        if (self.diary_widget.schedule_controller.pt.serialno ==
+           self.pt.serialno):
+            self.pt_diary_widget.layout_ptDiary()
+            self.pt_diary_widget.update_pt_diary_selection(appt)
 
     def appt_prefs_changed(self):
         self.updateDetails()
