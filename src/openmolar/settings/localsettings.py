@@ -42,14 +42,17 @@ LOGGER = logging.getLogger("openmolar")
 SUPERVISOR = '05b1f356646c24bf1765f6f1b65aea3bde7247e1'
 DBNAME = "default"
 
-# updated 28.11.2013
-CLIENT_SCHEMA_VERSION = "2.4"
+# updated 23.05.2014
+CLIENT_SCHEMA_VERSION = "2.5"
+
 DB_SCHEMA_VERSION = "unknown"
 
 ENCODING = locale.getpreferredencoding()
 
 FEETABLES = None
 WIKIURL = ""
+
+IGNORE_SCHEMA_CHECK = False
 
 locale.setlocale(locale.LC_ALL, '')
 
@@ -121,7 +124,6 @@ def setChosenServer(i):
         LOGGER.warning("no server name.. config file is old format?")
 
 wkdir = determine_path()
-referralfile = os.path.join(wkdir, "resources", "referral_data.xml")
 appt_shortcut_file = os.path.join(wkdir, "resources",
                                   "appointment_shortcuts.xml")
 stylesheet = "file://" + os.path.join(wkdir, "resources", "style.css")
@@ -916,18 +918,23 @@ def initiate(changedServer=False, debug=False):
 
     WIKIURL = db_settings.getWikiUrl()
 
-    message = ('''<html><head>
-<link rel="stylesheet" href="%s" type="text/css">
-</head><body><div align="center">
-<img src="%s" width="150", height="100", align="left" />
-<img src="%s" width="150", height="100", align="right" />
-<h1>''' % (stylesheet, LOGOPATH, LOGOPATH) +
-        _("Welcome to OpenMolar!") + '''</h1>
-<ul><li class="about">''' + _("Version") + ''' %s</li>
-<li class="about">''' % VERSION +
-        '''</li></ul><br clear="all" /><p>''' +
-        _("Your Data is Accessible, and the server reports no issues.") +
-        '''</p><p>''' + _("Have a great day!") + '''</p></div></body></html>''')
+    message = '''<html><head>
+    <link rel="stylesheet" href="%s" type="text/css">
+    </head><body><div align="center">
+    <img src="%s" width="150", height="100", align="left" />
+    <img src="%s" width="150", height="100", align="right" />
+    <h1>%s</h1>
+    <ul><li class="about">%s %s</li></ul><br clear="all" />
+    <p>%s</p><p>%s</p></div></body></html>
+    ''' % (stylesheet,
+            LOGOPATH,
+            LOGOPATH,
+            _("Welcome to OpenMolar!"),
+            _("Version"),
+            VERSION,
+            _("Your Data is Accessible, and the server reports no issues."),
+            _("Have a great day!")
+            )
 
     if debug:
         print "LOCALSETTINGS CALLED WITH DEBUG = TRUE"
@@ -939,7 +946,6 @@ def initiate(changedServer=False, debug=False):
         print "activehygs =", activehygs
         print "allowed logins =", allowed_logins
         print "stylesheet =", stylesheet
-        print "referralfile = ", referralfile
 
 
 def loadFeeTables():

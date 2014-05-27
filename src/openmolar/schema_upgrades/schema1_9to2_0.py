@@ -27,15 +27,16 @@ This module provides a function 'run' which will move data
 to schema 2_0
 '''
 from __future__ import division
+import logging
 import sys
+
 from openmolar.settings import localsettings
-from openmolar.dbtools import schema_version
-from openmolar import connect
+from openmolar.schema_upgrades.database_updater_thread import DatabaseUpdaterThread
 
-from PyQt4 import QtGui, QtCore
+LOGGER = logging.getLogger("openmolar")
 
-SQLSTRINGS_1 = [
-    '''
+SQLSTRINGS_1 = ['DROP table IF EXISTS appt_prefs',
+'''
 create table appt_prefs (
     serialno int(11),
     recall_active bool not null default True,
@@ -78,71 +79,12 @@ where t1.serialno = t2.serialno and t1.memo = t2.note;
 ]
 
 
-class UpdateException(Exception):
-
-    '''
-    A custom exception. If this is thrown the db will be rolled back
-    '''
-    pass
-
-
-class dbUpdater(QtCore.QThread):
-
-    def __init__(self, parent=None):
-        super(dbUpdater, self).__init__(parent)
-        self.stopped = False
-        self.path = None
-        self.completed = False
-        self.MESSAGE = "upating database"
-
-    def progressSig(self, val, message=""):
-        '''
-        emits a signal showing how we are proceeding.
-        val is a number between 0 and 100
-        '''
-        if message != "":
-            self.MESSAGE = message
-        self.emit(QtCore.SIGNAL("progress"), val, self.MESSAGE)
-
-    def execute_statements(self, sql_strings):
-        '''
-        execute the above commands
-        NOTE - this function may fail depending on the mysql permissions
-        in place
-        '''
-        db = connect.connect()
-        db.autocommit(False)
-        cursor = db.cursor()
-        success = False
-        try:
-            i, commandNo = 0, len(sql_strings)
-            for sql_string in sql_strings:
-                try:
-                    cursor.execute(sql_string)
-                except connect.GeneralError as e:
-                    print "FAILURE in executing sql statement", e
-                    print "erroneous statement was ", sql_string
-                    if 1060 in e.args:
-                        print "continuing, as column already exists issue"
-                self.progressSig(
-                    2 + 70 * i / commandNo,
-                    sql_string[:40] + "...")
-            success = True
-        except Exception as e:
-            print "FAILURE in executing sql statements", e
-            db.rollback()
-        if success:
-            db.commit()
-            db.autocommit(True)
-        else:
-            raise UpdateException("couldn't execute all statements!")
-
-    def completeSig(self, arg):
-        self.emit(QtCore.SIGNAL("completed"), self.completed, arg)
+class DatabaseUpdater(DatabaseUpdaterThread):
 
     def run(self):
-        print "running script to convert from schema 1.9 to 2.0"
+        LOGGER.info("running script to convert from schema 1.9 to 2.0")
         try:
+            self.connect()
             #- execute the SQL commands
             self.progressSig(10, _("creating new appt_prefs table"))
             self.execute_statements(SQLSTRINGS_1)
@@ -151,28 +93,20 @@ class dbUpdater(QtCore.QThread):
             self.progressSig(80, _('statements executed'))
 
             self.progressSig(90, _('updating settings'))
-            print "update database settings..."
-
-            schema_version.update(("2.0",), "1_9 to 2_0 script")
+            self.update_schema_version(("2.0",), "1_9 to 2_0 script")
 
             self.progressSig(100, _("updating stored schema version"))
-            self.completed = True
-            self.completeSig(_("ALL DONE - successfully moved db to")
-                             + " 2.0")
-
-        except UpdateException as e:
-            localsettings.CLIENT_SCHEMA_VERSION = "1.9"
-            self.completeSig(_("rolled back to") + " 1.9")
-
-        except Exception as e:
-            print "Exception caught", e
-            self.completeSig(str(e))
-
-        return self.completed
+            self.commit()
+            self.completeSig(_("Successfully moved db to")+ " 2.0")
+            return True
+        except Exception as exc:
+            LOGGER.exception("error transfering data")
+            self.rollback()
+            raise self.UpdateError(exc)
 
 if __name__ == "__main__":
-    dbu = dbUpdater()
+    dbu = DatabaseUpdater()
     if dbu.run():
-        print "ALL DONE, conversion successful"
+        LOGGER.info("ALL DONE, conversion successful")
     else:
-        print "conversion failed"
+        LOGGER.error("conversion failed")

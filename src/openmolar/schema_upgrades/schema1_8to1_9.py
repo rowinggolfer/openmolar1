@@ -27,16 +27,25 @@ This module provides a function 'run' which will move data
 to schema 1_9
 '''
 from __future__ import division
-import sys
-from openmolar.settings import localsettings
-from openmolar.dbtools import schema_version
-from openmolar import connect
 
-from PyQt4 import QtGui, QtCore
+import logging
+import sys
+
+try:
+    from collections import OrderedDict
+except ImportError:
+    # OrderedDict only came in python 2.7
+    print "using openmolar.backports for OrderedDict"
+    from openmolar.backports import OrderedDict
+
+from openmolar.settings import localsettings
+from openmolar.schema_upgrades.database_updater_thread import DatabaseUpdaterThread
+
+LOGGER = logging.getLogger("openmolar")
 
 SQLSTRINGS = [
     '''
-create table formatted_notes (ix serial, serialno int(11),
+CREATE TABLE IF NOT EXISTS formatted_notes (ix serial, serialno int(11),
 ndate date, op1 varchar(8), op2 varchar(8), ntype varchar(32),
 note varchar(80), timestamp timestamp default NOW());
 ''',
@@ -49,124 +58,105 @@ create index newdocsprinted_serialno_index on newdocsprinted(serialno);
 ]
 
 
-class UpdateException(Exception):
+class DatabaseUpdater(DatabaseUpdaterThread):
 
-    '''
-    A custom exception. If this is thrown the db will be rolled back
-    '''
-    pass
+    def __init__(self, *args, **kwargs):
+        DatabaseUpdaterThread.__init__(self,  *args, **kwargs)
+        from openmolar.ptModules import notes
+        self.decipher_noteline = notes.decipher_noteline
+
+    def get_notes(self, sno):
+        self.cursor.execute('''SELECT line from notes where serialno = %s
+        order by lineno''', sno)
+        results = self.cursor.fetchall()
+
+        notes_dict = OrderedDict()
+        ndate, op = "", ""
+
+        # a line is like ('\x01REC\x0c\x08m\x0c\x08m\n\x08',)
+        for line, in results:
+            line = line.encode("ascii", "replace")
+            ntype, note, operator, date2 = self.decipher_noteline(line)
+            if date2 != "":
+                ndate = date2
+            if operator != "":
+                op = operator
+
+            key = (ndate, op)
+            if key in notes_dict:
+                notes_dict[key].append((ntype, note))
+            else:
+                notes_dict[key] = [(ntype, note)]
+
+        return notes_dict
 
 
-class dbUpdater(QtCore.QThread):
+    def transfer(self, sno):
+        LOGGER.debug("transferring notes for serialnos %s", sno)
+        notes_dict = self.get_notes(sno)
+        query = '''insert into formatted_notes
+        (serialno, ndate, op1 , op2 , ntype, note)
+        values (%s, %s, %s, %s, %s, %s)'''
 
-    def __init__(self, parent=None):
-        super(dbUpdater, self).__init__(parent)
-        self.stopped = False
-        self.path = None
-        self.completed = False
-        self.MESSAGE = "upating database"
+        values = []
+        for key in notes_dict:
+            date, ops = key
+            op2 = None
+            if "/" in ops:
+                op1, op2 = ops.split("/")
+            else:
+                op1 = ops
+            for ntype, note in notes_dict[key]:
+                values.append((sno, date, op1, op2, ntype, note))
+        if values:
+            rows = self.cursor.executemany(query, values)
+            LOGGER.debug("%d rows of notes inserted", rows)
 
-    def progressSig(self, val, message=""):
-        '''
-        emits a signal showing how we are proceeding.
-        val is a number between 0 and 100
-        '''
-        if message != "":
-            self.MESSAGE = message
-        self.emit(QtCore.SIGNAL("progress"), val, self.MESSAGE)
+    def get_max_sno(self):
+        self.cursor.execute("select max(serialno) from notes")
+        max_sno = self.cursor.fetchone()[0]
+        return max_sno
 
-    def create_alter_tables(self):
-        '''
-        execute the above commands
-        NOTE - this function may fail depending on the mysql permissions
-        in place
-        '''
-        db = connect.connect()
-        db.autocommit(False)
-        cursor = db.cursor()
-        success = False
-        try:
-            i, commandNo = 0, len(SQLSTRINGS)
-            for sql_string in SQLSTRINGS:
-                try:
-                    cursor.execute(sql_string)
-                except connect.GeneralError as e:
-                    print "FAILURE in executing sql statement", e
-                    print "erroneous statement was ", sql_string
-                    if 1060 in e.args:
-                        print "continuing, as column already exists issue"
-                self.progressSig(
-                    2 + 70 * i / commandNo,
-                    sql_string[:40] + "...")
-            success = True
-        except Exception as e:
-            print "FAILURE in executing sql statements", e
-            db.rollback()
-        if success:
-            db.commit()
-            db.autocommit(True)
-        else:
-            raise UpdateException("couldn't execute all statements!")
 
     def insertValues(self):
         '''
         this code is complex, so in a separate module for ease of maintenance
         '''
-        from openmolar.schema_upgrades import formatted_notes1_9
-        max_sno = formatted_notes1_9.get_max_sno()
+        max_sno = self.get_max_sno()
         sno = 0
-        print "max_sno in notes = %s " % max_sno
+        LOGGER.info("max_sno in notes = %s ", max_sno)
 
         while sno < max_sno:
             sno += 1
-            formatted_notes1_9.transfer(sno)
+            self.transfer(sno)
             progress = int(sno / max_sno * 90) + 8
             self.progressSig(progress, "%s %s" % (
                 _('converting note'), sno))
-            QtGui.QApplication.instance().processEvents()
-
-        return True
-
-    def completeSig(self, arg):
-        self.emit(QtCore.SIGNAL("completed"), self.completed, arg)
 
     def run(self):
-        print "running script to convert from schema 1.8 to 1.9"
+        LOGGER.info("running script to convert from schema 1.8 to 1.9")
         try:
-            #- execute the SQL commands
-            self.progressSig(2, _("executing statements"))
-            self.create_alter_tables()
+            self.connect()
+            self.progressSig(2, _("creating new tables and indexes"))
+            self.execute_statements(SQLSTRINGS)
             self.progressSig(8, _('inserting values'))
 
-            print "inserting values"
-            if self.insertValues():
-                print "ok"
-            else:
-                print "FAILED!!!!!"
-
+            self.insertValues()
             self.progressSig(99, _('updating settings'))
-            print "update database settings..."
 
-            schema_version.update(("1.9",), "1_8 to 1_9 script")
-
+            self.update_schema_version(("1.9",), "1_8 to 1_9 script")
             self.progressSig(100, _("updating stored schema version"))
-            self.completed = True
-            self.completeSig(_("ALL DONE - successfully moved db to")
-                             + " 1.9")
-
-        except UpdateException as e:
-            localsettings.CLIENT_SCHEMA_VERSION = "1.8"
-            self.completeSig(_("rolled back to") + " 1.8")
-
-        except Exception as e:
-            print "Exception caught", e
-            self.completeSig(str(e))
-
-        return self.completed
+            self.commit()
+            self.completeSig(_("Successfully moved db to") + " 1.9")
+            return True
+        except Exception as exc:
+            LOGGER.exception("error transfering data")
+            self.rollback()
+            raise self.UpdateError(exc)
 
 if __name__ == "__main__":
-    dbu = dbUpdater()
+    dbu = DatabaseUpdater()
     if dbu.run():
-        print "ALL DONE, conversion successful"
+        LOGGER.info("ALL DONE, conversion successful")
     else:
-        print "conversion failed"
+        LOGGER.error("conversion failed")

@@ -54,6 +54,7 @@ from openmolar.qt4gui.dialogs.estimate_edit_dialog import EstimateEditDialog
 from openmolar.qt4gui.dialogs.course_history_options_dialog import CourseHistoryOptionsDialog
 from openmolar.qt4gui.dialogs.course_consistency_dialog import CourseConsistencyDialog
 from openmolar.qt4gui.dialogs.edit_treatment_dialog import EditTreatmentDialog
+from openmolar.qt4gui.dialogs.login_dialog import LoginDialog
 
 __all__ = ['AccountSeverityDialog',
            'AdvancedTxPlanningDialog',
@@ -79,6 +80,7 @@ __all__ = ['AccountSeverityDialog',
            'FindPatientDialog',
            'HygTreatWizard',
            'LoadRelativesDialog',
+           'LoginDialog',
            'MedNotesDialog',
            'NHSFormsConfigDialog',
            'RecallDialog',

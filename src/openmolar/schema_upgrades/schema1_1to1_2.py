@@ -24,25 +24,28 @@
 
 '''
 This module provides a function 'run' which will move data from the estimates
-table in schema 1_0 to the newestimates table in schema 1_1
-The NewTable schema is contained in module variable NEW_TABLE_SQLSTRINGS
-Incidentally - this script introduces the "settings table" in which the schema
-variable is stored.
+table in schema 1_1 to the newestimates table in schema 1_2
 '''
-from PyQt4 import QtGui, QtCore
+import logging
+import sys
+from openmolar.settings import localsettings
+from openmolar.schema_upgrades.database_updater_thread import DatabaseUpdaterThread
+
+LOGGER = logging.getLogger("openmolar")
 
 SQLSTRINGS = [
-    '''alter table forum add column recipient char(8);''',
-    '''alter table forum change column comment comment char(255);''',
-    '''
+'ALTER TABLE forum ADD COLUMN recipient char(8)',
+'ALTER TABLE forum CHANGE COLUMN comment comment char(255)',
+'''
 CREATE TABLE if not exists forumread (
 ix int(10) unsigned NOT NULL auto_increment ,
 id int(10) unsigned NOT NULL ,
 op char(8),
 readdate DATETIME NOT NULL,
 PRIMARY KEY (ix),
-KEY (id))''',
-    '''
+KEY (id))
+''',
+'''
 CREATE TABLE if not exists tasks (
 ix int(10) unsigned NOT NULL auto_increment,
 op char(8),
@@ -53,108 +56,68 @@ due DATETIME NOT NULL,
 message char(255),
 completed bool NOT NULL default False,
 visible bool NOT NULL default True,
-PRIMARY KEY (ix))''',
+PRIMARY KEY (ix))
+''',
 ]
 
-import sys
-from openmolar.settings import localsettings
-from openmolar.dbtools import schema_version
-from openmolar import connect
+LOCK_QUERY = 'lock tables omforum read,forum write'
 
+SOURCE_QUERY = '''select ix, parent_ix, inits, fdate, topic, comment, open
+from omforum order by ix'''
 
-def create_alter_tables():
-    '''
-    execute the above commands
-    NOTE - this function may fail depending on the mysql permissions in place
-    '''
-    db = connect.connect()
-    cursor = db.cursor()
-    for sql_string in SQLSTRINGS:
-        cursor.execute(sql_string)
-    db.commit()
-    return True
+FORUM_QUERY = '''insert into forum
+(parent_ix, inits, fdate, topic, comment, open)
+values (%s, %s, %s, %s, %s, %s)'''
 
+MAX_QUERY = 'select max(ix) from forum'
 
-def copy_OMforum_into_forum():
-    '''
-    I am scrapping the omforum table, put these posts into the forum
-    '''
-    db = connect.connect()
-    cursor = db.cursor()
-    cursor.execute('''lock tables omforum read,forum write''')
-    cursor.execute('''select ix, parent_ix, inits, fdate, topic, comment, open
-from omforum order by ix''')
-    rows = cursor.fetchall()
+class DatabaseUpdater(DatabaseUpdaterThread):
 
-    cursor.execute('''select max(ix) from forum''')
-    start_ix = cursor.fetchone()[0] + 1
-    print "start_ix =", start_ix
-
-    query = '''insert into forum (parent_ix, inits, fdate, topic, comment,
-    open) values (%s, %s, %s, %s, %s, %s)'''
-
-    for row in rows:
-        if row[1]:
-            parent_ix = row[1] + start_ix
-        else:
-            parent_ix = None
-        values = (parent_ix, row[2], row[3], row[4], row[5], row[6])
-        cursor.execute(query, values)
-
-    db.commit()
-
-    cursor.execute("unlock tables")
-    cursor.close()
-
-    db.close()
-    return True
-
-
-class dbUpdater(QtCore.QThread):
-
-    def __init__(self, parent=None):
-        super(dbUpdater, self).__init__(parent)
-        self.stopped = False
-        self.path = None
-        self.completed = False
-
-    def progressSig(self, val, message):
+    def copy_OMforum_into_forum(self):
         '''
-        emits a signal showhing how we are proceeding.
-        val is a number between 0 and 100
+        I am scrapping the omforum table, put these posts into the forum
         '''
-        self.emit(QtCore.SIGNAL("progress"), val, message)
+        self.cursor.execute(LOCK_QUERY)
 
-    def completeSig(self, arg):
-        self.emit(QtCore.SIGNAL("completed"), self.completed, arg)
+        self.cursor.execute(SOURCE_QUERY)
+        rows = self.cursor.fetchall()
+        self.cursor.execute(MAX_QUERY)
+        start_ix = self.cursor.fetchone()[0] + 1
+        LOGGER.debug("start_ix = %s", start_ix)
+
+        for row in rows:
+            if row[1]:
+                parent_ix = row[1] + start_ix
+            else:
+                parent_ix = None
+            values = (parent_ix, row[2], row[3], row[4], row[5], row[6])
+            self.cursor.execute(FORUM_QUERY, values)
+        self.cursor.execute("unlock tables")
 
     def run(self):
-        print "running script to convert from schema 1.1 to 1.2"
+        LOGGER.info("running script to convert from schema 1.1 to 1.2")
         try:
+            self.connect()
             self.progressSig(30, "updating schema to 1,2")
-            if create_alter_tables():
-                self.progressSig(50, 'created new table "forumread"')
+            self.execute_statements(SQLSTRINGS)
+            self.progressSig(50, 'created new table "forumread"')
 
-                if copy_OMforum_into_forum():
-                    self.progressSig(80,
-                                     'copied data from obsolete table OMforum')
+            self.copy_OMforum_into_forum()
+            self.progressSig(80, 'copied data from obsolete table OMforum')
+            self.update_schema_version(("1.2",), "1_1 to 1_2 script")
 
-                schema_version.update(("1.2",), "1_1 to 1_2 script")
-
-                self.progressSig(100, _("updating stored schema version"))
-                self.completed = True
-                self.completeSig(_("ALL DONE - successfully moved db to")
-                                 + " 1.2")
-
-        except Exception as e:
-            print "Exception caught", e
-            self.completeSig(str(e))
-
-        return self.completed
+            self.progressSig(100, _("updating stored schema version"))
+            self.commit()
+            self.completeSig(_("Successfully moved db to") + " 1.2")
+            return True
+        except Exception as exc:
+            LOGGER.exception("error transfering data")
+            self.rollback()
+            raise self.UpdateError(exc)
 
 if __name__ == "__main__":
-    dbu = dbUpdater()
+    dbu = DatabaseUpdater()
     if dbu.run():
-        print "ALL DONE, conversion successful"
+        LOGGER.info("ALL DONE, conversion successful")
     else:
-        print "conversion failed"
+        LOGGER.error("conversion failed")

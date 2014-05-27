@@ -32,18 +32,16 @@ import logging
 import os
 import sys
 from openmolar.settings import localsettings
-from openmolar.dbtools import schema_version
-from openmolar import connect
 
-from PyQt4 import QtGui, QtCore
+from openmolar.schema_upgrades.database_updater_thread import DatabaseUpdaterThread
 
-logging.basicConfig()
+LOGGER = logging.getLogger("openmolar")
 
 SQLSTRINGS = [
     'drop table if exists currtrtmt',
     'drop table if exists est_link',
     'drop table if exists feescales',
-    'drop table est_logger',
+    'drop table if exists est_logger',
     'update patients set addr2="" where addr2 is NULL',
     'update patients set addr3="" where addr3 is NULL',
     'update patients set town="" where town is NULL',
@@ -149,198 +147,107 @@ LOGGER_INSERT_QUERY = ('insert into est_logger '
                        '(courseno, est_data, operator) values (%s,%s, %s)')
 
 
-class UpdateException(Exception):
-
-    '''
-    A custom exception. If this is thrown the db will be rolled back
-    '''
-    pass
-
-
-class dbUpdater(QtCore.QThread):
-
-    def __init__(self, parent=None):
-        super(dbUpdater, self).__init__(parent)
-        self.stopped = False
-        self.path = None
-        self.completed = False
-        self.MESSAGE = "upating database"
-
-    def progressSig(self, val, message=""):
-        '''
-        emits a signal showing how we are proceeding.
-        val is a number between 0 and 100
-        '''
-        if message != "":
-            self.MESSAGE = message
-        self.emit(QtCore.SIGNAL("progress"), val, self.MESSAGE)
-
-    def execute_statements(self, sql_strings):
-        '''
-        execute the above commands
-        NOTE - this function may fail depending on the mysql permissions
-        in place
-        '''
-        db = connect.connect()
-        db.autocommit(False)
-        cursor = db.cursor()
-        success = False
-        try:
-            i, commandNo = 0, len(sql_strings)
-            for sql_string in sql_strings:
-                try:
-                    cursor.execute(sql_string)
-                except connect.GeneralError as e:
-                    print "FAILURE in executing sql statement", e
-                    print "erroneous statement was ", sql_string
-                    if 1060 in e.args:
-                        print "continuing, as column already exists issue"
-                self.progressSig(
-                    2 + 70 * i / commandNo,
-                    sql_string[:40] + "...")
-            success = True
-        except Exception as e:
-            print "FAILURE in executing sql statements", e
-            db.rollback()
-        if success:
-            db.commit()
-            db.autocommit(True)
-        else:
-            raise UpdateException("couldn't execute all statements!")
-
-    def completeSig(self, arg):
-        self.emit(QtCore.SIGNAL("completed"), self.completed, arg)
-
-    def run(self):
-        print "running script to convert from schema 2.1 to 2.2"
-        try:
-            #- execute the SQL commands
-            self.progressSig(5, _("creating tables"))
-            self.execute_statements(SQLSTRINGS)
-
-            self.progressSig(10, _("populating est_link table"))
-            self.transfer_data()
-
-            self.progressSig(95, _("populating feescales"))
-            self.insert_feescales()
-
-            self.progressSig(97, _('updating settings'))
-            print "update database settings..."
-
-            schema_version.update(("2.2",), "2_1 to 2_2 script")
-
-            self.progressSig(100, _("updating stored schema version"))
-            self.completed = True
-            self.completeSig(_("ALL DONE - successfully moved db to")
-                             + " 2.2")
-
-        except UpdateException as e:
-            localsettings.CLIENT_SCHEMA_VERSION = "2.1"
-            self.completeSig(_("rolled back to") + " 2.1")
-
-        except Exception as e:
-            print "Exception caught", e
-            self.completeSig(str(e))
-
-        return self.completed
+class DatabaseUpdater(DatabaseUpdaterThread):
 
     def transfer_data(self):
         '''
         function specific to this update.
         '''
-        db = connect.connect()
-        db.autocommit(False)
-        try:
-            cursor = db.cursor()
-            cursor.execute(SOURCE_QUERY)
-            rows = cursor.fetchall()
-            cursor.close()
-            cursor = db.cursor()
-            step = 1 / len(rows)
-            count, prev_courseno, prev_cat_type = 1, 0, ""
-            prev_hash = None
-            for i, row in enumerate(rows):
-                courseno, ix, category, type_, completed = row
-                cat_type = "%s%s" % (category, type_)
-                if courseno != prev_courseno:
-                    count = 1
-                elif cat_type != prev_cat_type:
-                    count = 1
-                else:
-                    count += 1
+        self.cursor.execute(SOURCE_QUERY)
+        rows = self.cursor.fetchall()
+        step = 1 / len(rows)
+        count, prev_courseno, prev_cat_type = 1, 0, ""
+        prev_hash = None
+        for i, row in enumerate(rows):
+            courseno, ix, category, type_, completed = row
+            cat_type = "%s%s" % (category, type_)
+            if courseno != prev_courseno:
+                count = 1
+            elif cat_type != prev_cat_type:
+                count = 1
+            else:
+                count += 1
 
-                prev_courseno = courseno
-                prev_cat_type = cat_type
+            prev_courseno = courseno
+            prev_cat_type = cat_type
 
-                tx_hash = hash("%s%s%s%s" % (courseno, category, count, type_))
+            tx_hash = hash("%s%s%s%s" % (courseno, category, count, type_))
 
-                if completed is None:
-                    completed = False
-                values = (ix, tx_hash, completed)
-                cursor.execute(DEST_QUERY, values)
-                if i % 1000 == 0:
-                    self.progressSig(50 * i / len(rows) + 10,
-                                     _("transfering data"))
+            if completed is None:
+                completed = False
+            values = (ix, tx_hash, completed)
+            self.cursor.execute(DEST_QUERY, values)
+            if i % 1000 == 0:
+                self.progressSig(50 * i / len(rows) + 10,
+                                 _("transfering data"))
 
-            cursor.execute(LOGGER_SELECT_QUERY)
-            rows = cursor.fetchall()
-            prev_courseno = None
-            est_log_text = ""
-            total, p_total = 0, 0
-            for i, (courseno, number, itemcode, description, csetype,
-                    feescale, dent, fee, ptfee) in enumerate(rows):
-                line_text = \
-                    "%s || %s || %s || %s || %s || %s || %s || %s||\n" % (
-                        number, itemcode, description, csetype,
-                        feescale, dent, fee, ptfee)
+        self.cursor.execute(LOGGER_SELECT_QUERY)
+        rows = self.cursor.fetchall()
+        prev_courseno = None
+        est_log_text = ""
+        total, p_total = 0, 0
+        for i, (courseno, number, itemcode, description, csetype,
+                feescale, dent, fee, ptfee) in enumerate(rows):
+            line_text = \
+                "%s || %s || %s || %s || %s || %s || %s || %s||\n" % (
+                    number, itemcode, description, csetype,
+                    feescale, dent, fee, ptfee)
 
-                if prev_courseno is None or courseno == prev_courseno:
-                    est_log_text += line_text
-                    total += fee
-                    p_total += ptfee
-                else:
-                    est_log_text += "TOTAL ||  ||  ||  ||  ||  || %s || %s" % (
-                        total, p_total)
-                    values = (prev_courseno, est_log_text, "2_2script")
-                    cursor.execute(LOGGER_INSERT_QUERY, values)
-                    est_log_text = line_text
-                    total, p_total = fee, ptfee
+            if prev_courseno is None or courseno == prev_courseno:
+                est_log_text += line_text
+                total += fee
+                p_total += ptfee
+            else:
+                est_log_text += "TOTAL ||  ||  ||  ||  ||  || %s || %s" % (
+                    total, p_total)
+                values = (prev_courseno, est_log_text, "2_2script")
+                self.cursor.execute(LOGGER_INSERT_QUERY, values)
+                est_log_text = line_text
+                total, p_total = fee, ptfee
 
-                prev_courseno = courseno
-                if i % 1000 == 0:
-                    self.progressSig(30 * i / len(rows) + 60,
-                                     _("transfering data"))
-
-            db.commit()
-            db.close()
-        except Exception as exc:
-            logging.exception("error transfering data")
-            db.rollback()
-            raise UpdateException(exc)
+            prev_courseno = courseno
+            if i % 1000 == 0:
+                self.progressSig(30 * i / len(rows) + 60,
+                                 _("transfering data"))
 
     def insert_feescales(self):
-        feescale_path = os.path.join(localsettings.wkdir, 'resources',
-                                     "feescales", "example_feescale.xml")
-        db = connect.connect()
-        db.autocommit(False)
-        try:
-            f = open(feescale_path, "r")
-            data = f.read()
-            f.close()
-            cursor = db.cursor()
-            cursor.execute(FEESCALE_QUERY, (data,))
-            cursor.close()
-            db.commit()
-            db.close()
-        except Exception as exc:
-            logging.exception("error inserting test feescale")
-            db.rollback()
-            raise UpdateException(exc)
+        feescale_path = os.path.join(
+            localsettings.wkdir,
+            'resources',
+            'feescales',
+            'example_feescale.xml'
+            )
+        f = open(feescale_path, "r")
+        data = f.read()
+        f.close()
+        self.cursor.execute(FEESCALE_QUERY, (data,))
 
+    def run(self):
+        LOGGER.info("running script to convert from schema 2.1 to 2.2")
+        try:
+            self.connect()
+            #- execute the SQL commands
+            self.progressSig(5, _("creating tables"))
+            self.execute_statements(SQLSTRINGS)
+            self.progressSig(10, _("populating est_link table"))
+            self.transfer_data()
+            self.progressSig(95, _("populating feescales"))
+            self.insert_feescales()
+            self.progressSig(97, _('updating settings'))
+            LOGGER.info("updating stored database version in settings table")
+            self.update_schema_version(("2.2",), "2_1 to 2_2 script")
+            self.progressSig(100, _("updating stored schema version"))
+            self.commit()
+            self.completeSig(_("Successfully moved db to")+ " 2.2")
+            return True
+        except Exception as exc:
+            LOGGER.exception("error transfering data")
+            self.rollback()
+            raise self.UpdateError(exc)
 
 if __name__ == "__main__":
-    dbu = dbUpdater()
+    dbu = DatabaseUpdater()
     if dbu.run():
-        print "ALL DONE, conversion successful"
+        LOGGER.info("ALL DONE, conversion successful")
     else:
-        print "conversion failed"
+        LOGGER.warning("conversion failed")

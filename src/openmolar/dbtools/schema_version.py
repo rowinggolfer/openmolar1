@@ -28,24 +28,27 @@ from openmolar.settings import localsettings
 
 LOGGER = logging.getLogger("openmolar")
 
+SELECT_QUERY = 'select max(data) from settings where value = "Schema_Version"'
+
+INSERT_QUERY = '''insert into settings (value,data,modified_by,time_stamp)
+values (%s, %s, %s, NOW())'''
+
+DELETE_QUERY = 'delete from settings where value = "compatible_clients"'
+
+COMPAT_QUERY = '''insert into settings (value, data, modified_by, time_stamp)
+values ("compatible_clients", %s, 'Update script', NOW())'''
+
 
 def getVersion():
     try:
         db = connect.connect()
         cursor = db.cursor()
-        query = 'select data from settings where value = "Schema_Version"'
-        cursor.execute(query)
-        rows = cursor.fetchall()
+        cursor.execute(SELECT_QUERY)
+        version = cursor.fetchone()[0]
     except connect.ProgrammingError as ex:
         LOGGER.warning("no settings table! %s" % ex)
         LOGGER.warning("schema assumed to be 1.0")
-        return "1.0"
-
-    version = ""
-    for row in rows:
-        data = row[0]
-        if data > version:
-            version = data
+        version = "1.0"
     localsettings.DB_SCHEMA_VERSION = version
     return version
 
@@ -76,21 +79,16 @@ def update(schemas, user):
     latest_schema = schemas[-1]
     db = connect.connect()
     cursor = db.cursor()
-    query = '''insert into settings (value,data,modified_by,time_stamp)
-            values (%s, %s, %s, NOW())'''
     values = ("Schema_Version", latest_schema, user)
 
     LOGGER.info("making the db aware of it's schema version")
-    cursor.execute(query, values)
+    cursor.execute(INSERT_QUERY, values)
 
-    LOGGER.info("disabling old clients")
-    query = '''delete from settings where value = "compatible_clients"'''
-    cursor.execute(query)
-    db.commit()
+    LOGGER.info("disabling ALL old clients")
+    cursor.execute(DELETE_QUERY)
+
+    LOGGER.info("enabling compatible clients")
     for schema in schemas:
-        query = '''insert into settings (value, data, modified_by, time_stamp)
-        values ("compatible_clients", %s, 'Update script', NOW())'''
         values = (schema,)
-        cursor.execute(query, values)
-    db.commit()
+        cursor.execute(COMPAT_QUERY, values)
     return True

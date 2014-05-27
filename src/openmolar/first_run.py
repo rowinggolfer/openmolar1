@@ -456,8 +456,22 @@ def run():
     app = QtGui.QApplication.instance()
     if not app:
         app = QtGui.QApplication(sys.argv)
+    message = "<center>%s<br />%s<hr /><em>%s</em></center>" % (
+        _("This appears to be your first running of OpenMolar."),
+        _("We need to generate a settings file."),
+        _("Are you ready to proceed?")
+    )
+
     mw = NewSetupMainWindow()
     mw.show()
+
+    if QtGui.QMessageBox.question(
+        mw,
+        _("First Run"),
+        message,
+        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+        QtGui.QMessageBox.Yes) == QtGui.QMessageBox.No:
+            sys.exit(app.closeAllWindows())
     app.exec_()
     return mw.completed
 

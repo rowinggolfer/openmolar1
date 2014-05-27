@@ -23,7 +23,7 @@
 # ############################################################################ #
 
 '''
-provides the main class which is my gui
+provides printing functions for the main gui.
 '''
 
 from __future__ import division
@@ -38,12 +38,12 @@ from openmolar.settings import localsettings, utilities
 
 from openmolar.ptModules import estimates
 from openmolar.ptModules import standardletter
-from openmolar.ptModules import referral
 
 from openmolar.dbtools import docsprinted
 from openmolar.dbtools import appointments
 from openmolar.dbtools import patient_class
 from openmolar.dbtools import patient_write_changes
+from openmolar.dbtools import referral
 
 from openmolar.qt4gui.compiled_uis import Ui_enter_letter_text
 from openmolar.qt4gui.compiled_uis import Ui_daylist_print

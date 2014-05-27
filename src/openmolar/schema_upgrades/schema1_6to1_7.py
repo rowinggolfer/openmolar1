@@ -26,14 +26,16 @@
 This module provides a function 'run' which will move data
 to schema 1_7
 '''
+import logging
 import sys
 import types
+from xml.dom import minidom
+
 from openmolar.settings import localsettings
-from openmolar.dbtools import schema_version
+from openmolar.connect import myDb as DATABASE_NAME
+from openmolar.schema_upgrades.database_updater_thread import DatabaseUpdaterThread
 
-from openmolar import connect
-
-from PyQt4 import QtGui, QtCore
+LOGGER = logging.getLogger("openmolar")
 
 SQLSTRINGS = [
     '''
@@ -184,232 +186,139 @@ REGEXDICT = {'2733': 'SR P', '0131': 'CTS', '1782': 'reg [ul]lr][1-8]CR,RC',
              '0701': 'FS'}
 
 
-#
-# SOME FUNCTIONS SPECIFIC TO this update                                  ##
-#
+TABLE_QUERY = 'select ix, tablename from feetable_key'
 
-from xml.dom import minidom
+COLUMN_QUERY = '''SELECT column_name FROM information_schema.columns WHERE table_name = %s AND table_schema = %s'''
 
+UPDATE_QUERY = "UPDATE feetable_key SET data = %s WHERE ix = %s"
 
-def getFeeDictForModification(table):
-    '''
-    a comprehensive dictionary formed from the entire table in the database
-    '''
-    query = '''select column_name from information_schema.columns
-    where table_name = %s and table_schema = %s'''
-    values = (table, connect.myDb)
+class DatabaseUpdater(DatabaseUpdaterThread):
 
-    db = connect.connect()
-    cursor = db.cursor()
-    cursor.execute(query, values)
-    rows = cursor.fetchall()
-    header = []
-    for row in rows:
-        header.append(row[0])
+    def convert_table_to_XML(self, table):
+        '''
+        convert the table to XML
+        called by schema upgrade script 1_6 to 1_7
+        '''
+        LOGGER.info("converting %s to xml", table)
 
-    query = 'select * from %s' % table
-    cursor.execute(query)
-    rows = cursor.fetchall()
-    cursor.close()
+        # poll database for fee tables
+        self.cursor.execute(COLUMN_QUERY, (table, DATABASE_NAME))
+        rows = self.cursor.fetchall()
+        col_names = []
+        for row in rows:
+            col_names.append(row[0])
 
-    return (header, rows)
+        #now convert to xml
+        dom = minidom.Document()
+        tab = dom.createElement("table")
+        itemcodeIndex = col_names.index("code")
+        currentItem = ""
 
+        query = 'select * from %s' % table
+        self.cursor.execute(query)#, (table,))
 
-def getAsXML(table):
-    '''
-    convert the table to XML
-    called by schema upgrade script 1_6 to 1_7
-    '''
-    print "converting %s to xml" % table
-    col_names, rows = getFeeDictForModification(table)
-    dom = minidom.Document()
-    tab = dom.createElement("table")
+        for row in self.cursor.fetchall():
+            newNode = row[itemcodeIndex] != currentItem
+            currentItem = row[itemcodeIndex]
+            if newNode:
+                item = dom.createElement("item")
 
-    itemcodeIndex = col_names.index("code")
-    currentItem = ""
+            fees = []
+            ptfees = []
+            for i, col in enumerate(col_names):
+                makeNode = (
+                    col != "ix" and (newNode or not
+                                     col in ("section",
+                                    "code",
+                                    "oldcode",
+                                    "USERCODE",
+                                    "regulation",
+                                     "description",
+                                    "hide",
+                                    "pl_cmp")
+                                    ))
 
-    for row in rows:
-        newNode = row[itemcodeIndex] != currentItem
-        currentItem = row[itemcodeIndex]
-        if newNode:
-            item = dom.createElement("item")
+                if col.startswith("fee") or col.startswith("pt_fee"):
+                    makeNode = False
+                    try:
+                        val = int(row[i])
+                    except ValueError:
+                        val = 0
+                    except TypeError:
+                        val = 0
+                    if col.startswith("fee"):
+                        fees.append(val)
+                    else:
+                        ptfees.append(val)
 
-        i = 0
-        fees = []
-        ptfees = []
-        for col in col_names:
-            makeNode = (col != "ix" and (newNode or not
-                                         col in (
-                                             "section", "code", "oldcode", "USERCODE", "regulation",
-                                         "description", "hide", "pl_cmp")))
+                if makeNode:
+                    if col == "USERCODE":
+                        colno = col_names.index("code")
+                        d = dom.createElement("USERCODE")
+                        val = REGEXDICT.get(row[colno], "")
+                        d.appendChild(dom.createTextNode(val))
+                    elif row[i]:
+                        d = dom.createElement(col)
+                        try:
+                            val = unicode(row[i]).encode("ascii", "replace")
+                        except UnicodeEncodeError:
+                            LOGGER.exception("Unicode error from %s", row[i])
+                        #val = val.replace('\xc3\xbe', '3/4')
+                        d.appendChild(dom.createTextNode(val))
+                    item.appendChild(d)
 
-            if col.startswith("fee") or col.startswith("pt_fee"):
-                makeNode = False
-                try:
-                    val = int(row[i])
-                except ValueError:
-                    val = 0
-                except TypeError:
-                    val = 0
-                if col.startswith("fee"):
-                    fees.append(val)
-                else:
-                    ptfees.append(val)
-
-            if makeNode:
-                if col == "USERCODE":
-                    colno = col_names.index("code")
-                    d = dom.createElement("USERCODE")
-                    val = REGEXDICT.get(row[colno], "")
-                    d.appendChild(dom.createTextNode(val))
-                elif row[i]:
-                    d = dom.createElement(col)
-                    val = str(row[i])
-                    val = val.replace('\xc3\xbe', '3/4')
-                    d.appendChild(dom.createTextNode(val))
-                item.appendChild(d)
-            i += 1
-
-        d = dom.createElement("fee")
-        d.appendChild(dom.createTextNode(str(fees).strip("[]")))
-        item.appendChild(d)
-
-        p_fees_str = str(ptfees).strip("[]")
-        if p_fees_str:
-            d = dom.createElement("pt_fee")
-            d.appendChild(dom.createTextNode(p_fees_str))
+            d = dom.createElement("fee")
+            d.appendChild(dom.createTextNode(str(fees).strip("[]")))
             item.appendChild(d)
 
-        tab.appendChild(item)
-    dom.appendChild(tab)
+            p_fees_str = str(ptfees).strip("[]")
+            if p_fees_str:
+                d = dom.createElement("pt_fee")
+                d.appendChild(dom.createTextNode(p_fees_str))
+                item.appendChild(d)
 
-    result = dom.toxml()
-    dom.unlink()
-    return result
+            tab.appendChild(item)
+        dom.appendChild(tab)
 
-
-class UpdateException(Exception):
-
-    '''
-    A custom exception. If this is thrown the db will be rolled back
-    '''
-    pass
-
-
-class dbUpdater(QtCore.QThread):
-
-    def __init__(self, parent=None):
-        super(dbUpdater, self).__init__(parent)
-        self.stopped = False
-        self.path = None
-        self.completed = False
-        self.MESSAGE = "upating database"
-
-    def progressSig(self, val, message=""):
-        '''
-        emits a signal showhing how we are proceeding.
-        val is a number between 0 and 100
-        '''
-        if message != "":
-            self.MESSAGE = message
-        self.emit(QtCore.SIGNAL("progress"), val, self.MESSAGE)
-
-    def create_alter_tables(self):
-        '''
-        execute the above commands
-        NOTE - this function may fail depending on the mysql permissions
-        in place
-        '''
-        db = connect.connect()
-        db.autocommit(False)
-        cursor = db.cursor()
-        success = False
-        try:
-            i, commandNo = 0, len(SQLSTRINGS)
-            for sql_string in SQLSTRINGS:
-                try:
-                    cursor.execute(sql_string)
-                except connect.GeneralError as e:
-                    print "FAILURE in executing sql statement", e
-                    print "erroneous statement was ", sql_string
-                    if 1060 in e.args:
-                        print "continuing, as column already exists issue"
-                self.progressSig(
-                    10 + 70 * i / commandNo,
-                    sql_string[:20] + "...")
-            success = True
-        except Exception as e:
-            print "FAILURE in executing sql statements", e
-            db.rollback()
-        if success:
-            db.commit()
-            db.autocommit(True)
-        else:
-            raise UpdateException("couldn't execute all statements!")
+        result = dom.toxml()
+        dom.unlink()
+        return result
 
     def insertValues(self):
         '''
         fee tables need a new column "Data" to replace the multiple tables
         '''
-
-        db = connect.connect()
-        cursor = db.cursor()
-
-        cursor.execute('select ix, tablename from feetable_key')
-        rows = cursor.fetchall()
-
+        self.cursor.execute(TABLE_QUERY)
+        rows = self.cursor.fetchall()
         for ix, tablename in rows:
-            print "altering feetable", tablename
-
-            table_xml = getAsXML(tablename)
-            query = "update feetable_key set data = %s where ix = %s"
-            values = (table_xml, ix)
-            cursor.execute(query, values)
-
-        db.commit()
-
-        cursor.close()
-        db.close()
-        return True
-
-    def completeSig(self, arg):
-        self.emit(QtCore.SIGNAL("completed"), self.completed, arg)
+            LOGGER.info("altering feetable %s", tablename)
+            values = (self.convert_table_to_XML(tablename), ix)
+            self.cursor.execute(UPDATE_QUERY, values)
 
     def run(self):
-        print "running script to convert from schema 1.6 to 1.7"
+        LOGGER.info("running script to convert from schema 1.6 to 1.7")
         try:
+            self.connect()
             #- execute the SQL commands
             self.progressSig(20, _("executing statements"))
-            self.create_alter_tables()
-
+            self.execute_statements(SQLSTRINGS)
             #- transfer data between tables
             self.progressSig(60, _('inserting values'))
-
-            print "inserting values"
-            if self.insertValues():
-                print "ok"
-            else:
-                print "FAILED!!!!!"
-
+            self.insertValues()
             self.progressSig(90, _('updating settings'))
-            print "update database settings..."
-
-            schema_version.update(("1.6", "1.7",), "1_6 to 1_7 script")
-
+            self.update_schema_version(("1.6", "1.7",), "1_6 to 1_7 script")
             self.progressSig(100, _("updating stored schema version"))
-            self.completed = True
-            self.completeSig(_("ALL DONE - successfully moved db to")
-                             + " 1.7 " + _("you may now remove old feetables"))
-
-        except UpdateException as e:
-            localsettings.CLIENT_SCHEMA_VERSION = "1.6"
-            self.completeSig(_("rolled back to") + " 1.6")
-
-        return self.completed
+            self.commit()
+            self.completeSig(_("Successfully moved db to")+ " 1.7")
+            return True
+        except Exception as exc:
+            LOGGER.exception("error transfering data")
+            self.rollback()
+            raise self.UpdateError(exc)
 
 if __name__ == "__main__":
-    dbu = dbUpdater()
+    dbu = DatabaseUpdater()
     if dbu.run():
-        print "ALL DONE, conversion successful"
+        LOGGER.info("ALL DONE, conversion successful")
     else:
-        print "conversion failed"
+        LOGGER.error("conversion failed")

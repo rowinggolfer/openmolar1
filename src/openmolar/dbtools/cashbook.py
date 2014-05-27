@@ -245,7 +245,8 @@ def details(dent, startdate, enddate,
     return retarg
 
 #--initiate the cashbook dictionary on module import
-cashbookCodesDict = CashBookCodesDict()
+# cashbookCodesDict = CashBookCodesDict()
+cashbookCodesDict = {}
 
 if __name__ == "__main__":
     from PyQt4.QtCore import QDate

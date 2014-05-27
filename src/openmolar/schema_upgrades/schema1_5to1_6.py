@@ -26,22 +26,20 @@
 This module provides a function 'run' which will move data
 to schema 1_6
 '''
+import logging
 import sys
-from openmolar.settings import localsettings
-from openmolar.dbtools import schema_version
-from openmolar import connect
 
-from PyQt4 import QtGui, QtCore
+from openmolar.settings import localsettings
+from openmolar.schema_upgrades.database_updater_thread import DatabaseUpdaterThread
+
+LOGGER = logging.getLogger("openmolar")
 
 SQLSTRINGS = [
-    '''
-alter table forum change comment comment text not null
-''',
-    '''
-drop table docsimported
-''',
-    '''
-CREATE TABLE if not exists docsimported (
+'drop table if exists docsimported',
+'drop table if exists docsimporteddata',
+'alter table forum change comment comment text not null',
+'''
+CREATE TABLE docsimported (
 ix mediumint(8) unsigned NOT NULL auto_increment,
 serialno int(11) unsigned NOT NULL default 0,
 datatype varchar(60) NOT NULL default 'application/octet-stream',
@@ -52,7 +50,7 @@ importime timestamp NOT NULL default CURRENT_TIMESTAMP,
 PRIMARY KEY (ix) )
 ''',
     '''
-CREATE TABLE if not exists docsimporteddata (
+CREATE TABLE docsimporteddata (
 ix mediumint(8) unsigned NOT NULL auto_increment,
 masterid mediumint(8) unsigned NOT NULL default '0',
 filedata blob NOT NULL,
@@ -90,7 +88,6 @@ TYPEDICT = {
             '5902', '5905', '5923', '5932', '5942', '5952'),
     "odl": ('2802', '2804', '2822', '2832', '2852', '2854', '2856', '2862', '2864', '2866', '5502',
             '5504', '5522', '5532', '5551', '5553', '5555', '5562', '5564', '5566', ),
-
     "ortho": ('3241', '3242', '3243', '3244', '3245', '3246', '3247', '3248', '3249', '3261', '3262',
               '3263', '3264', '3281', '3282', '3283', '3284', '3285', '3291', '5581', '5582', '5583',
               '5584', '5585', '5586', '5587', '5588', '5589')
@@ -98,159 +95,62 @@ TYPEDICT = {
 }
 
 
-class UpdateException(Exception):
-
-    '''
-    A custom exception. If this is thrown the db will be rolled back
-    '''
-    pass
-
-
-class dbUpdater(QtCore.QThread):
-
-    def __init__(self, parent=None):
-        super(dbUpdater, self).__init__(parent)
-        self.stopped = False
-        self.path = None
-        self.completed = False
-        self.MESSAGE = "upating database"
-
-    def progressSig(self, val, message=""):
-        '''
-        emits a signal showhing how we are proceeding.
-        val is a number between 0 and 100
-        '''
-        if message != "":
-            self.MESSAGE = message
-        self.emit(QtCore.SIGNAL("progress"), val, self.MESSAGE)
-
-    def create_alter_tables(self):
-        '''
-        execute the above commands
-        NOTE - this function may fail depending on the mysql permissions
-        in place
-        '''
-        db = connect.connect()
-        db.autocommit(False)
-        cursor = db.cursor()
-        success = False
-        try:
-            i, commandNo = 0, len(SQLSTRINGS)
-            for sql_string in SQLSTRINGS:
-                try:
-                    cursor.execute(sql_string)
-                except connect.GeneralError as e:
-                    print "FAILURE in executing sql statement", e
-                    print "erroneous statement was ", sql_string
-                    if 1060 in e.args:
-                        print "continuing, as column already exists issue"
-                self.progressSig(
-                    10 + 70 * i / commandNo,
-                    sql_string[:20] + "...")
-            success = True
-        except Exception as e:
-            print "FAILURE in executing sql statements", e
-            db.rollback()
-        if success:
-            db.commit()
-            db.autocommit(True)
-        else:
-            raise UpdateException("couldn't execute all statements!")
+class DatabaseUpdater(DatabaseUpdaterThread):
 
     def addColumns(self):
         '''
         fee tables need a new column
         '''
-
-        db = connect.connect()
-        cursor = db.cursor()
-
-        cursor.execute('select tablename from feetable_key')
-        rows = cursor.fetchall()
-
+        self.cursor.execute('select tablename from feetable_key')
+        rows = self.cursor.fetchall()
         for row in rows:
-            print "altering feetable", row[0]
+            LOGGER.info("altering feetable '%s'", row[0])
             query = 'alter table %s add column pl_cmp char(20)' % row[0]
-            cursor.execute(query)
-
-        db.commit()
-
-        cursor.close()
-        db.close()
-        return True
+            self.cursor.execute(query)
 
     def insertValues(self):
         '''
         fee tables need a new column
         '''
-
-        db = connect.connect()
-        cursor = db.cursor()
-
-        cursor.execute('select tablename from feetable_key')
-        rows = cursor.fetchall()
+        self.cursor.execute('select tablename from feetable_key')
+        rows = self.cursor.fetchall()
         for row in rows:
-            print "altering feetable", row[0]
+            LOGGER.info("updating codes in feetable '%s'", row[0])
             query = 'update %s set pl_cmp=%%s where code=%%s' % row[0]
             for key in TYPEDICT:
                 for code in TYPEDICT[key]:
                     values = (key, code)
-                    cursor.execute(query, values)
-        db.commit()
-
-        cursor.close()
-        db.close()
-        return True
-
-    def completeSig(self, arg):
-        self.emit(QtCore.SIGNAL("completed"), self.completed, arg)
+                    self.cursor.execute(query, values)
 
     def run(self):
-        print "running script to convert from schema 1.5 to 1.6"
+        LOGGER.info("running script to convert from schema 1.5 to 1.6")
         try:
-            #- execute the SQL commands
-            self.progressSig(20, _("executing statements"))
-            self.create_alter_tables()
+            self.connect()
+            self.progressSig(20, _("creating new tables"))
+            self.execute_statements(SQLSTRINGS)
 
             #- transfer data between tables
             self.progressSig(40, _('transfering data'))
-
-            print "adding columns to the feetables table, ...",
-            if self.addColumns():
-                print "ok"
-            else:
-                print "FAILED!!!!!"
+            LOGGER.info("adding columns to the feetables table, ...")
+            self.addColumns()
             self.progressSig(60, _('inserting values'))
-
-            print "inserting values"
-            if self.insertValues():
-                print "ok"
-            else:
-                print "FAILED!!!!!"
-
+            LOGGER.info("inserting values")
+            self.insertValues()
             self.progressSig(90, _('updating settings'))
-            print "update database settings..."
-
-            schema_version.update(("1.6",), "1_5 to 1_6 script")
+            self.update_schema_version(("1.6",), "1_5 to 1_6 script")
 
             self.progressSig(100, _("updating stored schema version"))
-            self.completed = True
-            self.completeSig(_("ALL DONE - successfully moved db to")
-                             + " 1.6")
-
-        except UpdateException as e:
-            localsettings.CLIENT_SCHEMA_VERSION = "1.5"
-            self.completeSig(_("rolled back to") + " 1.5")
-
-        except Exception as e:
-            print "Exception caught", e
-            self.completeSig(str(e))
-
-        return self.completed
+            self.commit()
+            self.completeSig(_("Successfully moved db to")+ " 1.6")
+            return True
+        except Exception as exc:
+            LOGGER.exception("error transfering data")
+            self.rollback()
+            raise self.UpdateError(exc)
 
 if __name__ == "__main__":
-    dbu = dbUpdater()
+    dbu = DatabaseUpdater()
     if dbu.run():
-        print "ALL DONE, conversion successful"
+        LOGGER.info("ALL DONE, conversion successful")
     else:
-        print "conversion failed"
+        LOGGER.error("conversion failed")

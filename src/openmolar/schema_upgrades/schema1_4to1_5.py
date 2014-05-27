@@ -29,19 +29,21 @@ in schema 1_4 to a new exemptions table in schema 1_5
 also, remove the key for calendar, it makes more sense to have the date
 as the primary key. (cleaner code for updates)
 '''
+import logging
 import sys
-from openmolar.settings import localsettings
-from openmolar.dbtools import schema_version
-from openmolar import connect
 
-from PyQt4 import QtGui, QtCore
+from openmolar.settings import localsettings
+from openmolar.schema_upgrades.database_updater_thread import DatabaseUpdaterThread
+
+LOGGER = logging.getLogger("openmolar")
 
 SQLSTRINGS = [
-    'alter table clinical_memos add column synopsis text',
-    'alter table calendar drop column ix',
-    'alter table calendar add primary key(adate)',
-    '''
-CREATE TABLE if not exists exemptions (
+'alter table clinical_memos add column synopsis text',
+'alter table calendar drop column ix',
+'alter table calendar add primary key(adate)',
+'DROP TABLE if exists exemptions',
+'''
+CREATE TABLE exemptions (
 ix int(10) unsigned NOT NULL auto_increment ,
 serialno int(11) unsigned NOT NULL ,
 exemption varchar(10),
@@ -52,136 +54,54 @@ key (serialno))
 '''
 ]
 
+SRC_QUERY = '''select serialno, exmpt, exempttext from patients
+where exmpt != "" or exempttext !=""'''
 
-class UpdateException(Exception):
-
-    '''
-    A custom exception. If this is thrown the db will be rolled back
-    '''
-    pass
+DEST_QUERY = '''insert into exemptions (serialno, exemption, exempttext)
+values (%s, %s, %s)'''
 
 
-class dbUpdater(QtCore.QThread):
+class DatabaseUpdater(DatabaseUpdaterThread):
 
-    def __init__(self, parent=None):
-        super(dbUpdater, self).__init__(parent)
-        self.stopped = False
-        self.path = None
-        self.completed = False
-        self.MESSAGE = "upating database"
-
-    def progressSig(self, val, message=""):
-        '''
-        emits a signal showhing how we are proceeding.
-        val is a number between 0 and 100
-        '''
-        if message != "":
-            self.MESSAGE = message
-        self.emit(QtCore.SIGNAL("progress"), val, self.MESSAGE)
-
-    def create_alter_tables(self):
-        '''
-        execute the above commands
-        NOTE - this function may fail depending on the mysql permissions
-        in place
-        '''
-        db = connect.connect()
-        db.autocommit(False)
-        cursor = db.cursor()
-        success = False
-        try:
-            i, commandNo = 0, len(SQLSTRINGS)
-            for sql_string in SQLSTRINGS:
-                try:
-                    cursor.execute(sql_string)
-                except connect.GeneralError as e:
-                    print "FAILURE in executing sql statement", e
-                    print "erroneous statement was ", sql_string
-                    if 1060 in e.args:
-                        print "continuing, as column already exists issue"
-                self.progressSig(
-                    10 + 70 * i / commandNo,
-                    sql_string[:20] + "...")
-            success = True
-        except Exception as e:
-            print "FAILURE in executing sql statements", e
-            db.rollback()
-        if success:
-            db.commit()
-            db.autocommit(True)
-        else:
-            raise UpdateException("couldn't execute all statements!")
 
     def transferData(self):
         '''
         move data into the new tables
         '''
-        db = connect.connect()
-        cursor = db.cursor()
-        cursor.execute('lock tables patients read, exemptions write')
-
-        cursor.execute('select serialno, exmpt, exempttext from patients')
-        rows = cursor.fetchall()
-
-        query = '''insert into exemptions (serialno, exemption, exempttext)
-        values (%s, %s, %s)'''
-
-        values = []
-        for row in rows:
-            if row[1] != "" or row[2] != "":
-                values.append(row)
-
-        cursor.executemany(query, values)
-
-        db.commit()
-        cursor.execute("unlock tables")
-
-        cursor.close()
-        db.close()
-        return True
-
-    def completeSig(self, arg):
-        self.emit(QtCore.SIGNAL("completed"), self.completed, arg)
+        self.cursor.execute('lock tables patients read, exemptions write')
+        self.cursor.execute(SRC_QUERY)
+        rows = self.cursor.fetchall()
+        self.cursor.executemany(DEST_QUERY, rows)
+        self.cursor.execute("unlock tables")
 
     def run(self):
-        print "running script to convert from schema 1.4 to 1.5"
+        LOGGER.info("running script to convert from schema 1.4 to 1.5")
         try:
-            #- execute the SQL commands
-            self.progressSig(20, _("executing statements"))
-            self.create_alter_tables()
+            self.connect()
+            self.progressSig(20, _("creating new tables"))
+            self.execute_statements(SQLSTRINGS)
 
             #- transfer data between tables
             self.progressSig(50, _('transfering data'))
 
-            print "transfering data to new table, ...",
-            if self.transferData():
-                print "ok"
-            else:
-                print "FAILED!!!!!"
-
+            LOGGER.info("transfering data to new table, ..."),
+            self.transferData()
             self.progressSig(90, _('updating settings'))
-            print "update database settings..."
 
-            schema_version.update(("1.5",), "1_4 to 1_5 script")
+            self.update_schema_version(("1.5",), "1_4 to 1_5 script")
 
             self.progressSig(100, _("updating stored schema version"))
-            self.completed = True
-            self.completeSig(_("ALL DONE - successfully moved db to")
-                             + " 1.5")
-
-        except UpdateException as e:
-            localsettings.CLIENT_SCHEMA_VERSION = "1.4"
-            self.completeSig(_("rolled back to") + " 1.4")
-
-        except Exception as e:
-            print "Exception caught", e
-            self.completeSig(str(e))
-
-        return self.completed
+            self.commit()
+            self.completeSig(_("Successfully moved db to")+ " 1.5")
+            return True
+        except Exception as exc:
+            LOGGER.exception("error transfering data")
+            self.rollback()
+            raise self.UpdateError(exc)
 
 if __name__ == "__main__":
-    dbu = dbUpdater()
+    dbu = DatabaseUpdater()
     if dbu.run():
-        print "ALL DONE, conversion successful"
+        LOGGER.info("ALL DONE, conversion successful")
     else:
-        print "conversion failed"
+        LOGGER.error("conversion failed")

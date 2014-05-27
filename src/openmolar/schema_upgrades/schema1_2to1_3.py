@@ -24,19 +24,24 @@
 
 '''
 This module provides a function 'run' which will move data from the estimates
-table in schema 1_1 to the newestimates table in schema 1_2
+table in schema 1_2 to the newestimates table in schema 1_3
 '''
+import logging
+import sys
 
-from PyQt4 import QtGui, QtCore
+from openmolar.settings import localsettings
+from openmolar.schema_upgrades.database_updater_thread import DatabaseUpdaterThread
+
+LOGGER = logging.getLogger("openmolar")
 
 SQLSTRINGS = [
-    '''alter table newfeetable drop column spare1''',
-    '''alter table newfeetable drop column spare2''',
-    '''alter table newfeetable drop column spare3''',
-    '''alter table newfeetable drop column spare4''',
-    '''alter table newfeetable change column PFC NF09 int(11)''',
-    '''alter table newfeetable change column PFI NF09_pt int(11)''',
-    '''
+'alter table newfeetable drop column spare1',
+'alter table newfeetable drop column spare2',
+'alter table newfeetable drop column spare3',
+'alter table newfeetable drop column spare4',
+'alter table newfeetable change column PFC NF09 int(11)',
+'alter table newfeetable change column PFI NF09_pt int(11)',
+'''
 CREATE TABLE if not exists clinical_memos (
 ix int(10) unsigned NOT NULL auto_increment ,
 serialno int(11) unsigned NOT NULL ,
@@ -47,88 +52,34 @@ PRIMARY KEY (ix),
 KEY (serialno))''',
 ]
 
-import sys
-from openmolar.settings import localsettings
-from openmolar.dbtools import schema_version
-from openmolar import connect
 
-
-class dbUpdater(QtCore.QThread):
-
-    def __init__(self, parent=None):
-        super(dbUpdater, self).__init__(parent)
-        self.stopped = False
-        self.path = None
-        self.completed = False
-        self.MESSAGE = "upating database"
-
-    def create_alter_tables(self):
-        '''
-        execute the above commands
-        NOTE - this function may fail depending on the mysql permissions in place
-        '''
-        db = connect.connect()
-        db.autocommit(False)
-        cursor = db.cursor()
-        success = False
-        try:
-            i, commandNo = 0, len(SQLSTRINGS)
-            for sql_string in SQLSTRINGS:
-                cursor.execute(sql_string)
-                self.progressSig(
-                    10 + 70 * i / commandNo,
-                    sql_string[:20] + "...")
-            success = True
-        except Exception as e:
-            print "FAILURE create_alter_tables", e
-            db.rollback()
-        if success:
-            db.commit()
-            db.autocommit(True)
-        return success
-
-    def progressSig(self, val, message=""):
-        '''
-        emits a signal showhing how we are proceeding.
-        val is a number between 0 and 100
-        '''
-        if message != "":
-            self.MESSAGE = message
-        self.emit(QtCore.SIGNAL("progress"), val, self.MESSAGE)
-
-    def completeSig(self, arg):
-        self.emit(QtCore.SIGNAL("completed"), self.completed, arg)
+class DatabaseUpdater(DatabaseUpdaterThread):
 
     def run(self):
-        print "running script to convert from schema 1.2 to 1.3"
+        LOGGER.info("running script to convert from schema 1.2 to 1.3")
         try:
+            self.connect()
             self.progressSig(10, _("creating new tables"))
-            if self.create_alter_tables():
-                self.progressSig(90, _('updating settings'))
-                print "update database settings..."
+            self.execute_statements(SQLSTRINGS)
+            self.progressSig(90, _('updating settings'))
+            LOGGER.debug("update database settings...")
 
-                # pass a tuple of compatible clients and the "user"
-                # who made these changes.
-                schema_version.update(("1.2", "1.3"), "1_2 to 1_3 script")
+            # pass a tuple of compatible clients and the "user"
+            # who made these changes.
+            self.update_schema_version(("1.2", "1.3"), "1_2 to 1_3 script")
 
-                self.progressSig(100, _("updating stored schema version"))
-                self.completed = True
-                self.completeSig(_("ALL DONE - successfully moved db to")
-                                 + " 1.3")
-            else:
-                localsettings.CLIENT_SCHEMA_VERSION = " 1.2"
-                self.completeSig(_("couldn't create tables, rolled back to")
-                                 + "1.2")
-
-        except Exception as e:
-            print "Exception caught", e
-            self.completeSig(str(e))
-
-        return self.completed
+            self.progressSig(100, _("updating stored schema version"))
+            self.commit()
+            self.completeSig(_("Successfully moved db to")+ " 1.3")
+            return True
+        except Exception as exc:
+            LOGGER.exception("error transfering data")
+            self.rollback()
+            raise self.UpdateError(exc)
 
 if __name__ == "__main__":
-    dbu = dbUpdater()
+    dbu = DatabaseUpdater()
     if dbu.run():
-        print "ALL DONE, conversion successful"
+        LOGGER.info("ALL DONE, conversion successful")
     else:
-        print "conversion failed"
+        LOGGER.error("conversion failed")

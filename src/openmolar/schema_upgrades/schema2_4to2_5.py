@@ -24,7 +24,7 @@
 
 '''
 This module provides a function 'run' which will move data
-to schema 2_3
+to schema 2_5
 '''
 from __future__ import division
 
@@ -38,44 +38,53 @@ from openmolar.schema_upgrades.database_updater_thread import DatabaseUpdaterThr
 LOGGER = logging.getLogger("openmolar")
 
 SQLSTRINGS = [
-    'drop table if exists est_link2',
-
+    'drop table if exists referral_centres',
+    'drop table if exists previous_snames',
     '''
-create table est_link2 (
-  ix         int(11) unsigned not null auto_increment ,
-  est_id     int(11),
-  daybook_id     int(11),
-  tx_hash    char(40) NOT NULL,
-  completed  bool NOT NULL default 0,
-PRIMARY KEY (ix),
-INDEX (est_id)
+create table referral_centres (
+  ix             int(11) unsigned not null auto_increment ,
+  description    char(64) NOT NULL DEFAULT "referral",
+  greeting       char(64) NOT NULL DEFAULT "Dear Sir/Madam",
+  addr1          char(64) NOT NULL DEFAULT "",
+  addr2          char(64) NOT NULL DEFAULT "",
+  addr3          char(64) NOT NULL DEFAULT "",
+  addr4          char(64) NOT NULL DEFAULT "",
+  addr5          char(64) NOT NULL DEFAULT "",
+  addr6          char(64) NOT NULL DEFAULT "",
+  addr7          char(64) NOT NULL DEFAULT "",
+PRIMARY KEY (ix)
 )''',
-
-    'create index est_link2_hash_index on est_link2(tx_hash)',
-]
-
-SOURCE_QUERY = ('SELECT courseno, ix, category, type, completed '
-                'FROM newestimates where type is not null '
-                'ORDER BY serialno, courseno, category, type, completed DESC')
-
-DEST_QUERY = ('insert into est_link2 (est_id, tx_hash, completed) '
-              'values (%s, %s, %s)')
-
-CLEANUPSTRINGS = [
+'''
+INSERT INTO referral_centres
+(description, greeting, addr1, addr2, addr3, addr4, addr5, addr6)
+values ("Example Referral Centre", "Dear Sir/Madam", "The Head Clinician",
+"Orthodontic Department", "The Local Dental Hospital", "Any Street",
+"Any Town", "POST CODE")
+'''
+,
     '''
-update est_link join est_link2
-on est_link.est_id = est_link2.est_id
-set est_link2.completed = est_link.completed,
-est_link2.daybook_id = est_link.daybook_id
-''',
-    '''
-insert into est_link2 (est_id, daybook_id, tx_hash, completed)
-select est_link.est_id, est_link.daybook_id, "BAD_HASH",
-est_link.completed from est_link left join est_link2
-on est_link.est_id=est_link2.est_id where est_link2.tx_hash is NULL
+create table previous_snames (
+  ix           int(11) unsigned not null auto_increment ,
+  serialno     int(11),
+  psn          char(40) NOT NULL,
+PRIMARY KEY (ix),
+INDEX (serialno)
+)''',
+'''
+UPDATE patients SET county="" WHERE COUNTY is NULL
 '''
 ]
 
+#NOTE - if next statement fails, it is silently overlooked.
+CLEANUPSTRINGS = [
+    'ALTER TABLE patients DROP COLUMN recd',
+]
+
+SOURCE_QUERY = \
+'SELECT serialno, psn FROM patients WHERE psn != "" AND psn IS NOT NULL'
+
+DEST_QUERY = \
+'INSERT INTO previous_snames (serialno, psn) VALUES (%s, %s)'
 
 class DatabaseUpdater(DatabaseUpdaterThread):
 
@@ -85,42 +94,17 @@ class DatabaseUpdater(DatabaseUpdaterThread):
         '''
         self.cursor.execute(SOURCE_QUERY)
         rows = self.cursor.fetchall()
-        step = 1 / len(rows)
-        count, prev_courseno, prev_cat_type = 1, 0, ""
-        prev_hash = None
-        for i, row in enumerate(rows):
-            courseno, ix, category, type_, completed = row
-            cat_type = "%s%s" % (category, type_)
-            if courseno != prev_courseno:
-                count = 1
-            elif cat_type != prev_cat_type:
-                count = 1
-            else:
-                count += 1
-
-            prev_courseno = courseno
-            prev_cat_type = cat_type
-
-            tx_hash = localsettings.hash_func(
-                "%s%s%s%s" % (courseno, category, count, type_))
-
-            if completed is None:
-                completed = False
-            values = (ix, tx_hash, completed)
-            self.cursor.execute(DEST_QUERY, values)
-            if i % 1000 == 0:
-                self.progressSig(85 * i / len(rows) + 10,
-                                     _("transfering data"))
+        self.cursor.executemany(DEST_QUERY, rows)
 
     def run(self):
-        LOGGER.info("running script to convert from schema 2.2 to 2.3")
+        LOGGER.info("running script to convert from schema 2.4 to 2.5")
         try:
             self.connect()
             #- execute the SQL commands
-            self.progressSig(5, _("creating est_link2 table"))
+            self.progressSig(10, _("creating new tables"))
             self.execute_statements(SQLSTRINGS)
 
-            self.progressSig(10, _("populating est_link2 table"))
+            self.progressSig(50, _("transferring data"))
             self.transfer_data()
 
             self.progressSig(95, _("executing cleanup statements"))
@@ -129,17 +113,16 @@ class DatabaseUpdater(DatabaseUpdaterThread):
             self.progressSig(97, _('updating settings'))
             LOGGER.info("updating stored database version in settings table")
 
-            self.update_schema_version(("2.3",), "2_2 to 2_3 script")
+            self.update_schema_version(("2.5",), "2_4 to 2_5 script")
 
             self.progressSig(100, _("updating stored schema version"))
             self.commit()
-            self.completeSig(_("Successfully moved db to")+ " 2.3")
+            self.completeSig(_("Successfully moved db to")+ " 2.5")
             return True
         except Exception as exc:
             LOGGER.exception("error transfering data")
             self.rollback()
             raise self.UpdateError(exc)
-
 
 if __name__ == "__main__":
     dbu = DatabaseUpdater()

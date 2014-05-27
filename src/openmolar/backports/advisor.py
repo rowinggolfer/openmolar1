@@ -55,6 +55,8 @@ class MessagePopup(QtGui.QWidget):
         self.setMouseTracking(True)
 
         width = doc_width + pic_width + padding * 2
+        if width < self.minimumWidth():
+            width = self.minimumWidth()
 
         height = doc_height
         if height < pic_height:
@@ -92,6 +94,13 @@ class MessagePopup(QtGui.QWidget):
         pen_colour = pal.toolTipText().color()
         pen_colour.setAlpha(alpha + 50)
         self.pen = QtGui.QPen(pen_colour)
+
+    def minimumWidth(self):
+        w = 300
+        if self.parent() is not None:
+            if self.parent().width() > w * 4:
+                w = self.parent().width() / 4
+        return w
 
     def toggleMouseEvents(self, off=True):
         self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents, off)
@@ -163,7 +172,7 @@ class Advisor(QtGui.QWidget):
         '''
         Advisor.__init__(self, parent=None)
         '''
-        super(Advisor, self).__init__(parent)
+        QtGui.QWidget.__init__(self, parent)
         self.brief_messages = []
         self.briefMessagePosition = QtCore.QPoint(10, 10)
 
@@ -244,7 +253,7 @@ class Advisor(QtGui.QWidget):
         if warning_level == 0:
             self.brief_messages.append(message)
             show_brief_messages()
-            QtCore.QTimer.singleShot(7000, hide_brief_message)  # 3 seconds
+            QtCore.QTimer.singleShot(7000, hide_brief_message)  # 7 seconds
 
             try:
                 self.statusbar.showMessage(message, 10000)

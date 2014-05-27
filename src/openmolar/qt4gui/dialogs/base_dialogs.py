@@ -42,6 +42,7 @@ class BaseDialog(QtGui.QDialog):
 
     def __init__(self, parent=None, remove_stretch=False):
         QtGui.QDialog.__init__(self, parent)
+        self.setWindowTitle("OpenMolar")
 
         self.button_box = QtGui.QDialogButtonBox(self)
         self.button_box.setOrientation(QtCore.Qt.Horizontal)

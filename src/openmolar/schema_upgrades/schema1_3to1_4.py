@@ -26,16 +26,26 @@
 This module provides a function 'run' which will move data from the estimates
 table in schema 1_3 to the newestimates table in schema 1_4
 '''
+import logging
 import sys
-from openmolar.settings import localsettings
-from openmolar.dbtools import schema_version
-from openmolar import connect
 
-from PyQt4 import QtGui, QtCore
+from openmolar.settings import localsettings
+from openmolar.schema_upgrades.database_updater_thread import DatabaseUpdaterThread
+
+LOGGER = logging.getLogger("openmolar")
 
 SQLSTRINGS = [
-    '''
-CREATE TABLE if not exists feetable_key (
+'DROP TABLE IF EXISTS feetable_key',
+'DROP TABLE IF EXISTS feetable_scotNHS_08_Adult',
+'DROP TABLE IF EXISTS feetable_scotNHS_08_Child',
+'DROP TABLE IF EXISTS feetable_scotNHS_09_Adult',
+'DROP TABLE IF EXISTS feetable_scotNHS_09_Child',
+'DROP TABLE IF EXISTS feetable_HDP',
+'DROP TABLE IF EXISTS feetable_Private_2009',
+'DROP TABLE IF EXISTS feetable_Private_2010',
+'DROP TABLE IF EXISTS docsimported',
+'''
+CREATE TABLE feetable_key (
 ix int(10) unsigned NOT NULL auto_increment ,
 tablename char(30),
 categories char(30),
@@ -47,17 +57,21 @@ in_use bool NOT NULL default True,
 display_order smallint(6),
 PRIMARY KEY (ix))
 ''',
-    '''
+'''
 INSERT into feetable_key (tablename, categories, description, startdate,
 enddate, display_order, feecoltypes)
 values ("feetable_scotNHS_08_Adult","N",
 "Scottish NHS Adult feescale implemented April 2008",
 20080401, 20090831, 5,
-'<?xml version="1.0"?><columns><column type="fee">fee</column><column type="ptfee">pt_fee</column></columns>'
+'<?xml version="1.0"?>
+    <columns>
+        <column type="fee">fee</column>
+        <column type="ptfee">pt_fee</column>
+    </columns>'
 )
 ''',
-    '''
-CREATE TABLE if not exists feetable_scotNHS_08_Adult (
+'''
+CREATE TABLE feetable_scotNHS_08_Adult (
 ix int(10) unsigned NOT NULL auto_increment ,
 section smallint(6),
 code char(8),
@@ -71,19 +85,21 @@ pt_fee int(11),
 hide bool NOT NULL default False,
 PRIMARY KEY (ix))
 ''',
-
-    '''
+'''
 INSERT into feetable_key (tablename, categories, description, startdate,
 enddate, display_order, feecoltypes)
 values ("feetable_scotNHS_08_Child","C",
 "Scottish NHS Child feescale implemented April 2008",
 20080401, 20090831, 6,
-'<?xml version="1.0"?><columns><column type="fee">fee</column><column type="ptfee">pt_fee</column></columns>'
+'<?xml version="1.0"?>
+    <columns>
+        <column type="fee">fee</column>
+        <column type="ptfee">pt_fee</column>
+    </columns>'
 )
-
 ''',
-    '''
-CREATE TABLE if not exists feetable_scotNHS_08_Child (
+'''
+CREATE TABLE feetable_scotNHS_08_Child (
 ix int(10) unsigned NOT NULL auto_increment ,
 section smallint(6),
 code char(8),
@@ -97,18 +113,21 @@ pt_fee int(11),
 hide bool NOT NULL default False,
 PRIMARY KEY (ix))
 ''',
-
-    '''
+'''
 INSERT into feetable_key (tablename, categories, description, startdate,
 display_order, feecoltypes)
 values ("feetable_scotNHS_09_Adult","N",
 "Scottish NHS Adult feescale implemented September 2009",
 20090901, 3,
-'<?xml version="1.0"?><columns><column type="fee">fee</column><column type="ptfee">pt_fee</column></columns>'
+'<?xml version="1.0"?>
+    <columns>
+        <column type="fee">fee</column>
+        <column type="ptfee">pt_fee</column>
+    </columns>'
 )
 ''',
-    '''
-CREATE TABLE if not exists feetable_scotNHS_09_Adult (
+'''
+CREATE TABLE feetable_scotNHS_09_Adult (
 ix int(10) unsigned NOT NULL auto_increment ,
 section smallint(6),
 code char(8),
@@ -122,18 +141,21 @@ pt_fee int(11),
 hide bool NOT NULL default False,
 PRIMARY KEY (ix))
 ''',
-
-    '''
+'''
 INSERT into feetable_key (tablename, categories, description, startdate,
 display_order, feecoltypes)
 values ("feetable_scotNHS_09_Child","C",
 "Scottish NHS Adult feescale implemented September 2009", 20090901, 4,
-'<?xml version="1.0"?><columns><column type="fee">fee</column><column type="ptfee">pt_fee</column></columns>'
+'<?xml version="1.0"?>
+    <columns>
+        <column type="fee">fee</column>
+        <column type="ptfee">pt_fee</column>
+    </columns>'
 )
 
 ''',
-    '''
-CREATE TABLE if not exists feetable_scotNHS_09_Child (
+'''
+CREATE TABLE feetable_scotNHS_09_Child (
 ix int(10) unsigned NOT NULL auto_increment ,
 section smallint(6),
 code char(8),
@@ -147,18 +169,20 @@ pt_fee int(11),
 hide bool NOT NULL default False,
 PRIMARY KEY (ix))
 ''',
-
-    '''
+'''
 INSERT into feetable_key (tablename, categories, description, startdate,
 display_order, feecoltypes)
 values ("feetable_HDP", "I",
 "Highland Dental Plan FeeScale", 20080401, 2,
-'<?xml version="1.0"?><columns><column type="fee">fee</column><column type="ptfee">pt_fee</column></columns>'
+'<?xml version="1.0"?>
+    <columns>
+        <column type="fee">fee</column>
+        <column type="ptfee">pt_fee</column>
+    </columns>'
 )
-
 ''',
-    '''
-CREATE TABLE if not exists feetable_HDP (
+'''
+CREATE TABLE feetable_HDP (
 ix int(10) unsigned NOT NULL auto_increment ,
 section smallint(6),
 code char(8),
@@ -172,18 +196,22 @@ pt_fee int(11) NOT NULL default 0,
 hide bool NOT NULL default False,
 PRIMARY KEY (ix))
 ''',
-
-    '''
+'''
 INSERT into feetable_key (tablename, categories, description, startdate,
 enddate, display_order, feecoltypes)
 values ("feetable_Private_2009","P,PB,PC,PD",
 "Private FeeScale", 20080401, 20091231, 1,
-'<?xml version="1.0"?><columns><column type="fee">fee</column><column type="fee">feeB</column>
-<column type="fee">feeC</column><column type="fee">feeD</column></columns>'
+'<?xml version="1.0"?>
+    <columns>
+        <column type="fee">fee</column>
+        <column type="fee">feeB</column>
+        <column type="fee">feeC</column>
+        <column type="fee">feeD</column>
+    </columns>'
 )
 ''',
-    '''
-CREATE TABLE if not exists feetable_Private_2009 (
+'''
+CREATE TABLE feetable_Private_2009 (
 ix int(10) unsigned NOT NULL auto_increment ,
 section smallint(6),
 code char(8),
@@ -199,19 +227,22 @@ feeD int(11),
 hide bool NOT NULL default False,
 PRIMARY KEY (ix))
 ''',
-
-    '''
+'''
 INSERT into feetable_key (tablename, categories, description, startdate,
 display_order, feecoltypes)
 values ("feetable_Private_2010","P,PB,PC,PD",
 "Private FeeScale", 20100101, 7,
-'<?xml version="1.0"?><columns><column type="fee">fee</column><column type="fee">feeB</column>
-<column type="fee">feeC</column><column type="fee">feeD</column></columns>'
+'<?xml version="1.0"?>
+    <columns>
+        <column type="fee">fee</column>
+        <column type="fee">feeB</column>
+        <column type="fee">feeC</column>
+        <column type="fee">feeD</column>
+    </columns>'
 )
 ''',
-
-    '''
-CREATE TABLE if not exists feetable_Private_2010 (
+'''
+CREATE TABLE feetable_Private_2010 (
 ix int(10) unsigned NOT NULL auto_increment ,
 section smallint(6),
 code char(8),
@@ -227,9 +258,8 @@ feeD int(11),
 hide bool NOT NULL default False,
 PRIMARY KEY (ix))
 ''',
-
-    '''
-CREATE TABLE if not exists docsimported (
+'''
+CREATE TABLE docsimported (
 ix int(10) unsigned NOT NULL auto_increment ,
 serialno int(11) NOT NULL ,
 importdate date ,
@@ -238,72 +268,27 @@ data blob ,
 PRIMARY KEY (ix),
 KEY (serialno))
 ''',
-
-    'DROP TABLE if exists omforum',
-    'DROP TABLE if exists estimates',
-
+'DROP TABLE IF EXISTS omforum',
+'DROP TABLE IF EXISTS estimates',
 ]
 
 
-class UpdateException(Exception):
+SRC_QUERY = '''select section, code, oldcode, USERCODE,
+regulation, description, description1, %s from newfeetable
+order by code, ix'''
 
-    '''
-    A custom exception. If this is thrown the db will be rolled back
-    '''
-    pass
+DEST_QUERY = '''insert into %s (section, code, oldcode, USERCODE,
+regulation, description, brief_description, fee, pt_fee)
+values (%%s, %%s, %%s, %%s, %%s, %%s, %%s, %%s, %%s)'''.replace("\n", " ")
 
+LOCK_QUERY = 'lock tables newfeetable read, %s write'
 
-class dbUpdater(QtCore.QThread):
-
-    def __init__(self, parent=None):
-        super(dbUpdater, self).__init__(parent)
-        self.stopped = False
-        self.path = None
-        self.completed = False
-        self.MESSAGE = "upating database"
-
-    def progressSig(self, val, message=""):
-        '''
-        emits a signal showhing how we are proceeding.
-        val is a number between 0 and 100
-        '''
-        if message != "":
-            self.MESSAGE = message
-        self.emit(QtCore.SIGNAL("progress"), val, self.MESSAGE)
-
-    def create_alter_tables(self):
-        '''
-        execute the above commands
-        NOTE - this function may fail depending on the mysql permissions
-        in place
-        '''
-        db = connect.connect()
-        db.autocommit(False)
-        cursor = db.cursor()
-        success = False
-        try:
-            i, commandNo = 0, len(SQLSTRINGS)
-            for sql_string in SQLSTRINGS:
-                cursor.execute(sql_string)
-                self.progressSig(
-                    10 + 70 * i / commandNo,
-                    sql_string[:20] + "...")
-            success = True
-        except Exception as e:
-            print "FAILURE create_alter_tables", e
-            db.rollback()
-        if success:
-            db.commit()
-            db.autocommit(True)
-        else:
-            raise UpdateException("couldn't create tables!")
+class DatabaseUpdater(DatabaseUpdaterThread):
 
     def transferData(self):
         '''
         move data into the new tables
         '''
-        db = connect.connect()
-        cursor = db.cursor()
         for table, vals in (
             ("feetable_scotNHS_08_Adult", "NF08, NF08_pt"),
             ("feetable_scotNHS_08_Child", "NF08, NF08_pt"),
@@ -311,46 +296,28 @@ class dbUpdater(QtCore.QThread):
             ("feetable_scotNHS_09_Child", "NF09, NF09_pt"),
             ("feetable_Private_2009", "PFA"),
             ("feetable_Private_2010", "PFA"),
-                ("feetable_HDP", "PFA")):
-            cursor.execute('lock tables newfeetable read, %s write' % table)
+            ("feetable_HDP", "PFA")
+        ):
+            self.cursor.execute(LOCK_QUERY % table)
+            self.cursor.execute(SRC_QUERY % vals)
+            rows = self.cursor.fetchall()
 
-            cursor.execute('''select section, code, oldcode, USERCODE,
-regulation, description, description1, %s from newfeetable
-order by code, ix''' % vals)
-            rows = cursor.fetchall()
+            query = DEST_QUERY % table
+            if not "," in vals:
+                query = query.replace(", pt_fee", "")
+                query = query.replace("%s,","", 1)
 
-            query = 'insert into %s' % table
-            query += ''' (section, code, oldcode, USERCODE,
-regulation, description, brief_description, fee'''
-
-            if "," in vals:
-                query += ' , pt_fee) values (%s, %s, %s, %s, %s, %s, %s, %s, %s)'
-            else:
-                query += ') values (%s, %s, %s, %s, %s, %s, %s, %s)'
-
-            values = []
-            for row in rows:
-                if "NHS" in table or row[7] != 0:
-                    values.append(row)
-
-            cursor.executemany(query, values)
-
-            db.commit()
-            cursor.execute("unlock tables")
-
-        cursor.close()
-        db.close()
-        return True
-
-    def completeSig(self, arg):
-        self.emit(QtCore.SIGNAL("completed"), self.completed, arg)
+            values = [row for row in rows if "NHS" in table or row[7]!=0]
+            self.cursor.executemany(query, values)
+            self.cursor.execute("unlock tables")
 
     def run(self):
-        print "running script to convert from schema 1.3 to 1.4"
+        LOGGER.info("running script to convert from schema 1.3 to 1.4")
         try:
+            self.connect()
             #- execute the SQL commands
             self.progressSig(10, _("creating new tables"))
-            self.create_alter_tables()
+            self.execute_statements(SQLSTRINGS)
 
             #- transfer data
             self.progressSig(20,
@@ -363,28 +330,22 @@ regulation, description, brief_description, fee'''
             # only 1.4 client will work now.
 
             self.progressSig(90, _('updating settings'))
-            print "update database settings..."
 
-            schema_version.update(("1.4",), "1_3 to 1_4 script")
+            self.update_schema_version(("1.4",), "1_3 to 1_4 script")
 
             self.progressSig(100, _("updating stored schema version"))
-            self.completed = True
-            self.completeSig(_("ALL DONE - successfully moved db to")
-                             + " 1.4")
-
-        except UpdateException as e:
-            localsettings.CLIENT_SCHEMA_VERSION = "1.3"
-            self.completeSig(_("rolled back to") + " 1.3")
-
-        except Exception as e:
-            print "Exception caught", e
-            self.completeSig(str(e))
-
-        return self.completed
+            self.commit()
+            self.completeSig(_("Successfully moved db to")+ " 1.4")
+            return True
+        except Exception as exc:
+            LOGGER.exception("error transfering data")
+            self.rollback()
+            raise self.UpdateError(exc)
 
 if __name__ == "__main__":
-    dbu = dbUpdater()
+    LOGGER.setLevel(logging.DEBUG)
+    dbu = DatabaseUpdater()
     if dbu.run():
-        print "ALL DONE, conversion successful"
+        LOGGER.info("ALL DONE, conversion successful")
     else:
-        print "conversion failed"
+        LOGGER.error("conversion failed")

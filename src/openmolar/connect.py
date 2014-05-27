@@ -105,6 +105,10 @@ IntegrityError = MySQLdb.IntegrityError
 OperationalError = MySQLdb.OperationalError
 
 
+class WaitingError(Exception):
+    pass
+
+
 class omSQLresult(object):
 
     '''
@@ -172,6 +176,7 @@ def connect():
             LOGGER.error("unable to connect to Mysql database")
             LOGGER.info("will attempt re-connect in 2 seconds...")
             mainconnection = None
+            raise WaitingError("attempting to connect to Mysql")
         time.sleep(2)
         attempts += 1
 

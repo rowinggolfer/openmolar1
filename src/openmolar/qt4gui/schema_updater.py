@@ -26,17 +26,20 @@
 this module is called when the schema is found to be out of date
 '''
 
-from gettext import gettext as _
 import logging
 import sys
 import time
+
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 from openmolar.dbtools import schema_version
+from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
+from openmolar.backports.advisor import Advisor
 
 LOGGER = logging.getLogger("openmolar")
 
-MESSAGE = "<h3>%s</h3>%s<br />%s {OLD} %s {NEW}<hr />%s<br /><b>%s</b>" % (
+MESSAGE = '''<h3>%s</h3>
+%s<br />%s {OLD}<br />%s {NEW}<br /><br />%s<hr /><b>%s</b>''' % (
     _("Update required"),
     _("Your Openmolar database schema is out of date "
       "for this version of the client."),
@@ -49,7 +52,7 @@ MESSAGE = "<h3>%s</h3>%s<br />%s {OLD} %s {NEW}<hr />%s<br /><b>%s</b>" % (
 ABORT_MESSAGE = _('Sorry, you cannot run this version of the '
                   'openmolar client without updating your database schema.')
 
-FAILURE_MESSAGE = "<p>%s</p><p>%s</p><p>%s></p>" % (
+FAILURE_MESSAGE = "<p>%s</p><p>%s</p><p>%s</p>" % (
     _("Sorry, we seem unable to update your schema at this point, "
       "Perhaps you have grabbed a development version of the program?"),
     ("If so, please revert to a release version."),
@@ -62,206 +65,262 @@ class UserQuit(Exception):
     pass
 
 
-def proceed():
-    '''
-    on to the main gui.
-    '''
-    from openmolar.qt4gui import maingui
-    localsettings.loadFeeTables()
-    sys.exit(maingui.main(QtGui.QApplication.instance()))
+class SchemaUpdater(BaseDialog, Advisor):
+    def __init__(self, parent=None):
+        Advisor.__init__(self, parent)
+        BaseDialog.__init__(self, parent, remove_stretch=True)
+        self.setWindowTitle("openMolar")
 
+        self.header_label = QtGui.QLabel(_("Updating Database"))
+        self.header_label.setStyleSheet("font-weight:bold;")
+        self.label = QtGui.QLabel("")
+        self.pb = QtGui.QProgressBar()
 
-def user_quit():
-    raise UserQuit("user has quit the update")
+        self.insertWidget(self.header_label)
+        self.insertWidget(self.label)
+        self.insertWidget(self.pb)
+        self.pb.hide()
 
+        self._current_version = None
+        self.apply_but.setText(_("Continue"))
 
-class SchemaUpdater(object):
+        self.dbu = None
+        QtCore.QTimer.singleShot(100, self.confirm_update)
 
-    def __init__(self):
-        self.pb = QtGui.QProgressDialog()
-        self.pb.canceled.connect(user_quit)
+    @property
+    def current_version(self):
+        if self._current_version is None:
+            self._current_version = schema_version.getVersion()
+        return self._current_version
 
-        required = localsettings.CLIENT_SCHEMA_VERSION
-        self.current = schema_version.getVersion()
+    def confirm_update(self):
+        message = MESSAGE.replace("{OLD}", self.current_version)
+        message = message.replace("{NEW}", localsettings.CLIENT_SCHEMA_VERSION)
 
-        message = MESSAGE.replace(
-            "{OLD}",
-            self.current).replace(
-            "{NEW}",
-            required)
+        if QtGui.QMessageBox.question(
+                self,
+                _("Schema Update Required"),
+                message,
+                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                QtGui.QMessageBox.No
+        ) == QtGui.QMessageBox.Yes:
 
-        if QtGui.QMessageBox.question(None, "Update Schema",
-                                      message, QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                                      QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
-            self.pb.setWindowTitle("openMolar")
-            self.pb.show()
+            self.apply_updates()
         else:
-            self.completed(False, ABORT_MESSAGE)
+            self.hide_brief_message()
+            self.label.setText(_("Operation Cancelled."))
+            self.completed(ABORT_MESSAGE)
+            time.sleep(2)
+            self.reject()
 
-        self.apply_updates()
+    def sizeHint(self):
+        return QtCore.QSize(700,300)
 
-        if schema_version.getVersion() == required:
-            self.pb.destroy()
-            proceed()
-        else:
-            self.completed(False, FAILURE_MESSAGE)
+    def resizeEvent(self, event):
+        '''
+        this function is overwritten so that the advisor popup can be
+        put in the correct place
+        '''
+        QtGui.QDialog.resizeEvent(self, event)
+        widg = self.header_label
+        brief_pos_x = widg.pos().x() + widg.width()
+        brief_pos_y = widg.pos().y()
+
+        brief_pos = QtCore.QPoint(brief_pos_x, brief_pos_y)
+        self.setBriefMessagePosition(brief_pos, True)
+
+
+    def reject(self):
+        if self.dbu is not None:
+            self.dbu.force_stop()
+        BaseDialog.reject(self)
+        sys.exit("user rejected")
+        #raise UserQuit("user has quit the update")
+
 
     def updateProgress(self, arg, message):
         LOGGER.info("%s %s" % (arg, message))
-        self.pb.setLabelText(message)
+        self.label.setText(message)
         self.pb.setValue(arg)
         QtGui.QApplication.instance().processEvents()
 
     def apply_update(self):
-        self.updateProgress(1,
-                            "%s %s" % (_("upgrading to schema version"), self.next_version))
+        QtGui.QApplication.instance().processEvents()
+        time.sleep(2)
+        header_message = "%s <b>%s</b> %s <b>%s</b>" % (
+            _("Converting Database Schema from version"),
+            self.current_version,
+             _("to"),
+            self.next_version)
+        self.header_label.setText(header_message)
+        self.pb.show()
+        self.updateProgress(
+            1,
+            "%s %s" % (_("upgrading to schema version"),
+                       self.next_version))
 
-        QtCore.QObject.connect(self.dbu,
-                               QtCore.SIGNAL("progress"), self.updateProgress)
-        QtCore.QObject.connect(self.dbu,
-                               QtCore.SIGNAL("completed"), self.completed)
-
+        self.dbu.progress_signal.connect(self.updateProgress)
+        self.dbu.completed_signal.connect(self.completed)
+        QtGui.QApplication.instance().processEvents()
         try:
             if self.dbu.run():
                 localsettings.DB_SCHEMA_VERSION = self.next_version
+                self._current_version = None
             else:
-                self.completed(False,
-                               _('Conversion to %s failed') % self.next_version)
+                self.completed(
+                    False,
+                    _('Conversion to %s failed') % self.next_version)
         except UserQuit:
             LOGGER.warning("user quit the database upgrade")
-            completed(False, "Schema Upgrade Halted")
+            self.completed(False, _("Schema Upgrade Halted"))
 
         except Exception as exc:
             LOGGER.exception("unexpected exception")
             # fatal error!
-            completed(False, ('Unexpected Error updating the schema '
-                              'please file a bug at http:www.openmolar.com'))
+            self.completed(
+                _('Unexpected Error updating the schema '
+                  'please file a bug at http:www.openmolar.com')
+            )
 
-    def completed(self, success, message):
-        def accept():
-            m.accept()
-            self.pb.hide()
-        if success:
-            m = QtGui.QMessageBox()
-            m.setText(message)
-            m.setStandardButtons(QtGui.QMessageBox.NoButton)
-            m.setWindowTitle(_("OpenMolar"))
-            m.setModal(False)
-            QtCore.QTimer.singleShot(3 * 1000, accept)
-            m.exec_()
-            m.move(0, 0)
-        else:
-            LOGGER.warning("failure - %s" % message)
-            QtGui.QMessageBox.warning(self.pb, "Failure", message)
-            QtGui.QApplication.instance().closeAllWindows()
-            sys.exit("FAILED TO UPGRADE SCHEMA")
+    def completed(self, message):
+        '''
+        called by DatabaseUpdaterThread when completed
+        '''
+        QtGui.QApplication.instance().processEvents()
+        self.advise(message)
+        time.sleep(2)
+        self.pb.hide()
+
+    def success(self):
+        message = _("All updates successully applied!")
+        self.advise(message)
+        self.label.setText("%s<hr />%s" % (
+            message, _("continuing to openmolar")))
+        self.enableApply()
+        self.cancel_but.setText(_("Quit"))
+        QtCore.QTimer.singleShot(5000, self.accept)
+
+    def failure(self, message=None):
+        if message is None:
+            message = FAILURE_MESSAGE
+        self.hide_brief_message()
+        self.label.setText(message)
+
 
     def apply_updates(self):
         # UPDATE TO SCHEMA 1.1 ########################
         self.next_version = "1.1"
-        if self.current < self.next_version:
+        if self.current_version < self.next_version:
             from openmolar.schema_upgrades import schema1_0to1_1 as upmod
-            self.dbu = upmod.dbUpdater(self.pb)
+            self.dbu = upmod.DatabaseUpdater(self.pb)
             self.apply_update()
 
-       # UPDATE TO SCHEMA 1.2 ########################
+        # UPDATE TO SCHEMA 1.2 ########################
         self.next_version = "1.2"
-        if self.current < self.next_version:
+        if self.current_version < self.next_version:
             from openmolar.schema_upgrades import schema1_1to1_2 as upmod
-            self.dbu = upmod.dbUpdater(self.pb)
+            self.dbu = upmod.DatabaseUpdater(self.pb)
             self.apply_update()
 
-       # UPDATE TO SCHEMA 1.3 ########################
+        # UPDATE TO SCHEMA 1.3 ########################
         self.next_version = "1.3"
-        if self.current < self.next_version:
+        if self.current_version < self.next_version:
             from openmolar.schema_upgrades import schema1_2to1_3 as upmod
-            self.dbu = upmod.dbUpdater(self.pb)
+            self.dbu = upmod.DatabaseUpdater(self.pb)
             self.apply_update()
 
-       # UPDATE TO SCHEMA 1.4 ########################
+        # UPDATE TO SCHEMA 1.4 ########################
         self.next_version = "1.4"
-        if self.current < self.next_version:
+        if self.current_version < self.next_version:
             from openmolar.schema_upgrades import schema1_3to1_4 as upmod
-            self.dbu = upmod.dbUpdater(self.pb)
+            self.dbu = upmod.DatabaseUpdater(self.pb)
             self.apply_update()
 
-       # UPDATE TO SCHEMA 1.5 ########################
+        # UPDATE TO SCHEMA 1.5 ########################
         self.next_version = "1.5"
-        if self.current < self.next_version:
+        if self.current_version < self.next_version:
             from openmolar.schema_upgrades import schema1_4to1_5 as upmod
-            self.dbu = upmod.dbUpdater(self.pb)
+            self.dbu = upmod.DatabaseUpdater(self.pb)
             self.apply_update()
 
-       # UPDATE TO SCHEMA 1.6 ########################
+        # UPDATE TO SCHEMA 1.6 ########################
         self.next_version = "1.6"
-        if self.current < self.next_version:
+        if self.current_version < self.next_version:
+            from openmolar.schema_upgrades import schema1_5to1_6 as upmod
+            self.dbu = upmod.DatabaseUpdater(self.pb)
             self.apply_update()
 
-       # UPDATE TO SCHEMA 1.7 ########################
+        # UPDATE TO SCHEMA 1.7 ########################
         self.next_version = "1.7"
-        if self.current < self.next_version:
+        if self.current_version < self.next_version:
             from openmolar.schema_upgrades import schema1_6to1_7 as upmod
-            self.dbu = upmod.dbUpdater(self.pb)
+            self.dbu = upmod.DatabaseUpdater(self.pb)
             self.apply_update()
 
-       # UPDATE TO SCHEMA 1.8 ########################
+        # UPDATE TO SCHEMA 1.8 ########################
         self.next_version = "1.8"
-        if self.current < self.next_version:
+        if self.current_version < self.next_version:
             from openmolar.schema_upgrades import schema1_7to1_8 as upmod
-            self.dbu = upmod.dbUpdater(self.pb)
+            self.dbu = upmod.DatabaseUpdater(self.pb)
             self.apply_update()
 
-       # UPDATE TO SCHEMA 1.9 ########################
+        # UPDATE TO SCHEMA 1.9 ########################
         self.next_version = "1.9"
-        if self.current < self.next_version:
+        if self.current_version < self.next_version:
             from openmolar.schema_upgrades import schema1_8to1_9 as upmod
-            self.dbu = upmod.dbUpdater(self.pb)
+            self.dbu = upmod.DatabaseUpdater(self.pb)
             self.apply_update()
 
-       # UPDATE TO SCHEMA 2.0 ########################
+        # UPDATE TO SCHEMA 2.0 ########################
         self.next_version = "2.0"
-        if self.current < self.next_version:
+        if self.current_version < self.next_version:
             from openmolar.schema_upgrades import schema1_9to2_0 as upmod
-            self.dbu = upmod.dbUpdater(self.pb)
+            self.dbu = upmod.DatabaseUpdater(self.pb)
             self.apply_update()
 
-       # UPDATE TO SCHEMA 2.1 ########################
+        # UPDATE TO SCHEMA 2.1 ########################
         self.next_version = "2.1"
-        if self.current < self.next_version:
+        if self.current_version < self.next_version:
             from openmolar.schema_upgrades import schema2_0to2_1 as upmod
-            self.dbu = upmod.dbUpdater(self.pb)
+            self.dbu = upmod.DatabaseUpdater(self.pb)
             self.apply_update()
 
-       # UPDATE TO SCHEMA 2.2 ########################
+        # UPDATE TO SCHEMA 2.2 ########################
         self.next_version = "2.2"
-        if self.current < self.next_version:
+        if self.current_version < self.next_version:
             from openmolar.schema_upgrades import schema2_1to2_2 as upmod
-            self.dbu = upmod.dbUpdater(self.pb)
+            self.dbu = upmod.DatabaseUpdater(self.pb)
             self.apply_update()
 
-       # UPDATE TO SCHEMA 2.3 ########################
+        # UPDATE TO SCHEMA 2.3 ########################
         self.next_version = "2.3"
-        if self.current < self.next_version:
+        if self.current_version < self.next_version:
             from openmolar.schema_upgrades import schema2_2to2_3 as upmod
-            self.dbu = upmod.dbUpdater(self.pb)
+            self.dbu = upmod.DatabaseUpdater(self.pb)
             self.apply_update()
 
-       # UPDATE TO SCHEMA 2.4 ########################
+        # UPDATE TO SCHEMA 2.4 ########################
         self.next_version = "2.4"
-        if self.current < self.next_version:
+        if self.current_version < self.next_version:
             from openmolar.schema_upgrades import schema2_3to2_4 as upmod
-            self.dbu = upmod.dbUpdater(self.pb)
+            self.dbu = upmod.DatabaseUpdater(self.pb)
             self.apply_update()
 
+        # UPDATE TO SCHEMA 2.5 ########################
+        self.next_version = "2.5"
+        if self.current_version < self.next_version:
+            from openmolar.schema_upgrades import schema2_4to2_5 as upmod
+            self.dbu = upmod.DatabaseUpdater(self.pb)
+            self.apply_update()
 
-def main():
-    LOGGER.info("running schema_updater")
-    if QtGui.QApplication.instance() is None:
-        app = QtGui.QApplication(sys.argv)
-    schema_update = SchemaUpdater()
-    schema_update.run()
+        self.dbu = None
+        if schema_version.getVersion() == localsettings.CLIENT_SCHEMA_VERSION:
+            self.success()
+        else:
+            self.failure()
 
 if __name__ == "__main__":
+    from gettext import gettext as _
     #-- put "openmolar" on the pyth path and go....
     LOGGER.setLevel(logging.DEBUG)
     LOGGER.debug("starting schema_updater")
@@ -284,4 +343,6 @@ if __name__ == "__main__":
     wkdir = determine_path()
     sys.path.append(os.path.dirname(wkdir))
 
-    main()
+    app = QtGui.QApplication(sys.argv)
+    schema_updater = SchemaUpdater()
+    print schema_updater.exec_()

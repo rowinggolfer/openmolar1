@@ -30,6 +30,7 @@ from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
 LOGGER = logging.getLogger("openmolar")
 
+
 class RecallPromptDialog(BaseDialog):
     APPLY = 0
     IGNORE = 1
@@ -47,13 +48,13 @@ class RecallPromptDialog(BaseDialog):
         message = _("There is a problem with the recall date of this patient.")
         action = _("Would you like to fix this now?")
 
-        self.warning_label = WarningLabel("%s<hr />%s"% (message, action))
+        self.warning_label = WarningLabel("%s<hr />%s" % (message, action))
 
         self.apply_but.setText(_("Fix"))
 
         self.ignore_but = self.button_box.addButton(
             QtGui.QDialogButtonBox.Discard)
-        self.ignore_but.setText(_("Ignore"))
+        self.ignore_but.setText(_("Ignore Recall Date"))
         self.ignore_but.setToolTip(_("Ignore this for now."))
 
         self.cancel_but.setToolTip(_("Cancel and Continue Editing"))

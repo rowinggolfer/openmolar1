@@ -102,13 +102,14 @@ from openmolar.dbtools import estimatesHistory
 from openmolar.dbtools import est_logger
 from openmolar.dbtools import daybook
 from openmolar.dbtools.distinct_statuses import DistinctStatuses
+from openmolar.dbtools import schema_version
+from openmolar.dbtools import referral
 
 
 #--modules which act upon the pt class type (and subclasses)
 from openmolar.ptModules import patientDetails
 from openmolar.ptModules import formatted_notes
 from openmolar.ptModules import plan
-from openmolar.ptModules import referral
 from openmolar.ptModules import debug_html
 from openmolar.ptModules import estimates
 from openmolar.ptModules import tooth_history
@@ -187,8 +188,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.completed_listView.setContextMenuPolicy(
             QtCore.Qt.CustomContextMenu)
 
-        self.setWindowTitle("OpenMolar - %s '%s'" % (
-            _("connected to"), database_name()))
+        self.setWindowTitle("OpenMolar - %s" % _("OFFLINE"))
 
         # reimplement these functions to catch "clicked links"
         self.ui.daybook_filters_frame.setEnabled(False)
@@ -200,10 +200,93 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.reloadButton.setEnabled(False)
         self.ui.relatedpts_pushButton.setEnabled(False)
 
-        QtCore.QTimer.singleShot(500, self.set_operator_label)
-        QtCore.QTimer.singleShot(500, self.load_pt_statuses)
-        QtCore.QTimer.singleShot(1000, self.load_todays_patients_combobox)
-        QtCore.QTimer.singleShot(2000, self.load_fee_tables)
+        self.forum_timer = QtCore.QTimer()
+        QtCore.QTimer.singleShot(100, self.login)
+
+    def initiate(self):
+        self.setWindowTitle("OpenMolar - %s '%s'" % (
+            _("connected to"), database_name()))
+        self.set_operator_label()
+        self.load_pt_statuses()
+        self.ui.reception_textBrowser.setHtml(localsettings.message)
+        self.ui.notesSummary_webView.setHtml(localsettings.message)
+        self.ui.forumViewFilter_comboBox.addItems(
+            localsettings.allowed_logins)
+
+        QtCore.QTimer.singleShot(500, self.load_todays_patients_combobox)
+        QtCore.QTimer.singleShot(1000, self.load_fee_tables)
+        self.forum_timer.start(60000)  # fire every minute
+        self.forum_timer.timeout.connect(self.checkForNewForumPosts)
+        self.set_referral_centres()
+
+    def login(self):
+        dl = LoginDialog(self)
+        if not dl.exec_():
+            self.advise(_("No valid Login - Closing Application"), 2)
+            QtGui.QApplication.instance().closeAllWindows()
+        else:
+            self.advise("%s %s %s" %(
+                _("Login by"), localsettings.operator, "accepted"))
+            self.check_schema()
+            localsettings.initiate()
+            self.initiate()
+
+    def check_schema(self):
+        LOGGER.debug("checking schema version...")
+
+        if localsettings.IGNORE_SCHEMA_CHECK:
+            LOGGER.warning(
+                "Ignoring schema check - I hope you know what you are doing!")
+            self.advise(_("Warning - ignoring schema check!"), 2)
+            return
+        sv = schema_version.getVersion()
+        if localsettings.CLIENT_SCHEMA_VERSION == sv:
+            self.advise(_("database schema is up to date"))
+
+        elif localsettings.CLIENT_SCHEMA_VERSION > sv:
+            LOGGER.warning("schema is out of date")
+            self.advise(_("database schema is incompatible"))
+            from openmolar.qt4gui.schema_updater import SchemaUpdater
+            schema_updater = SchemaUpdater()
+            if not schema_updater.exec_():
+                QtGui.QApplication.instance().closeAllWindows()
+
+        elif localsettings.CLIENT_SCHEMA_VERSION < sv:
+            LOGGER.warning("client is out of date")
+            compatible = schema_version.clientCompatibility(
+                localsettings.CLIENT_SCHEMA_VERSION)
+
+            if not compatible:
+                self.advise("<p>%s</p><p>%s %s %s %s</p><hr />%s" % (
+                    _('Sorry, you cannot run this version of the openMolar '
+                    'client because your database schema is more advanced.'),
+                    _('this client requires schema version '),
+                    localsettings.CLIENT_SCHEMA_VERSION,
+                    _('but your database is at'),
+                    sv,
+                    _('Please Update openMolar now')), 2)
+            else:
+                message = '''<p>%s</p><p>%s %s %s %s</p>
+                <p>%s<br />%s</p><hr />%s''' % (
+                    _('This openMolar client has fallen behind your database '
+                    'schema version'),
+                    _('This client was written for schema version'),
+                    localsettings.CLIENT_SCHEMA_VERSION,
+                    _('and your database is now at'),
+                    sv.
+                    _('However, the differences are not critical, and you can '
+                    'continue if you wish'),
+                    _('It would still be wise to update this client ASAP'),
+                    _('Do you wish to continue?'))
+
+                if QtGui.QMessageBox.question(
+                    self,
+                    _("Proceed without upgrade?"),
+                    message,
+                    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                    QtGui.QMessageBox.Yes) == QtGui.QMessageBox.No:
+                    QtGui.QApplication.instance().closeAllWindows()
+
 
     def resizeEvent(self, event):
         '''
@@ -375,17 +458,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.ui.perioGroupBoxes.append(periogb)
             self.ui.perioChartWidgets.append(pchart)
 
-        #--updates the current time in appointment books
-        self.ui.referralLettersComboBox.clear()
-
-        self.forum_timer = QtCore.QTimer()
-        self.forum_timer.start(60000)  # fire every minute
-        self.forum_timer.timeout.connect(self.checkForNewForumPosts)
-
         self.enableEdit(False)
-        for desc in referral.getDescriptions():
-            s = QtCore.QString(desc)
-            self.ui.referralLettersComboBox.addItem(s)
 
         #-- add a header to the estimates page
         self.ui.estWidget = estimate_widget.EstimateWidget(self)
@@ -407,6 +480,11 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         layout = QtGui.QVBoxLayout(self.ui.cashbook_placeholder_widget)
         layout.setMargin(0)
         layout.addWidget(self.ui.cashbookTextBrowser)
+
+    def set_referral_centres(self):
+        #--updates the current time in appointment books
+        self.ui.referralLettersComboBox.clear()
+        self.ui.referralLettersComboBox.addItems(referral.getDescriptions())
 
     def setClinician(self):
         result, selected = ClinicianSelectDialog(self).result()
@@ -1440,9 +1518,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         else:
             self.ui.tabWidget.setCurrentIndex(3)
 
-        self.ui.reception_textBrowser.setHtml(localsettings.message)
         self.ui.recNotes_webView.setHtml("")
-        self.ui.notesSummary_webView.setHtml(localsettings.message)
 
         today = QtCore.QDate().currentDate()
         self.ui.daybookEndDateEdit.setDate(today)
@@ -1459,9 +1535,6 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                      self.ui.fnameEdit, self.ui.addr1Edit, self.ui.dobEdit,
                      self.ui.pcdeEdit, self.ui.sexEdit):
             widg.setPalette(palette)
-
-        self.ui.forumViewFilter_comboBox.addItems(
-            localsettings.allowed_logins)
 
         self.forum_mode()
         self.addHistoryMenu()
@@ -3262,40 +3335,23 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.advise('UNHANDLED EXCEPTION!<hr /><pre>%s' % message, 2)
 
 
-def main(app):
+def main():
     '''
     the entry point for the app
     '''
-    if not localsettings.successful_login:
-        try:
-            dev_path = os.path.join(
-                localsettings.localFileDirectory, "dev_login.txt")
-            f = open(dev_path, "r")
-            data = f.read().strip("\n")
-            f.close()
-            if localsettings.hash_func(data) != \
-                    '1fd0c27f4d65caaa10ef5ef6a714faf96ed44fdd':
-                raise IOError("bad checksum")
-            LOGGER.warning("allowing developer login")
-        except:
-            sys.exit("unable to run... no login")
-    localsettings.initiate()
+    os.chdir(os.path.expanduser("~"))
+    app = QtGui.QApplication(sys.argv)
     mainWindow = OpenmolarGui()
     sys.excepthook = mainWindow.excepthook
     mainWindow.show()
     mainWindow.setWindowState(QtCore.Qt.WindowMaximized)
-
     sys.exit(app.exec_())
 
 if __name__ == "__main__":
     from gettext import gettext as _
     LOGGER.setLevel(logging.DEBUG)
     LOGGER.warning("dev mode in use - verbose logging")
-    os.chdir(os.path.expanduser("~"))
-
     LOGGER.debug("Qt Version: %s", QtCore.QT_VERSION_STR)
     LOGGER.debug("PyQt Version: %s", QtCore.PYQT_VERSION_STR)
-    newapp = QtGui.QApplication(sys.argv)
-    localsettings.operator = "NW"
-    # localsettings.station = "reception"
-    main(newapp)
+
+    main()

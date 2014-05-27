@@ -29,10 +29,20 @@ The NewTable schema is contained in module variable NEW_TABLE_SQLSTRINGS
 Incidentally - this script introduces the "settings table" in which the schema
 variable is stored.
 '''
-from PyQt4 import QtGui, QtCore
+import logging
+import sys
 
-NEW_TABLE_SQLSTRINGS = ['''
-CREATE TABLE IF NOT EXISTS newestimates (
+from openmolar.settings import localsettings
+from openmolar.schema_upgrades.database_updater_thread import DatabaseUpdaterThread
+
+LOGGER = logging.getLogger("openmolar")
+
+NEW_TABLE_SQLSTRINGS = [
+'DROP TABLE IF EXISTS newestimates',
+'DROP TABLE IF EXISTS settings',
+'DROP TABLE IF EXISTS calendar',
+'''
+CREATE TABLE newestimates (
 `ix` int(10) unsigned NOT NULL auto_increment ,
 `serialno` int(11) NOT NULL ,
 `courseno` int(10) unsigned ,
@@ -56,7 +66,7 @@ KEY (serialno),
 KEY (courseno));
 ''',
                         '''
-CREATE TABLE IF NOT EXISTS settings (
+CREATE TABLE settings (
 `ix` int(10) unsigned NOT NULL auto_increment ,
 `value` varchar(128),
 `data` text,
@@ -69,7 +79,7 @@ PRIMARY KEY (ix),
 KEY (value));
 ''',
                         '''
-CREATE TABLE IF NOT EXISTS calendar (
+CREATE TABLE calendar (
 `ix` int(10) unsigned NOT NULL auto_increment ,
 `adate` DATE NOT NULL,
 `memo` char(30),
@@ -78,50 +88,27 @@ KEY (adate));
 '''
                         ]
 
-import sys
-from openmolar.settings import localsettings
-from openmolar.dbtools import schema_version
-from openmolar import connect
-'''this checks for names which have changed.'''
 
+SRC_QUERY = '''select serialno, courseno, type, number, itemcode,
+description, fee, ptfee, feescale, csetype, dent, completed,
+carriedover, linked from estimates'''
 
-class dbUpdater(QtCore.QThread):
-
-    def __init__(self, parent=None):
-        super(dbUpdater, self).__init__(parent)
-        self.stopped = False
-        self.path = None
-        self.completed = False
-        self.MESSAGE = "upating database"
+class DatabaseUpdater(DatabaseUpdaterThread):
 
     def createNewTables(self):
         '''
         creates the newEstimatesTable.
-        NOTE - this function may fail depending on the mysql permissions in place
         '''
-        try:
-            db = connect.connect()
-            cursor = db.cursor()
-            for sql_strings in NEW_TABLE_SQLSTRINGS:
-                cursor.execute(sql_strings)
-            db.commit()
-            return True
-        except Exception as e:
-            print e
-            print "unable to execute createNewEstimates"
+        for sql_strings in NEW_TABLE_SQLSTRINGS:
+            self.cursor.execute(sql_strings)
+        return True
 
     def getRowsFromOld(self):
         '''
         get ALL data from the estimates table
         '''
-        db = connect.connect()
-        cursor = db.cursor()
-        cursor.execute('''select serialno, courseno, type, number, itemcode,
-        description, fee, ptfee, feescale, csetype, dent, completed,
-        carriedover, linked from estimates''')
-        rows = cursor.fetchall()
-        cursor.close()
-        db.close()
+        self.cursor.execute(SRC_QUERY)
+        rows = self.cursor.fetchall()
         return rows
 
     def convertData(self, rows):
@@ -154,7 +141,7 @@ class dbUpdater(QtCore.QThread):
                 if i % 100 == 0:
                     self.progressSig((i / progress_var) * 40 + 20)
             if len(row) != len(newrow) - 1:
-                print "Error converting ", row
+                LOGGER.error("Error converting %s", str(row))
                 sys.exit()
             retlist.append(newrow)
         return retlist
@@ -163,8 +150,6 @@ class dbUpdater(QtCore.QThread):
         '''
         insert new row types into the newestimates table
         '''
-        db = connect.connect()
-        cursor = db.cursor()
         progress_var = len(rows)
         i = 0
         query = '''insert into newestimates
@@ -174,54 +159,36 @@ class dbUpdater(QtCore.QThread):
         %s, %s, %s, %s, %s, %s, %s, %s, %s, '1_0to1_1script', NOW())'''
 
         for values in rows:
-            cursor.execute(query, values)
+            self.cursor.execute(query, values)
             i += 1
             if i % 100 == 0:
                 self.progressSig((i / progress_var) * 90 + 40)
 
-        db.commit()
-        db.close()
-
-    def progressSig(self, val, message=""):
-        '''
-        emits a signal showhing how we are proceeding.
-        val is a number between 0 and 100
-        '''
-        if message != "":
-            self.MESSAGE = message
-        self.emit(QtCore.SIGNAL("progress"), val, self.MESSAGE)
-
-    def completeSig(self, arg):
-        self.emit(QtCore.SIGNAL("completed"), self.completed, arg)
-
     def run(self):
-        print "running script to convert from schema 1.0 to 1.1"
+        LOGGER.info("running script to convert from schema 1.0 to 1.1")
         try:
+            self.connect()
             if self.createNewTables():
                 self.progressSig(10, "extracting estimates")
                 oldrows = self.getRowsFromOld()
                 self.progressSig(20, "converting data")
                 newRows = self.convertData(oldrows)
-
                 self.progressSig(40, "exporting into newestimates table")
-                print 'now exporting, this can take some time'
                 self.insertRowsIntoNew(newRows)
                 self.progressSig(90, "updating stored schema version")
-                schema_version.update(("1.1",), "1_0 to 1_1 script")
-
+                self.update_schema_version(("1.1",), "1_0 to 1_1 script")
                 self.progressSig(100)
-                self.completed = True
-                self.completeSig("ALL DONE - successfully moved db to 1,1")
-
-        except Exception as e:
-            print "Exception caught", e
-            self.completeSig(str(e))
-
-        return self.completed
+                self.commit()
+                self.completeSig(_("Successfully moved db to")+ " 1.1")
+                return True
+        except Exception as exc:
+            LOGGER.exception("error transfering data")
+            self.rollback()
+            raise self.UpdateError(exc)
 
 if __name__ == "__main__":
-    dbu = dbUpdater()
+    dbu = DatabaseUpdater()
     if dbu.run():
-        print "ALL DONE, conversion successful"
+        LOGGER.info("ALL DONE, conversion successful")
     else:
-        print "conversion failed"
+        LOGGER.error("conversion failed")
