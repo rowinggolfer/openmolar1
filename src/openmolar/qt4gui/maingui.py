@@ -206,7 +206,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
     def initiate(self):
         self.setWindowTitle("OpenMolar - %s '%s'" % (
             _("connected to"), database_name()))
-        self.set_operator_label()
+        self.set_surgery_mode()
         self.load_pt_statuses()
         self.ui.reception_textBrowser.setHtml(localsettings.message)
         self.ui.notesSummary_webView.setHtml(localsettings.message)
@@ -1477,8 +1477,10 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             if dl.exec_() and dl.chosen_sno:
                 self.getrecord(dl.chosen_sno, True)
 
-    def set_surgery_mode(self, surgery):
-        localsettings.station = "surgery" if surgery else "reception"
+    def set_surgery_mode(self, is_surgery=None):
+        if is_surgery is None:
+            is_surgery = localsettings.station == "surgery"
+        localsettings.station = "surgery" if is_surgery else "reception"
         self.set_operator_label()
         self.gotoDefaultTab()
 

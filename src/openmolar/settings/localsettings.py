@@ -719,7 +719,7 @@ def autologin():
         try:
             PASSWORD = scp.get("login", "PASSWORD")
         except ConfigParser.NoOptionError:
-            PASSWORD = ""
+            pass
         try:
             USER1 = scp.get("login", "USER1")
         except ConfigParser.NoOptionError:
@@ -729,8 +729,8 @@ def autologin():
         except ConfigParser.NoOptionError:
             pass
     except ConfigParser.NoSectionError:
-        LOGGER.exception("autologin")
-        pass
+        LOGGER.info("no autologin")
+
     return PASSWORD, USER1, USER2
 
 
