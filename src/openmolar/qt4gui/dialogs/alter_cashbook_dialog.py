@@ -29,9 +29,6 @@ from openmolar.connect import connect
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 from openmolar.qt4gui.dialogs import permissions
 
-from openmolar.dbtools.cashbook import cashbookCodesDict
-
-
 QUERY = '''select cbdate, ref, descr, code, dntid, amt from cashbook
 where id = %s'''
 
@@ -64,7 +61,7 @@ class AlterCashbookDialog(ExtendableDialog):
         self.amount_sb = QtGui.QDoubleSpinBox()
         self.amount_sb.setRange(0, 10000)
 
-        self.codestrings = cashbookCodesDict.values()
+        self.codestrings = localsettings.cashbookCodesDict.values()
         self.code_cb.addItems(self.codestrings)
 
         form_layout.addRow(_("Patient Number"), self.serialno_le)
@@ -126,7 +123,7 @@ class AlterCashbookDialog(ExtendableDialog):
             pos = -1
         self.dentist_cb.setCurrentIndex(pos)
 
-        code_str = cashbookCodesDict.get(code)
+        code_str = localsettings.cashbookCodesDict.get(code)
         self.code_cb.setCurrentIndex(self.codestrings.index(code_str))
 
         pounds = amt // 100
@@ -140,7 +137,7 @@ class AlterCashbookDialog(ExtendableDialog):
         date_ = self.date_edit.date().toPyDate()
         ref = str(self.serialno_le.text().toAscii())
         descr = str(self.patient_le.text().toAscii())
-        for key, value in cashbookCodesDict.viewitems():
+        for key, value in localsettings.cashbookCodesDict.viewitems():
             if self.code_cb.currentText() == value:
                 code = key
                 break

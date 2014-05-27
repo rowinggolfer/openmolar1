@@ -51,6 +51,7 @@ ENCODING = locale.getpreferredencoding()
 
 FEETABLES = None
 WIKIURL = ""
+cashbookCodesDict = None
 
 IGNORE_SCHEMA_CHECK = False
 
@@ -814,15 +815,20 @@ def initiate(changedServer=False, debug=False):
     # print "initiating settings"
     global message, dentDict, ops, SUPERVISOR, \
         ops_reverse, activedents, activehygs, activedent_ixs, activehyg_ixs, \
-        apptix, apptix_reverse, bookEnd, clinicianNo, clinicianInits, WIKIURL
+        apptix, apptix_reverse, bookEnd, clinicianNo, clinicianInits, \
+        WIKIURL, cashbookCodesDict
 
     from openmolar import connect
     from openmolar.dbtools import db_settings
+    from openmolar.dbtools import cashbook
 
     if changedServer and connect.mainconnection:
         print "closing connection"
         connect.mainconnection.close()
         reload(connect)
+
+    cashbookCodesDict = cashbook.CashBookCodesDict()
+
 
     data = db_settings.getData("bookend")
     if data:

@@ -3,8 +3,8 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/main.ui'
 #
-# Created: Tue May  6 12:04:10 2014
-#      by: PyQt4 UI code generator 4.10.3
+# Created: Tue May 27 16:06:22 2014
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -283,7 +283,7 @@ class Ui_MainWindow(object):
         self.scrollArea_4.setObjectName(_fromUtf8("scrollArea_4"))
         self.scrollAreaWidgetContents_7 = QtGui.QWidget()
         self.scrollAreaWidgetContents_7.setGeometry(
-            QtCore.QRect(0, 0, 743, 644))
+            QtCore.QRect(0, 0, 469, 644))
         self.scrollAreaWidgetContents_7.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_7"))
         self.verticalLayout_6 = QtGui.QVBoxLayout(
@@ -919,7 +919,7 @@ class Ui_MainWindow(object):
         self.scrollArea_5.setObjectName(_fromUtf8("scrollArea_5"))
         self.scrollAreaWidgetContents_8 = QtGui.QWidget()
         self.scrollAreaWidgetContents_8.setGeometry(
-            QtCore.QRect(0, 0, 725, 421))
+            QtCore.QRect(0, 0, 423, 421))
         self.scrollAreaWidgetContents_8.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_8"))
         self.gridLayout = QtGui.QGridLayout(self.scrollAreaWidgetContents_8)
@@ -1112,7 +1112,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setObjectName(_fromUtf8("scrollArea_2"))
         self.scrollAreaWidgetContents_5 = QtGui.QWidget()
         self.scrollAreaWidgetContents_5.setGeometry(
-            QtCore.QRect(0, 0, 745, 470))
+            QtCore.QRect(0, 0, 283, 470))
         self.scrollAreaWidgetContents_5.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_5"))
         self.horizontalLayout_26 = QtGui.QHBoxLayout(
@@ -1654,7 +1654,7 @@ class Ui_MainWindow(object):
             _fromUtf8("estimate_scrollArea"))
         self.scrollAreaWidgetContents_11 = QtGui.QWidget()
         self.scrollAreaWidgetContents_11.setGeometry(
-            QtCore.QRect(0, 0, 532, 375))
+            QtCore.QRect(0, 0, 98, 200))
         self.scrollAreaWidgetContents_11.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_11"))
         self.horizontalLayout_19 = QtGui.QHBoxLayout(
@@ -1677,7 +1677,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_4 = QtGui.QWidget()
         self.scrollAreaWidgetContents_4.setGeometry(
-            QtCore.QRect(0, 0, 198, 375))
+            QtCore.QRect(0, 0, 139, 212))
         self.scrollAreaWidgetContents_4.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_4"))
         self.verticalLayout_9 = QtGui.QVBoxLayout(
@@ -1738,7 +1738,7 @@ class Ui_MainWindow(object):
             _fromUtf8("perioCharts_scrollArea"))
         self.scrollAreaWidgetContents_6 = QtGui.QWidget()
         self.scrollAreaWidgetContents_6.setGeometry(
-            QtCore.QRect(0, 0, 740, 377))
+            QtCore.QRect(0, 0, 252, 374))
         self.scrollAreaWidgetContents_6.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_6"))
         self.gridLayout_15 = QtGui.QGridLayout(self.scrollAreaWidgetContents_6)
@@ -3071,6 +3071,9 @@ class Ui_MainWindow(object):
         self.action_all_history_edits.setCheckable(True)
         self.action_all_history_edits.setObjectName(
             _fromUtf8("action_all_history_edits"))
+        self.actionEdit_Referral_Centres = QtGui.QAction(MainWindow)
+        self.actionEdit_Referral_Centres.setObjectName(
+            _fromUtf8("actionEdit_Referral_Centres"))
         self.menuMenu.addAction(self.action_Open_Patient)
         self.menuMenu.addSeparator()
         self.menuMenu.addAction(self.action_save_patient)
@@ -3119,6 +3122,7 @@ class Ui_MainWindow(object):
         self.menuTools.addAction(self.actionDocuments_Dialog)
         self.menuTools.addSeparator()
         self.menuTools.addAction(self.actionEdit_Phrasebooks)
+        self.menuTools.addAction(self.actionEdit_Referral_Centres)
         self.menubar.addAction(self.menuMenu.menuAction())
         self.menubar.addAction(self.menu_Prefences.menuAction())
         self.menubar.addAction(self.menuTools.menuAction())
@@ -3660,6 +3664,7 @@ class Ui_MainWindow(object):
         self.actionEdit_Estimates.setText(_("Allow Edit &Estimates"))
         self.actionAllow_Edit_Treatment.setText(_("Allow Edit &Treatment"))
         self.action_all_history_edits.setText(_("Allow &ALL Edits"))
+        self.actionEdit_Referral_Centres.setText(_("Edit Referral Centres"))
 
 from PyQt4 import QtWebKit
 from openmolar.qt4gui import resources_rc

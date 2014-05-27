@@ -185,7 +185,7 @@ def details(dent, startdate, enddate,
         retarg += '<td>%s</td><td>%s</td>' % (row[0], row[1])
         retarg += '<td>%s</td>' % localsettings.ops.get(row[2])
         retarg += '<td>%s</td>' % row[3]
-        CODE = cashbookCodesDict.get(row[4])
+        CODE = localsettings.cashbookCodesDict.get(row[4])
         retarg += '<td>%s</td>' % CODE
         amt = row[5]
         amt_str = localsettings.formatMoney(amt)
@@ -244,13 +244,9 @@ def details(dent, startdate, enddate,
     # db.close()
     return retarg
 
-#--initiate the cashbook dictionary on module import
-# cashbookCodesDict = CashBookCodesDict()
-cashbookCodesDict = {}
-
 if __name__ == "__main__":
     from PyQt4.QtCore import QDate
 
     localsettings.initiate()
-    print cashbookCodesDict
-    print cashbookCodesDict.viewitems()
+    print localsettings.cashbookCodesDict
+    print localsettings.cashbookCodesDict.viewitems()

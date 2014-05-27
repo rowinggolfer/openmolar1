@@ -25,7 +25,6 @@
 from __future__ import division
 from openmolar.settings import localsettings
 from openmolar.connect import connect
-from openmolar.dbtools.cashbook import cashbookCodesDict
 
 HEADERS = (
     _("Date"),

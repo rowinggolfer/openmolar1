@@ -24,15 +24,29 @@
 
 import time
 import datetime
-from openmolar.settings import localsettings
+from collections import namedtuple
 
+from openmolar.settings import localsettings
 from openmolar.connect import connect
 
 QUERY = "SELECT description FROM referral_centres"
 
 ADDRESS_QUERY = '''
-SELECT greeting,addr1, addr2, addr3, addr4, addr5, addr6, addr7
+SELECT greeting, addr1, addr2, addr3, addr4, addr5, addr6, addr7
 FROM referral_centres where description = %s'''
+
+EDIT_QUERY = '''SELECT ix, description, greeting, addr1, addr2,
+addr3, addr4, addr5, addr6, addr7 FROM referral_centres order by ix'''
+
+UPDATE_QUERY = '''UPDATE referral_centres
+SET description=%s, greeting=%s, addr1=%s, addr2=%s,
+addr3=%s, addr4=%s, addr5=%s, addr6=%s, addr7=%s WHERE ix=%s'''
+
+INSERT_QUERY = '''INSERT INTO referral_centres
+(description, greeting, addr1, addr2, addr3, addr4, addr5, addr6, addr7)
+VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)'''
+
+DELETE_QUERY = 'DELETE FROM referral_centres WHERE ix=%s'
 
 HTML = '''
 <html><body>
@@ -55,6 +69,12 @@ HTML = '''
 </body></html>'''
 
 
+ReferralCentre = namedtuple('ReferralCentre',
+    ('ix', 'description', 'greeting', 'addr1', 'addr2',
+'addr3', 'addr4', 'addr5', 'addr6', 'addr7')
+    )
+
+
 def getDescriptions():
     descriptions = []
     db = connect()
@@ -65,6 +85,62 @@ def getDescriptions():
     cursor.close()
     return descriptions
 
+def get_referral_centres():
+    db = connect()
+    cursor = db.cursor()
+    cursor.execute(EDIT_QUERY)
+    for row in cursor.fetchall():
+        yield ReferralCentre(*row)
+    cursor.close()
+
+def insert_centres(centres):
+    values = []
+    for centre in centres:
+        values.append((centre.description,
+                      centre.greeting,
+                      centre.addr1,
+                      centre.addr2,
+                      centre.addr3,
+                      centre.addr4,
+                      centre.addr5,
+                      centre.addr6,
+                      centre.addr7)
+                    )
+    if values != []:
+        db = connect()
+        cursor = db.cursor()
+        cursor.executemany(INSERT_QUERY, values)
+        cursor.close()
+
+def update_centres(centres):
+    values = []
+    for centre in centres:
+        values.append((centre.description,
+                      centre.greeting,
+                      centre.addr1,
+                      centre.addr2,
+                      centre.addr3,
+                      centre.addr4,
+                      centre.addr5,
+                      centre.addr6,
+                      centre.addr7,
+                      centre.ix)
+                    )
+    if values != []:
+        db = connect()
+        cursor = db.cursor()
+        cursor.executemany(UPDATE_QUERY, values)
+        cursor.close()
+
+def delete_centres(centres):
+    values = []
+    for centre in centres:
+        values.append((centre.ix,))
+    if values != []:
+        db = connect()
+        cursor = db.cursor()
+        cursor.executemany(DELETE_QUERY, values)
+        cursor.close()
 
 def getHtml(description, pt):
     '''
