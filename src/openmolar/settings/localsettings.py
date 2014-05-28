@@ -117,10 +117,11 @@ chosenserver = 0
 
 def setChosenServer(i):
     global DBNAME, chosenserver
+    LOGGER.debug("chosen server number is set as %s", i)
     chosenserver = i
     try:
         DBNAME = server_names[i]
-        LOGGER.debug("DBNAME = %s" % DBNAME)
+        LOGGER.warning("User has chosen database '%s'", DBNAME)
     except IndexError:
         LOGGER.warning("no server name.. config file is old format?")
 
@@ -788,17 +789,20 @@ def updateLocalSettings(setting, value):
     return True
 
 
-def initiateUsers(changedServer=False):
+def initiateUsers(changed_server=False):
     '''
     just grab user names. necessary because the db schema could be OOD here
     '''
+    LOGGER.debug("initiating allowed users changed_server = %s",
+        changed_server)
     global allowed_logins
     from openmolar import connect
 
-    if changedServer and connect.mainconnection:
-        print "closing connection"
-        connect.mainconnection.close()
-        reload(connect)
+    if changed_server:
+        if connect.mainconnection:
+            LOGGER.warning("closing connection to previously chosen database")
+            connect.mainconnection.close()
+        connect.params.reload()
 
     db = connect.connect()
     cursor = db.cursor()
@@ -811,8 +815,8 @@ def initiateUsers(changedServer=False):
         allowed_logins.append(row[0])
 
 
-def initiate(changedServer=False, debug=False):
-    # print "initiating settings"
+def initiate(changed_server=False, debug=False):
+    LOGGER.debug("initiating settings from database")
     global message, dentDict, ops, SUPERVISOR, \
         ops_reverse, activedents, activehygs, activedent_ixs, activehyg_ixs, \
         apptix, apptix_reverse, bookEnd, clinicianNo, clinicianInits, \
@@ -822,10 +826,11 @@ def initiate(changedServer=False, debug=False):
     from openmolar.dbtools import db_settings
     from openmolar.dbtools import cashbook
 
-    if changedServer and connect.mainconnection:
-        print "closing connection"
-        connect.mainconnection.close()
-        reload(connect)
+    if changed_server:
+        if connect.mainconnection:
+            LOGGER.warning("closing connection to previously chosen database")
+            connect.mainconnection.close()
+        connect.params.reload()
 
     cashbookCodesDict = cashbook.CashBookCodesDict()
 

@@ -32,10 +32,11 @@ import types
 from xml.dom import minidom
 
 from openmolar.settings import localsettings
-from openmolar.connect import myDb as DATABASE_NAME
+from openmolar.connect import params
 from openmolar.schema_upgrades.database_updater_thread import DatabaseUpdaterThread
 
 LOGGER = logging.getLogger("openmolar")
+DATABASE_NAME = params.db_name
 
 SQLSTRINGS = [
     '''
@@ -192,6 +193,7 @@ COLUMN_QUERY = '''SELECT column_name FROM information_schema.columns WHERE table
 
 UPDATE_QUERY = "UPDATE feetable_key SET data = %s WHERE ix = %s"
 
+
 class DatabaseUpdater(DatabaseUpdaterThread):
 
     def convert_table_to_XML(self, table):
@@ -208,14 +210,14 @@ class DatabaseUpdater(DatabaseUpdaterThread):
         for row in rows:
             col_names.append(row[0])
 
-        #now convert to xml
+        # now convert to xml
         dom = minidom.Document()
         tab = dom.createElement("table")
         itemcodeIndex = col_names.index("code")
         currentItem = ""
 
         query = 'select * from %s' % table
-        self.cursor.execute(query)#, (table,))
+        self.cursor.execute(query)  # , (table,))
 
         for row in self.cursor.fetchall():
             newNode = row[itemcodeIndex] != currentItem
@@ -229,14 +231,14 @@ class DatabaseUpdater(DatabaseUpdaterThread):
                 makeNode = (
                     col != "ix" and (newNode or not
                                      col in ("section",
-                                    "code",
-                                    "oldcode",
-                                    "USERCODE",
-                                    "regulation",
-                                     "description",
-                                    "hide",
-                                    "pl_cmp")
-                                    ))
+                                             "code",
+                                             "oldcode",
+                                             "USERCODE",
+                                             "regulation",
+                                             "description",
+                                             "hide",
+                                             "pl_cmp")
+                                     ))
 
                 if col.startswith("fee") or col.startswith("pt_fee"):
                     makeNode = False
@@ -263,7 +265,7 @@ class DatabaseUpdater(DatabaseUpdaterThread):
                             val = unicode(row[i]).encode("ascii", "replace")
                         except UnicodeEncodeError:
                             LOGGER.exception("Unicode error from %s", row[i])
-                        #val = val.replace('\xc3\xbe', '3/4')
+                        # val = val.replace('\xc3\xbe', '3/4')
                         d.appendChild(dom.createTextNode(val))
                     item.appendChild(d)
 
@@ -309,7 +311,7 @@ class DatabaseUpdater(DatabaseUpdaterThread):
             self.update_schema_version(("1.6", "1.7",), "1_6 to 1_7 script")
             self.progressSig(100, _("updating stored schema version"))
             self.commit()
-            self.completeSig(_("Successfully moved db to")+ " 1.7")
+            self.completeSig(_("Successfully moved db to") + " 1.7")
             return True
         except Exception as exc:
             LOGGER.exception("error transfering data")

@@ -43,114 +43,78 @@ if __name__ == "__main__":
 
 mainconnection = None
 
-LOGGER.debug("parsing the global settings file")
-dom = minidom.parse(localsettings.cflocation)
+class DB_Params(object):
+    def __init__(self):
+        self.host = ""
+        self.port = 0
+        self.user = ""
+        self.db_name = ""
+        self.reload()
 
-settingsversion = dom.getElementsByTagName("version")[0].firstChild.data
-sysPassword = dom.getElementsByTagName("system_password")[0].firstChild.data
+    def reload(self):
+        dom = minidom.parse(localsettings.cflocation)
+        settingsversion = dom.getElementsByTagName("version")[0].firstChild.data
+        xmlnode = dom.getElementsByTagName("server")[localsettings.chosenserver]
+        command_nodes = xmlnode.getElementsByTagName("command")
+        for command_node in command_nodes:
+            LOGGER.info("commands found in conf file!")
+            commands = command_node.getElementsByTagName("str")
+            command_list = []
+            for command in commands:
+                command_list.append(command.firstChild.data)
+            if command_list:
+                LOGGER.info("executing %s" % str(command_list))
+                subprocess.Popen(command_list)
 
-xmlnode = dom.getElementsByTagName("server")[localsettings.chosenserver]
-command_nodes = xmlnode.getElementsByTagName("command")
-for command_node in command_nodes:
-    LOGGER.info("commands found in conf file!")
-    commands = command_node.getElementsByTagName("str")
-    command_list = []
-    for command in commands:
-        command_list.append(command.firstChild.data)
-    if command_list:
-        LOGGER.info("executing %s" % str(command_list))
-        subprocess.Popen(command_list)
+        self.host = xmlnode.getElementsByTagName("location")[0].firstChild.data
+        self.port = int(xmlnode.getElementsByTagName("port")[0].firstChild.data)
+        sslnode = xmlnode.getElementsByTagName("ssl")
+        self.use_ssl = sslnode and sslnode[0].firstChild.data == "True"
 
-myHost = xmlnode.getElementsByTagName("location")[0].firstChild.data
-myPort = int(xmlnode.getElementsByTagName("port")[0].firstChild.data)
-sslnode = xmlnode.getElementsByTagName("ssl")
+        xmlnode = dom.getElementsByTagName("database")[localsettings.chosenserver]
+        self.user = xmlnode.getElementsByTagName("user")[0].firstChild.data
+        self.password = xmlnode.getElementsByTagName("password")[0].firstChild.data
+        if settingsversion == "1.1":
+            self.password = base64.b64decode(self.password)
 
-xmlnode = dom.getElementsByTagName("database")[localsettings.chosenserver]
-myUser = xmlnode.getElementsByTagName("user")[0].firstChild.data
-myPassword = xmlnode.getElementsByTagName("password")[0].firstChild.data
-if settingsversion == "1.1":
-    myPassword = base64.b64decode(myPassword)
+        self.db_name = xmlnode.getElementsByTagName("dbname")[0].firstChild.data
 
-myDb = xmlnode.getElementsByTagName("dbname")[0].firstChild.data
+        if not self.use_ssl:
+            #-- to enable ssl... add <ssl>True</ssl> to the conf file
+            LOGGER.debug("using ssl")
+        else:
+            LOGGER.warning("not using ssl (you really should!)")
 
+        dom.unlink()
 
-def database_name():
-    return "%s %s:%s" % (myDb, myHost, myPort)
+    @property
+    def kwargs(self):
+        kwargs = {
+            "host": self.host,
+            "port": self.port,
+            "user": self.user,
+            "passwd": self.password,
+            "db": self.db_name,
+            "use_unicode": True,
+            "charset": "utf8"
+            }
+        if self.use_ssl:
+                #-- note, dictionary could have up to 5 params.
+            #-- ca, cert, key, capath and cipher
+            #-- however, IIUC, just using ca will encrypt the data
+            kwargs["ssl_settings"] = {'ca': '/etc/mysql/ca-cert.pem'}
+        return kwargs
 
-kwargs = {
-    "host": myHost,
-    "port": myPort,
-    "user": myUser,
-    "passwd": myPassword,
-    "db": myDb,
-    "use_unicode": True,
-    "charset": "utf8"
-}
+    @property
+    def database_name(self):
+        return "%s %s:%s" % (self.db_name, self.host, self.port)
 
-if sslnode and sslnode[0].firstChild.data == "True":
-    #-- to enable ssl... add <ssl>True</ssl> to the conf file
-    LOGGER.debug("using ssl")
-    #-- note, dictionary could have up to 5 params.
-    #-- ca, cert, key, capath and cipher
-    #-- however, IIUC, just using ca will encrypt the data
-    kwargs["ssl_settings"] = {'ca': '/etc/mysql/ca-cert.pem'}
-else:
-    LOGGER.warning("not using ssl (you really should!)")
-
-dom.unlink()
+params = DB_Params()
 
 GeneralError = MySQLdb.Error
 ProgrammingError = MySQLdb.ProgrammingError
 IntegrityError = MySQLdb.IntegrityError
 OperationalError = MySQLdb.OperationalError
-
-
-class WaitingError(Exception):
-    pass
-
-
-class omSQLresult(object):
-
-    '''
-    a class used in returning the result of sql queries
-    '''
-
-    def __init__(self):
-        self.message = ""
-        self.number = 0
-        self.result = False
-
-    def __nonzero__(self):
-        '''
-        used in case the class is used thus
-        if omSQLresult:
-        '''
-        return self.result
-
-    def setMessage(self, arg):
-        '''
-        set the message associated with the result
-        '''
-        self.message = arg
-
-    def getMessage(self):
-        '''
-        get the message associated with the result
-        '''
-        return self.message
-
-    def setNumber(self, arg):
-        '''
-        set the number of rows grabbed by the result
-        '''
-        self.number = arg
-
-    def getNumber(self):
-        '''
-        get the number of rows grabbed by the result
-        '''
-        return self.number
-
 
 def connect():
     '''
@@ -163,10 +127,8 @@ def connect():
         try:
             if not (mainconnection and mainconnection.open):
                 LOGGER.info("New database connection needed")
-                LOGGER.debug(
-                    "connecting to %s on %s port %s" % (myDb, myHost, myPort))
-
-                mainconnection = MySQLdb.connect(**kwargs)
+                LOGGER.debug("connecting to %s", params.database_name)
+                mainconnection = MySQLdb.connect(**params.kwargs)
                 mainconnection.autocommit(True)
             else:
                 mainconnection.commit()
@@ -176,39 +138,33 @@ def connect():
             LOGGER.error("unable to connect to Mysql database")
             LOGGER.info("will attempt re-connect in 2 seconds...")
             mainconnection = None
-            raise WaitingError("attempting to connect to Mysql")
         time.sleep(2)
         attempts += 1
 
     raise exc
 
 if __name__ == "__main__":
-    import time
-    from openmolar.settings import localsettings
-    localsettings.initiate()
-
     LOGGER.setLevel(logging.DEBUG)
-
     LOGGER.debug("using conffile -  %s" % localsettings.cflocation)
     for i in range(1, 11):
         try:
             LOGGER.debug("connecting....")
             dbc = connect()
-            LOGGER.info(dbc.info())
+            LOGGER.info(dbc)
             LOGGER.debug('ok... we can make Mysql connections!!')
             LOGGER.debug("    loop no %d " % i)
             if i == 2:
                 # close the db... let's check it reconnects
                 dbc.close()
             if i == 4:
-                # make a slightly bad query... let's check we get a warning
-                c = dbc.cursor()
-                c.execute(
+                LOGGER.debug(
+                "making a slightly bad query... let's check we get a warning")
+                cursor = dbc.cursor()
+                cursor.execute(
                     'update patients set dob="196912091" where serialno=4')
-                c.close()
+                cursor.close()
         except Exception as exc:
             LOGGER.exception("exception caught?")
-
         time.sleep(5)
 
     dbc.close()

@@ -41,7 +41,7 @@ from functools import partial
 
 from PyQt4 import QtGui, QtCore
 
-from openmolar.connect import database_name
+from openmolar.connect import params
 from openmolar.settings import localsettings, utilities
 from openmolar.qt4gui import colours
 
@@ -205,7 +205,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
     def initiate(self):
         self.setWindowTitle("OpenMolar - %s '%s'" % (
-            _("connected to"), database_name()))
+            _("connected to"), params.database_name))
         self.set_surgery_mode()
         self.load_pt_statuses()
         self.ui.reception_textBrowser.setHtml(localsettings.message)
@@ -225,7 +225,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.advise(_("No valid Login - Closing Application"), 2)
             QtGui.QApplication.instance().closeAllWindows()
         else:
-            self.advise("%s %s %s" %(
+            self.advise("%s %s %s" % (
                 _("Login by"), localsettings.operator, "accepted"))
             self.check_schema()
             localsettings.initiate()
@@ -259,7 +259,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             if not compatible:
                 self.advise("<p>%s</p><p>%s %s %s %s</p><hr />%s" % (
                     _('Sorry, you cannot run this version of the openMolar '
-                    'client because your database schema is more advanced.'),
+                      'client because your database schema is more advanced.'),
                     _('this client requires schema version '),
                     localsettings.CLIENT_SCHEMA_VERSION,
                     _('but your database is at'),
@@ -269,13 +269,13 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                 message = '''<p>%s</p><p>%s %s %s %s</p>
                 <p>%s<br />%s</p><hr />%s''' % (
                     _('This openMolar client has fallen behind your database '
-                    'schema version'),
+                      'schema version'),
                     _('This client was written for schema version'),
                     localsettings.CLIENT_SCHEMA_VERSION,
                     _('and your database is now at'),
                     sv.
                     _('However, the differences are not critical, and you can '
-                    'continue if you wish'),
+                      'continue if you wish'),
                     _('It would still be wise to update this client ASAP'),
                     _('Do you wish to continue?'))
 
@@ -284,9 +284,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                     _("Proceed without upgrade?"),
                     message,
                     QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                    QtGui.QMessageBox.Yes) == QtGui.QMessageBox.No:
+                        QtGui.QMessageBox.Yes) == QtGui.QMessageBox.No:
                     QtGui.QApplication.instance().closeAllWindows()
-
 
     def resizeEvent(self, event):
         '''

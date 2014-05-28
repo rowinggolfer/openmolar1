@@ -26,8 +26,7 @@ import datetime
 import logging
 
 from openmolar.settings import localsettings
-from openmolar.connect import (connect,
-    omSQLresult, ProgrammingError, OperationalError)
+from openmolar.connect import connect, ProgrammingError, OperationalError
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -453,7 +452,7 @@ class DayAppointmentData(DaySummary):
                 for app in self.dentAppointments(dent):
                     if (not ignore_emergency or
                     not(app[4] == 0 and app[3].lower() == "emergency")
-                        ):
+                            ):
                         appt_times_list.append((app[1], app[2]))
                 if appt_times_list:
                     slotlist += slots(self.date, dent, self.getStart(dent),
@@ -669,67 +668,23 @@ def getLengthySlots(slots, length):
     return retlist
 
 
-def updateAday(uddate, arg):
+def updateAday(date_, data):
     '''
     takes an instance of the workingDay class
     and updates the database
-    returns an omSQLresult
     '''
     db = connect()
     cursor = db.cursor()
-    result = omSQLresult()
     query = '''insert into aday (memo, adate, apptix, start, end, flag)
     values (%s,%s, %s, %s, %s, %s)
     on duplicate key
     update memo=%s, adate=%s, apptix=%s, start=%s, end=%s, flag=%s'''
 
-    values = (arg.memo, uddate, arg.apptix, arg.sqlStart(), arg.sqlFinish(),
-    arg.active) * 2
+    values = (data.memo, date_, data.apptix, data.sqlStart(), data.sqlFinish(),
+    data.active) * 2
 
-    result.setNumber(cursor.execute(query, values))
-
-    if result:
-        db.commit()
-    return result
-
-
-def alterDay(arg):
-    '''
-    takes a DentistDay object tries to change the aday table
-    returns an omSQLresult
-    '''
-    #-- this method is called from the apptOpenDay Dialog, which is deprecated!!
-    print "DEPRECATED FUNCTION CALLED alterDay"
-    db = connect()
-    cursor = db.cursor()
-    result = omSQLresult()
-    query = 'SELECT flag FROM aday WHERE adate="%s" and apptix=%d' % (
-        arg.date, arg.apptix)
-
-    if cursor.execute(query):
-        #-- dentists diary includes this date
-        query = '''update aday set start=%s,end=%s,flag=%s, memo=%s
-        where adate=%s and apptix=%s'''
-        values = (arg.start, arg.end, arg.flag, arg.memo, arg.date,
-        arg.ix)
-
-        result.setNumber(cursor.execute(query, values))
-
-        if result.getNumber() == 1:
-            result.setMessage("Date successfully modified")
-        else:
-            result.setMessage(
-                "No changes applied - the values you supplied " +
-                "are the same as the existing.")
-
-        db.commit()
-
-    else:
-        result.setMessage("The date you have tried to modify is " +
-        "beyond the dates opened for dentist %s" % (
-                          localsettings.ops.get(arg.ix),))
-
-    return result
+    n_rows = cursor.execute(query, values)
+    return n_rows
 
 
 def todays_patients(dents):

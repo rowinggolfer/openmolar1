@@ -48,13 +48,17 @@ class AlternateServersWidget(QtGui.QWidget):
         layout = QtGui.QVBoxLayout(self)
         for i, server in enumerate(localsettings.server_names):
             if i == 0:
-                server = "%s %s" % (server, _("Default"))
-            radio_button = (QtGui.QRadioButton(server))
+                server = "%s (%s)" % (server, _("Default"))
+            radio_button = (QtGui.QRadioButton(server, self))
             radio_button.setChecked(i == 0)
 
             self.radio_buttons.append(radio_button)
             radio_button.toggled.connect(self.input)
             layout.addWidget(radio_button)
+
+    @property
+    def has_options(self):
+        return self.radio_buttons != []
 
     @property
     def confirm_message(self):
@@ -77,6 +81,7 @@ class AlternateServersWidget(QtGui.QWidget):
                 QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
                     QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
                 self.radio_buttons[0].setChecked(True)
+        LOGGER.warning("chosen server = %s", self.chosen)
 
 
 class LoginDialog(ExtendableDialog):
@@ -110,6 +115,10 @@ class LoginDialog(ExtendableDialog):
         form_layout.addRow(_("User 1 (Required)"), self.user1_lineEdit)
         form_layout.addRow(_("User 2 (Optional)"), self.user2_lineEdit)
 
+        but_group = QtGui.QButtonGroup(self)
+        but_group.addButton(self.surgery_radioButton)
+        but_group.addButton(self.reception_radioButton)
+
         self.insertWidget(header_label)
         self.insertWidget(frame)
         self.insertWidget(self.surgery_radioButton)
@@ -128,8 +137,12 @@ class LoginDialog(ExtendableDialog):
 
         self.parse_conf_file()
 
-        self.alternate_servers_widget = AlternateServersWidget()
-        self.add_advanced_widget(self.alternate_servers_widget)
+        self.alternate_servers_widget = AlternateServersWidget(self)
+        if self.alternate_servers_widget.has_options:
+            self.more_but.setText(_("Database choice"))
+            self.add_advanced_widget(self.alternate_servers_widget)
+        else:
+            self.more_but.hide()
 
         self.user1_lineEdit.textEdited.connect(self.autoreception)
         self.user2_lineEdit.textEdited.connect(self.autoreception)
@@ -167,9 +180,8 @@ class LoginDialog(ExtendableDialog):
         check to see if the user is special user "rec"
         which implies a reception machine
         '''
-        is_rec = user.toLower() == "rec"
-        self.reception_radioButton.setChecked(is_rec)
-        self.surgery_radioButton.setChecked(not is_rec)
+        if user.toLower() == "rec":
+            self.reception_radioButton.setChecked(True)
 
     @property
     def _is_developer_environment(self):
