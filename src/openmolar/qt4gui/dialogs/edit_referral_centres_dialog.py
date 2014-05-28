@@ -31,6 +31,7 @@ from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
 LOGGER = logging.getLogger("openmolar")
 
+
 class ListModel(QtCore.QAbstractListModel):
 
     '''
@@ -62,6 +63,7 @@ class ListModel(QtCore.QAbstractListModel):
         self.labels.append(label)
         self.endResetModel()
 
+
 class EditReferralCentresDialog(BaseDialog):
 
     _referral_centres = None
@@ -92,8 +94,8 @@ class EditReferralCentresDialog(BaseDialog):
         layout = QtGui.QGridLayout(left_frame)
         layout.setMargin(0)
         layout.addWidget(self.list_view, 0, 0, 1, 3)
-        layout.addWidget(delete_but, 1,0)
-        layout.addWidget(add_but, 1,1)
+        layout.addWidget(delete_but, 1, 0)
+        layout.addWidget(add_but, 1, 1)
         left_frame.setMaximumWidth(250)
 
         right_frame = QtGui.QFrame()
@@ -110,7 +112,7 @@ class EditReferralCentresDialog(BaseDialog):
         splitter = QtGui.QSplitter()
         splitter.addWidget(left_frame)
         splitter.addWidget(right_frame)
-        splitter.setSizes([1,10])
+        splitter.setSizes([1, 10])
         self.insertWidget(header_label)
         self.insertWidget(splitter)
 
@@ -120,22 +122,24 @@ class EditReferralCentresDialog(BaseDialog):
         self.apply_but.setText(_("Apply Changes"))
 
         self.set_check_on_cancel(True)
+        self.description_line_edit.editingFinished.connect(
+            self.description_edited)
         self.signals()
         add_but.clicked.connect(self.add_centre)
         delete_but.clicked.connect(self.remove_centre)
 
         self.orig_data = []
         QtCore.QTimer.singleShot(100, self.load_existing)
-        #self.enableApply()
+        # self.enableApply()
 
     def sizeHint(self):
-        return QtCore.QSize(700,300)
+        return QtCore.QSize(700, 300)
 
     def signals(self, connect=True):
         for signal in (
-        self.description_line_edit.textChanged,
-        self.greeting_line_edit.textChanged,
-        self.text_edit.textChanged
+            self.description_line_edit.textChanged,
+            self.greeting_line_edit.textChanged,
+            self.text_edit.textChanged
         ):
             if connect:
                 signal.connect(self.update_centre)
@@ -152,12 +156,14 @@ class EditReferralCentresDialog(BaseDialog):
         return self._referral_centres
 
     def load_existing(self, row=0):
+        self.signals(False)
         self.list_model.clear()
         for ref_centre in self.referral_centres:
             if ref_centre not in self.deleted_centres:
                 self.list_model.add_item(ref_centre.description)
         index = self.list_model.createIndex(row, 0)
         self.list_view.setCurrentIndex(index)
+        self.signals()
         self.show_data(index)
 
     def show_data(self, index):
@@ -167,13 +173,13 @@ class EditReferralCentresDialog(BaseDialog):
         self.greeting_line_edit.setText(centre.greeting)
         address = "\n".join(
             [a for a in (centre.addr1,
-                        centre.addr2,
-                        centre.addr3,
-                        centre.addr4,
-                        centre.addr5,
-                        centre.addr6,
-                        centre.addr7)]
-                        )
+                         centre.addr2,
+                         centre.addr3,
+                         centre.addr4,
+                         centre.addr5,
+                         centre.addr6,
+                         centre.addr7)]
+        )
         self.text_edit.setText(address)
         self.signals()
 
@@ -206,14 +212,14 @@ class EditReferralCentresDialog(BaseDialog):
 
     @property
     def address(self):
-        lines = self.text_edit.toPlainText().split("\n")
+        lines = unicode(self.text_edit.toPlainText()).split("\n")
         while len(lines) < 8:
             lines.append("")
         return lines
 
     def add_centre(self):
         centre = referral.ReferralCentre(hash(len(self.referral_centres)),
-        _("New"), "", "", "", "", "", "", "", "")
+                                         _("New"), "", "", "", "", "", "", "", "")
         self.referral_centres.append(centre)
         rowno = len(self.referral_centres) - len(self.deleted_centres) - 1
         self.load_existing(rowno)
@@ -222,9 +228,10 @@ class EditReferralCentresDialog(BaseDialog):
     def remove_centre(self):
         if len(self.referral_centres) == 1:
             QtGui.QMessageBox.warning(self,
-                _("Warning"),
-                _("You must have at least one referral centre in the database")
-                )
+                                      _("Warning"),
+                                      _(
+                                      "You must have at least one referral centre in the database")
+                                      )
             return
         self.deleted_centres.append(self.current_centre)
         self.load_existing()
@@ -233,16 +240,16 @@ class EditReferralCentresDialog(BaseDialog):
     def update_centre(self):
         ix = self.current_centre.ix
         centre = referral.ReferralCentre(ix,
-                                        self.description,
-                                        self.greeting,
-                                        self.address[0],
-                                        self.address[1],
-                                        self.address[2],
-                                        self.address[3],
-                                        self.address[4],
-                                        self.address[5],
-                                        self.address[6],
-                                        )
+                                         self.description,
+                                         self.greeting,
+                                         self.address[0],
+                                         self.address[1],
+                                         self.address[2],
+                                         self.address[3],
+                                         self.address[4],
+                                         self.address[5],
+                                         self.address[6],
+                                         )
         self._referral_centres[self.current_row] = centre
         self.check_for_changes()
 
@@ -256,6 +263,10 @@ class EditReferralCentresDialog(BaseDialog):
                     break
         self.enableApply(self.dirty)
 
+    def description_edited(self):
+        rowno = self.current_row
+        self.load_existing(rowno)
+
     def new_centres(self):
         return self.referral_centres[len(self.orig_data):]
 
@@ -263,7 +274,7 @@ class EditReferralCentresDialog(BaseDialog):
         for i in range(len(self.orig_data)):
             centre = self.referral_centres[i]
             if (self.orig_data[i] != str(centre) and
-            centre not in self.deleted_centres):
+               centre not in self.deleted_centres):
                 yield centre
 
     def exec_(self):
