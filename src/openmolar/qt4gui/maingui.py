@@ -175,7 +175,6 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.actionSurgery_Mode.setChecked(
             localsettings.station == "surgery")
         self.setupSignals()
-        self.loadDentistComboboxes()
         self.feestableLoaded = False
         self.forum_parenting_mode = (False, None)
         self.ui.new_patient_frame.hide()
@@ -208,6 +207,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             _("connected to"), params.database_name))
         self.set_surgery_mode()
         self.load_pt_statuses()
+        self.loadDentistComboboxes()
         self.ui.reception_textBrowser.setHtml(localsettings.message)
         self.ui.notesSummary_webView.setHtml(localsettings.message)
         self.ui.forumViewFilter_comboBox.addItems(
