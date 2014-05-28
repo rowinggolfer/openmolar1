@@ -80,7 +80,7 @@ def summary_details(sno, start_date):
 
         retarg += '<td>%s</td>' % (row[0])
         retarg += '<td>%s</td>' % localsettings.ops.get(row[1])
-        CODE = cashbookCodesDict.get(row[2], "UNKNOWN")
+        CODE = localsettings.cashbookCodesDict.get(row[2], "UNKNOWN")
         retarg += '<td>%s</td>' % CODE
         amt = row[3]
 
@@ -136,7 +136,7 @@ def details(sno):
         retarg += '<td>%s</td>' % (row[0])
         retarg += '<td>%s</td>' % localsettings.ops.get(row[1])
         retarg += '<td>%s</td>' % row[2]
-        CODE = cashbookCodesDict.get(row[3], "UNKNOWN")
+        CODE = localsettings.cashbookCodesDict.get(row[3], "UNKNOWN")
         retarg += '<td>%s</td>' % CODE
         amt = row[4]
         amt_str = localsettings.formatMoney(amt)
