@@ -66,13 +66,14 @@ class ListModel(QtCore.QAbstractListModel):
 
 class EditReferralCentresDialog(BaseDialog):
 
-    _referral_centres = None
-    deleted_centres = []
-
     def __init__(self, parent=None):
         BaseDialog.__init__(self, parent, remove_stretch=True)
         message = _("Edit Referral Centres")
         self.setWindowTitle(message)
+
+        self._referral_centres = None
+        self.deleted_centres = []
+
         header_label = QtGui.QLabel("<b>%s</b>" % message)
 
         self.list_model = ListModel()
