@@ -3,8 +3,8 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/patient_finder.ui'
 #
-# Created: Wed Nov  6 23:05:24 2013
-#      by: PyQt4 UI code generator 4.10.3
+# Created: Thu May 29 10:12:39 2014
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -21,7 +21,7 @@ class Ui_Dialog(object):
 
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(306, 367)
+        Dialog.resize(386, 360)
         icon = QtGui.QIcon()
         icon.addPixmap(
             QtGui.QPixmap(_fromUtf8(":/logo.png")),
