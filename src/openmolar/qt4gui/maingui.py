@@ -126,7 +126,6 @@ from openmolar.qt4gui.pt_diary_widget import PtDiaryWidget
 from openmolar.qt4gui.customwidgets import chartwidget
 from openmolar.qt4gui.customwidgets import toothProps
 from openmolar.qt4gui.customwidgets import perioToothProps
-from openmolar.qt4gui.customwidgets import perioChartWidget
 from openmolar.qt4gui.customwidgets import estimate_widget
 from openmolar.qt4gui.customwidgets import notification_widget
 from openmolar.qt4gui.customwidgets.static_control_panel \
@@ -388,11 +387,6 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         hlayout = QtGui.QHBoxLayout(self.ui.staticSummaryPanel)
         hlayout.addWidget(self.ui.summaryChartWidget)
 
-        #-perio chart
-        self.ui.perioChartWidget = chartwidget.chartWidget()
-        hlayout = QtGui.QHBoxLayout(self.ui.perioChart_frame)
-        hlayout.addWidget(self.ui.perioChartWidget)
-
         #-static chart
         self.ui.staticChartWidget = chartwidget.chartWidget()
         self.ui.staticChartWidget.setFocusPolicy(QtCore.Qt.StrongFocus)
@@ -427,35 +421,6 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         hlayout = QtGui.QHBoxLayout(self.ui.toothProps_frame)
         hlayout.setMargin(0)
         hlayout.addWidget(self.ui.toothPropsWidget)
-
-        #-PERIOPROPS
-        self.ui.perioToothPropsWidget = perioToothProps.tpWidget()
-        hlayout = QtGui.QHBoxLayout(self.ui.perioToothProps_frame)
-        hlayout.addWidget(self.ui.perioToothPropsWidget)
-
-        self.ui.perioChartWidgets = []
-        self.ui.perioGroupBoxes = []
-        hlayout = QtGui.QVBoxLayout(self.ui.perioChartData_frame)
-        hlayout.setMargin(2)
-        for i in range(8):
-            gbtitle = (_("Recession"), _("Pocketing"), _("Plaque"),
-                       _("Bleeding"), _("Other"), _(
-                           "Suppuration"), _("Furcation"),
-                       _("Mobility"))[i]
-            periogb = QtGui.QGroupBox(gbtitle)
-            periogb.setCheckable(True)
-            periogb.setChecked(True)
-            # periogb.setMinimumSize(0, 120)
-            pchart = perioChartWidget.chartWidget()
-            pchart.type = gbtitle
-            gblayout = QtGui.QVBoxLayout(periogb)
-            gblayout.setMargin(2)
-            gblayout.addWidget(pchart)
-            hlayout.addWidget(periogb)
-
-            # make these widgets accessible
-            self.ui.perioGroupBoxes.append(periogb)
-            self.ui.perioChartWidgets.append(pchart)
 
         self.enableEdit(False)
 
@@ -711,9 +676,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.update_plan_est()
 
         elif ci == 8:  # -- perio tab
-            charts_gui.periochart_dates(self)
-            # load the periocharts (if the patient has data)
-            charts_gui.layoutPerioCharts(self)
+            self.advise("perio interface being rewritten")
 
         self.wait(False)
 
@@ -770,7 +733,6 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             for chart in (self.ui.staticChartWidget,
                           self.ui.planChartWidget,
                           self.ui.completedChartWidget,
-                          self.ui.perioChartWidget,
                           self.ui.summaryChartWidget):
                 chart.clear()
                 chart.update()
@@ -1302,9 +1264,11 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
         self.ui.notes_webView.setHtml("")
         self.ui.notesEnter_textEdit.setText("")
-        for chart in (self.ui.staticChartWidget, self.ui.planChartWidget,
-                      self.ui.completedChartWidget, self.ui.perioChartWidget,
-                      self.ui.summaryChartWidget):
+        for chart in (self.ui.staticChartWidget,
+                      self.ui.planChartWidget,
+                      self.ui.completedChartWidget,
+                      self.ui.summaryChartWidget
+                      ):
             chart.clear()
             #--necessary to restore the chart to full dentition
         self.selectedChartWidget = "st"
@@ -1314,7 +1278,6 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
         self.ui.toothPropsWidget.setTooth("ur8", "st")
         charts_gui.chartsTable(self)
-        charts_gui.bpe_dates(self)
 
         try:
             pos = localsettings.CSETYPES.index(self.pt.cset)
@@ -2936,16 +2899,6 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                    self.ui.summary_notes_checkBox):
             rb.toggled.connect(self.updateNotesPage)
             rb.toggled.connect(self.load_notes_summary)
-
-    def signals_periochart(self):
-
-        # periochart
-        # defunct  QtCore.QObject.connect(self.ui.perioChartWidget,
-        # QtCore.SIGNAL("toothSelected"), self.periocharts)
-
-        self.ui.perioChartDateComboBox.currentIndexChanged.connect(
-            self.layoutPerioCharts)
-        self.ui.bpeDateComboBox.currentIndexChanged.connect(self.bpe_table)
 
     def signals_tabs(self, connect=True):
         '''

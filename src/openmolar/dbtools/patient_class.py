@@ -29,7 +29,7 @@ import re
 import sys
 
 from openmolar import connect
-from openmolar.ptModules import perio, dec_perm, formatted_notes
+from openmolar.ptModules import dec_perm, formatted_notes
 from openmolar.settings import localsettings
 
 from openmolar.dbtools.appt_prefs import ApptPrefs
@@ -337,17 +337,6 @@ class patient(object):
             self.serialno, self.courseno0)
 
         self.getNotesTuple()
-
-        query = 'select chartdate,chartdata from perio where serialno=%s'
-        cursor.execute(query, self.serialno)
-        perioData = cursor.fetchall()
-
-        for data in perioData:
-            self.perioData[localsettings.formatDate(data[0])] = (
-                perio.get_perioData(data[1]))
-            #--perioData is
-            #--a dictionary (keys=dates) of dictionaries with keys
-            #--like "ur8" and containing 7 tuples of data
 
         query = 'select drnm,adrtel,curmed,oldmed,allerg,heart,lungs,' +\
             'liver,kidney,bleed,anaes,other,alert,chkdate from mednotes' +\
@@ -686,7 +675,7 @@ class patient(object):
         for est in self.estimates:
             if (est.csetype.startswith("N") and
                (not completed_only or est.completed == 2)
-                ):
+                    ):
                 claims.append(est)
         return claims
 

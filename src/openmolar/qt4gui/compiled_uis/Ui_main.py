@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/main.ui'
 #
-# Created: Tue May 27 16:06:22 2014
+# Created: Thu May 29 10:20:15 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -283,7 +283,7 @@ class Ui_MainWindow(object):
         self.scrollArea_4.setObjectName(_fromUtf8("scrollArea_4"))
         self.scrollAreaWidgetContents_7 = QtGui.QWidget()
         self.scrollAreaWidgetContents_7.setGeometry(
-            QtCore.QRect(0, 0, 469, 644))
+            QtCore.QRect(0, 0, 743, 644))
         self.scrollAreaWidgetContents_7.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_7"))
         self.verticalLayout_6 = QtGui.QVBoxLayout(
@@ -919,7 +919,7 @@ class Ui_MainWindow(object):
         self.scrollArea_5.setObjectName(_fromUtf8("scrollArea_5"))
         self.scrollAreaWidgetContents_8 = QtGui.QWidget()
         self.scrollAreaWidgetContents_8.setGeometry(
-            QtCore.QRect(0, 0, 423, 421))
+            QtCore.QRect(0, 0, 725, 421))
         self.scrollAreaWidgetContents_8.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_8"))
         self.gridLayout = QtGui.QGridLayout(self.scrollAreaWidgetContents_8)
@@ -1112,7 +1112,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setObjectName(_fromUtf8("scrollArea_2"))
         self.scrollAreaWidgetContents_5 = QtGui.QWidget()
         self.scrollAreaWidgetContents_5.setGeometry(
-            QtCore.QRect(0, 0, 283, 470))
+            QtCore.QRect(0, 0, 745, 470))
         self.scrollAreaWidgetContents_5.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_5"))
         self.horizontalLayout_26 = QtGui.QHBoxLayout(
@@ -1654,7 +1654,7 @@ class Ui_MainWindow(object):
             _fromUtf8("estimate_scrollArea"))
         self.scrollAreaWidgetContents_11 = QtGui.QWidget()
         self.scrollAreaWidgetContents_11.setGeometry(
-            QtCore.QRect(0, 0, 98, 200))
+            QtCore.QRect(0, 0, 532, 375))
         self.scrollAreaWidgetContents_11.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_11"))
         self.horizontalLayout_19 = QtGui.QHBoxLayout(
@@ -1677,7 +1677,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_4 = QtGui.QWidget()
         self.scrollAreaWidgetContents_4.setGeometry(
-            QtCore.QRect(0, 0, 139, 212))
+            QtCore.QRect(0, 0, 198, 375))
         self.scrollAreaWidgetContents_4.setObjectName(
             _fromUtf8("scrollAreaWidgetContents_4"))
         self.verticalLayout_9 = QtGui.QVBoxLayout(
@@ -1730,139 +1730,18 @@ class Ui_MainWindow(object):
         self.tab_patient_perio = QtGui.QWidget()
         self.tab_patient_perio.setObjectName(_fromUtf8("tab_patient_perio"))
         self.horizontalLayout_8 = QtGui.QHBoxLayout(self.tab_patient_perio)
+        self.horizontalLayout_8.setSpacing(0)
+        self.horizontalLayout_8.setMargin(0)
         self.horizontalLayout_8.setObjectName(_fromUtf8("horizontalLayout_8"))
-        self.perioCharts_scrollArea = QtGui.QScrollArea(self.tab_patient_perio)
-        self.perioCharts_scrollArea.setFrameShape(QtGui.QFrame.NoFrame)
-        self.perioCharts_scrollArea.setWidgetResizable(True)
-        self.perioCharts_scrollArea.setObjectName(
-            _fromUtf8("perioCharts_scrollArea"))
-        self.scrollAreaWidgetContents_6 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_6.setGeometry(
-            QtCore.QRect(0, 0, 252, 374))
-        self.scrollAreaWidgetContents_6.setObjectName(
-            _fromUtf8("scrollAreaWidgetContents_6"))
-        self.gridLayout_15 = QtGui.QGridLayout(self.scrollAreaWidgetContents_6)
-        self.gridLayout_15.setObjectName(_fromUtf8("gridLayout_15"))
-        self.perioChart_frame = QtGui.QFrame(self.scrollAreaWidgetContents_6)
-        sizePolicy = QtGui.QSizePolicy(
-            QtGui.QSizePolicy.Expanding,
-            QtGui.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.perioChart_frame.sizePolicy(
-            ).hasHeightForWidth(
-            ))
-        self.perioChart_frame.setSizePolicy(sizePolicy)
-        self.perioChart_frame.setMinimumSize(QtCore.QSize(0, 140))
-        self.perioChart_frame.setMaximumSize(QtCore.QSize(16777215, 140))
-        self.perioChart_frame.setFrameShape(QtGui.QFrame.StyledPanel)
-        self.perioChart_frame.setFrameShadow(QtGui.QFrame.Raised)
-        self.perioChart_frame.setObjectName(_fromUtf8("perioChart_frame"))
-        self.gridLayout_15.addWidget(self.perioChart_frame, 0, 0, 1, 3)
-        self.perioChartData_scrollArea = QtGui.QScrollArea(
-            self.scrollAreaWidgetContents_6)
-        self.perioChartData_scrollArea.setMinimumSize(QtCore.QSize(0, 0))
-        self.perioChartData_scrollArea.setWidgetResizable(True)
-        self.perioChartData_scrollArea.setObjectName(
-            _fromUtf8("perioChartData_scrollArea"))
-        self.scrollAreaWidgetContents_10 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_10.setGeometry(
-            QtCore.QRect(0, 0, 918, 1218))
-        self.scrollAreaWidgetContents_10.setObjectName(
-            _fromUtf8("scrollAreaWidgetContents_10"))
-        self.horizontalLayout_15 = QtGui.QHBoxLayout(
-            self.scrollAreaWidgetContents_10)
-        self.horizontalLayout_15.setObjectName(
-            _fromUtf8("horizontalLayout_15"))
-        self.perioChartData_frame = QtGui.QFrame(
-            self.scrollAreaWidgetContents_10)
-        self.perioChartData_frame.setMinimumSize(QtCore.QSize(900, 1200))
-        self.perioChartData_frame.setFrameShape(QtGui.QFrame.StyledPanel)
-        self.perioChartData_frame.setFrameShadow(QtGui.QFrame.Raised)
-        self.perioChartData_frame.setObjectName(
-            _fromUtf8("perioChartData_frame"))
-        self.horizontalLayout_15.addWidget(self.perioChartData_frame)
-        self.perioChartData_scrollArea.setWidget(
-            self.scrollAreaWidgetContents_10)
-        self.gridLayout_15.addWidget(
-            self.perioChartData_scrollArea,
-            1,
-            0,
-            1,
-            3)
-        self.groupBox_11 = QtGui.QGroupBox(self.scrollAreaWidgetContents_6)
-        self.groupBox_11.setObjectName(_fromUtf8("groupBox_11"))
-        self.verticalLayout_16 = QtGui.QVBoxLayout(self.groupBox_11)
-        self.verticalLayout_16.setObjectName(_fromUtf8("verticalLayout_16"))
-        self.label_41 = QtGui.QLabel(self.groupBox_11)
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.label_41.setFont(font)
-        self.label_41.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_41.setObjectName(_fromUtf8("label_41"))
-        self.verticalLayout_16.addWidget(self.label_41)
-        self.perioChartDateComboBox = QtGui.QComboBox(self.groupBox_11)
-        self.perioChartDateComboBox.setObjectName(
-            _fromUtf8("perioChartDateComboBox"))
-        self.verticalLayout_16.addWidget(self.perioChartDateComboBox)
-        self.newPerioChartPushButton = QtGui.QPushButton(self.groupBox_11)
-        self.newPerioChartPushButton.setAutoDefault(False)
-        self.newPerioChartPushButton.setObjectName(
-            _fromUtf8("newPerioChartPushButton"))
-        self.verticalLayout_16.addWidget(self.newPerioChartPushButton)
-        self.gridLayout_15.addWidget(self.groupBox_11, 2, 0, 1, 1)
-        self.perioToothProps_frame = QtGui.QFrame(
-            self.scrollAreaWidgetContents_6)
-        sizePolicy = QtGui.QSizePolicy(
-            QtGui.QSizePolicy.Expanding,
-            QtGui.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.perioToothProps_frame.sizePolicy(
-            ).hasHeightForWidth(
-            ))
-        self.perioToothProps_frame.setSizePolicy(sizePolicy)
-        self.perioToothProps_frame.setMinimumSize(QtCore.QSize(0, 0))
-        self.perioToothProps_frame.setMaximumSize(
-            QtCore.QSize(16777215, 16777215))
-        self.perioToothProps_frame.setFrameShape(QtGui.QFrame.StyledPanel)
-        self.perioToothProps_frame.setFrameShadow(QtGui.QFrame.Raised)
-        self.perioToothProps_frame.setObjectName(
-            _fromUtf8("perioToothProps_frame"))
-        self.gridLayout_15.addWidget(self.perioToothProps_frame, 2, 1, 1, 1)
-        self.groupBox_12 = QtGui.QGroupBox(self.scrollAreaWidgetContents_6)
-        self.groupBox_12.setMaximumSize(QtCore.QSize(120, 16777215))
-        self.groupBox_12.setObjectName(_fromUtf8("groupBox_12"))
-        self.verticalLayout_15 = QtGui.QVBoxLayout(self.groupBox_12)
-        self.verticalLayout_15.setObjectName(_fromUtf8("verticalLayout_15"))
-        self.bpe_textBrowser_2 = QtGui.QTextBrowser(self.groupBox_12)
-        self.bpe_textBrowser_2.setMinimumSize(QtCore.QSize(0, 0))
-        self.bpe_textBrowser_2.setMaximumSize(QtCore.QSize(16777215, 65))
-        self.bpe_textBrowser_2.setVerticalScrollBarPolicy(
-            QtCore.Qt.ScrollBarAlwaysOff)
-        self.bpe_textBrowser_2.setHorizontalScrollBarPolicy(
-            QtCore.Qt.ScrollBarAlwaysOff)
-        self.bpe_textBrowser_2.setObjectName(_fromUtf8("bpe_textBrowser_2"))
-        self.verticalLayout_15.addWidget(self.bpe_textBrowser_2)
-        self.bpeDateComboBox = QtGui.QComboBox(self.groupBox_12)
-        sizePolicy = QtGui.QSizePolicy(
-            QtGui.QSizePolicy.Preferred,
-            QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.bpeDateComboBox.sizePolicy().hasHeightForWidth())
-        self.bpeDateComboBox.setSizePolicy(sizePolicy)
-        self.bpeDateComboBox.setMinimumSize(QtCore.QSize(0, 0))
-        self.bpeDateComboBox.setSizeAdjustPolicy(
-            QtGui.QComboBox.AdjustToContentsOnFirstShow)
-        self.bpeDateComboBox.setObjectName(_fromUtf8("bpeDateComboBox"))
-        self.verticalLayout_15.addWidget(self.bpeDateComboBox)
-        self.gridLayout_15.addWidget(self.groupBox_12, 2, 2, 1, 1)
-        self.perioCharts_scrollArea.setWidget(self.scrollAreaWidgetContents_6)
-        self.horizontalLayout_8.addWidget(self.perioCharts_scrollArea)
+        self.perio_scrollArea = QtGui.QScrollArea(self.tab_patient_perio)
+        self.perio_scrollArea.setWidgetResizable(True)
+        self.perio_scrollArea.setObjectName(_fromUtf8("perio_scrollArea"))
+        self.scrollAreaWidgetContents = QtGui.QWidget()
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 756, 393))
+        self.scrollAreaWidgetContents.setObjectName(
+            _fromUtf8("scrollAreaWidgetContents"))
+        self.perio_scrollArea.setWidget(self.scrollAreaWidgetContents)
+        self.horizontalLayout_8.addWidget(self.perio_scrollArea)
         self.tabWidget.addTab(self.tab_patient_perio, _fromUtf8(""))
         self.tab_patient_history = QtGui.QWidget()
         self.tab_patient_history.setObjectName(
@@ -3195,10 +3074,7 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(
             self.printAccount_pushButton,
             self.takePayment_pushButton)
-        MainWindow.setTabOrder(
-            self.takePayment_pushButton,
-            self.perioChartDateComboBox)
-        MainWindow.setTabOrder(self.perioChartDateComboBox, self.dnt1comboBox)
+        MainWindow.setTabOrder(self.takePayment_pushButton, self.dnt1comboBox)
         MainWindow.setTabOrder(self.dnt1comboBox, self.scrollArea)
         MainWindow.setTabOrder(self.scrollArea, self.accounts_tableWidget)
         MainWindow.setTabOrder(
@@ -3241,18 +3117,6 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.exampushButton, self.medNotes_pushButton)
         MainWindow.setTabOrder(
             self.medNotes_pushButton,
-            self.perioCharts_scrollArea)
-        MainWindow.setTabOrder(
-            self.perioCharts_scrollArea,
-            self.newPerioChartPushButton)
-        MainWindow.setTabOrder(
-            self.newPerioChartPushButton,
-            self.bpeDateComboBox)
-        MainWindow.setTabOrder(
-            self.bpeDateComboBox,
-            self.perioChartData_scrollArea)
-        MainWindow.setTabOrder(
-            self.perioChartData_scrollArea,
             self.contract_tabWidget)
         MainWindow.setTabOrder(self.contract_tabWidget, self.notesPrintButton)
         MainWindow.setTabOrder(
@@ -3460,10 +3324,6 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(
             self.tabWidget.indexOf(self.tab_patient_estimate),
             _("Estimate"))
-        self.groupBox_11.setTitle(_("Choose Data"))
-        self.label_41.setText(_("Chart Date"))
-        self.newPerioChartPushButton.setText(_("New"))
-        self.groupBox_12.setTitle(_("BPE"))
         self.tabWidget.setTabText(
             self.tabWidget.indexOf(self.tab_patient_perio),
             _("Perio Charts"))

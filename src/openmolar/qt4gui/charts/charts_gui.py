@@ -132,9 +132,11 @@ def flipDeciduous(om_gui):
                 om_gui.ui.chartsTableWidget.item(row, 0).text().toAscii())
 
             om_gui.pt.flipDec_Perm(selectedTooth)
-        for chart in (om_gui.ui.staticChartWidget, om_gui.ui.planChartWidget,
-                      om_gui.ui.completedChartWidget, om_gui.ui.perioChartWidget,
-                      om_gui.ui.summaryChartWidget):
+        for chart in (om_gui.ui.staticChartWidget,
+                      om_gui.ui.planChartWidget,
+                      om_gui.ui.completedChartWidget,
+                      om_gui.ui.summaryChartWidget
+                      ):
             chart.chartgrid = om_gui.pt.chartgrid
             #--necessary to restore the chart to full dentition
             chart.update()
@@ -210,23 +212,6 @@ def selectChartedTooth(om_gui, x, y):
                                             om_gui.selectedChartWidget == "st")
 
 
-def bpe_dates(om_gui):
-    '''
-    updates the date in the bpe date groupbox
-    '''
-    #--bpe = "basic periodontal exam"
-    om_gui.ui.bpeDateComboBox.clear()
-    om_gui.ui.bpe_textBrowser.setPlainText("")
-    if om_gui.pt.bpe == []:
-        om_gui.ui.bpeDateComboBox.addItem(QtCore.QString("NO BPE"))
-    else:
-        l = copy.deepcopy(om_gui.pt.bpe)
-        l.reverse()  # show newest first
-        for sets in l:
-            bpedate = localsettings.formatDate(sets[0])
-            om_gui.ui.bpeDateComboBox.addItem(bpedate)
-
-
 def bpe_table(om_gui, arg):
     '''
     updates the BPE chart on the clinical summary page
@@ -254,39 +239,6 @@ def bpe_table(om_gui, arg):
         om_gui.ui.bpe_textBrowser.setHtml("")
 
 
-def periochart_dates(om_gui):
-    '''
-    multiple perio charts on multiple dates....
-    display those dates in a combo box
-    '''
-    om_gui.ui.perioChartDateComboBox.clear()
-    for date in om_gui.pt.perioData.keys():
-        om_gui.ui.perioChartDateComboBox.addItem(QtCore.QString(date))
-    if om_gui.pt.perioData == {}:
-        om_gui.ui.perioChartDateComboBox.addItem(_("NO CHARTS"))
-
-
-def layoutPerioCharts(om_gui):
-    '''
-    layout the perio charts
-    '''
-    #--convert from QString
-    selected_date = str(om_gui.ui.perioChartDateComboBox.currentText())
-    if selected_date in om_gui.pt.perioData:
-        perioD = om_gui.pt.perioData[selected_date]
-        #--headers=("Recession", "Pocketing", "Plaque", "Bleeding", "Other",
-        #--"Suppuration", "Furcation", "Mobility")
-        for key in perioD.keys():
-            for i in range(8):
-                om_gui.ui.perioChartWidgets[i].setProps(key, perioD[key][i])
-    else:
-        om_gui.advise("no perio data found for", selected_date)
-        for i in range(8):
-            om_gui.ui.perioChartWidgets[i].props = {}
-    for chart in om_gui.ui.perioChartWidgets:
-        chart.update()
-
-
 def chartsTable(om_gui):
     '''
     update the charts table
@@ -303,7 +255,7 @@ def chartsTable(om_gui):
                   om_gui.ui.staticChartWidget,
                   om_gui.ui.planChartWidget,
                   om_gui.ui.completedChartWidget,
-                  om_gui.ui.perioChartWidget):
+                  ):
         chart.chartgrid = om_gui.pt.chartgrid
         #--sets the tooth numbering
     row = 0
@@ -332,7 +284,5 @@ def chartsTable(om_gui):
         om_gui.ui.planChartWidget.setToothProps(tooth, pItem.lower())
         om_gui.ui.completedChartWidget.setToothProps(tooth, cItem.lower())
 
-        if static_text[:2] in ("AT", "TM", "UE"):
-            om_gui.ui.perioChartWidget.setToothProps(tooth, static_text)
     om_gui.ui.chartsTableWidget.resizeColumnsToContents()
     om_gui.ui.chartsTableWidget.setCurrentCell(0, 0)

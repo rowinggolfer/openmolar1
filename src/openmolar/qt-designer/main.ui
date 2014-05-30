@@ -463,7 +463,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>469</width>
+                      <width>743</width>
                       <height>644</height>
                      </rect>
                     </property>
@@ -1797,7 +1797,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>423</width>
+                      <width>725</width>
                       <height>421</height>
                      </rect>
                     </property>
@@ -2090,7 +2090,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>283</width>
+                      <width>745</width>
                       <height>470</height>
                      </rect>
                     </property>
@@ -3032,8 +3032,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>98</width>
-                      <height>200</height>
+                      <width>532</width>
+                      <height>375</height>
                      </rect>
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_19"/>
@@ -3062,8 +3062,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>139</width>
-                      <height>212</height>
+                      <width>198</width>
+                      <height>375</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -3166,215 +3166,26 @@ Note - this will not remove items which are currently there. </string>
                  <string>Perio Charts</string>
                 </attribute>
                 <layout class="QHBoxLayout" name="horizontalLayout_8">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <property name="margin">
+                  <number>0</number>
+                 </property>
                  <item>
-                  <widget class="QScrollArea" name="perioCharts_scrollArea">
-                   <property name="frameShape">
-                    <enum>QFrame::NoFrame</enum>
-                   </property>
+                  <widget class="QScrollArea" name="perio_scrollArea">
                    <property name="widgetResizable">
                     <bool>true</bool>
                    </property>
-                   <widget class="QWidget" name="scrollAreaWidgetContents_6">
+                   <widget class="QWidget" name="scrollAreaWidgetContents">
                     <property name="geometry">
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>252</width>
-                      <height>374</height>
+                      <width>756</width>
+                      <height>393</height>
                      </rect>
                     </property>
-                    <layout class="QGridLayout" name="gridLayout_15">
-                     <item row="0" column="0" colspan="3">
-                      <widget class="QFrame" name="perioChart_frame">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="minimumSize">
-                        <size>
-                         <width>0</width>
-                         <height>140</height>
-                        </size>
-                       </property>
-                       <property name="maximumSize">
-                        <size>
-                         <width>16777215</width>
-                         <height>140</height>
-                        </size>
-                       </property>
-                       <property name="frameShape">
-                        <enum>QFrame::StyledPanel</enum>
-                       </property>
-                       <property name="frameShadow">
-                        <enum>QFrame::Raised</enum>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="0" colspan="3">
-                      <widget class="QScrollArea" name="perioChartData_scrollArea">
-                       <property name="minimumSize">
-                        <size>
-                         <width>0</width>
-                         <height>0</height>
-                        </size>
-                       </property>
-                       <property name="widgetResizable">
-                        <bool>true</bool>
-                       </property>
-                       <widget class="QWidget" name="scrollAreaWidgetContents_10">
-                        <property name="geometry">
-                         <rect>
-                          <x>0</x>
-                          <y>0</y>
-                          <width>918</width>
-                          <height>1218</height>
-                         </rect>
-                        </property>
-                        <layout class="QHBoxLayout" name="horizontalLayout_15">
-                         <item>
-                          <widget class="QFrame" name="perioChartData_frame">
-                           <property name="minimumSize">
-                            <size>
-                             <width>900</width>
-                             <height>1200</height>
-                            </size>
-                           </property>
-                           <property name="frameShape">
-                            <enum>QFrame::StyledPanel</enum>
-                           </property>
-                           <property name="frameShadow">
-                            <enum>QFrame::Raised</enum>
-                           </property>
-                          </widget>
-                         </item>
-                        </layout>
-                       </widget>
-                      </widget>
-                     </item>
-                     <item row="2" column="0">
-                      <widget class="QGroupBox" name="groupBox_11">
-                       <property name="title">
-                        <string>Choose Data</string>
-                       </property>
-                       <layout class="QVBoxLayout" name="verticalLayout_16">
-                        <item>
-                         <widget class="QLabel" name="label_41">
-                          <property name="font">
-                           <font>
-                            <pointsize>12</pointsize>
-                           </font>
-                          </property>
-                          <property name="text">
-                           <string>Chart Date</string>
-                          </property>
-                          <property name="alignment">
-                           <set>Qt::AlignCenter</set>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QComboBox" name="perioChartDateComboBox"/>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="newPerioChartPushButton">
-                          <property name="text">
-                           <string>New</string>
-                          </property>
-                          <property name="autoDefault">
-                           <bool>false</bool>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
-                      </widget>
-                     </item>
-                     <item row="2" column="1">
-                      <widget class="QFrame" name="perioToothProps_frame">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="minimumSize">
-                        <size>
-                         <width>0</width>
-                         <height>0</height>
-                        </size>
-                       </property>
-                       <property name="maximumSize">
-                        <size>
-                         <width>16777215</width>
-                         <height>16777215</height>
-                        </size>
-                       </property>
-                       <property name="frameShape">
-                        <enum>QFrame::StyledPanel</enum>
-                       </property>
-                       <property name="frameShadow">
-                        <enum>QFrame::Raised</enum>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="2" column="2">
-                      <widget class="QGroupBox" name="groupBox_12">
-                       <property name="maximumSize">
-                        <size>
-                         <width>120</width>
-                         <height>16777215</height>
-                        </size>
-                       </property>
-                       <property name="title">
-                        <string>BPE</string>
-                       </property>
-                       <layout class="QVBoxLayout" name="verticalLayout_15">
-                        <item>
-                         <widget class="QTextBrowser" name="bpe_textBrowser_2">
-                          <property name="minimumSize">
-                           <size>
-                            <width>0</width>
-                            <height>0</height>
-                           </size>
-                          </property>
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>65</height>
-                           </size>
-                          </property>
-                          <property name="verticalScrollBarPolicy">
-                           <enum>Qt::ScrollBarAlwaysOff</enum>
-                          </property>
-                          <property name="horizontalScrollBarPolicy">
-                           <enum>Qt::ScrollBarAlwaysOff</enum>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QComboBox" name="bpeDateComboBox">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="minimumSize">
-                           <size>
-                            <width>0</width>
-                            <height>0</height>
-                           </size>
-                          </property>
-                          <property name="sizeAdjustPolicy">
-                           <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
-                      </widget>
-                     </item>
-                    </layout>
                    </widget>
                   </widget>
                  </item>
@@ -5506,7 +5317,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <tabstop>reception_textBrowser</tabstop>
   <tabstop>printAccount_pushButton</tabstop>
   <tabstop>takePayment_pushButton</tabstop>
-  <tabstop>perioChartDateComboBox</tabstop>
   <tabstop>dnt1comboBox</tabstop>
   <tabstop>scrollArea</tabstop>
   <tabstop>accounts_tableWidget</tabstop>
@@ -5540,10 +5350,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <tabstop>planSummary_textBrowser</tabstop>
   <tabstop>exampushButton</tabstop>
   <tabstop>medNotes_pushButton</tabstop>
-  <tabstop>perioCharts_scrollArea</tabstop>
-  <tabstop>newPerioChartPushButton</tabstop>
-  <tabstop>bpeDateComboBox</tabstop>
-  <tabstop>perioChartData_scrollArea</tabstop>
   <tabstop>contract_tabWidget</tabstop>
   <tabstop>notesPrintButton</tabstop>
   <tabstop>loadAccountsTable_pushButton</tabstop>
