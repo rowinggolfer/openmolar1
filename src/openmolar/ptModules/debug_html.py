@@ -49,8 +49,6 @@ def toHtml(pt, tableCalled=None, changesOnly=False):
         attributesDict["HDP"] = ("plandata",)
     elif tableCalled == "Estimates":
         attributesDict["Estimates"] = ("estimates", )
-    elif tableCalled == "Perio":
-        attributesDict["Perio Data"] = ("perioData",)
     else:
         attributesDict["all attributes"] = pt.dbstate.__dict__.keys()
 

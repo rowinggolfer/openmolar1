@@ -95,8 +95,6 @@ patientTableVals = (
 bpeTableAtts = ('bpedate', 'bpe')
 bpeTableVals = (nullDate, '', ())
 
-perioTableAtts = ('chartdate', 'chartdata')
-
 mnhistTableAtts = ('chgdate', 'ix', 'note')
 
 notesTableAtts = ('lineno', 'line')
@@ -270,7 +268,6 @@ class patient(object):
         # NEIL'S STUFF####
         self.exemption = ""
         self.exempttext = ""
-        self.perioData = {}
         self.bpe = []
         self.bpedate = nullDate
         self.chartdate = nullDate
@@ -790,7 +787,7 @@ class patient(object):
         '''
         return (patientTableAtts +
             exemptionTableAtts + bpeTableAtts + mnhistTableAtts +
-            perioTableAtts + clinical_memos + (
+            clinical_memos + (
                 "fees", "estimate_charges", "serialno", "estimates",
             "appt_prefs", "treatment_course", "chartgrid"))
 

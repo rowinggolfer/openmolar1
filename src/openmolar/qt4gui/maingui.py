@@ -125,7 +125,6 @@ from openmolar.qt4gui.diary_widget import DiaryWidget
 from openmolar.qt4gui.pt_diary_widget import PtDiaryWidget
 from openmolar.qt4gui.customwidgets import chartwidget
 from openmolar.qt4gui.customwidgets import toothProps
-from openmolar.qt4gui.customwidgets import perioToothProps
 from openmolar.qt4gui.customwidgets import estimate_widget
 from openmolar.qt4gui.customwidgets import notification_widget
 from openmolar.qt4gui.customwidgets.static_control_panel \
@@ -471,12 +470,6 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         updates the BPE chart on the clinical summary page
         '''
         charts_gui.bpe_table(self, arg)
-
-    def layoutPerioCharts(self):
-        '''
-        layout the perio charts
-        '''
-        charts_gui.layoutPerioCharts(self)
 
     def deleteComments(self):
         '''
@@ -2547,7 +2540,6 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.signals_charts()
         self.signals_editPatient()
         self.signals_notesPage()
-        self.signals_periochart()
         self.signals_tabs()
         self.signals_appointments()
         self.signals_forum()
