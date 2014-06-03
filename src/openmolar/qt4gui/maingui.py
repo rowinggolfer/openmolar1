@@ -1271,6 +1271,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
         self.ui.toothPropsWidget.setTooth("ur8", "st")
         charts_gui.chartsTable(self)
+        charts_gui.bpe_table(self, 0)
 
         try:
             pos = localsettings.CSETYPES.index(self.pt.cset)
@@ -1689,7 +1690,6 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.ui.notesEnter_textEdit.setText(newnotes)
         else:
             self.advise("BPE not applied", 2)
-        charts_gui.bpe_dates(self)
         charts_gui.bpe_table(self, 0)
 
     def nhsformOptionsDialog(self):

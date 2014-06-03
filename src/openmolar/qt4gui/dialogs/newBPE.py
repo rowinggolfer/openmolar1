@@ -49,9 +49,13 @@ class BPE_Dialog(QtGui.QDialog, Ui_newBPE.Ui_Dialog):
     def getBPE(self):  # this could be simplified!!!!
         retarg = ""
         for i in (
-            self.bpe_comboBox.currentText(), self.bpe2_comboBox.currentText(),
-            self.bpe3_comboBox.currentText(), self.bpe4_comboBox.currentText(),
-                self.bpe5_comboBox.currentText(), self.bpe6_comboBox.currentText()):
+            self.bpe_comboBox.currentText(),
+            self.bpe2_comboBox.currentText(),
+            self.bpe3_comboBox.currentText(),
+            self.bpe4_comboBox.currentText(),
+            self.bpe5_comboBox.currentText(),
+            self.bpe6_comboBox.currentText()
+            ):
             val = str(i)
             if val == "":
                 val = "_"
@@ -59,11 +63,6 @@ class BPE_Dialog(QtGui.QDialog, Ui_newBPE.Ui_Dialog):
         return retarg  # a 6 character string.
 
 if __name__ == "__main__":
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    ui = BPE_Dialog()
-    print str(ui.getInput())
-    # if Dialog.exec_():
-    #        print "accepted"
-    # else:
-    #        print "rejected"
+    app = QtGui.QApplication([])
+    dl = BPE_Dialog()
+    print dl.getInput()
