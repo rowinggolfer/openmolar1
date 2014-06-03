@@ -27,11 +27,11 @@ from openmolar.connect import connect
 
 QUERY = '''SELECT description, ptfee, est_link2.completed
 from newestimates right join est_link2 on newestimates.ix = est_link2.est_id
-where courseno = %s order by itemcode, description'''
+where serialno=%s AND courseno=%s order by itemcode, description'''
 
 
-def html(courseno):
-    values = (courseno,)
+def html(serialno, courseno):
+    values = (serialno, courseno)
     db = connect()
     cursor = db.cursor()
     cursor.execute(QUERY, values)

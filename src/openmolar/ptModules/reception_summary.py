@@ -59,7 +59,7 @@ def header_html(pt):
 
 def treatment_html(pt):
     return u"<h4>Treatments (courseno %s)</h4>%s" % (
-        pt.courseno0, estimate_synopsis.html(pt.courseno0))
+        pt.courseno0, estimate_synopsis.html(pt.serialno, pt.courseno0))
 
 
 def payments_html(pt):
