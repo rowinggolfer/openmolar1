@@ -669,7 +669,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.update_plan_est()
 
         elif ci == 8:  # -- perio tab
-            self.advise("perio interface being rewritten")
+            LOGGER.debug("perio interface being rewritten")
 
         self.wait(False)
 
@@ -1496,6 +1496,9 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
         self.forum_mode()
         self.addHistoryMenu()
+
+        self.ui.perio_scrollArea.setWidget(
+            QtGui.QLabel("perio interface is being rewritten"))
 
     def addHistoryMenu(self):
         '''
