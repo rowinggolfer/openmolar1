@@ -23,9 +23,10 @@
 # ############################################################################ #
 
 '''
-This module provides a function 'run' which will move data from the estimates
-table in schema 1_3 to the newestimates table in schema 1_4
+This module provides a function 'run' which will move data
+to schema 1_4
 '''
+
 import logging
 import sys
 
@@ -35,16 +36,16 @@ from openmolar.schema_upgrades.database_updater_thread import DatabaseUpdaterThr
 LOGGER = logging.getLogger("openmolar")
 
 SQLSTRINGS = [
-'DROP TABLE IF EXISTS feetable_key',
-'DROP TABLE IF EXISTS feetable_scotNHS_08_Adult',
-'DROP TABLE IF EXISTS feetable_scotNHS_08_Child',
-'DROP TABLE IF EXISTS feetable_scotNHS_09_Adult',
-'DROP TABLE IF EXISTS feetable_scotNHS_09_Child',
-'DROP TABLE IF EXISTS feetable_HDP',
-'DROP TABLE IF EXISTS feetable_Private_2009',
-'DROP TABLE IF EXISTS feetable_Private_2010',
-'DROP TABLE IF EXISTS docsimported',
-'''
+    'DROP TABLE IF EXISTS feetable_key',
+    'DROP TABLE IF EXISTS feetable_scotNHS_08_Adult',
+    'DROP TABLE IF EXISTS feetable_scotNHS_08_Child',
+    'DROP TABLE IF EXISTS feetable_scotNHS_09_Adult',
+    'DROP TABLE IF EXISTS feetable_scotNHS_09_Child',
+    'DROP TABLE IF EXISTS feetable_HDP',
+    'DROP TABLE IF EXISTS feetable_Private_2009',
+    'DROP TABLE IF EXISTS feetable_Private_2010',
+    'DROP TABLE IF EXISTS docsimported',
+    '''
 CREATE TABLE feetable_key (
 ix int(10) unsigned NOT NULL auto_increment ,
 tablename char(30),
@@ -57,7 +58,7 @@ in_use bool NOT NULL default True,
 display_order smallint(6),
 PRIMARY KEY (ix))
 ''',
-'''
+    '''
 INSERT into feetable_key (tablename, categories, description, startdate,
 enddate, display_order, feecoltypes)
 values ("feetable_scotNHS_08_Adult","N",
@@ -70,7 +71,7 @@ values ("feetable_scotNHS_08_Adult","N",
     </columns>'
 )
 ''',
-'''
+    '''
 CREATE TABLE feetable_scotNHS_08_Adult (
 ix int(10) unsigned NOT NULL auto_increment ,
 section smallint(6),
@@ -85,7 +86,7 @@ pt_fee int(11),
 hide bool NOT NULL default False,
 PRIMARY KEY (ix))
 ''',
-'''
+    '''
 INSERT into feetable_key (tablename, categories, description, startdate,
 enddate, display_order, feecoltypes)
 values ("feetable_scotNHS_08_Child","C",
@@ -98,7 +99,7 @@ values ("feetable_scotNHS_08_Child","C",
     </columns>'
 )
 ''',
-'''
+    '''
 CREATE TABLE feetable_scotNHS_08_Child (
 ix int(10) unsigned NOT NULL auto_increment ,
 section smallint(6),
@@ -113,7 +114,7 @@ pt_fee int(11),
 hide bool NOT NULL default False,
 PRIMARY KEY (ix))
 ''',
-'''
+    '''
 INSERT into feetable_key (tablename, categories, description, startdate,
 display_order, feecoltypes)
 values ("feetable_scotNHS_09_Adult","N",
@@ -126,7 +127,7 @@ values ("feetable_scotNHS_09_Adult","N",
     </columns>'
 )
 ''',
-'''
+    '''
 CREATE TABLE feetable_scotNHS_09_Adult (
 ix int(10) unsigned NOT NULL auto_increment ,
 section smallint(6),
@@ -141,7 +142,7 @@ pt_fee int(11),
 hide bool NOT NULL default False,
 PRIMARY KEY (ix))
 ''',
-'''
+    '''
 INSERT into feetable_key (tablename, categories, description, startdate,
 display_order, feecoltypes)
 values ("feetable_scotNHS_09_Child","C",
@@ -154,7 +155,7 @@ values ("feetable_scotNHS_09_Child","C",
 )
 
 ''',
-'''
+    '''
 CREATE TABLE feetable_scotNHS_09_Child (
 ix int(10) unsigned NOT NULL auto_increment ,
 section smallint(6),
@@ -169,7 +170,7 @@ pt_fee int(11),
 hide bool NOT NULL default False,
 PRIMARY KEY (ix))
 ''',
-'''
+    '''
 INSERT into feetable_key (tablename, categories, description, startdate,
 display_order, feecoltypes)
 values ("feetable_HDP", "I",
@@ -181,7 +182,7 @@ values ("feetable_HDP", "I",
     </columns>'
 )
 ''',
-'''
+    '''
 CREATE TABLE feetable_HDP (
 ix int(10) unsigned NOT NULL auto_increment ,
 section smallint(6),
@@ -196,7 +197,7 @@ pt_fee int(11) NOT NULL default 0,
 hide bool NOT NULL default False,
 PRIMARY KEY (ix))
 ''',
-'''
+    '''
 INSERT into feetable_key (tablename, categories, description, startdate,
 enddate, display_order, feecoltypes)
 values ("feetable_Private_2009","P,PB,PC,PD",
@@ -210,7 +211,7 @@ values ("feetable_Private_2009","P,PB,PC,PD",
     </columns>'
 )
 ''',
-'''
+    '''
 CREATE TABLE feetable_Private_2009 (
 ix int(10) unsigned NOT NULL auto_increment ,
 section smallint(6),
@@ -227,7 +228,7 @@ feeD int(11),
 hide bool NOT NULL default False,
 PRIMARY KEY (ix))
 ''',
-'''
+    '''
 INSERT into feetable_key (tablename, categories, description, startdate,
 display_order, feecoltypes)
 values ("feetable_Private_2010","P,PB,PC,PD",
@@ -241,7 +242,7 @@ values ("feetable_Private_2010","P,PB,PC,PD",
     </columns>'
 )
 ''',
-'''
+    '''
 CREATE TABLE feetable_Private_2010 (
 ix int(10) unsigned NOT NULL auto_increment ,
 section smallint(6),
@@ -258,7 +259,7 @@ feeD int(11),
 hide bool NOT NULL default False,
 PRIMARY KEY (ix))
 ''',
-'''
+    '''
 CREATE TABLE docsimported (
 ix int(10) unsigned NOT NULL auto_increment ,
 serialno int(11) NOT NULL ,
@@ -268,8 +269,8 @@ data blob ,
 PRIMARY KEY (ix),
 KEY (serialno))
 ''',
-'DROP TABLE IF EXISTS omforum',
-'DROP TABLE IF EXISTS estimates',
+    'DROP TABLE IF EXISTS omforum',
+    'DROP TABLE IF EXISTS estimates',
 ]
 
 
@@ -282,6 +283,7 @@ regulation, description, brief_description, fee, pt_fee)
 values (%%s, %%s, %%s, %%s, %%s, %%s, %%s, %%s, %%s)'''.replace("\n", " ")
 
 LOCK_QUERY = 'lock tables newfeetable read, %s write'
+
 
 class DatabaseUpdater(DatabaseUpdaterThread):
 
@@ -305,9 +307,9 @@ class DatabaseUpdater(DatabaseUpdaterThread):
             query = DEST_QUERY % table
             if not "," in vals:
                 query = query.replace(", pt_fee", "")
-                query = query.replace("%s,","", 1)
+                query = query.replace("%s,", "", 1)
 
-            values = [row for row in rows if "NHS" in table or row[7]!=0]
+            values = [row for row in rows if "NHS" in table or row[7] != 0]
             self.cursor.executemany(query, values)
             self.cursor.execute("unlock tables")
 
@@ -335,7 +337,7 @@ class DatabaseUpdater(DatabaseUpdaterThread):
 
             self.progressSig(100, _("updating stored schema version"))
             self.commit()
-            self.completeSig(_("Successfully moved db to")+ " 1.4")
+            self.completeSig(_("Successfully moved db to") + " 1.4")
             return True
         except Exception as exc:
             LOGGER.exception("error transfering data")

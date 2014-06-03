@@ -23,9 +23,10 @@
 # ############################################################################ #
 
 '''
-This module provides a function 'run' which will move data from the estimates
-table in schema 1_1 to the newestimates table in schema 1_2
+This module provides a function 'run' which will move data
+to schema 1_2
 '''
+
 import logging
 import sys
 from openmolar.settings import localsettings
@@ -34,9 +35,9 @@ from openmolar.schema_upgrades.database_updater_thread import DatabaseUpdaterThr
 LOGGER = logging.getLogger("openmolar")
 
 SQLSTRINGS = [
-'ALTER TABLE forum ADD COLUMN recipient char(8)',
-'ALTER TABLE forum CHANGE COLUMN comment comment char(255)',
-'''
+    'ALTER TABLE forum ADD COLUMN recipient char(8)',
+    'ALTER TABLE forum CHANGE COLUMN comment comment char(255)',
+    '''
 CREATE TABLE if not exists forumread (
 ix int(10) unsigned NOT NULL auto_increment ,
 id int(10) unsigned NOT NULL ,
@@ -45,7 +46,7 @@ readdate DATETIME NOT NULL,
 PRIMARY KEY (ix),
 KEY (id))
 ''',
-'''
+    '''
 CREATE TABLE if not exists tasks (
 ix int(10) unsigned NOT NULL auto_increment,
 op char(8),
@@ -70,6 +71,7 @@ FORUM_QUERY = '''insert into forum
 values (%s, %s, %s, %s, %s, %s)'''
 
 MAX_QUERY = 'select max(ix) from forum'
+
 
 class DatabaseUpdater(DatabaseUpdaterThread):
 

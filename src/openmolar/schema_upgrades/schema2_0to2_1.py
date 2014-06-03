@@ -200,8 +200,6 @@ xraycmp="" AND periocmp="" AND anaescmp="" AND othercmp="" AND nducmp=""
 AND ndlcmp="" AND oducmp="" AND odlcmp="" AND customcmp=""
 '''
 
-# don't use this one.. seems unnecessary.
-
 CORRECTION_QUERY = '''
 update patients join
 (select serialno, max(courseno) cno from currtrtmt2 group by serialno) as t

@@ -37,11 +37,11 @@ from openmolar.schema_upgrades.database_updater_thread import DatabaseUpdaterThr
 
 LOGGER = logging.getLogger("openmolar")
 
-NEW_TABLE_SQLSTRINGS = [
-'DROP TABLE IF EXISTS newestimates',
-'DROP TABLE IF EXISTS settings',
-'DROP TABLE IF EXISTS calendar',
-'''
+SQLSTRINGS = [
+    'DROP TABLE IF EXISTS newestimates',
+    'DROP TABLE IF EXISTS settings',
+    'DROP TABLE IF EXISTS calendar',
+    '''
 CREATE TABLE newestimates (
 `ix` int(10) unsigned NOT NULL auto_increment ,
 `serialno` int(11) NOT NULL ,
@@ -65,7 +65,7 @@ PRIMARY KEY (ix),
 KEY (serialno),
 KEY (courseno));
 ''',
-                        '''
+    '''
 CREATE TABLE settings (
 `ix` int(10) unsigned NOT NULL auto_increment ,
 `value` varchar(128),
@@ -78,7 +78,7 @@ CREATE TABLE settings (
 PRIMARY KEY (ix),
 KEY (value));
 ''',
-                        '''
+    '''
 CREATE TABLE calendar (
 `ix` int(10) unsigned NOT NULL auto_increment ,
 `adate` DATE NOT NULL,
@@ -86,22 +86,15 @@ CREATE TABLE calendar (
 PRIMARY KEY (ix),
 KEY (adate));
 '''
-                        ]
+]
 
 
 SRC_QUERY = '''select serialno, courseno, type, number, itemcode,
 description, fee, ptfee, feescale, csetype, dent, completed,
 carriedover, linked from estimates'''
 
-class DatabaseUpdater(DatabaseUpdaterThread):
 
-    def createNewTables(self):
-        '''
-        creates the newEstimatesTable.
-        '''
-        for sql_strings in NEW_TABLE_SQLSTRINGS:
-            self.cursor.execute(sql_strings)
-        return True
+class DatabaseUpdater(DatabaseUpdaterThread):
 
     def getRowsFromOld(self):
         '''
@@ -168,19 +161,21 @@ class DatabaseUpdater(DatabaseUpdaterThread):
         LOGGER.info("running script to convert from schema 1.0 to 1.1")
         try:
             self.connect()
-            if self.createNewTables():
-                self.progressSig(10, "extracting estimates")
-                oldrows = self.getRowsFromOld()
-                self.progressSig(20, "converting data")
-                newRows = self.convertData(oldrows)
-                self.progressSig(40, "exporting into newestimates table")
-                self.insertRowsIntoNew(newRows)
-                self.progressSig(90, "updating stored schema version")
-                self.update_schema_version(("1.1",), "1_0 to 1_1 script")
-                self.progressSig(100)
-                self.commit()
-                self.completeSig(_("Successfully moved db to")+ " 1.1")
-                return True
+            #- execute the SQL commands
+            self.progressSig(10, _("creating new tables"))
+            self.execute_statements(SQLSTRINGS)
+            self.progressSig(15, "extracting estimates")
+            oldrows = self.getRowsFromOld()
+            self.progressSig(20, "converting data")
+            newRows = self.convertData(oldrows)
+            self.progressSig(40, "exporting into newestimates table")
+            self.insertRowsIntoNew(newRows)
+            self.progressSig(90, "updating stored schema version")
+            self.update_schema_version(("1.1",), "1_0 to 1_1 script")
+            self.progressSig(100)
+            self.commit()
+            self.completeSig(_("Successfully moved db to") + " 1.1")
+            return True
         except Exception as exc:
             LOGGER.exception("error transfering data")
             self.rollback()

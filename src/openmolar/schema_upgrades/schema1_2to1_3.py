@@ -23,8 +23,8 @@
 # ############################################################################ #
 
 '''
-This module provides a function 'run' which will move data from the estimates
-table in schema 1_2 to the newestimates table in schema 1_3
+This module provides a function 'run' which will move data
+to schema 1_3
 '''
 import logging
 import sys
@@ -35,13 +35,13 @@ from openmolar.schema_upgrades.database_updater_thread import DatabaseUpdaterThr
 LOGGER = logging.getLogger("openmolar")
 
 SQLSTRINGS = [
-'alter table newfeetable drop column spare1',
-'alter table newfeetable drop column spare2',
-'alter table newfeetable drop column spare3',
-'alter table newfeetable drop column spare4',
-'alter table newfeetable change column PFC NF09 int(11)',
-'alter table newfeetable change column PFI NF09_pt int(11)',
-'''
+    'alter table newfeetable drop column spare1',
+    'alter table newfeetable drop column spare2',
+    'alter table newfeetable drop column spare3',
+    'alter table newfeetable drop column spare4',
+    'alter table newfeetable change column PFC NF09 int(11)',
+    'alter table newfeetable change column PFI NF09_pt int(11)',
+    '''
 CREATE TABLE if not exists clinical_memos (
 ix int(10) unsigned NOT NULL auto_increment ,
 serialno int(11) unsigned NOT NULL ,
@@ -70,7 +70,7 @@ class DatabaseUpdater(DatabaseUpdaterThread):
 
             self.progressSig(100, _("updating stored schema version"))
             self.commit()
-            self.completeSig(_("Successfully moved db to")+ " 1.3")
+            self.completeSig(_("Successfully moved db to") + " 1.3")
             return True
         except Exception as exc:
             LOGGER.exception("error transfering data")
