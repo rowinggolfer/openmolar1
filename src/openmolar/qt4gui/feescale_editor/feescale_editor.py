@@ -665,9 +665,11 @@ class FeescaleEditor(QtGui.QMainWindow):
         parser = self.current_parser
         try:
             if filepath is None:
-                filepath = QtGui.QFileDialog.getSaveFileName(self,
-                _("save as"), parser.filepath,
-                    "%s %s" % (_("xml_files"), "(*.xml)"))
+                filepath = unicode(
+                    QtGui.QFileDialog.getSaveFileName(self,
+                    _("save as"), parser.filepath,
+                        "%s %s" % (_("xml_files"), "(*.xml)")).toUtf8()
+                )
             if filepath == '':
                 return
             if not re.match(".*\.xml$", filepath):
