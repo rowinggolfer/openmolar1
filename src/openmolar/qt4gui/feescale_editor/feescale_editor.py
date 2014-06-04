@@ -118,7 +118,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self, parent)
         self.window_title = _("Feescale Editor")
         self.setWindowTitle(self.window_title)
-        self.loading = True
+        self.is_loading = True
 
         statusbar = QtGui.QStatusBar()
         self.setStatusBar(statusbar)
@@ -260,7 +260,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         self.feescale_parsers = OrderedDict()
         self.text_editors = []
         self.feescale_handler = feescale_handler
-
+        self.feescale_handler.check_dir()
         self.action_refactor = QtGui.QAction(_("XML tidy"), self)
         self.action_refactor.triggered.connect(self.refactor)
 
@@ -406,7 +406,15 @@ class FeescaleEditor(QtGui.QMainWindow):
         self.view_feescale(0)
 
     def load_feescales(self):
-        self.loading = True
+        self.is_loading = True
+
+        # if reloading.. disconnect signals.
+        for editor in self.text_editors:
+            editor.editing_finished.disconnect(self.te_editing_finished)
+            editor.cursorPositionChanged.disconnect(
+                self.cursor_position_changed)
+            editor.deleteLater()
+
         self.text_editors = []
         self.feescale_parsers = OrderedDict()
         for ix, filepath in self.feescale_handler.local_files:
@@ -430,10 +438,10 @@ class FeescaleEditor(QtGui.QMainWindow):
 
             self.tab_widget.addTab(editor, title)
 
-        self.loading = False
+        self.is_loading = False
 
     def view_feescale(self, i=0):
-        while self.loading:
+        while self.is_loading:
             QtCore.QTimer.singleShot(1000, self.view_feescale)
             return
         if len(self.text_editors) > 1:
@@ -668,7 +676,7 @@ class FeescaleEditor(QtGui.QMainWindow):
                 filepath = unicode(
                     QtGui.QFileDialog.getSaveFileName(self,
                     _("save as"), parser.filepath,
-                        "%s %s" % (_("xml_files"), "(*.xml)")).toUtf8()
+                        "%s (*.xml)" % _("xml_files")).toUtf8()
                 )
             if filepath == '':
                 return
@@ -679,7 +687,7 @@ class FeescaleEditor(QtGui.QMainWindow):
             f.close()
             if filepath != parser.filepath:
                 self.advise("%s %s" % (_("Copy saved to"), filepath), 1)
-                if os.path.dirname(filepath) == FEESCALE_DIR:
+                if os.path.dirname(filepath) == FEESCALE_DIR():
                     self.advise(_("Reload files to edit the new feescale"), 1)
             else:
                 if parser in self._known_deleted_parsers:
@@ -702,26 +710,57 @@ class FeescaleEditor(QtGui.QMainWindow):
             ) == QtGui.QMessageBox.Cancel):
             return
 
-        for fp in self.feescale_parsers.values():
-            fp.refresh()
-        self.view_feescale(self.tab_widget.currentIndex())
+        self.tab_widget.clear()
+        self.load_feescales()
 
     def apply_changes(self):
+        if self.is_dirty:
+            self.advise(
+                _("Please save local files before pushing to database"), 1)
+            return
         if QtGui.QMessageBox.question(self, _("confirm"),
-        _("commit all local files to database?"),
+        _("update all existing feescales with data from the local files?"),
             QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel
-        ) == QtGui.QMessageBox.Ok:
-            message = self.feescale_handler.update_db_all()
-            LOGGER.info("message")
-            self.advise("<pre>%s</pre>" % message, 1)
+        ) == QtGui.QMessageBox.Cancel:
+            return
+
+        message, insert_ids = self.feescale_handler.update_db_all()
+        LOGGER.info("message")
+        self.advise("<pre>%s</pre>" % message, 1)
+
+        mappings = {}
+        for ins_id in insert_ids:
+            if QtGui.QMessageBox.question(self, _("confirm"),
+            "%s %s?" % (_("Insert new Feescale"),
+            self.feescale_handler.index_to_local_filepath(ins_id)),
+                QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel
+            ) == QtGui.QMessageBox.Ok:
+                mappings[ins_id] = self.feescale_handler.insert_db(ins_id)
+
+        move_required = False
+        for file_ix, db_ix in mappings.iteritems():
+            if file_ix != db_ix:
+                move_required = True
+                self.advise(_("your local files will now be moved to "
+                "comply with the database indexes they have been given"), 1)
+                break
+        if not move_required:
+            return
+
+        # self._checking_files = True
+        for file_ix in mappings.keys():
+            self.feescale_handler.temp_move(file_ix)
+        for file_ix, db_ix in mappings.iteritems():
+            self.feescale_handler.final_move(file_ix, db_ix)
+        self.refresh_files()
 
     def cursor_position_changed(self, row, col):
         self.cursor_pos_label.setText("Line %d, Column %d" % (row + 1, col))
 
     def text_changed(self):
         new_text = self.text_edit.text()
-        if self.current_parser.text.count("\n") == new_text.count("\n"):
-            return
+        # if self.current_parser.text.count("\n") == new_text.count("\n"):
+        #    return
         if self.current_parser.set_edited_text(new_text):
             self.update_index()
 

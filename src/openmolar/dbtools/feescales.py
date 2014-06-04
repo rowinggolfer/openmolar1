@@ -35,13 +35,25 @@ from openmolar.settings import localsettings
 LOGGER = logging.getLogger("openmolar")
 
 
+def FEESCALE_DIR():
+    '''
+    this is dynamic in case user switches database
+    '''
+    return os.path.join(
+        localsettings.localFileDirectory,
+        "feescales",
+        connect.params.database_name.replace(" ", "_").replace(":", "_PORT_")
+    )
+
+
 def write_readme():
-    LOGGER.info("creating directory %s" % FEESCALE_DIR)
-    os.makedirs(FEESCALE_DIR)
-    f = open(os.path.join(FEESCALE_DIR, "README.txt"), "w")
+    dir_path = FEESCALE_DIR()
+    LOGGER.info("creating directory %s" % dir_path)
+    os.makedirs(dir_path)
+    f = open(os.path.join(dir_path, "README.txt"), "w")
     f.write('''
 This folder is created by openmolar to store xml copies of the feescales in
-your database (see feescales table).
+database %s.
 Filenames herein are IMPORTANT!
 feescale1.xml relates to the xml stored in row 1 of that table
 feescale2.xml relates to the xml stored in row 2 of that table
@@ -50,13 +62,11 @@ whilst you are free to edit these files using an editor of your choice,
 validation against feescale_schema.xsd is highly recommended.
 
 note - openmolar has a build in application for doing this.
-    ''')
+
+in addition - why not use some version control for this folder?
+    ''' % connect.params.database_name)
     f.close()
 
-
-FEESCALE_DIR = os.path.join(localsettings.localFileDirectory, "feescales")
-if not os.path.exists(FEESCALE_DIR):
-    write_readme()
 
 QUERY = 'select ix, xml_data from feescales'
 
@@ -67,7 +77,19 @@ UPDATE_QUERY = "update feescales set xml_data = %s where ix = %s"
 NEW_FEESCALE_QUERY = "insert into feescales (xml_data) values(%s)"
 
 
+def get_digits(string_value):
+    '''
+    used as a key for sort function for filenames.
+    I want foo_10 to be after foo_9 etc..
+    '''
+    m = re.search("(\d+)", string_value)
+    if not m:
+        return None
+    return int(m.groups()[0])
+
+
 class FeescaleHandler(object):
+    ixs_in_db = set([])
 
     def get_feescale_from_database(self, ix):
         '''
@@ -90,6 +112,8 @@ class FeescaleHandler(object):
         query = QUERY
         if in_use_only:
             query += ' where in_use = True'
+        else:  # if called by feescale editor
+            self.ixs_in_db = set([])
         if priority_order:
             query += ' order by priority desc'
         db = connect.connect()
@@ -98,6 +122,8 @@ class FeescaleHandler(object):
         rows = cursor.fetchall()
         cursor.close()
         LOGGER.debug("%d feescales retrieved" % len(rows))
+        for ix, xml_data in rows:
+            self.ixs_in_db.add(ix)
         return rows
 
     def save_file(self, ix, xml_data):
@@ -114,9 +140,6 @@ class FeescaleHandler(object):
             xml_file.filepath = self.index_to_local_filepath(ix)
 
             yield xml_file
-
-            # self.save_file(ix, xml_data)
-        # LOGGER.info("feescales data written to local filesystem")
 
     def non_existant_and_modified_local_files(self):
         '''
@@ -136,25 +159,50 @@ class FeescaleHandler(object):
         return unwritten, modified
 
     def index_to_local_filepath(self, ix):
-        return os.path.join(FEESCALE_DIR, "feescale_%d.xml" % ix)
+        return os.path.join(FEESCALE_DIR(), "feescale_%d.xml" % ix)
+
+    def check_dir(self):
+        if not os.path.exists(FEESCALE_DIR()):
+            write_readme()
 
     @property
     def local_files(self):
-        for file_ in sorted(os.listdir(FEESCALE_DIR)):
-            m = re.match(".*(\d+)\.xml$", file_)
+        self.check_dir()
+        dirname = FEESCALE_DIR()
+        for file_ in sorted(os.listdir(dirname), key=get_digits):
+            m = re.match("feescale_(\d+)\.xml$", file_)
             if m:
                 ix = int(m.groups()[0])
-                yield ix, os.path.join(FEESCALE_DIR, file_)
+                yield ix, os.path.join(dirname, file_)
+
+    def temp_move(self, file_ix):
+        '''
+        after insert, a local file may need to move.
+        this is done cautiously as could overwrite another
+        '''
+        path = self.index_to_local_filepath(file_ix)
+        shutil.move(path, path + "temp")
+
+    def final_move(self, file_ix, db_ix):
+        '''
+        finalised temp_move
+        '''
+        temp_path = self.index_to_local_filepath(file_ix) + "temp"
+        final_path = self.index_to_local_filepath(db_ix)
+        shutil.move(temp_path, final_path)
 
     def update_db_all(self):
         '''
         apply all local file changes to the database.
         '''
         message = ""
+        insert_ids = []
         for ix, filepath in self.local_files:
-            message += self.update_db(ix)
-
-        return message
+            if ix in self.ixs_in_db:
+                message += self.update_db(ix)
+            else:
+                insert_ids.append(ix)
+        return message, insert_ids
 
     def update_db(self, ix):
         message = ""
@@ -182,6 +230,31 @@ class FeescaleHandler(object):
 
         return message
 
+    def insert_db(self, ix):
+        message = ""
+        filepath = self.index_to_local_filepath(ix)
+        LOGGER.debug("inserting new feescale into database %s" % ix)
+        if not os.path.isfile(filepath):
+            message = "FATAL %s does not exist!" % filepath
+        else:
+            db = connect.connect()
+            cursor = db.cursor()
+
+            f = open(filepath)
+            data = f.read()
+            f.close()
+
+            values = (data,)
+            cursor.execute(NEW_FEESCALE_QUERY, values)
+            db_ix = db.insert_id()
+            self.ixs_in_db.add(db_ix)
+
+            r_message = "inserting new feescale '%s' to database." % filepath
+            db.close()
+
+            LOGGER.info(r_message)
+            return db_ix
+
     def save_xml(self, ix, xml):
         file_path = self.index_to_local_filepath(ix)
         LOGGER.info("saving %s" % file_path)
@@ -206,4 +279,6 @@ if __name__ == "__main__":
 
     fh = FeescaleHandler()
     fh.get_feescales_from_database()
+    for ix, local_file in fh.local_files:
+        print ix, local_file
     print fh.non_existant_and_modified_local_files()
