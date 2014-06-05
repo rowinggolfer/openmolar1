@@ -91,6 +91,10 @@ class BaseDialog(QtGui.QDialog):
         self.layout_.removeItem(self.spacer)
         self.insertpoint_offset = 1
 
+    @property
+    def abandon_message(self):
+        return _("Abandon Changes?")
+
     def set_check_on_cancel(self, check):
         '''
         if true, then user will be asked if changes should be abandoned
@@ -131,7 +135,7 @@ class BaseDialog(QtGui.QDialog):
             if not self.check_before_reject_if_dirty:
                 self.reject()
             if (not self.dirty or QtGui.QMessageBox.question(self,
-               _("Confirm"), _("Abandon Changes?"),
+               _("Confirm"), self.abandon_message,
                 QtGui.QMessageBox.Yes | QtGui.QMessageBox.Cancel,
                     QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Yes):
                 self.reject()

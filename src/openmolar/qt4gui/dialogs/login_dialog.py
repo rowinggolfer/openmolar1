@@ -147,10 +147,17 @@ class LoginDialog(ExtendableDialog):
         self.user1_lineEdit.textEdited.connect(self.autoreception)
         self.user2_lineEdit.textEdited.connect(self.autoreception)
 
+        self.dirty = True
+        self.set_check_on_cancel(True)
+
         QtCore.QTimer.singleShot(0, self._developer_login)
 
     def sizeHint(self):
         return QtCore.QSize(350, 300)
+
+    @property
+    def abandon_message(self):
+        return _("Are you sure you wish to cancel the login process?")
 
     def parse_conf_file(self):
         try:
