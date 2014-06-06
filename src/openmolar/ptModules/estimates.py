@@ -131,11 +131,12 @@ class Estimate(object):
             self.fee,
             self.ptfee,
             self.dent,
-            self.tx_hashes,
             self.itemcode,
             self.description,
             self.csetype,
-            self.feescale)
+            self.feescale,
+            self.tx_hashes
+        )
 
     @property
     def log_text(self):
@@ -149,6 +150,9 @@ class Estimate(object):
 
     def __eq__(self, other):
         return str(self) == str(other)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def toHtmlRow(self):
         hash_string = ""
@@ -193,7 +197,7 @@ class Estimate(object):
     def htmlHeader(self):
         color_string = ' bgcolor="#ffff99"'
         sub_values = (color_string, _("Estimates for Course Number"),
-        self.courseno) + (color_string,) * 10
+                      self.courseno) + (color_string,) * 10
         return '''
         <tr>
         <th%s colspan="10">%s %s <!--editlink--></th>

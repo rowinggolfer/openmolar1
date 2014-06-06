@@ -26,6 +26,13 @@ from openmolar.settings import localsettings
 from openmolar.connect import connect
 from openmolar.ptModules.estimates import Estimate, TXHash
 
+try:
+    from collections import OrderedDict
+except ImportError:
+    # OrderedDict only came in python 2.7
+    LOGGER.warning("using openmolar.backports for OrderedDict")
+    from openmolar.backports import OrderedDict
+
 QUERY = '''SELECT newestimates.ix, number, itemcode, description,
 fee, ptfee, feescale, csetype, dent, est_link2.completed, tx_hash, courseno
 from newestimates right join est_link2 on newestimates.ix = est_link2.est_id
@@ -50,7 +57,7 @@ def getEsts(sno, courseno=None):
     rows = cursor.fetchall()
     cursor.close()
 
-    estimates = {}
+    estimates = OrderedDict()
 
     for row in rows:
         hash_ = row[10]
@@ -80,6 +87,7 @@ def getEsts(sno, courseno=None):
 
     return estimates.values()
 
+
 def details(sno):
     '''
     returns an html page showing pt's old estimates
@@ -99,8 +107,10 @@ def details(sno):
         if est.courseno != courseno:
             header = est.htmlHeader()
             if ALLOW_EDIT:
-                header = header.replace("<!--editlink-->",
-                    EDIT_STRING % est.courseno)
+                header = header.replace(
+                    "<!--editlink-->",
+                    EDIT_STRING % est.courseno
+                )
 
             if i > 0:
                 html += "</table><hr />"

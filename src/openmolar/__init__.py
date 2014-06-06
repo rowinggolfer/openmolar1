@@ -45,6 +45,7 @@ if "-q" in sys.argv:
     LOGGER.setLevel(logging.WARNING)
 elif "-v" in sys.argv:
     LOGGER.setLevel(logging.DEBUG)
+    LOGGER.warning("verbose logging called by -v flag in sys.argv")
 else:
     LOGGER.setLevel(logging.INFO)
 

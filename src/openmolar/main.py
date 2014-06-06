@@ -37,19 +37,30 @@ from xml.dom import minidom
 
 from openmolar.settings import localsettings
 
-SHORTARGS = "v"
-LONGARGS = ["help", "version", "setup", "firstrun", "user=", "db=", "port=",
-            "ignore-schema-check"]
+SHORTARGS = "vq"
+LONGARGS = [
+    "help",
+    "version",
+    "setup",
+    "firstrun",
+    "ignore-schema-check",
+    "no-dev-login"
+]
 
 LOGGER = logging.getLogger("openmolar")
 
 USAGE = '''%s
+-q                   \t : %s
+-v                   \t : %s
+
 --help               \t : %s
 --firstrun           \t : %s
 --ignore-schema-check\t : %s
 --setup              \t : %s
 --version            \t : %s
+--no-dev-login       \t : %s
 '''
+
 
 def first_run():
     import first_run
@@ -57,6 +68,7 @@ def first_run():
         main()
     else:
         sys.exit()
+
 
 def main():
     '''
@@ -73,6 +85,7 @@ def main():
     else:
         first_run()
 
+
 def setup():
     '''
     run the setup gui, which allows customisation of the app
@@ -80,19 +93,25 @@ def setup():
     from openmolar.qt4gui.tools import new_setup
     new_setup.main(sys.argv)
 
+
 def usage():
     '''
     called by --help, bad arguments, or no arguments
     simply importing the localsettings will display some system info
     '''
     print USAGE % (
-    _("command line options are as follows"),
-    _("show this text"),
-    _("offer the firstrun config and demodatabase generation"),
-    _("proceed even if client and database versions clash (NOT ADVISABLE!)"),
-    _("takes you to the admin page"),
-    _("show the versioning and exit")
+        _("command line options are as follows"),
+        _("quiet (minimal logging to console)"),
+        _("verbose logging to console (for debugging)"),
+        _("show this text"),
+        _("offer the firstrun config and demodatabase generation"),
+        _(
+            "proceed even if client and database versions clash (NOT ADVISABLE!)"),
+        _("takes you to the admin page"),
+        _("show the versioning and exit"),
+        _("Ignore dev login (advanced)")
     )
+
 
 def version():
     '''
@@ -109,7 +128,8 @@ def run():
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], SHORTARGS, LONGARGS)
     except getopt.GetoptError as exc:
-        LOGGER.exception ("Unable to parse command line arguments")
+        # LOGGER.exception ("Unable to parse command line arguments")
+        print "\n%s\n" % exc.msg
         opts = (("--help", ""),)
 
     # some backward compatibility stuff here...

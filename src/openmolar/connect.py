@@ -43,7 +43,9 @@ if __name__ == "__main__":
 
 mainconnection = None
 
+
 class DB_Params(object):
+
     def __init__(self):
         self.host = ""
         self.port = 0
@@ -53,8 +55,10 @@ class DB_Params(object):
 
     def reload(self):
         dom = minidom.parse(localsettings.cflocation)
-        settingsversion = dom.getElementsByTagName("version")[0].firstChild.data
-        xmlnode = dom.getElementsByTagName("server")[localsettings.chosenserver]
+        settingsversion = dom.getElementsByTagName(
+            "version")[0].firstChild.data
+        xmlnode = dom.getElementsByTagName(
+            "server")[localsettings.chosenserver]
         command_nodes = xmlnode.getElementsByTagName("command")
         for command_node in command_nodes:
             LOGGER.info("commands found in conf file!")
@@ -67,17 +71,21 @@ class DB_Params(object):
                 subprocess.Popen(command_list)
 
         self.host = xmlnode.getElementsByTagName("location")[0].firstChild.data
-        self.port = int(xmlnode.getElementsByTagName("port")[0].firstChild.data)
+        self.port = int(
+            xmlnode.getElementsByTagName("port")[0].firstChild.data)
         sslnode = xmlnode.getElementsByTagName("ssl")
         self.use_ssl = sslnode and sslnode[0].firstChild.data == "True"
 
-        xmlnode = dom.getElementsByTagName("database")[localsettings.chosenserver]
+        xmlnode = dom.getElementsByTagName(
+            "database")[localsettings.chosenserver]
         self.user = xmlnode.getElementsByTagName("user")[0].firstChild.data
-        self.password = xmlnode.getElementsByTagName("password")[0].firstChild.data
+        self.password = xmlnode.getElementsByTagName(
+            "password")[0].firstChild.data
         if settingsversion == "1.1":
             self.password = base64.b64decode(self.password)
 
-        self.db_name = xmlnode.getElementsByTagName("dbname")[0].firstChild.data
+        self.db_name = xmlnode.getElementsByTagName(
+            "dbname")[0].firstChild.data
 
         if not self.use_ssl:
             #-- to enable ssl... add <ssl>True</ssl> to the conf file
@@ -97,7 +105,7 @@ class DB_Params(object):
             "db": self.db_name,
             "use_unicode": True,
             "charset": "utf8"
-            }
+        }
         if self.use_ssl:
                 #-- note, dictionary could have up to 5 params.
             #-- ca, cert, key, capath and cipher
@@ -115,6 +123,7 @@ GeneralError = MySQLdb.Error
 ProgrammingError = MySQLdb.ProgrammingError
 IntegrityError = MySQLdb.IntegrityError
 OperationalError = MySQLdb.OperationalError
+
 
 def connect():
     '''
@@ -144,7 +153,6 @@ def connect():
     raise exc
 
 if __name__ == "__main__":
-    LOGGER.setLevel(logging.DEBUG)
     LOGGER.debug("using conffile -  %s" % localsettings.cflocation)
     for i in range(1, 11):
         try:
@@ -158,7 +166,7 @@ if __name__ == "__main__":
                 dbc.close()
             if i == 4:
                 LOGGER.debug(
-                "making a slightly bad query... let's check we get a warning")
+                    "making a slightly bad query... let's check we get a warning")
                 cursor = dbc.cursor()
                 cursor.execute(
                     'update patients set dob="196912091" where serialno=4')

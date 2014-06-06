@@ -25,6 +25,7 @@
 import hashlib
 import logging
 import os
+import sys
 from xml.dom import minidom
 
 from PyQt4 import QtGui, QtCore
@@ -208,12 +209,12 @@ class LoginDialog(ExtendableDialog):
                     LOGGER.warning(
                         "dev_login - file present, but with bad checksum")
             except:
-                #fail quietly
+                # fail quietly
                 pass
         return self.__is_developer_environment
 
     def _developer_login(self):
-        if self._is_developer_environment:
+        if self._is_developer_environment and not "--no-dev-login" in sys.argv:
             self.accept()
 
     @property

@@ -32,34 +32,42 @@ from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 from openmolar.qt4gui.customwidgets.estimate_widget import EstimateWidget
 LOGGER = logging.getLogger("openmolar")
 
+
 class _Patient(object):
+
     '''
     A "duck" patient
     '''
-    def __init__(self, serialno):
+
+    def __init__(self, serialno, courseno):
         self.serialno = serialno
+        self.courseno0 = courseno
         self.estimates = []
 
+
 class OldEstimateWidget(EstimateWidget):
+
     '''
     Estimate widget assumes current course, and parent being full blown gui.
     Override some functions.
     '''
+
     def allow_check(self, *args):
         return True
 
     def tx_hash_complete(self, tx_hash):
         pass
 
+
 class EstimateEditDialog(ExtendableDialog):
     orig_ests = []
+
     def __init__(self, serialno, courseno, parent=None):
         ExtendableDialog.__init__(self, parent)
-        self.patient = _Patient(serialno)
-        self.courseno = courseno
+        self.patient = _Patient(serialno, courseno)
 
         header_label = QtGui.QLabel("<b>%s %s</b>" % (
-            _("Inspecting estimate for Course Number"), self.courseno))
+            _("Inspecting estimate for Course Number"), courseno))
         header_label.setAlignment(QtCore.Qt.AlignCenter)
 
         self.est_widget = OldEstimateWidget(self)
@@ -69,7 +77,7 @@ class EstimateEditDialog(ExtendableDialog):
 
         self.adv_widget = QtGui.QLabel(_("No advanced options available"))
         self.add_advanced_widget(self.adv_widget)
-        #self.remove_spacer()
+        # self.remove_spacer()
 
         self.est_widget.delete_estimate_item.connect(self.delete_item)
         self.est_widget.edited_signal.connect(self._enable_apply)
@@ -83,13 +91,16 @@ class EstimateEditDialog(ExtendableDialog):
         return QtCore.QSize(400, 400)
 
     def get_data(self):
-        ests = estimates.get_ests(self.patient.serialno, self.courseno)
+        ests = estimates.get_ests(
+            self.patient.serialno,
+            self.patient.courseno0)
         self.orig_ests = copy.deepcopy(ests)
         self.patient.estimates = ests
         self.est_widget.setPatient(self.patient)
 
     def delete_item(self, est):
-        assert type(est) == estimates.Estimate, "bad object passed to delete"
+        assert isinstance(
+            est, estimates.Estimate), "bad object passed to delete"
         LOGGER.debug("delete %s" % est)
         self.patient.estimates.remove(est)
 
@@ -97,16 +108,22 @@ class EstimateEditDialog(ExtendableDialog):
         LOGGER.debug("checking enable apply")
         self.enableApply(self.patient.estimates != self.orig_ests)
 
-    def update_db(self):
-        if QtGui.QMessageBox.question(
-            self, _("Confirm"), _("Apply Changes"),
-            QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel,
+    def _clicked(self, but):
+        '''
+        overwrite BaseDialog method
+        '''
+        role = self.button_box.buttonRole(but)
+        if role == QtGui.QDialogButtonBox.ApplyRole and QtGui.QMessageBox.question(
+            self, _("Confirm"), _("Apply Changes?"),
+            QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
             QtGui.QMessageBox.Cancel
-            ) == QtGui.QMessageBox.Cancel:
-            self.advise(_("Not Applying Estimate Changes"))
+        ) == QtGui.QMessageBox.Cancel:
             return
-        self.advise(_("Applying Estimate Changes"))
-        print dl.patient.estimates
+        ExtendableDialog._clicked(self, but)
+
+    def update_db(self):
+        estimates.apply_changes(
+            self.patient, self.orig_ests, self.patient.estimates)
 
 if __name__ == "__main__":
 
@@ -115,3 +132,4 @@ if __name__ == "__main__":
     dl = EstimateEditDialog(11956, 29749)
     if dl.exec_():
         dl.update_db()
+        print dl.patient.estimates

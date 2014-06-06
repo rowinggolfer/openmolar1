@@ -133,7 +133,6 @@ from openmolar.qt4gui.customwidgets.static_control_panel \
 from openmolar.backports.advisor import Advisor
 
 LOGGER = logging.getLogger("openmolar")
-LOGGER.setLevel(logging.INFO)
 
 
 class OpenmolarGui(QtGui.QMainWindow, Advisor):
@@ -2957,8 +2956,9 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         '''
         if not self.pt.underTreatment:
             self.advise(
-                _("Recalculate Estimate is for active courses only"), 1)
-            return
+                _("Recalculate Estimate is not normally used on closed courses"), 1)
+            if not permissions.granted(self):
+                return
         if QtGui.QMessageBox.question(
             self,
             _("Confirm"),

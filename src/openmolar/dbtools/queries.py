@@ -22,11 +22,6 @@
 # #                                                                          # #
 # ############################################################################ #
 
-ESTS_QUERY = '''SELECT newestimates.ix, number, itemcode, description,
-fee, ptfee, feescale, csetype, dent, est_link2.completed, tx_hash, courseno
-from newestimates right join est_link2 on newestimates.ix = est_link2.est_id
-where serialno=%s and courseno=%s order by itemcode, ix'''
-
 PATIENT_QUERY = '''SELECT pf0, pf1, pf2, pf3, pf4, pf5, pf6, pf7, pf8, pf9,
 pf10, pf11, pf12, pf14, pf15, pf16, pf17, pf18, pf19, money0, money1, money2,
 money3, money4, money5, money6, money7, money8, money9, money10,
