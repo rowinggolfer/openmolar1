@@ -47,6 +47,7 @@ VALID_INPUTS = (
 
 
 class _OptionPage(QtGui.QWidget):
+    finished_signal = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
@@ -130,27 +131,56 @@ class PageZero(_OptionPage):
 
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
-        self.upper_radioButton = QtGui.QRadioButton(_("Upper Denture"))
-        self.lower_radioButton = QtGui.QRadioButton(_("Lower Denture"))
+        self._is_completed = False
+        self._chosen_arch = "upper"
+        self._return_text = ""
 
-        layout = QtGui.QVBoxLayout(self.frame)
-        layout.addWidget(self.upper_radioButton)
-        layout.addWidget(self.lower_radioButton)
+        upper_but = QtGui.QPushButton(_("New UPPER Denture"))
+        upper_but.setMinimumSize(QtCore.QSize(150, 150))
+        lower_but = QtGui.QPushButton(_("New LOWER Denture"))
+        lower_but.setMinimumSize(QtCore.QSize(150, 150))
+        full_fulls_but = QtGui.QPushButton(
+            _("Complete Upper AND Lower Acrylic Dentures"))
+        full_fulls_but.setMinimumSize(QtCore.QSize(150, 150))
+
+        layout = QtGui.QGridLayout(self.frame)
+        layout.addWidget(upper_but, 0, 0)
+        layout.addWidget(lower_but, 0, 1)
+        layout.addWidget(full_fulls_but, 1, 0, 1, 2)
+
+        upper_but.clicked.connect(self._finished)
+        lower_but.clicked.connect(self._lower)
+        full_fulls_but.clicked.connect(self._full_fulls)
 
     @property
     def is_completed(self):
-        return (self.upper_radioButton.isChecked() or
-                self.lower_radioButton.isChecked())
+        return self._is_completed
 
     @property
     def return_text(self):
-        return ""
+        return self._return_text
 
     @property
     def chosen_arch(self):
-        if self.upper_radioButton.isChecked():
-            return "upper"
-        return "lower"
+        return self._chosen_arch
+
+    def _finished(self):
+        self._is_completed = True
+        self.finished_signal.emit()
+
+    def _lower(self):
+        self._chosen_arch = "lower"
+        self._finished()
+
+    @property
+    def next_index(self):
+        if self._return_text == "SR_F/F":
+            return 4
+        return 1
+
+    def _full_fulls(self):
+        self._return_text = "SR_F/F"
+        self._finished()
 
 
 class PageOne(_OptionPage):
@@ -165,6 +195,12 @@ class PageOne(_OptionPage):
         layout.addWidget(self.acrylic_radioButton)
         layout.addWidget(self.metal_radioButton)
         layout.addWidget(self.flexible_radioButton)
+
+    @property
+    def is_completed(self):
+        return (self.acrylic_radioButton.isChecked() or
+                self.metal_radioButton.isChecked() or
+                self.flexible_radioButton.isChecked())
 
     @property
     def return_text(self):
@@ -278,6 +314,7 @@ class NewDentureDialog(ExtendableDialog):
         self.wizard_widget = QtGui.QStackedWidget()
 
         page0 = PageZero(self)
+        page0.finished_signal.connect(self.next_widget)
         page1 = PageOne(self)
         page2 = PageTwo(self)
         page3 = PageThree(self)
@@ -333,6 +370,11 @@ class NewDentureDialog(ExtendableDialog):
         le.setText(le.text() + self.current_page.return_text)
 
         self.current_page.cleanup()
+
+        if self.current_index == 4:
+            if "F/F" in self.upper_input:
+                le = self.ndl_le
+                le.setText(le.text() + self.current_page.return_text)
 
         index_ = self.current_index + self.current_page.next_index
         if index_ >= self.wizard_widget.count() - 1:

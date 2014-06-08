@@ -48,7 +48,7 @@ class DentureDialog(BaseDialog):
         frame = QtGui.QFrame()
         layout = QtGui.QHBoxLayout(frame)
 
-        new_but = QtGui.QPushButton(_("Plan a New Denture"))
+        new_but = QtGui.QPushButton(_("Plan New Denture(s)"))
         new_but.setMinimumSize(QtCore.QSize(150, 150))
         alt_but = QtGui.QPushButton(_("Alter an Existing Denture"))
         alt_but.setMinimumSize(QtCore.QSize(150, 150))
