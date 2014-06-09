@@ -160,7 +160,6 @@ def apply_changes(pt, old_ests, new_ests):
     estimate_insertions = []
     estimate_updates = []
     estimate_deletions = []
-    estimate_daybook_alterations = []
     post_cleanup_commands = []
 
     result = True
@@ -232,6 +231,11 @@ def apply_changes(pt, old_ests, new_ests):
                           (estimate.ix, tx_hash.hash,
                            tx_hash.completed)
                            )
+
+    for query, values in estimate_deletions:
+        LOGGER.debug(query)
+        LOGGER.debug(values)
+        cursor.execute(query, values)
 
     cursor.close()
 
