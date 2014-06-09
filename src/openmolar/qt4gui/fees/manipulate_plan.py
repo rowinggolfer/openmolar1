@@ -136,17 +136,18 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
                 continue
             alt_code = alt_table.getToothCode(att, shortcut)
             if alt_code != "-----":
-                if QtGui.QMessageBox.question(om_gui, _("Confirm"),
-                                              u"<p><b>%s %s</b> %s.</p><p>%s <em>%s</em></p><hr />%s" % (
-                                                  att, shortcut,
-                                                  _(
-                                                      "was not found in the patient's default feescale"),
-                                                  _(
-                                                      "It is matched in another feescale -"),
-                                                  alt_table.briefName,
-                                                  _("Shall we add this item from this feescale?")),
-                                              QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                                              QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+                if QtGui.QMessageBox.question(om_gui,
+                    _("Confirm"),
+                  u"<p><b>%s %s</b> %s.</p><p>%s <em>%s</em></p><hr />%s" % (
+                      att, shortcut,
+                      _(
+                          "was not found in the patient's default feescale"),
+                      _(
+                          "It is matched in another feescale -"),
+                      alt_table.briefName,
+                      _("Shall we add this item from this feescale?")),
+                  QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                  QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
                     return alt_code, alt_table
 
         return itemcode, table
@@ -161,17 +162,19 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
                 continue
             alt_code = alt_table.getItemCodeFromUserCode(usercode)
             if alt_code != "-----":
-                if QtGui.QMessageBox.question(om_gui, _("Confirm"),
-                                              u"<p><b>%s</b> %s.</p><p>%s <em>%s</em></p><hr />%s" % (
-                                                  usercode,
-                                                  _(
-                                                      "was not found in the patient's default feescale"),
-                                                  _(
-                                                      "It is matched in another feescale -"),
-                                                  alt_table.briefName,
-                                                  _("Shall we add this item from this feescale?")),
-                                              QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                                              QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+                if QtGui.QMessageBox.question(
+                    om_gui,
+                    _("Confirm"),
+                  u"<p><b>%s</b> %s.</p><p>%s <em>%s</em></p><hr />%s" % (
+                      usercode,
+                      _(
+                          "was not found in the patient's default feescale"),
+                      _(
+                          "It is matched in another feescale -"),
+                      alt_table.briefName,
+                      _("Shall we add this item from this feescale?")),
+                  QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                  QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
                     return alt_code, alt_table
         return itemcode, table
 
@@ -594,9 +597,10 @@ def fromFeeTable(om_gui, fee_item, sub_index):
             reason = _("Exam items can never be added this way")
         else:
             reason = fee_item.forbid_reason
-        message = "%s<hr /><em>%s</em>" % (_(
-                                           "This item can not be added to the treatment plan "
-                                           "using the feescale method, sorry"), reason)
+        message = "%s<hr /><em>%s</em>" % (
+            _("This item can not be added to the treatment plan "
+              "using the feescale method, sorry"),
+            reason)
         om_gui.advise(message, 1)
         return
 
@@ -700,8 +704,13 @@ def complex_shortcut_addition(om_gui, att, shortcut, n_txs, tx_hash,
 
                 for item_code in case.additions:
                     LOGGER.debug("adding additional code %s" % item_code)
-                    add_treatment_to_estimate(om_gui,
-                                              att, shortcut, dentid, list(tx_hashes), item_code)
+                    add_treatment_to_estimate(
+                        om_gui,
+                        att,
+                        shortcut,
+                        dentid,
+                        list(tx_hashes),
+                        item_code)
 
                 for item_code in case.alterations:
                     # instead of adding a new estimate item
@@ -787,8 +796,13 @@ def complex_shortcut_removal_handled(om_gui, att, shortcut, n_txs, tx_hash):
 
                 for item_code in case.additions:
                     LOGGER.debug("adding additional code %s" % item_code)
-                    add_treatment_to_estimate(om_gui,
-                                              att, shortcut, dentid, tx_hashes, item_code)
+                    add_treatment_to_estimate(
+                        om_gui,
+                        att,
+                        shortcut,
+                        dentid,
+                        tx_hashes,
+                        item_code)
 
                 for item_code in case.alterations:
                     # instead of adding a new estimate item
@@ -916,6 +930,7 @@ def remove_estimate_item(om_gui, est_item):
                     pt.addHiddenNote("exam", treat_code, attempt_delete=True)
                     for est in pt.ests_from_hash(tx_hash):
                         pt.estimates.remove(est)
+                    om_gui.updateHiddenNotesLabel()
                 elif treat_code.strip(" ") == "!FEE":
                     LOGGER.debug("special case - removing feescale added item")
                     if tx_hash.completed:
@@ -924,13 +939,17 @@ def remove_estimate_item(om_gui, est_item):
                         pt.estimates.remove(est)
                 else:
                     LOGGER.debug("not a special case")
-                    remove_treatments_from_plan_and_est(om_gui,
-                                                       ((att, treat_code.strip(" ")),), tx_hash.completed)
+                    remove_treatments_from_plan_and_est(
+                        om_gui,
+                        ((att, treat_code.strip(" ")),),
+                        tx_hash.completed)
 
     if not found:
         LOGGER.debug("NO MATCHING hash FOUND!")
-        om_gui.advise(u"%s - %s" % (
-                      _("couldn't pass on delete message for"), est_item.description), 1)
+        om_gui.advise(
+            u"%s - %s" % (_("couldn't pass on delete message for"),
+                          est_item.description),
+            1)
 
 
 def recalculate_estimate(om_gui):

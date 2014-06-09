@@ -121,6 +121,7 @@ def setupNewCourse(om_gui):
         accd = atts[3].toPyDate()
 
         new_courseno = writeNewCourse.write(om_gui.pt.serialno, accd)
+        om_gui.load_dentComboBoxes()
         return apply_new_courseno(om_gui, new_courseno, accd)
 
 

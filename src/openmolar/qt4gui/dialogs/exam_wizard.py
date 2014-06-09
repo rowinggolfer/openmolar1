@@ -126,6 +126,8 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
             else:
                 APPLIED = False
 
+            self.om_gui.load_dentComboBoxes()
+
         return APPLIED, examdent
 
     def perform_exam(self):
@@ -166,7 +168,7 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
 
                 self.update_recall_date()
 
-                self.pt.addHiddenNote("exam", "%s" % examtype)
+                self.pt.addHiddenNote("exam", "%s " % examtype)
 
                 dentid = localsettings.ops_reverse[examdent]
 

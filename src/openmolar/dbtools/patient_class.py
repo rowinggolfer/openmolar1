@@ -680,9 +680,8 @@ class patient(object):
         '''
         re-written for schema 1.9
         '''
-        LOGGER.info(
-            "patient.addHiddenNote(ntype='%s',note='%s', attempt_delete='%s'" % (
-                ntype, note, attempt_delete))
+        LOGGER.info("(ntype='%s',note='%s', attempt_delete='%s'",
+                ntype, note, attempt_delete)
 
         HN = ()
         if ntype == "payment":
@@ -711,7 +710,8 @@ class patient(object):
             HN = ("INTERIM: ", note)
 
         if not HN:
-            print "unable to add Hidden Note notetype '%s' not found" % ntype
+            LOGGER.warning(
+                "unable to add Hidden Note notetype '%s' not found" , ntype)
             return
 
         reversing_note = ("UNCOMPLETED", "{%s}" % note)
@@ -720,6 +720,8 @@ class patient(object):
             try:
                 self.HIDDENNOTES.remove(HN)
             except ValueError:
+                LOGGER.debug("'%s' not in hiddenotes", HN)
+                LOGGER.debug(self.HIDDENNOTES)
                 self.HIDDENNOTES.append(reversing_note)
         else:
             try:

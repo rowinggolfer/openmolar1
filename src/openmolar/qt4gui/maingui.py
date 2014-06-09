@@ -823,7 +823,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         return True
 
     def load_dentComboBoxes(self, newpatient=False):
-        # print "loading dnt comboboxes."
+        LOGGER.debug("loading dnt comboboxes. dnt1=%s dnt2=%s",
+            self.pt.dnt1, self.pt.dnt2)
         inits = localsettings.ops.get(self.pt.dnt1, "")
         if inits in localsettings.activedents:
             self.ui.dnt1comboBox.setCurrentIndex(
@@ -831,12 +832,12 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         else:
             self.ui.dnt1comboBox.setCurrentIndex(-1)
             if not newpatient:
-                print "dnt1 error - record %d" % self.pt.serialno
+                LOGGER.warning("dnt1 error %s - record %s",
+                    self.pt.dnt1, self.pt.serialno)
                 if not inits in ("", "NONE"):
                     message = "%s " % inits + _(
                         "is no longer an active dentist in this practice")
                 else:
-                    print "unknown dentist number", self.pt.dnt1
                     message = _(
                         "unknown contract dentist - please correct this")
                 self.advise(message, 2)
@@ -854,7 +855,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                     "is no longer an active dentist in this practice")
                 self.advise(message, 2)
             elif inits == "":
-                print "unknown dentist number", self.pt.dnt2
+                LOGGER.warning("dnt2 error %s - record %s",
+                    self.pt.dnt2, self.pt.serialno)
                 message = _("unknown course dentist - please correct this")
                 self.advise(message, 2)
 
@@ -1674,6 +1676,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             dl.apply()
             self.advise("Updated Medical Notes")
             self.medalert()
+            self.updateHiddenNotesLabel()
 
     def newBPE_Dialog(self):
         '''
