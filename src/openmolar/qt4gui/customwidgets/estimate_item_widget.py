@@ -26,6 +26,7 @@ import logging
 
 from PyQt4 import QtGui, QtCore
 
+from openmolar.settings import localsettings
 from openmolar.qt4gui.customwidgets.chainLabel import ChainLabel
 from openmolar.qt4gui.customwidgets.confirming_check_box import ConfirmingCheckBox
 
@@ -421,6 +422,15 @@ class EstimateItemWidget(QtGui.QWidget):
         perform logic here first to see if he/she is allowed to do this
         '''
         LOGGER.debug("EstimateItemWidget.check_first")
+
+        if localsettings.clinicianNo == 0:
+            QtGui.QMessageBox.warning(
+                self,
+                _("Not Allowed"),
+                _("You have no clinician login. "
+                  "Treatments cannot be completed by you!"))
+            return
+
         if self.est_items[0].is_exam:
             if QtGui.QMessageBox.question(
                 self,

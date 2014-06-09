@@ -824,7 +824,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
     def load_dentComboBoxes(self, newpatient=False):
         LOGGER.debug("loading dnt comboboxes. dnt1=%s dnt2=%s",
-            self.pt.dnt1, self.pt.dnt2)
+                     self.pt.dnt1, self.pt.dnt2)
         inits = localsettings.ops.get(self.pt.dnt1, "")
         if inits in localsettings.activedents:
             self.ui.dnt1comboBox.setCurrentIndex(
@@ -833,7 +833,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.ui.dnt1comboBox.setCurrentIndex(-1)
             if not newpatient:
                 LOGGER.warning("dnt1 error %s - record %s",
-                    self.pt.dnt1, self.pt.serialno)
+                               self.pt.dnt1, self.pt.serialno)
                 if not inits in ("", "NONE"):
                     message = "%s " % inits + _(
                         "is no longer an active dentist in this practice")
@@ -856,7 +856,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                 self.advise(message, 2)
             elif inits == "":
                 LOGGER.warning("dnt2 error %s - record %s",
-                    self.pt.dnt2, self.pt.serialno)
+                               self.pt.dnt2, self.pt.serialno)
                 message = _("unknown course dentist - please correct this")
                 self.advise(message, 2)
 
@@ -1746,14 +1746,16 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.apply_editpage_changes()
         uc = self.unsavedChanges()
         if uc != []:
-            print "changes made to patient atttributes..... updating database"
+            LOGGER.info(
+                "changes made to patient atttributes..... updating database")
             result = patient_write_changes.all_changes(self.pt, uc)
-            daybook_module.updateDaybook(self)
-            if self.pt.est_logger is not None:
-                self.pt.est_logger.add_row(
-                    self.pt.courseno0, self.pt.est_logger_text)
 
             if result:  # True if successful
+                daybook_module.updateDaybook(self)
+                if self.pt.est_logger is not None:
+                    self.pt.est_logger.add_row(
+                        self.pt.courseno0, self.pt.est_logger_text)
+
                 if not leavingRecord and "estimates" in uc:
                     #-- necessary to get index numbers for estimate data types
                     self.pt.getEsts()
@@ -1813,21 +1815,26 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.ui.saveButton,
             self.ui.phraseBook_pushButton,
             self.ui.clinician_phrasebook_pushButton,
-            self.ui.exampushButton,
-            self.ui.xray_pushButton,
             self.ui.medNotes_pushButton,
             self.ui.printGP17_pushButton,
-            self.ui.newBPE_pushButton,
-            self.ui.hygWizard_pushButton,
             self.ui.notesEnter_textEdit,
             self.ui.synopsis_lineEdit,
             self.ui.memos_pushButton,
             self.pt_diary_widget,
-            self.ui.childsmile_button,
             self.ui.reloadButton,
         ):
-
             widg.setEnabled(arg)
+
+        enable_tx_buts = arg and localsettings.clinicianNo != 0
+        for widg in (
+            self.ui.exampushButton,
+            self.ui.xray_pushButton,
+            self.ui.newBPE_pushButton,
+            self.ui.hygWizard_pushButton,
+            self.ui.childsmile_button,
+            self.ui.completedChartWidget
+        ):
+            widg.setEnabled(enable_tx_buts)
 
         self.ui.closeCourse_pushButton.setEnabled(False)
         self.ui.actionFix_Locked_New_Course_of_Treatment.setEnabled(False)

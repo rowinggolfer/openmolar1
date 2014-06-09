@@ -136,18 +136,19 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
                 continue
             alt_code = alt_table.getToothCode(att, shortcut)
             if alt_code != "-----":
-                if QtGui.QMessageBox.question(om_gui,
+                if QtGui.QMessageBox.question(
+                    om_gui,
                     _("Confirm"),
-                  u"<p><b>%s %s</b> %s.</p><p>%s <em>%s</em></p><hr />%s" % (
-                      att, shortcut,
-                      _(
-                          "was not found in the patient's default feescale"),
-                      _(
-                          "It is matched in another feescale -"),
-                      alt_table.briefName,
-                      _("Shall we add this item from this feescale?")),
-                  QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                  QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+                    u"<p><b>%s %s</b> %s.</p><p>%s <em>%s</em></p><hr />%s" % (
+                        att, shortcut,
+                        _(
+                            "was not found in the patient's default feescale"),
+                        _(
+                            "It is matched in another feescale -"),
+                        alt_table.briefName,
+                        _("Shall we add this item from this feescale?")),
+                    QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                        QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
                     return alt_code, alt_table
 
         return itemcode, table
@@ -165,16 +166,16 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
                 if QtGui.QMessageBox.question(
                     om_gui,
                     _("Confirm"),
-                  u"<p><b>%s</b> %s.</p><p>%s <em>%s</em></p><hr />%s" % (
-                      usercode,
-                      _(
-                          "was not found in the patient's default feescale"),
-                      _(
-                          "It is matched in another feescale -"),
-                      alt_table.briefName,
-                      _("Shall we add this item from this feescale?")),
-                  QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                  QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+                    u"<p><b>%s</b> %s.</p><p>%s <em>%s</em></p><hr />%s" % (
+                        usercode,
+                        _(
+                            "was not found in the patient's default feescale"),
+                        _(
+                            "It is matched in another feescale -"),
+                        alt_table.briefName,
+                        _("Shall we add this item from this feescale?")),
+                    QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                        QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
                     return alt_code, alt_table
         return itemcode, table
 
@@ -1064,6 +1065,12 @@ def complete_txs(om_gui, treatments, confirm_multiples=True):
     args is a list - [("ul5","MOD"),("ul5", "RT"), ("perio", "SP")]
 
     '''
+    if localsettings.clinicianNo == 0:
+        om_gui.advise(
+            _("You have no clinician login. "
+              "Treatments cannot be completed by you!"),
+            2)
+        return
     LOGGER.debug(treatments)
 
     pt = om_gui.pt
@@ -1106,6 +1113,13 @@ def tx_hash_complete(om_gui, tx_hash):
     reponds to a signal when the user completes an item of treatment by
     checking a checkbox on the estwidget
     '''
+    if localsettings.clinicianNo == 0:
+        om_gui.advise(
+            _("You have no clinician login. "
+              "Treatments cannot be completed by you!"),
+            2)
+        return
+
     LOGGER.debug(tx_hash)
 
     pt = om_gui.pt

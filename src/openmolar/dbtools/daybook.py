@@ -82,17 +82,20 @@ UPDATE_TREATMENTS_QUERY = ('update daybook '
                            'set diagn=%s, perio=%s, anaes=%s, misc=%s, ndu=%s, ndl=%s, '
                            'odu=%s, odl=%s, other=%s, chart=%s where id = %s')
 
-#custom class for daybook data
+# custom class for daybook data
 DaybookEntry = namedtuple('DaybookEntry',
-    ('date', 'coursetype', 'dntid', 'trtid', 'diagn', 'perio',
-     'anaes', 'misc', 'ndu', 'ndl', 'odu', 'odl', 'other', 'chart',
-     'feesa', 'feesb', 'feesc', 'id')
-    )
+                         ('date', 'coursetype', 'dntid', 'trtid', 'diagn', 'perio',
+                          'anaes', 'misc', 'ndu', 'ndl', 'odu', 'odl', 'other', 'chart',
+                          'feesa', 'feesb', 'feesc', 'id')
+                          )
+
 
 def add(sno, cset, dent, trtid, t_dict, fee, ptfee, tx_hashes):
     '''
     add a row to the daybook table
     '''
+    if trtid in (0, None):
+        LOGGER.warning("no clinician login - daybook will contain junk!")
     db = connect.connect()
     cursor = db.cursor()
 
@@ -308,6 +311,7 @@ def all_data(serialno):
     for row in rows:
         yield DaybookEntry(*row)
 
+
 def all_data_header():
     color_string = ' bgcolor="#ffff99"'
 
@@ -317,15 +321,15 @@ def all_data_header():
     </tr>
     <tr><th%s>%s</th></tr>
     ''' % (color_string,
-        _("Daybook Items during this Period"),
-        color_string, color_string,
-        ("</th><th%s>" % color_string).join(
-            ("date", "cset", "dntid", "trtid",
+           _("Daybook Items during this Period"),
+           color_string, color_string,
+           ("</th><th%s>" % color_string).join(
+           ("date", "cset", "dntid", "trtid",
             "diagn", "perio", "anaes", "misc",
             "ndu", "ndl", "odu", "odl", "other",
             "chart", "feesa", "feesb", "id")
-            )
-            )
+           )
+           )
 
 
 class FilterHelp(object):
@@ -365,6 +369,7 @@ class FilterHelp(object):
         return html
 
 _filter_help = FilterHelp()
+
 
 def filter_help_text():
     return _filter_help.help_text()
