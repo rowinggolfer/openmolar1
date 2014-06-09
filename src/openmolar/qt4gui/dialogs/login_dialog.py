@@ -248,8 +248,8 @@ class LoginDialog(ExtendableDialog):
 
     @property
     def login_ok(self):
-        return self._is_developer_environment or (
-            self.user1_ok and self.user2_ok and self.password_ok)
+        return self.user1_ok and self.user2_ok and (
+            self._is_developer_environment or self.password_ok)
 
     @property
     def chosen_server(self):
