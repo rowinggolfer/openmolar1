@@ -33,7 +33,7 @@ LOGGER = logging.getLogger("openmolar")
 
 class CloseCourseDialog(BaseDialog):
 
-    def __init__(self, parent=None):
+    def __init__(self, ftr=False, parent=None):
         BaseDialog.__init__(self, parent)
         self.setWindowTitle(_("Close Course Dialog"))
 
@@ -57,9 +57,21 @@ class CloseCourseDialog(BaseDialog):
         layout = QtGui.QFormLayout(frame)
         layout.addRow(_("Suggested Completion Date"), self.date_edit)
 
+        question_label = QtGui.QLabel(
+            "<b>%s</b>" %
+            _("Close this course now?"))
+        question_label.setAlignment(QtCore.Qt.AlignCenter)
+
+        self.ftr_checkbox = QtGui.QCheckBox(_("Pt failed to return"))
+        self.ftr_checkbox.setChecked(ftr)
+
         self.insertWidget(self.patient_label)
         self.insertWidget(self.tx_complete_label)
         self.insertWidget(frame)
+        self.insertWidget(question_label)
+
+        if ftr:
+            self.insertWidget(self.ftr_checkbox)
 
         self.enableApply()
 
@@ -69,13 +81,22 @@ class CloseCourseDialog(BaseDialog):
     def set_date(self, date_):
         self.date_edit.setDate(date_)
 
+    @property
+    def completion_date(self):
+        return self.date_edit.date().toPyDate()
+
+    @property
+    def ftr(self):
+        return self.ftr_checkbox.isChecked()
+
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
     app = QtGui.QApplication([])
 
-    dl = CloseCourseDialog()
+    dl = CloseCourseDialog(True)
     dl.patient_label.setText("test")
     # dl.tx_complete_label.hide()
     dl.set_minimum_date(QtCore.QDate().currentDate().addMonths(-1))
 
-    dl.exec_()
+    if dl.exec_():
+        print dl.completion_date, dl.ftr

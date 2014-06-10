@@ -241,6 +241,7 @@ class GP17iFront(PrintedForm):
             self._fill_pid,
             self._fill_accd,
             self._fill_cmpd,
+            self._fill_pftr,
             self._fill_stampbox,
             self._fill_previous_surname,
             self._fill_address,
@@ -355,6 +356,11 @@ class GP17iFront(PrintedForm):
                 painter.drawText(rect, self.data.cmpd[i], OPTION)
             except IndexError:
                 break
+
+    def _fill_pftr(self, painter):
+        if self.data.pftr:
+            rect = self.rects["pftr"]
+            painter.drawText(rect, "X", OPTION)
 
     def _fill_charting(self, painter):
         if not self.data.show_chart:

@@ -42,8 +42,8 @@ LOGGER = logging.getLogger("openmolar")
 SUPERVISOR = '05b1f356646c24bf1765f6f1b65aea3bde7247e1'
 DBNAME = "default"
 
-# updated 23.05.2014
-CLIENT_SCHEMA_VERSION = "2.5"
+# updated 10.06.2014
+CLIENT_SCHEMA_VERSION = "2.6"
 
 DB_SCHEMA_VERSION = "unknown"
 
@@ -794,7 +794,7 @@ def initiateUsers(changed_server=False):
     just grab user names. necessary because the db schema could be OOD here
     '''
     LOGGER.debug("initiating allowed users changed_server = %s",
-        changed_server)
+                 changed_server)
     global allowed_logins
     from openmolar import connect
 
@@ -833,7 +833,6 @@ def initiate(changed_server=False, debug=False):
         connect.params.reload()
 
     cashbookCodesDict = cashbook.CashBookCodesDict()
-
 
     data = db_settings.getData("bookend")
     if data:
@@ -938,14 +937,14 @@ def initiate(changed_server=False, debug=False):
     <ul><li class="about">%s %s</li></ul><br clear="all" />
     <p>%s</p><p>%s</p></div></body></html>
     ''' % (stylesheet,
-            LOGOPATH,
-            LOGOPATH,
-            _("Welcome to OpenMolar!"),
-            _("Version"),
-            VERSION,
-            _("Your Data is Accessible, and the server reports no issues."),
-            _("Have a great day!")
-            )
+           LOGOPATH,
+           LOGOPATH,
+           _("Welcome to OpenMolar!"),
+           _("Version"),
+           VERSION,
+           _("Your Data is Accessible, and the server reports no issues."),
+           _("Have a great day!")
+           )
 
     if debug:
         print "LOCALSETTINGS CALLED WITH DEBUG = TRUE"

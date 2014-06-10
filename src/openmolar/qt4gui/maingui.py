@@ -262,6 +262,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                     _('but your database is at'),
                     sv,
                     _('Please Update openMolar now')), 2)
+                QtGui.QApplication.instance().closeAllWindows()
             else:
                 message = '''<p>%s</p><p>%s %s %s %s</p>
                 <p>%s<br />%s</p><hr />%s''' % (

@@ -38,7 +38,8 @@ from openmolar.dbtools.plan_data import PlanData
 from openmolar.dbtools.est_logger import EstLogger
 from openmolar.dbtools import estimates as db_estimates
 
-from openmolar.dbtools.queries import PATIENT_QUERY, FUTURE_EXAM_QUERY
+from openmolar.dbtools.queries import \
+    PATIENT_QUERY, FUTURE_EXAM_QUERY, PSN_QUERY
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -58,7 +59,7 @@ patientTableAtts = (
     'pd12', 'pd13', 'pd14',
     'sname', 'fname', 'title', 'sex', 'dob', 'addr1', 'addr2', 'addr3', 'pcde', 'tel1',
     'tel2', 'occup',
-    'nhsno', 'cnfd', 'psn', 'cset', 'dnt1', 'dnt2', 'courseno0', 'courseno1',
+    'nhsno', 'cnfd', 'cset', 'dnt1', 'dnt2', 'courseno0', 'courseno1',
     'ur8st', 'ur7st', 'ur6st', 'ur5st', 'ur4st', 'ur3st', 'ur2st', 'ur1st',
     'ul1st', 'ul2st', 'ul3st', 'ul4st', 'ul5st', 'ul6st', 'ul7st', 'ul8st',
     'll8st', 'll7st', 'll6st', 'll5st', 'll4st', 'll3st', 'll2st', 'll1st',
@@ -184,7 +185,6 @@ class patient(object):
         self.occup = ''
         self.nhsno = ''
         self.cnfd = None
-        self.psn = ''
         self.cset = ''
         self.dnt1 = 0
         self.dnt2 = 0
@@ -284,6 +284,7 @@ class patient(object):
         self.est_logger = None
         self._most_recent_daybook_entry = None
         self._has_exam_booked = None
+        self._previous_surnames = None
 
         if self.serialno == 0:
             return
@@ -711,7 +712,7 @@ class patient(object):
 
         if not HN:
             LOGGER.warning(
-                "unable to add Hidden Note notetype '%s' not found" , ntype)
+                "unable to add Hidden Note notetype '%s' not found", ntype)
             return
 
         reversing_note = ("UNCOMPLETED", "{%s}" % note)
@@ -758,6 +759,26 @@ class patient(object):
     def name(self):
         return u"%s %s %s" % (
             self.title, self.fname, self.sname)
+
+    @property
+    def psn(self):
+        '''
+        previous surname
+        '''
+        try:
+            return self.previous_surnames[0]
+        except IndexError:
+            return ""
+
+    @property
+    def previous_surnames(self):
+        if self._previous_surnames is None:
+            db = connect.connect()
+            cursor = db.cursor()
+            cursor.execute(PSN_QUERY, (self.serialno,))
+            self._previous_surnames = [s[0] for s in cursor.fetchall()]
+            cursor.close()
+        return self._previous_surnames
 
     @property
     def n_family_members(self):

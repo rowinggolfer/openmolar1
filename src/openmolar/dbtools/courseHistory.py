@@ -40,9 +40,10 @@ from openmolar.ptModules.course_checker import CourseChecker
 LOGGER = logging.getLogger("openmolar")
 
 QUERY = '''SELECT courseno from currtrtmt2 where serialno = %s
-order by accd desc'''
+order by courseno desc, accd desc'''
 
 ALLOW_EDIT = False
+
 
 def _get_courses(sno):
     db = connect()
@@ -86,7 +87,8 @@ def details(sno, include_estimates=False, include_daybook=False):
                     if not est_table_init:
                         header = est.htmlHeader()
                         if estimatesHistory.ALLOW_EDIT:
-                            header = header.replace("<!--editlink-->",
+                            header = header.replace(
+                                "<!--editlink-->",
                                 estimatesHistory.EDIT_STRING % est.courseno)
                         course_html += (
                             '<table width="100%%" border="1">%s ' % header)
@@ -121,8 +123,9 @@ def details(sno, include_estimates=False, include_daybook=False):
                         daybook_course_guesses[course.courseno].append(
                             daybook_entry)
                     except KeyError:
-                        daybook_course_guesses[course.courseno
-                            ] = [daybook_entry]
+                        daybook_course_guesses[
+                            course.courseno] = [
+                            daybook_entry]
 
                     gap = cmpd - daybook_entry.date
                     if daybook.ALLOW_TX_EDITS:
@@ -148,13 +151,14 @@ def details(sno, include_estimates=False, include_daybook=False):
             if daybook_html:
                 header_rows = daybook.all_data_header()
                 if course.cmpd is None:
-                    header_rows = header_rows.replace("<!--gap-->",
-                        _("Course is Ongoing"))
+                    header_rows = header_rows.replace(
+                        "<!--gap-->", _("Course is Ongoing"))
                 elif gap.days != 0:
-                    header_rows = header_rows.replace("<!--gap-->",
-                    "%s %s %s" % (_("Course closed"),
-                    gap.days,
-                    _("days after last treatment")))
+                    header_rows = header_rows.replace(
+                        "<!--gap-->",
+                        "%s %s %s" % (_("Course closed"),
+                                      gap.days,
+                                      _("days after last treatment")))
                 course_html += '<table width="100%%" border=1>%s%s</table>' % (
                     header_rows, daybook_html)
             else:
@@ -162,7 +166,8 @@ def details(sno, include_estimates=False, include_daybook=False):
                     "Course dates not found in daybook")
 
             if include_estimates and include_daybook:
-                course_check = CourseChecker(course,
+                course_check = CourseChecker(
+                    course,
                     course_ests,
                     daybook_course_guesses.get(course.courseno, []))
 
@@ -208,8 +213,10 @@ def details(sno, include_estimates=False, include_daybook=False):
             i += 1
 
     if course_checker_errors:
-        html = html.replace("<!-- ERRORS -->",
-            "<h3>%d %s</h3>" % (course_checker_errors, _("Errors Found")))
+        html = html.replace(
+            "<!-- ERRORS -->",
+            "<h3>%d %s</h3>" % (course_checker_errors, _("Errors Found"))
+        )
 
     if i == 0:
         return html
@@ -221,6 +228,6 @@ def details(sno, include_estimates=False, include_daybook=False):
 
 if __name__ == "__main__":
     from gettext import gettext as _
-    #ALLOW_EDIT = True
+    # ALLOW_EDIT = True
     localsettings.initiate()
     print details(17322, True, True).encode("ascii", "replace")

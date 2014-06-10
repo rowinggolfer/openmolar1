@@ -177,6 +177,7 @@ def recall_check(om_gui):
                 return True
     return False
 
+
 def delete_new_course(om_gui):
     '''
     user is discarding all changes to a record.
@@ -192,7 +193,8 @@ def closeCourse(om_gui, leaving=False):
     '''
     allow the user to add a completion Date to a course of treatment
     '''
-    dl = CloseCourseDialog(om_gui)
+    ftr = om_gui.pt.treatment_course.has_treatment_outstanding
+    dl = CloseCourseDialog(ftr, om_gui)
     if not leaving:
         dl.tx_complete_label.hide()
     dl.patient_label.setText("%s %s - (%s)" % (
@@ -201,8 +203,8 @@ def closeCourse(om_gui, leaving=False):
     dl.set_date(om_gui.pt.last_treatment_date)
 
     if dl.exec_():
-        cmpd = dl.date_edit.date().toPyDate()
-        om_gui.pt.treatment_course.setCmpd(cmpd)
+        om_gui.pt.treatment_course.setCmpd(dl.completion_date)
+        om_gui.pt.treatment_course.ftr = dl.ftr
         om_gui.pt.addHiddenNote("close_course")
         om_gui.updateDetails()
         om_gui.updateHiddenNotesLabel()
@@ -238,6 +240,7 @@ def resumeCourse(om_gui):
             QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
 
         om_gui.pt.treatment_course.cmpd = None
+        om_gui.pt.treatment_course.ftr = False
         om_gui.updateDetails()
         om_gui.pt.addHiddenNote("resume_course")
         om_gui.updateHiddenNotesLabel()

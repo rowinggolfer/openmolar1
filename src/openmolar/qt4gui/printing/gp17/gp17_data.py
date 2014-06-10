@@ -463,9 +463,18 @@ class Gp17Data(object):
         '''
         date of completion
         '''
-        if "cmpd" in self.exclusions:
+        if "cmpd" in self.exclusions or self.pftr:
             return ""
         return self.format_date(self.pt.treatment_course.cmpd)
+
+    @property
+    def pftr(self):
+        '''
+        patient failed to return
+        '''
+        if "pftr" in self.exclusions:
+            return False
+        return self.pt.treatment_course.ftr
 
     @property
     def show_chart(self):

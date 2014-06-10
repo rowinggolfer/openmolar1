@@ -66,6 +66,7 @@ class UserQuit(Exception):
 
 
 class SchemaUpdater(BaseDialog, Advisor):
+
     def __init__(self, parent=None):
         Advisor.__init__(self, parent)
         BaseDialog.__init__(self, parent, remove_stretch=True)
@@ -114,7 +115,7 @@ class SchemaUpdater(BaseDialog, Advisor):
             self.reject()
 
     def sizeHint(self):
-        return QtCore.QSize(700,300)
+        return QtCore.QSize(700, 300)
 
     def resizeEvent(self, event):
         '''
@@ -129,14 +130,12 @@ class SchemaUpdater(BaseDialog, Advisor):
         brief_pos = QtCore.QPoint(brief_pos_x, brief_pos_y)
         self.setBriefMessagePosition(brief_pos, True)
 
-
     def reject(self):
         if self.dbu is not None:
             self.dbu.force_stop()
         BaseDialog.reject(self)
         sys.exit("user rejected")
-        #raise UserQuit("user has quit the update")
-
+        # raise UserQuit("user has quit the update")
 
     def updateProgress(self, arg, message):
         LOGGER.info("%s %s" % (arg, message))
@@ -150,7 +149,7 @@ class SchemaUpdater(BaseDialog, Advisor):
         header_message = "%s <b>%s</b> %s <b>%s</b>" % (
             _("Converting Database Schema from version"),
             self.current_version,
-             _("to"),
+            _("to"),
             self.next_version)
         self.header_label.setText(header_message)
         self.pb.show()
@@ -205,7 +204,6 @@ class SchemaUpdater(BaseDialog, Advisor):
             message = FAILURE_MESSAGE
         self.hide_brief_message()
         self.label.setText(message)
-
 
     def apply_updates(self):
         # UPDATE TO SCHEMA 1.1 ########################
@@ -310,6 +308,13 @@ class SchemaUpdater(BaseDialog, Advisor):
         self.next_version = "2.5"
         if self.current_version < self.next_version:
             from openmolar.schema_upgrades import schema2_4to2_5 as upmod
+            self.dbu = upmod.DatabaseUpdater(self.pb)
+            self.apply_update()
+
+        # UPDATE TO SCHEMA 2.6 ########################
+        self.next_version = "2.6"
+        if self.current_version < self.next_version:
+            from openmolar.schema_upgrades import schema2_5to2_6 as upmod
             self.dbu = upmod.DatabaseUpdater(self.pb)
             self.apply_update()
 

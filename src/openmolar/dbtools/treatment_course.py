@@ -57,7 +57,7 @@ CURRTRT_ATTS = (
     'll4cmp', 'll3cmp', 'll2cmp', 'll1cmp',
     'lr1cmp', 'lr2cmp', 'lr3cmp', 'lr4cmp',
     'lr5cmp', 'lr6cmp', 'lr7cmp', 'lr8cmp',
-    'examt', 'examd', 'accd', 'cmpd')
+    'examt', 'examd', 'accd', 'cmpd', 'ftr')
 
 QUERY = "SELECT "
 for field in CURRTRT_ATTS:
@@ -101,6 +101,7 @@ def update_estimate_courseno(courseno_orig, courseno_new):
     cursor.execute(UPDATE_ESTS_COURSENO_QUERY, (courseno_new, courseno_orig))
     cursor.close()
 
+
 def update_course(query_insert, values, serialno, courseno):
     assert len(values) == query_insert.count("=")
     query = UPDATE_CURRTTMT2_QUERY % query_insert
@@ -111,6 +112,7 @@ def update_course(query_insert, values, serialno, courseno):
     result = cursor.execute(query, values)
     cursor.close()
     return result
+
 
 def delete_course(serialno, courseno):
     db = connect.connect()
@@ -214,8 +216,9 @@ class TreatmentCourse(object):
         self.examd = ''
         self.accd = None
         self.cmpd = None
+        self.ftr = None
 
-        #this next line gives me a way to create a Mock Instance of the class
+        # this next line gives me a way to create a Mock Instance of the class
         if self.courseno == 0:
             return
 
@@ -302,6 +305,12 @@ class TreatmentCourse(object):
         set the completion date (with a pydate)
         '''
         self.cmpd = cmpd
+
+    def set_ftr(self, ftr):
+        '''
+        ftr = "Failed to Return"
+        '''
+        self.ftr = ftr
 
     @property
     def has_treatment_outstanding(self):
@@ -432,10 +441,11 @@ class TreatmentCourse(object):
         if days_elapsed is None:
             days_str = ""
         else:
-            days_str = " (%s %s)" %(days_elapsed, _("days earlier"))
+            days_str = " (%s %s)" % (days_elapsed, _("days earlier"))
 
         html = '''
         <h4>%s %s %s</h4>
+        <font color="red">%s</font>
         <table width = "100%%" border = "1">
         <tr>
             <th width="20%%" colspan="1" bgcolor="#ffff99">%s</th>
@@ -445,7 +455,9 @@ class TreatmentCourse(object):
             <th width="60%%" bgcolor="#ffff99">%s %s</th>
         </tr>
         ''' % (
-            _("Course Number"), self.courseno, days_str, edit_str,
+            _("Course Number"), self.courseno, days_str,
+            _("PATIENT FAILED TO RETURN") if self.ftr else "",
+            edit_str,
             _("Opened"), localsettings.formatDate(self.accd),
             _("Closed"), localsettings.formatDate(self.cmpd),
             _("Duration"), self.course_duration,

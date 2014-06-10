@@ -132,11 +132,20 @@ def summary(pt):
     if not pt.underTreatment:
         retarg += "<H4>%s</H4>" % _("Previous Course")
     if pt.treatment_course.accd is not None:
-        retarg += '%s %s<br />' % (_("Start"),
-                                   localsettings.formatDate(pt.treatment_course.accd))
+        retarg += '%s %s<br />' % (
+            _("Start"),
+            localsettings.formatDate(pt.treatment_course.accd))
     if pt.treatment_course.cmpd is not None:
-        retarg += '%s %s<br />' % (_('End'),
-                                   localsettings.formatDate(pt.treatment_course.cmpd))
+        retarg += '%s %s<br />' % (
+            _('End'),
+            localsettings.formatDate(pt.treatment_course.cmpd))
+    else:
+        retarg += '<b>%s</b><br />' % _("ONGOING")
+
+    if pt.treatment_course.ftr:
+        retarg += '<font color="red">%s</font><br />' % _(
+            "Patient Failed to Return")
+
     plan = ""
     for item in plannedItems(pt):
         plan += '%s - %s<br />' % (item)
