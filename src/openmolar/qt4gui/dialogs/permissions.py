@@ -54,11 +54,13 @@ class RaisePermissionsDialog(BaseDialog):
         frame = QtGui.QFrame()
         self.form_layout = QtGui.QFormLayout(frame)
         self.line_edit = QtGui.QLineEdit()
+        self.line_edit.setEchoMode(QtGui.QLineEdit.Password)
         self.form_layout.addRow(_("Supervisor Password"), self.line_edit)
 
         self.insertWidget(label)
         self.insertWidget(frame)
         self.enableApply()
+        self.line_edit.setFocus(True)
 
     @property
     def correct_password(self):
@@ -87,6 +89,9 @@ class ResetSupervisorPasswordDialog(RaisePermissionsDialog):
 
         self.new_password_line_edit = QtGui.QLineEdit()
         self.confirm_password_line_edit = QtGui.QLineEdit()
+
+        self.new_password_line_edit.setEchoMode(QtGui.QLineEdit.Password)
+        self.confirm_password_line_edit.setEchoMode(QtGui.QLineEdit.Password)
 
         self.form_layout.addRow(_("New Password"), self.new_password_line_edit)
         self.form_layout.addRow(_("Confirm New Password"),
