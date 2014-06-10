@@ -39,7 +39,10 @@ from openmolar.settings.version import VERSION
 
 LOGGER = logging.getLogger("openmolar")
 
-SUPERVISOR = '05b1f356646c24bf1765f6f1b65aea3bde7247e1'
+SALT = "OIHoIHyO"
+# default supervisor password is blank
+SUPERVISOR = "c1219df26de403348e211a314ff2fce58aa6e28d"
+
 DBNAME = "default"
 
 # updated 10.06.2014
@@ -845,11 +848,8 @@ def initiate(changed_server=False, debug=False):
         SUPERVISOR = data[0][0]
     else:
         LOGGER.warning("#" * 30)
-        LOGGER.warning(
-            "WARNING - no supervisor password is set, restting to default")
+        LOGGER.warning("WARNING - no supervisor password is set")
         LOGGER.warning("#" * 30)
-        db_settings.updateData("supervisor_pword", SUPERVISOR,
-                               "not found reset")
 
     db = connect.connect()
     cursor = db.cursor()

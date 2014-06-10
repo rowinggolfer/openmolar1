@@ -2688,6 +2688,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.actionEdit_Estimates.triggered.connect(self.edit_estimates)
         self.ui.actionEdit_Referral_Centres.triggered.connect(
             self.edit_referral_centres)
+        self.ui.actionReset_Supervisor_Password.triggered.connect(
+            self.reset_supervisor)
 
     def signals_estimates(self):
         # Estimates and Course Management
@@ -3289,6 +3291,10 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         dl = EditReferralCentresDialog(self)
         if dl.exec_():
             self.set_referral_centres()
+
+    def reset_supervisor(self):
+        dl = ResetSupervisorPasswordDialog(self)
+        dl.exec_()
 
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''

@@ -4978,9 +4978,10 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
      <string>&amp;File</string>
     </property>
     <addaction name="action_Open_Patient"/>
-    <addaction name="separator"/>
     <addaction name="action_save_patient"/>
+    <addaction name="separator"/>
     <addaction name="actionPrint_Daylists"/>
+    <addaction name="actionDocuments_Dialog"/>
     <addaction name="separator"/>
     <addaction name="action_Quit"/>
    </widget>
@@ -5076,16 +5077,18 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <addaction name="actionClear_Today_s_Emergency_Slots"/>
     <addaction name="actionAppointment_Tools"/>
     <addaction name="actionAdvanced_Record_Management"/>
+    <addaction name="separator"/>
     <addaction name="actionFix_Locked_New_Course_of_Treatment"/>
     <addaction name="separator"/>
     <addaction name="actionSet_Clinician"/>
     <addaction name="actionSet_Assistant"/>
     <addaction name="actionSet_Surgery_Number"/>
     <addaction name="separator"/>
-    <addaction name="actionDocuments_Dialog"/>
-    <addaction name="separator"/>
     <addaction name="actionEdit_Phrasebooks"/>
     <addaction name="actionEdit_Referral_Centres"/>
+    <addaction name="actionEdit_Feescales"/>
+    <addaction name="separator"/>
+    <addaction name="actionReset_Supervisor_Password"/>
    </widget>
    <addaction name="menuMenu"/>
    <addaction name="menu_Prefences"/>
@@ -5233,11 +5236,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <string>Edit Phrasebooks</string>
    </property>
   </action>
-  <action name="actionDocuments_Dialog">
-   <property name="text">
-    <string>Documents Dialog</string>
-   </property>
-  </action>
   <action name="actionAllow_Edit">
    <property name="checkable">
     <bool>true</bool>
@@ -5289,6 +5287,21 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <action name="actionEdit_Referral_Centres">
    <property name="text">
     <string>Edit Referral Centres</string>
+   </property>
+  </action>
+  <action name="actionEdit_Feescales">
+   <property name="text">
+    <string>Edit Feescales</string>
+   </property>
+  </action>
+  <action name="actionDocuments_Dialog">
+   <property name="text">
+    <string>Open Document Dialog</string>
+   </property>
+  </action>
+  <action name="actionReset_Supervisor_Password">
+   <property name="text">
+    <string>Reset Supervisor Password</string>
    </property>
   </action>
  </widget>

@@ -3,8 +3,8 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/main.ui'
 #
-# Created: Thu May 29 10:20:15 2014
-#      by: PyQt4 UI code generator 4.10.4
+# Created: Tue Jun 10 21:57:07 2014
+#      by: PyQt4 UI code generator 4.11
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -1500,8 +1500,6 @@ class Ui_MainWindow(object):
         self.chartsTableWidget.setSelectionBehavior(
             QtGui.QAbstractItemView.SelectItems)
         self.chartsTableWidget.setObjectName(_fromUtf8("chartsTableWidget"))
-        self.chartsTableWidget.setColumnCount(0)
-        self.chartsTableWidget.setRowCount(0)
         self.horizontalLayout_4.addWidget(self.chartsTableWidget)
         self.stackedWidget.addWidget(self.table)
         self.charts = QtGui.QWidget()
@@ -2365,8 +2363,6 @@ class Ui_MainWindow(object):
             QtGui.QAbstractItemView.SelectRows)
         self.accounts_tableWidget.setObjectName(
             _fromUtf8("accounts_tableWidget"))
-        self.accounts_tableWidget.setColumnCount(0)
-        self.accounts_tableWidget.setRowCount(0)
         self.gridLayout_9.addWidget(self.accounts_tableWidget, 1, 0, 1, 5)
         spacerItem20 = QtGui.QSpacerItem(
             746,
@@ -2925,9 +2921,6 @@ class Ui_MainWindow(object):
         self.actionEdit_Phrasebooks = QtGui.QAction(MainWindow)
         self.actionEdit_Phrasebooks.setObjectName(
             _fromUtf8("actionEdit_Phrasebooks"))
-        self.actionDocuments_Dialog = QtGui.QAction(MainWindow)
-        self.actionDocuments_Dialog.setObjectName(
-            _fromUtf8("actionDocuments_Dialog"))
         self.actionAllow_Edit = QtGui.QAction(MainWindow)
         self.actionAllow_Edit.setCheckable(True)
         self.actionAllow_Edit.setObjectName(_fromUtf8("actionAllow_Edit"))
@@ -2953,10 +2946,20 @@ class Ui_MainWindow(object):
         self.actionEdit_Referral_Centres = QtGui.QAction(MainWindow)
         self.actionEdit_Referral_Centres.setObjectName(
             _fromUtf8("actionEdit_Referral_Centres"))
+        self.actionEdit_Feescales = QtGui.QAction(MainWindow)
+        self.actionEdit_Feescales.setObjectName(
+            _fromUtf8("actionEdit_Feescales"))
+        self.actionDocuments_Dialog = QtGui.QAction(MainWindow)
+        self.actionDocuments_Dialog.setObjectName(
+            _fromUtf8("actionDocuments_Dialog"))
+        self.actionReset_Supervisor_Password = QtGui.QAction(MainWindow)
+        self.actionReset_Supervisor_Password.setObjectName(
+            _fromUtf8("actionReset_Supervisor_Password"))
         self.menuMenu.addAction(self.action_Open_Patient)
-        self.menuMenu.addSeparator()
         self.menuMenu.addAction(self.action_save_patient)
+        self.menuMenu.addSeparator()
         self.menuMenu.addAction(self.actionPrint_Daylists)
+        self.menuMenu.addAction(self.actionDocuments_Dialog)
         self.menuMenu.addSeparator()
         self.menuMenu.addAction(self.action_Quit)
         self.menu_Help.addAction(self.action_About)
@@ -2992,16 +2995,18 @@ class Ui_MainWindow(object):
         self.menuTools.addAction(self.actionClear_Today_s_Emergency_Slots)
         self.menuTools.addAction(self.actionAppointment_Tools)
         self.menuTools.addAction(self.actionAdvanced_Record_Management)
+        self.menuTools.addSeparator()
         self.menuTools.addAction(self.actionFix_Locked_New_Course_of_Treatment)
         self.menuTools.addSeparator()
         self.menuTools.addAction(self.actionSet_Clinician)
         self.menuTools.addAction(self.actionSet_Assistant)
         self.menuTools.addAction(self.actionSet_Surgery_Number)
         self.menuTools.addSeparator()
-        self.menuTools.addAction(self.actionDocuments_Dialog)
-        self.menuTools.addSeparator()
         self.menuTools.addAction(self.actionEdit_Phrasebooks)
         self.menuTools.addAction(self.actionEdit_Referral_Centres)
+        self.menuTools.addAction(self.actionEdit_Feescales)
+        self.menuTools.addSeparator()
+        self.menuTools.addAction(self.actionReset_Supervisor_Password)
         self.menubar.addAction(self.menuMenu.menuAction())
         self.menubar.addAction(self.menu_Prefences.menuAction())
         self.menubar.addAction(self.menuTools.menuAction())
@@ -3517,7 +3522,6 @@ class Ui_MainWindow(object):
         self.actionSet_Surgery_Number.setToolTip(
             _("Set Surgery Number (used so other applications can see which record is loaded)"))
         self.actionEdit_Phrasebooks.setText(_("Edit Phrasebooks"))
-        self.actionDocuments_Dialog.setText(_("Documents Dialog"))
         self.actionAllow_Edit.setText(_("Allow &Edit"))
         self.actionEnable_Filters.setText(_("Enable &Filters"))
         self.actionEdit_Courses.setText(_("Allow Edit &Courses"))
@@ -3525,6 +3529,10 @@ class Ui_MainWindow(object):
         self.actionAllow_Edit_Treatment.setText(_("Allow Edit &Treatment"))
         self.action_all_history_edits.setText(_("Allow &ALL Edits"))
         self.actionEdit_Referral_Centres.setText(_("Edit Referral Centres"))
+        self.actionEdit_Feescales.setText(_("Edit Feescales"))
+        self.actionDocuments_Dialog.setText(_("Open Document Dialog"))
+        self.actionReset_Supervisor_Password.setText(
+            _("Reset Supervisor Password"))
 
 from PyQt4 import QtWebKit
 from openmolar.qt4gui import resources_rc

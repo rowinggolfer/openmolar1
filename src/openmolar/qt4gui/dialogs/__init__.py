@@ -23,7 +23,7 @@
 # ############################################################################ #
 
 from openmolar.qt4gui.dialogs import saveMemo
-from openmolar.qt4gui.dialogs import permissions
+# from openmolar.qt4gui.dialogs import permissions
 from openmolar.qt4gui.dialogs import select_language
 
 from openmolar.qt4gui.dialogs.newBPE import BPE_Dialog
@@ -56,6 +56,7 @@ from openmolar.qt4gui.dialogs.course_consistency_dialog import CourseConsistency
 from openmolar.qt4gui.dialogs.edit_treatment_dialog import EditTreatmentDialog
 from openmolar.qt4gui.dialogs.login_dialog import LoginDialog
 from openmolar.qt4gui.dialogs.edit_referral_centres_dialog import EditReferralCentresDialog
+from openmolar.qt4gui.dialogs.permissions import ResetSupervisorPasswordDialog
 
 __all__ = ['AccountSeverityDialog',
            'AdvancedTxPlanningDialog',
@@ -85,6 +86,7 @@ __all__ = ['AccountSeverityDialog',
            'LoginDialog',
            'MedNotesDialog',
            'NHSFormsConfigDialog',
+           'ResetSupervisorPasswordDialog',
            'RecallDialog',
            'SaveDiscardCancelDialog',
            ]

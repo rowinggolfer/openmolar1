@@ -29,11 +29,9 @@ and starts the gui
 
 import getopt
 import logging
-import sys
 import os
-import hashlib
-
-from xml.dom import minidom
+import subprocess
+import sys
 
 from openmolar.settings import localsettings
 
@@ -65,7 +63,7 @@ USAGE = '''%s
 def first_run():
     import first_run
     if first_run.run():
-        main()
+        subprocess.Popen([__file__])
     else:
         sys.exit()
 
