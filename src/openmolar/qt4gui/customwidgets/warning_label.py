@@ -24,14 +24,16 @@
 
 from PyQt4 import QtGui, QtCore
 
+
 class WarningLabel(QtGui.QWidget):
+
     def __init__(self, text, parent=None):
         QtGui.QWidget.__init__(self, parent)
 
         icon = QtGui.QIcon(":/openmolar.svg")
 
         icon_label = QtGui.QLabel()
-        icon_label.setPixmap(icon.pixmap(48,48))
+        icon_label.setPixmap(icon.pixmap(48, 48))
 
         self.label = QtGui.QLabel(text)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
@@ -40,7 +42,10 @@ class WarningLabel(QtGui.QWidget):
         layout = QtGui.QHBoxLayout(self)
         layout.addWidget(icon_label)
         layout.addWidget(self.label)
-        layout.setStretch(1,9)
+        layout.setStretch(1, 9)
+
+    def setText(self, message):
+        self.label.setText(message)
 
 if __name__ == "__main__":
     app = QtGui.QApplication([])

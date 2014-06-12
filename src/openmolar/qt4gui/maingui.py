@@ -75,7 +75,7 @@ from openmolar.qt4gui.dialogs import saveMemo
 from openmolar.qt4gui.dialogs import permissions
 from openmolar.qt4gui.dialogs import select_language
 
-from openmolar.qt4gui.dialogs import *
+from openmolar.qt4gui.dialogs.dialog_collection import *
 
 from openmolar.qt4gui.phrasebook.phrasebook_dialog import PhraseBookDialog
 from openmolar.qt4gui.phrasebook.phrasebook_dialog import PHRASEBOOKS
@@ -197,7 +197,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.relatedpts_pushButton.setEnabled(False)
 
         self.forum_timer = QtCore.QTimer()
-        QtCore.QTimer.singleShot(100, self.login)
+        QtCore.QTimer.singleShot(100, self.check_first_run)
 
     def initiate(self):
         self.setWindowTitle("OpenMolar - %s '%s'" % (
@@ -215,6 +215,20 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.forum_timer.start(60000)  # fire every minute
         self.forum_timer.timeout.connect(self.checkForNewForumPosts)
         self.set_referral_centres()
+
+    def check_first_run(self):
+        if os.path.exists(localsettings.global_cflocation):
+            localsettings.cflocation = localsettings.global_cflocation
+            cf_Found = True
+        else:
+            cf_found = os.path.exists(localsettings.cflocation)
+        if not cf_found or localsettings.FORCE_FIRST_RUN:
+            dl = FirstRunDialog(self)
+            if not dl.exec_():
+                QtGui.QApplication.instance().closeAllWindows()
+                return
+            params.reload()
+        self.login()
 
     def login(self):
         dl = LoginDialog(self)

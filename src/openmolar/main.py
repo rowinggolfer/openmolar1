@@ -60,28 +60,12 @@ USAGE = '''%s
 '''
 
 
-def first_run():
-    import first_run
-    if first_run.run():
-        subprocess.Popen([__file__])
-    else:
-        sys.exit()
-
-
 def main():
     '''
     main function
     '''
-    if os.path.exists(localsettings.global_cflocation):
-        localsettings.cflocation = localsettings.global_cflocation
-        cf_Found = True
-    else:
-        cf_found = os.path.exists(localsettings.cflocation)
-    if cf_found:
-        from openmolar.qt4gui import maingui
-        maingui.main()
-    else:
-        first_run()
+    from openmolar.qt4gui import maingui
+    maingui.main()
 
 
 def setup():
@@ -149,8 +133,7 @@ def run():
             chosen_func = setup
             break
         if option == "--firstrun":
-            chosen_func = first_run
-            break
+            localsettings.FORCE_FIRST_RUN = True
         if option == "--ignore-schema-check":
             localsettings.IGNORE_SCHEMA_CHECK = True
             LOGGER.warning("command line args demand no schema check")

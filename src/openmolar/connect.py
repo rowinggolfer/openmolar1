@@ -51,7 +51,10 @@ class DB_Params(object):
         self.port = 0
         self.user = ""
         self.db_name = ""
-        self.reload()
+        try:
+            self.reload()
+        except IOError:
+            LOGGER.warning("no such file exists %s", localsettings.cflocation)
 
     def reload(self):
         dom = minidom.parse(localsettings.cflocation)

@@ -57,6 +57,7 @@ WIKIURL = ""
 cashbookCodesDict = None
 
 IGNORE_SCHEMA_CHECK = False
+FORCE_FIRST_RUN = False
 
 locale.setlocale(locale.LC_ALL, '')
 
