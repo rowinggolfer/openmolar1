@@ -3344,6 +3344,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         if self.pt.serialno:
             self.advise(
                 _("Please exit any record before taking this action"), 1)
+            return
         dl = AddClinicianDialog(self)
         if dl.exec_():
             self.initiate()
