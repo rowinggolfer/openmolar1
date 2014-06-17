@@ -62,9 +62,13 @@ from openmolar.qt4gui.dialogs.login_dialog import LoginDialog
 from openmolar.qt4gui.dialogs.edit_referral_centres_dialog import EditReferralCentresDialog
 from openmolar.qt4gui.dialogs.permissions import ResetSupervisorPasswordDialog
 from openmolar.qt4gui.dialogs.first_run_dialog import FirstRunDialog
+from openmolar.qt4gui.dialogs.add_user_dialog import AddUserDialog
+from openmolar.qt4gui.dialogs.add_clinician_dialog import AddClinicianDialog
 
 
 __all__ = ['AccountSeverityDialog',
+           'AddClinicianDialog',
+           'AddUserDialog',
            'AdvancedTxPlanningDialog',
            'AlterTodaysNotesDialog',
            'AssistantSelectDialog',

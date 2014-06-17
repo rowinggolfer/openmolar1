@@ -25,74 +25,265 @@
 '''
 this module reads and write to the settings table of the database
 '''
+import datetime
+import logging
+import re
 
 from openmolar import connect
 
+LOGGER = logging.getLogger("openmolar")
 
-def getData(value):
+PT_COUNT_QUERY = "select count(*) from patients"
+# PRACTITIONERS_QUERY = "select id, inits, apptix from practitioners"
+DENTIST_DATA_QUERY = "select id,inits,name,formalname,fpcno,quals from practitioners where flag0=1"
+# APPTIX_QUERY = "select apptix,inits from practitioners where flag3=1"
+# ACTIVE_DENTS_QUERY = "select apptix, inits from practitioners where flag3=1 and flag0=1"
+# ACTIVE_HYGS_QUERY = "select apptix, inits from practitioners where
+# flag3=1 and flag0=0"
+
+
+CLINICIANS_QUERY = '''
+SELECT ix, apptix, initials, name, formal_name, qualifications, type,
+speciality, data, start_date, end_date FROM
+clinicians JOIN clinician_dates on clinicians.ix = clinician_dates.clinician_ix
+LEFT JOIN diary_link on ix = diary_link.clinician_ix
+'''
+
+ACTIVE_CLINICIANS_QUERY = CLINICIANS_QUERY + \
+    '''WHERE start_date<now() AND (end_date IS NULL OR end_date>now());'''
+
+LOGINS_QUERY = "select id from opid"
+INSERT_OPID_QUERY = "INSERT INTO opid (id) values (%s)"
+
+INSERT_CLINICIAN_QUERIES = (
+    '''INSERT INTO clinicians
+(initials, name, formal_name, qualifications, type, speciality, data, comments)
+  VALUES(%s, %s, %s, %s, %s, %s, %s, %s)
+''',
+    '''
+INSERT INTO clinician_dates(clinician_ix, start_date, end_date)
+VALUES (%s, %s, %s)
+''',
+    '''
+INSERT INTO diary_link(clinician_ix, apptix)
+VALUES (%s, %s)
+''')
+
+
+def insert_login(opid):
+    db = connect.connect()
+    cursor = db.cursor()
+    result = cursor.execute(INSERT_OPID_QUERY, opid)
+    cursor.close()
+    return result
+
+
+def insert_clinician(clinician):
+    result = False
+    comments = "added by client - %s" % datetime.datetime.now().strftime(
+        "%m %h %Y %H:%M")
+    db = connect.connect()
     try:
-        db = connect.connect()
+        db.autocommit = False
         cursor = db.cursor()
-        query = 'select data from settings where value = %s'
-        cursor.execute(query, value)
-        rows = cursor.fetchall()
+        cursor.execute(INSERT_CLINICIAN_QUERIES[0],
+                      (clinician.initials,
+                       clinician.name,
+                       clinician.formal_name,
+                       clinician.qualifications,
+                       clinician.type,
+                       clinician.speciality,
+                       clinician.data,
+                       comments)
+                       )
+
+        ix = db.insert_id()
+        cursor.execute(INSERT_CLINICIAN_QUERIES[1], (ix,
+                                                     clinician.start_date,
+                                                     clinician.end_date)
+                       )
+
+        if clinician.new_diary:
+            cursor.execute(INSERT_CLINICIAN_QUERIES[2], (ix, ix))
         cursor.close()
-        return rows
-    except connect.ProgrammingError:
-        return ()
-
-
-def insertData(value, data, user):
-    '''
-    insert a setting (leaving old values behind)
-    '''
-    db = connect.connect()
-    cursor = db.cursor()
-    query = '''insert into settings (value,data,modified_by,time_stamp)
-    values (%s, %s, %s, NOW())'''
-    values = (value, data, user)
-
-    print "saving setting (%s, %s) to settings table" % (value, data)
-    cursor.execute(query, values)
-    db.commit()
-    return True
-
-
-def updateData(value, data, user):
-    '''
-    update a setting
-    '''
-    db = connect.connect()
-    cursor = db.cursor()
-    query = '''update settings set data = %s, modified_by = %s,
-    time_stamp = NOW() where value=%s'''
-    values = (data, user, value)
-
-    print "updating setting (%s, %s) to settings table" % (value, data)
-    if not cursor.execute(query, values):
-        return insertData(value, data, user)
-    else:
         db.commit()
+        result = True
+    except:
+        LOGGER.exception("failed to insert clinician")
+        db.rollback()
+    finally:
+        db.autocommit = True
+    return result
+
+
+class SettingsFetcher(object):
+
+    def __init__(self):
+        self._cursor = None
+        self.loaded = False
+        self.PT_COUNT = 0
+
+    @property
+    def cursor(self):
+        if self._cursor is None:
+            db = connect.connect()
+            self._cursor = db.cursor()
+        return self._cursor
+
+    def close_cursor(self):
+        if self._cursor is not None:
+            self._cursor.close()
+            self._cursor = None
+
+    def fetch(self):
+        self.cursor.execute(PT_COUNT_QUERY)
+        self.PT_COUNT = self.cursor.fetchone()[0]
+        self._get_clinicians()
+        self.loaded = True
+        self.close_cursor()
+
+    def getData(self, key):
+        try:
+            query = 'select data from settings where value = %s order by ix'
+            self.cursor.execute(query, (key,))
+            rows = self.cursor.fetchall()
+            return rows
+        except connect.ProgrammingError:
+            return ()
+
+    def get_unique_value(self, key):
+        '''
+        get a single value from the settings table.
+        by default gets the last entry
+        '''
+        try:
+            return self.getData(key)[-1][0]
+        except IndexError:
+            LOGGER.warning("no wikiurl found in settings")
+
+    def insertData(self, value, data, user):
+        '''
+        insert a setting (leaving old values behind)
+        '''
+        query = '''insert into settings (value,data,modified_by,time_stamp)
+        values (%s, %s, %s, NOW())'''
+        values = (value, data, user)
+
+        LOGGER.info("saving setting (%s, %s) to settings table", value, data)
+        self.cursor.execute(query, values)
         return True
 
+    def updateData(self, value, data, user):
+        '''
+        update a setting
+        '''
+        query = '''update settings set data = %s, modified_by = %s,
+        time_stamp = NOW() where value=%s'''
+        values = (data, user, value)
 
-def getWikiUrl():
-    '''
-    the database may know of the url (presumably an internally facing ip)
-    for the practice wiki??
-    '''
-    try:
-        db = connect.connect()
-        cursor = db.cursor()
-        query = 'select data from settings where value = "wikiurl"'
-        cursor.execute(query)
-        rows = cursor.fetchall()
-    except connect.ProgrammingError as ex:
-        print "no wikiurl loaded as there is no settings table??"
-    if rows:
-        return rows[-1][0]
-    else:
-        return "http://openmolar.wikidot.com/"
+        LOGGER.info("updating setting (%s, %s) to settings table", value, data)
+        if self.cursor.execute(query, values):
+            db.commit()
+            return True
+        return self.insertData(value, data, user)
+
+    @property
+    def allowed_logins(self):
+        self.cursor.execute(LOGINS_QUERY)
+        # grab initials of those currently allowed to log in
+        trows = self.cursor.fetchall()
+        allowed_logins = []
+        for row in trows:
+            allowed_logins.append(row[0])
+        return allowed_logins
+
+    @property
+    def wiki_url(self):
+        '''
+        the database may know of the url (presumably an internally facing ip)
+        for the practice wiki??
+        '''
+        wiki_url = self.get_unique_value("wikiurl")
+        return wiki_url if wiki_url else "http://openmolar.com/wiki"
+
+    @property
+    def book_end(self):
+        book_end = self.get_unique_value("bookend")
+        try:
+            year, month, day = book_end.split(",")
+            return datetime.date(int(year), int(month), int(day))
+        except AttributeError:
+            pass
+        except ValueError:
+            LOGGER.warning("Badly formatted value for bookend in settings")
+        return datetime.date.today() + datetime.timedelta(days=183)
+
+    @property
+    def supervisor_pword(self):
+        hash_ = self.get_unique_value("supervisor_pword")
+        if hash_:
+            return hash_
+        LOGGER.warning("#" * 30)
+        LOGGER.warning("WARNING - no supervisor password is set")
+        LOGGER.warning("#" * 30)
+        # hash of salted ""
+        return "c1219df26de403348e211a314ff2fce58aa6e28d"
+
+    def _get_clinicians(self):
+        '''
+        poll the database and retrieve all practitioners (past and present)
+        '''
+        self.ops, self.ops_reverse = {}, {}
+        self.apptix_dict, self.apptix_reverse = {}, {}
+        active_dent_initials, active_dent_ixs = [], []
+        active_hyg_initials, active_hyg_ixs = [], []
+        self.dentist_data = {}
+
+        self.cursor.execute(CLINICIANS_QUERY)
+        rows = self.cursor.fetchall()
+        for (ix, apptix, initials, name, formal_name, qualifications, type_,
+             speciality, data, start_date, end_date) in rows:
+            self.ops[ix] = initials
+            self.ops_reverse[initials] = ix
+            today = datetime.date.today()
+
+            if apptix:
+                self.apptix_reverse[apptix] = initials
+            if start_date <= today and (end_date is None or end_date >= today):
+                if apptix:
+                    self.apptix_dict[initials] = apptix
+                if type_ == 1:
+                    active_dent_initials.append(initials)
+                    active_dent_ixs.append(ix)
+                elif type_ in (2, 3):   # hygienist and therapist
+                    active_hyg_initials.append(initials)
+                    active_hyg_ixs.append(ix)
+            if type_ == 1:
+                list_no = ""
+                if data:
+                    m = re.search("list_no=([^ ]*)", data)
+                    if m:
+                        list_no = m.groups()[0]
+
+                self.dentist_data[ix] = (
+                    initials,
+                    name,
+                    formal_name,
+                    list_no,
+                    qualifications)
+
+        self.active_dents = tuple(active_dent_initials), tuple(active_dent_ixs)
+        self.active_hygs = tuple(active_hyg_initials), tuple(active_hyg_ixs)
 
 if __name__ == "__main__":
-    print getData("enddate")
+    sf = SettingsFetcher()
+    sf.fetch()
+
+    print sf.PT_COUNT
+    print sf.wiki_url
+    print sf.book_end
+    print sf.supervisor_pword
+    print sf.getData("enddate")
+    print sf.active_dents
+    print sf.active_hygs
+    print sf.dentist_data

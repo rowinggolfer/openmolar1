@@ -245,8 +245,6 @@ def details(dent, startdate, enddate,
     return retarg
 
 if __name__ == "__main__":
-    from PyQt4.QtCore import QDate
-
     localsettings.initiate()
     print localsettings.cashbookCodesDict
     print localsettings.cashbookCodesDict.viewitems()

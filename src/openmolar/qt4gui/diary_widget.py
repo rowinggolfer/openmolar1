@@ -456,9 +456,9 @@ class DiaryWidget(QtGui.QWidget):
 
         seldate = self.selected_date()
 
-        if seldate.toPyDate() > localsettings.bookEnd:
+        if seldate.toPyDate() > localsettings.BOOKEND:
             message = (_("Reached") +
-                       ' %s <br />' % localsettings.longDate(localsettings.bookEnd) +
+                       ' %s <br />' % localsettings.longDate(localsettings.BOOKEND) +
                        _("which is specified as the book end point"))
             return (False, message, ())
 
@@ -812,7 +812,7 @@ class DiaryWidget(QtGui.QWidget):
             self.layout_agenda()
 
         if self.appt_mode == self.SCHEDULING_MODE:
-            if date_ > localsettings.bookEnd:
+            if date_ > localsettings.BOOKEND:
                 self.advise(u'''<b>%s<br />%s %s</b><hr /><em>(%s)</em>
                 <ul><li>%s</li><li>%s</li><li>%s</li></ul>''' % (
                             _("This date is beyond the diary limit."),
@@ -976,7 +976,7 @@ class DiaryWidget(QtGui.QWidget):
                 self.finding_next_slot = 0
                 # self.set_date(localsettings.currentDay())
                 # return
-            if date_ > localsettings.bookEnd:
+            if date_ > localsettings.BOOKEND:
                 # self.advise(_("You are beyond scheduling range"),1)
                 self.finding_next_slot = 0
                 available_slots = []
@@ -1091,7 +1091,7 @@ class DiaryWidget(QtGui.QWidget):
 
         if self.appt_mode == self.SCHEDULING_MODE:
             if (date_ < localsettings.currentDay() or
-               date_ > localsettings.bookEnd):
+               date_ > localsettings.BOOKEND):
                 self.finding_next_slot = 0
                 available_slots = []
                 self.schedule_controller.set_available_slots([])

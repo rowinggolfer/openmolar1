@@ -70,7 +70,7 @@ class apptTools(Ui_apptTools.Ui_MainWindow):
 
         message = "%s %s %s %s" % (_("Books Currently end on"),
                                    localsettings.formatDate(
-                                   localsettings.bookEnd), "<br />",
+                                   localsettings.BOOKEND), "<br />",
                                    _("extend the books now?"))
 
         result = QtGui.QMessageBox.question(self.parent, _("Confirm"),
@@ -86,10 +86,10 @@ class apptTools(Ui_apptTools.Ui_MainWindow):
         if result:
 
             newBookEnd = QtCore.QDate(
-                localsettings.bookEnd).addMonths(months).toPyDate()
+                localsettings.BOOKEND).addMonths(months).toPyDate()
 
             if extend_books.extend(localsettings.apptix.values(),
-                                   localsettings.bookEnd, newBookEnd):
+                                   localsettings.BOOKEND, newBookEnd):
                 # now put this date into the settings database.
 
                 db_format = "%s,%s,%s" % newBookEnd.timetuple()[:3]

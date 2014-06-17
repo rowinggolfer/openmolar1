@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/main.ui'
 #
-# Created: Tue Jun 10 21:57:07 2014
+# Created: Fri Jun 13 10:31:50 2014
 #      by: PyQt4 UI code generator 4.11
 #
 # WARNING! All changes made in this file will be lost!
@@ -2955,6 +2955,14 @@ class Ui_MainWindow(object):
         self.actionReset_Supervisor_Password = QtGui.QAction(MainWindow)
         self.actionReset_Supervisor_Password.setObjectName(
             _fromUtf8("actionReset_Supervisor_Password"))
+        self.actionAdd_User = QtGui.QAction(MainWindow)
+        self.actionAdd_User.setObjectName(_fromUtf8("actionAdd_User"))
+        self.actionAdd_Clinician = QtGui.QAction(MainWindow)
+        self.actionAdd_Clinician.setObjectName(
+            _fromUtf8("actionAdd_Clinician"))
+        self.actionEdit_Practice_Details = QtGui.QAction(MainWindow)
+        self.actionEdit_Practice_Details.setObjectName(
+            _fromUtf8("actionEdit_Practice_Details"))
         self.menuMenu.addAction(self.action_Open_Patient)
         self.menuMenu.addAction(self.action_save_patient)
         self.menuMenu.addSeparator()
@@ -3007,6 +3015,9 @@ class Ui_MainWindow(object):
         self.menuTools.addAction(self.actionEdit_Feescales)
         self.menuTools.addSeparator()
         self.menuTools.addAction(self.actionReset_Supervisor_Password)
+        self.menuTools.addAction(self.actionAdd_User)
+        self.menuTools.addAction(self.actionAdd_Clinician)
+        self.menuTools.addAction(self.actionEdit_Practice_Details)
         self.menubar.addAction(self.menuMenu.menuAction())
         self.menubar.addAction(self.menu_Prefences.menuAction())
         self.menubar.addAction(self.menuTools.menuAction())
@@ -3533,6 +3544,9 @@ class Ui_MainWindow(object):
         self.actionDocuments_Dialog.setText(_("Open Document Dialog"))
         self.actionReset_Supervisor_Password.setText(
             _("Reset Supervisor Password"))
+        self.actionAdd_User.setText(_("Add User"))
+        self.actionAdd_Clinician.setText(_("Add Clinician"))
+        self.actionEdit_Practice_Details.setText(_("Edit Practice Details"))
 
 from PyQt4 import QtWebKit
 from openmolar.qt4gui import resources_rc

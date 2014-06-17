@@ -271,6 +271,7 @@ CREATE TABLE `cbcodes` (
 
 LOCK TABLES `cbcodes` WRITE;
 /*!40000 ALTER TABLE `cbcodes` DISABLE KEYS */;
+INSERT INTO cbcodes (code, flag, descr) VALUES (1, 2, "NHS CASH"), (2, 2, "PRIVATE CASH"), (3, 2, "NHS CHEQUE"), (4, 2, "PRIVATE CHEQUE"), (5, 2, "NHS CARD"), (6, 2, "PRIVATE CARD"), (9, 2, "BANK TRANSFER"), (14, 2, "SUNDRY CASH"), (15, 2, "SUNDRY CHEQUE"), (17, 2, "SUNDRY CARD"), (21, 2, "ANNUAL HDP"), (24, 2, "OTHER"), (125, 2, "REFUND");
 /*!40000 ALTER TABLE `cbcodes` ENABLE KEYS */;
 UNLOCK TABLES;
 

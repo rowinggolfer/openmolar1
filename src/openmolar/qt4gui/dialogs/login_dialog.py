@@ -134,8 +134,6 @@ class LoginDialog(ExtendableDialog):
         self.autoreception(QtCore.QString(USER1))
         self.autoreception(QtCore.QString(USER2))
 
-        self.password_lineEdit.setFocus(True)
-
         self.parse_conf_file()
 
         self.alternate_servers_widget = AlternateServersWidget(self)
@@ -155,6 +153,9 @@ class LoginDialog(ExtendableDialog):
 
     def sizeHint(self):
         return QtCore.QSize(350, 300)
+
+    def showEvent(self, event):
+        self.password_lineEdit.setFocus(True)
 
     @property
     def abandon_message(self):
@@ -214,6 +215,9 @@ class LoginDialog(ExtendableDialog):
         return self.__is_developer_environment
 
     def _developer_login(self):
+        '''
+        convenience function for developer to login without password
+        '''
         if self._is_developer_environment and not "--no-dev-login" in sys.argv:
             self.accept()
 
@@ -285,7 +289,7 @@ class LoginDialog(ExtendableDialog):
                 # LOGGER.debug("user1 ok %s", self.user1_ok)
                 # LOGGER.debug("user2 ok %s", self.user2_ok)
                 QtGui.QMessageBox.warning(
-                    self,
+                    self.parent(),
                     _("Login Error"),
                     u'<h2>%s %s</h2><em>%s</em>' % (
                         _('Incorrect'),

@@ -37,7 +37,7 @@ class CloseCourseDialog(BaseDialog):
         BaseDialog.__init__(self, parent)
         self.setWindowTitle(_("Close Course Dialog"))
 
-        self.patient_label = QtGui.QLabel()
+        self.patient_label = QtGui.QLabel("")
         self.patient_label.setAlignment(QtCore.Qt.AlignCenter)
         f = self.patient_label.font()
         f.setBold(True)
@@ -71,6 +71,7 @@ class CloseCourseDialog(BaseDialog):
         self.insertWidget(question_label)
 
         if ftr:
+            self.layout().insertStretch(100)
             self.insertWidget(self.ftr_checkbox)
 
         self.enableApply()

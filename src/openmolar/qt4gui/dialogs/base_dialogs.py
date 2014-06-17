@@ -136,8 +136,8 @@ class BaseDialog(QtGui.QDialog):
                 self.reject()
             if (not self.dirty or QtGui.QMessageBox.question(self,
                _("Confirm"), self.abandon_message,
-                QtGui.QMessageBox.Yes | QtGui.QMessageBox.Cancel,
-                    QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Yes):
+                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                    QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes):
                 self.reject()
 
     def enableApply(self, enable=True):

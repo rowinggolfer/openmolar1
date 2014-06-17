@@ -5089,6 +5089,9 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <addaction name="actionEdit_Feescales"/>
     <addaction name="separator"/>
     <addaction name="actionReset_Supervisor_Password"/>
+    <addaction name="actionAdd_User"/>
+    <addaction name="actionAdd_Clinician"/>
+    <addaction name="actionEdit_Practice_Details"/>
    </widget>
    <addaction name="menuMenu"/>
    <addaction name="menu_Prefences"/>
@@ -5302,6 +5305,21 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <action name="actionReset_Supervisor_Password">
    <property name="text">
     <string>Reset Supervisor Password</string>
+   </property>
+  </action>
+  <action name="actionAdd_User">
+   <property name="text">
+    <string>Add User</string>
+   </property>
+  </action>
+  <action name="actionAdd_Clinician">
+   <property name="text">
+    <string>Add Clinician</string>
+   </property>
+  </action>
+  <action name="actionEdit_Practice_Details">
+   <property name="text">
+    <string>Edit Practice Details</string>
    </property>
   </action>
  </widget>

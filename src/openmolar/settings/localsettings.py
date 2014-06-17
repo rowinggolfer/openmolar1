@@ -45,8 +45,8 @@ SUPERVISOR = "c1219df26de403348e211a314ff2fce58aa6e28d"
 
 DBNAME = "default"
 
-# updated 10.06.2014
-CLIENT_SCHEMA_VERSION = "2.6"
+# updated 16.06.2014
+CLIENT_SCHEMA_VERSION = "2.7"
 
 DB_SCHEMA_VERSION = "unknown"
 
@@ -58,6 +58,8 @@ cashbookCodesDict = None
 
 IGNORE_SCHEMA_CHECK = False
 FORCE_FIRST_RUN = False
+
+PT_COUNT = 0
 
 locale.setlocale(locale.LC_ALL, '')
 
@@ -96,6 +98,30 @@ MH_HEADER = ("The Academy Dental Practice",
              _("Confidential Medical History Questionaire"))
 
 WINDOWS = False
+
+MESSAGE_TEMPLATE = '''
+<html>
+  <head>
+    <link rel="stylesheet" href="%s" type="text/css">
+  </head>
+  <body>
+    <div align="center">
+      <img src="%s" width="150", height="100", align="left" />
+      <img src="%s" width="150", height="100", align="right" />
+      <h1>%s</h1>
+        <ul><li class="about">%s %s</li></ul>
+      <br clear="all" />
+      <p>%s</p>
+      <p>%s</p>
+    </div>
+  </body>
+</html>
+'''
+LOCALSETTINGS_TEMPLATE = '''<?xml version="1.0" ?>
+<settings>
+    <version>1.0</version>
+</settings>
+'''
 
 
 def determine_path():
@@ -300,7 +326,7 @@ apptix_reverse = {}
 #--(necessary if a very long appointment goes right on through)
 #-- would get maximum recursion, quite quickly!
 # todo - this will need to change!!!!
-bookEnd = datetime.date(2010, 12, 31)
+BOOKEND = datetime.date.today() + datetime.timedelta(days=183)
 
 #--treatment codes..
 
@@ -764,9 +790,7 @@ def getLocalSettings():
         #-- no file found..
         #--so create a settings file.
         f = open(localSets, "w")
-        f.write('''<?xml version="1.0" ?>
-        <settings><version>1.0</version></settings>
-        ''')
+        f.write(LOCALSETTINGS_TEMPLATE)
         f.close()
 
 
@@ -793,129 +817,64 @@ def updateLocalSettings(setting, value):
     return True
 
 
+def force_reconnect():
+    '''
+    user has changed server!
+    '''
+    from openmolar import connect
+    if connect.mainconnection:
+        LOGGER.warning("closing connection to previously chosen database")
+        connect.mainconnection.close()
+    connect.params.reload()
+
+
 def initiateUsers(changed_server=False):
     '''
     just grab user names. necessary because the db schema could be OOD here
     '''
-    LOGGER.debug("initiating allowed users changed_server = %s",
-                 changed_server)
     global allowed_logins
-    from openmolar import connect
+    LOGGER.debug(
+        "initiating allowed users changed_server = %s", changed_server)
+    from openmolar.dbtools.db_settings import SettingsFetcher
 
     if changed_server:
-        if connect.mainconnection:
-            LOGGER.warning("closing connection to previously chosen database")
-            connect.mainconnection.close()
-        connect.params.reload()
-
-    db = connect.connect()
-    cursor = db.cursor()
-    cursor.execute("select id from opid")
-    # grab initials of those currently allowed to log in
-    trows = cursor.fetchall()
-    cursor.close()
-    allowed_logins = []
-    for row in trows:
-        allowed_logins.append(row[0])
+        force_reconnect()
+    settings_fetcher = SettingsFetcher()
+    allowed_logins = settings_fetcher.allowed_logins
 
 
-def initiate(changed_server=False, debug=False):
+def initiate(changed_server=False):
     LOGGER.debug("initiating settings from database")
     global message, dentDict, ops, SUPERVISOR, \
         ops_reverse, activedents, activehygs, activedent_ixs, activehyg_ixs, \
-        apptix, apptix_reverse, bookEnd, clinicianNo, clinicianInits, \
-        WIKIURL, cashbookCodesDict
+        apptix, apptix_reverse, BOOKEND, clinicianNo, clinicianInits, \
+        WIKIURL, cashbookCodesDict, PT_COUNT
 
-    from openmolar import connect
-    from openmolar.dbtools import db_settings
     from openmolar.dbtools import cashbook
+    from openmolar.dbtools.db_settings import SettingsFetcher
 
     if changed_server:
-        if connect.mainconnection:
-            LOGGER.warning("closing connection to previously chosen database")
-            connect.mainconnection.close()
-        connect.params.reload()
+        force_reconnect()
 
+    settings_fetcher = SettingsFetcher()
+    settings_fetcher.fetch()
     cashbookCodesDict = cashbook.CashBookCodesDict()
 
-    data = db_settings.getData("bookend")
-    if data:
-        bookEndVals = data[-1][0].split(",")
-        bookEnd = datetime.date(int(bookEndVals[0]), int(bookEndVals[1]),
-                                int(bookEndVals[2]))
+    PT_COUNT = settings_fetcher.PT_COUNT
+    WIKIURL = settings_fetcher.wiki_url
+    BOOKEND = settings_fetcher.book_end
+    SUPERVISOR = settings_fetcher.supervisor_pword
 
-    data = db_settings.getData("supervisor_pword")
-    if data:
-        SUPERVISOR = data[0][0]
-    else:
-        LOGGER.warning("#" * 30)
-        LOGGER.warning("WARNING - no supervisor password is set")
-        LOGGER.warning("#" * 30)
-
-    db = connect.connect()
-    cursor = db.cursor()
-
-    # set up four lists with key/value pairs reversedto make for easy
+    # set up four lists with key/value pairs reversed to make for easy
     # referencing
 
-    # first"ops" which is all practitioners
-    ops = {}
-    ops_reverse = {}
-    apptix_reverse = {}
-    cursor.execute("select id, inits, apptix from practitioners")
-    practitioners = cursor.fetchall()
-    for practitioner in practitioners:
-        if practitioner[1] is not None:
-            ops[practitioner[0]] = practitioner[1]
-            ops_reverse[practitioner[1]] = practitioner[0]
-            if practitioner[2] != 0:
-                apptix_reverse[practitioner[2]] = practitioner[1]
-        else:
-            ops[0] = "NONE"
-            ops_reverse["NONE"] = 0
-
-    try:
-        # correspondence details for NHS forms
-        query = ("select id,inits,name,formalname,fpcno,quals "
-                 "from practitioners where flag0=1")
-
-        cursor.execute(query)
-        practitioners = cursor.fetchall()
-        dentDict = {}
-        for practitioner in practitioners:
-            dentDict[practitioner[0]] = practitioner[1:]
-
-        # now get only practitioners who have an active daybook
-        query = "select apptix,inits from practitioners where flag3=1"
-        cursor.execute(query)
-        practitioners = cursor.fetchall()
-        apptix = {}
-        for practitioner in practitioners:
-            if practitioner[0] != 0 and practitioner[0] is not None:  # apptix
-                apptix[practitioner[1]] = practitioner[0]
-
-        cursor.execute(
-            "select apptix, inits from practitioners where flag3=1 and flag0=1")
-        # dentists where appts active
-        ixs, activedents = [], []
-        practitioners = cursor.fetchall()
-        for ix, inits in practitioners:
-            ixs.append(ix)
-            activedents.append(inits)
-        activedent_ixs = tuple(ixs)
-
-        cursor.execute(
-            "select apptix, inits from practitioners where flag3=1 and flag0=0")
-        # hygenists where appts active
-        practitioners = cursor.fetchall()
-        ixs, activehygs = [], []
-        for ix, inits in practitioners:
-            ixs.append(ix)
-            activehygs.append(inits)
-        activehyg_ixs = tuple(ixs)
-
-    except Exception as exc:
-        LOGGER.exception("error loading practitioners")
+    ops = settings_fetcher.ops
+    ops_reverse = settings_fetcher.ops_reverse
+    apptix_reverse = settings_fetcher.apptix_reverse
+    dentDict = settings_fetcher.dentist_data
+    apptix = settings_fetcher.apptix_dict
+    activedents, activedent_ixs = settings_fetcher.active_dents
+    activehygs, activehyg_ixs = settings_fetcher.active_hygs
 
     #-- set the clinician if possible
     u1 = operator.split("/")[0].strip(" ")
@@ -927,36 +886,26 @@ def initiate(changed_server=False, debug=False):
 
     getLocalSettings()
 
-    WIKIURL = db_settings.getWikiUrl()
+    message = MESSAGE_TEMPLATE % (stylesheet,
+                                  LOGOPATH,
+                                  LOGOPATH,
+                                  _("Welcome to OpenMolar!"),
+                                  _("Version"),
+                                  VERSION,
+                                  _(
+                                  "Your Data is Accessible, and the server reports no issues."),
+                                  _("Have a great day!")
+                                  )
 
-    message = '''<html><head>
-    <link rel="stylesheet" href="%s" type="text/css">
-    </head><body><div align="center">
-    <img src="%s" width="150", height="100", align="left" />
-    <img src="%s" width="150", height="100", align="right" />
-    <h1>%s</h1>
-    <ul><li class="about">%s %s</li></ul><br clear="all" />
-    <p>%s</p><p>%s</p></div></body></html>
-    ''' % (stylesheet,
-           LOGOPATH,
-           LOGOPATH,
-           _("Welcome to OpenMolar!"),
-           _("Version"),
-           VERSION,
-           _("Your Data is Accessible, and the server reports no issues."),
-           _("Have a great day!")
-           )
-
-    if debug:
-        print "LOCALSETTINGS CALLED WITH DEBUG = TRUE"
-        print "ops = ", ops
-        print "ops_reverse = ", ops_reverse
-        print "apptix = ", apptix
-        print "apptix_reverse = ", apptix_reverse
-        print "activedents =", activedents
-        print "activehygs =", activehygs
-        print "allowed logins =", allowed_logins
-        print "stylesheet =", stylesheet
+    LOGGER.debug("LOCALSETTINGS")
+    LOGGER.debug("ops = %s", ops)
+    LOGGER.debug("ops_reverse = %s", ops_reverse)
+    LOGGER.debug("apptix = %s", apptix)
+    LOGGER.debug("apptix_reverse = %s", apptix_reverse)
+    LOGGER.debug("activedents = %s", activedents)
+    LOGGER.debug("activehygs = %s", activehygs)
+    LOGGER.debug("allowed logins = %s", allowed_logins)
+    LOGGER.debug("stylesheet = %s", stylesheet)
 
 
 def loadFeeTables():
@@ -979,4 +928,5 @@ def _test():
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
+    initiate()
     _test()

@@ -200,8 +200,28 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         QtCore.QTimer.singleShot(100, self.check_first_run)
 
     def initiate(self):
+        localsettings.initiate()
         self.setWindowTitle("OpenMolar - %s '%s'" % (
             _("connected to"), params.database_name))
+
+        self.advise("you have %s patients" % localsettings.PT_COUNT)
+        if len(localsettings.cashbookCodesDict) < 1:
+            self.advise(_("The cbcodes table in your database is inadequate"),
+                        2)
+
+        n_active_dents = len(localsettings.activedents)
+        if not n_active_dents:
+            self.advise("%s<hr />%s" % (
+                _("you have no active dentists in your database"),
+                _('to add one click the menu item "Add a Clinician"')), 1)
+        else:
+            self.advise("%s %d %s" % (
+                        _("you have"), n_active_dents, _("active dentists")))
+        self.advise(
+            "you have %s active hygienists" % len(localsettings.activehygs))
+        self.advise("appointment search final date is %s" %
+                    localsettings.formatDate(localsettings.BOOKEND))
+
         self.set_surgery_mode()
         self.load_pt_statuses()
         self.loadDentistComboboxes()
@@ -233,13 +253,14 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
     def login(self):
         dl = LoginDialog(self)
         if not dl.exec_():
-            self.advise(_("No valid Login - Closing Application"), 2)
-            QtGui.QApplication.instance().closeAllWindows()
+            app = QtGui.QApplication.instance()
+            QtCore.QTimer.singleShot(4000, app.closeAllWindows)
+            self.advise(_("Login Cancelled- Closing Application"), 2)
+            app.closeAllWindows()
         else:
             self.advise("%s %s %s" % (
                 _("Login by"), localsettings.operator, "accepted"))
             self.check_schema()
-            localsettings.initiate()
             self.initiate()
 
     def check_schema(self):
@@ -840,6 +861,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
     def load_dentComboBoxes(self, newpatient=False):
         LOGGER.debug("loading dnt comboboxes. dnt1=%s dnt2=%s",
                      self.pt.dnt1, self.pt.dnt2)
+
         inits = localsettings.ops.get(self.pt.dnt1, "")
         if inits in localsettings.activedents:
             self.ui.dnt1comboBox.setCurrentIndex(
@@ -849,7 +871,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             if not newpatient:
                 LOGGER.warning("dnt1 error %s - record %s",
                                self.pt.dnt1, self.pt.serialno)
-                if not inits in ("", "NONE"):
+                if inits != "":
                     message = "%s " % inits + _(
                         "is no longer an active dentist in this practice")
                 else:
@@ -858,22 +880,23 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                 self.advise(message, 2)
 
         inits = localsettings.ops.get(self.pt.dnt2, "")
-        if inits in localsettings.activedents:
-            self.ui.dnt2comboBox.setCurrentIndex(
-                localsettings.activedents.index(inits))
+        if self.pt.dnt2 is None:
+            i = -1
+        elif inits in localsettings.activedents:
+            i = localsettings.activedents.index(inits)
         else:
-            self.ui.dnt2comboBox.setCurrentIndex(-1)
+            i = -1
             if self.pt.dnt1 == self.pt.dnt2:
                 pass
-            elif not inits in ("", "NONE"):
-                message = "%s " % inits + _(
-                    "is no longer an active dentist in this practice")
+            elif inits != "":
+                message = "%s '%s' %s" % (
+                    _("Course dentist"),
+                    inits,
+                    _("is no longer an active dentist in this practice")
+                )
+                self.pt.dnt2 = None
                 self.advise(message, 2)
-            elif inits == "":
-                LOGGER.warning("dnt2 error %s - record %s",
-                               self.pt.dnt2, self.pt.serialno)
-                message = _("unknown course dentist - please correct this")
-                self.advise(message, 2)
+        self.ui.dnt2comboBox.setCurrentIndex(i)
 
     def enterNewPatient(self):
         '''
@@ -1453,6 +1476,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         if is_surgery is None:
             is_surgery = localsettings.station == "surgery"
         localsettings.station = "surgery" if is_surgery else "reception"
+        self.ui.actionSurgery_Mode.setChecked(is_surgery)
         self.set_operator_label()
         self.gotoDefaultTab()
 
@@ -1461,8 +1485,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             if localsettings.station == "surgery":
                 op_text = " <b>" + _("NO CLINICIAN SET") + "</b> - "
                 self.advise(
-                    _("you are in surgery mode without a clinician"),
-                    1)
+                    _("You are in surgery mode without a clinician"))
             else:
                 op_text = ""
         else:
@@ -2704,6 +2727,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.edit_referral_centres)
         self.ui.actionReset_Supervisor_Password.triggered.connect(
             self.reset_supervisor)
+        self.ui.actionAdd_User.triggered.connect(self.add_user)
+        self.ui.actionAdd_Clinician.triggered.connect(self.add_clinician)
 
     def signals_estimates(self):
         # Estimates and Course Management
@@ -3309,6 +3334,19 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
     def reset_supervisor(self):
         dl = ResetSupervisorPasswordDialog(self)
         dl.exec_()
+
+    def add_user(self):
+        dl = AddUserDialog(self)
+        if dl.exec_():
+            self.advise(_("New user added to login table"), 1)
+
+    def add_clinician(self):
+        if self.pt.serialno:
+            self.advise(
+                _("Please exit any record before taking this action"), 1)
+        dl = AddClinicianDialog(self)
+        if dl.exec_():
+            self.initiate()
 
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''
