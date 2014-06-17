@@ -55,21 +55,24 @@ def check_use_family(om_gui):
     else:
         return
 
-    if localsettings.last_family_no is None:
-        if QtGui.QMessageBox.question(om_gui,
-                                      _("Question"),
-                                      _("Start a new family group?"),
-                                      QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                                      QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+    if localsettings.last_family_no in (None, 0):
+        if QtGui.QMessageBox.question(
+                om_gui,
+            _("Question"),
+            _("Start a new family group?"),
+            QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
             om_gui.pt.familyno = families.new_group(
                 localsettings.previous_sno())
+            LOGGER.info("starting new family group %s", om_gui.pt.familyno)
     else:
-        if QtGui.QMessageBox.question(om_gui,
-                                      _("Question"),
-                                      _(
-                                      "Add the new patient to this family group?"),
-                                      QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                                      QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+        if QtGui.QMessageBox.question(
+            om_gui,
+            _("Question"),
+            _(
+                "Add the new patient to this family group?"),
+            QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
             om_gui.pt.familyno = localsettings.last_family_no
 
 

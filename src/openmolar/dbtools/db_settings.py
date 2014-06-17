@@ -159,7 +159,7 @@ class SettingsFetcher(object):
         try:
             return self.getData(key)[-1][0]
         except IndexError:
-            LOGGER.warning("no wikiurl found in settings")
+            LOGGER.warning("no key '%s' found in settings", key)
 
     def insertData(self, value, data, user):
         '''

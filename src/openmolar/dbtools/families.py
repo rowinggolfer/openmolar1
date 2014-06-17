@@ -69,6 +69,8 @@ def new_group(serialno):
     cursor = db.cursor()
     cursor.execute(NEXT_FAMILYNO_QUERY)
     family_no = cursor.fetchone()[0]
+    if family_no is None:
+        family_no = 1
     cursor.execute(NEW_GROUP_QUERY, (family_no, serialno))
     cursor.close()
     return family_no
