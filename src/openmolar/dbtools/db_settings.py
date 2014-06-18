@@ -30,6 +30,7 @@ import logging
 import re
 
 from openmolar import connect
+from openmolar.settings import localsettings
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -69,6 +70,14 @@ INSERT INTO diary_link(clinician_ix, apptix)
 VALUES (%s, %s)
 ''')
 
+INSERT_SETTING_QUERY = \
+'''INSERT INTO settings (value, data, modified_by, time_stamp)
+values (%s, %s, %s, NOW())'''
+
+UPDATE_SETTING_QUERY = \
+'''UPDATE settings SET data = %s, modified_by = %s, time_stamp = NOW()
+where value=%s'''
+
 
 def insert_login(opid):
     db = connect.connect()
@@ -76,6 +85,42 @@ def insert_login(opid):
     result = cursor.execute(INSERT_OPID_QUERY, opid)
     cursor.close()
     return result
+
+def insertData(value, data, user=None):
+    '''
+    insert a setting (leaving old values behind)
+    '''
+    LOGGER.info("saving setting (%s, %s) to settings table", value, data)
+    if user is None:
+        user = localsettings.operator
+    values = (value, data, user)
+
+    db = connect.connect()
+    cursor = db.cursor()
+    result = cursor.execute(INSERT_SETTING_QUERY, values)
+    cursor.close()
+    return True
+
+def updateData(value, data, user=None):
+    '''
+    update a setting - if no update occurs, will insert
+    '''
+    LOGGER.info("updating setting (%s, %s) to settings table", value, data)
+    if user is None:
+        user = localsettings.operator
+    values = (data, user, value)
+    db = connect.connect()
+    cursor = db.cursor()
+    if cursor.execute(UPDATE_SETTING_QUERY, values):
+        cursor.close()
+        return True
+    return insertData(value, data, user)
+
+def insert_practice_name(practice_name):
+    return insertData("practice name", practice_name)
+
+def insert_practice_address(address):
+    return insertData("practice address", address)
 
 
 def insert_clinician(clinician):
@@ -161,32 +206,6 @@ class SettingsFetcher(object):
         except IndexError:
             LOGGER.warning("no key '%s' found in settings", key)
 
-    def insertData(self, value, data, user):
-        '''
-        insert a setting (leaving old values behind)
-        '''
-        query = '''insert into settings (value,data,modified_by,time_stamp)
-        values (%s, %s, %s, NOW())'''
-        values = (value, data, user)
-
-        LOGGER.info("saving setting (%s, %s) to settings table", value, data)
-        self.cursor.execute(query, values)
-        return True
-
-    def updateData(self, value, data, user):
-        '''
-        update a setting
-        '''
-        query = '''update settings set data = %s, modified_by = %s,
-        time_stamp = NOW() where value=%s'''
-        values = (data, user, value)
-
-        LOGGER.info("updating setting (%s, %s) to settings table", value, data)
-        if self.cursor.execute(query, values):
-            db.commit()
-            return True
-        return self.insertData(value, data, user)
-
     @property
     def allowed_logins(self):
         self.cursor.execute(LOGINS_QUERY)
@@ -217,6 +236,28 @@ class SettingsFetcher(object):
         except ValueError:
             LOGGER.warning("Badly formatted value for bookend in settings")
         return datetime.date.today() + datetime.timedelta(days=183)
+
+    @property
+    def practice_name(self):
+        name = self.get_unique_value("practice name")
+        if name:
+            return name
+        return _("Example Dental Practice")
+
+    @property
+    def practice_address(self):
+        address = self.get_unique_value("practice address")
+        address_list = [self.practice_name]
+        try:
+            for line_ in address.split("|"):
+                address_list.append(line_)
+        except AttributeError:
+            address_list += ["My Street", "My Town", "POST CODE"]
+        except ValueError:
+            LOGGER.warning(
+                "Badly formatted value for practice_address in settings")
+            address_list.append(unicode(address))
+        return tuple(address_list)
 
     @property
     def supervisor_pword(self):

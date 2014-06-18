@@ -30,12 +30,21 @@ import datetime
 DATE_FORMAT = "MMMM, yyyy"
 
 
-class RecallPrinter():
+class RecallPrinter(object):
 
-    def __init__(self, rows):
+    def __init__(self, pt):
         self.printer = QtGui.QPrinter()
-        self.printer.setPageSize(QtGui.QPrinter.A5)
-        self.recalls = rows
+        self.pt = pt
+
+        self.line1 = _('We are writing to inform you that your '
+                       'dental examination is now due.')
+
+        self.line2 = _('Please contact the surgery to arrange '
+                       'an appointment. *')
+
+        self.line3 = _('We look forward to seeing you in the near future.')
+
+        self.sign_off = _("Yours Sincerely")
 
     def print_(self):
         dialog = QtGui.QPrintDialog(self.printer)
@@ -53,89 +62,98 @@ class RecallPrinter():
         DateWidth = fm.width(" September 99, 2999 ")
         painter = QtGui.QPainter(self.printer)
         pageRect = self.printer.pageRect()
-        page = 1
-        for recall in self.recalls:
-            painter.save()
-            painter.setPen(QtCore.Qt.black)
-            painter.setFont(sansFont)
-            # put dent serialno in topleft corner
-            painter.drawText(
-                LeftMargin, TopMargin, "%s %d" %
-                (localsettings.ops[recall[3]], recall[4]))
-            x, y = AddressMargin, TopMargin + 50
-            painter.drawText(
-                x, y, "%s %s %s" %
-                (recall[0].title(), recall[1].title(), recall[2].title()))
-            y += sansLineHeight
-            for line in recall[5:10]:
-                if line:
-                    painter.drawText(x, y, str(line).title() + ",")
-                    y += serifLineHeight
-            if recall[10]:
-                painter.drawText(x, y, str(recall[10]) + ".")  # postcode
-            y += serifLineHeight
+        painter.save()
+        painter.setPen(QtCore.Qt.black)
+        painter.setFont(sansFont)
+        # put dent serialno in topleft corner
+        painter.drawText(
+            LeftMargin,
+            TopMargin,
+            "%s %d" % (localsettings.ops.get(self.pt.dnt1, ""),
+                       self.pt.serialno)
+        )
+        x, y = AddressMargin, TopMargin + 50
+        painter.drawText(
+            x, y,
+            "%s %s %s" % (self.pt.title.title(),
+                          self.pt.fname.title(),
+                          self.pt.sname.title())
+        )
+        y += sansLineHeight
+        for line_ in (self.pt.addr1,
+                      self.pt.addr2,
+                      self.pt.addr3,
+                      self.pt.town,
+                      self.pt.county
+                      ):
+            if line_:
+                painter.drawText(x, y, "%s," % line_.title())
+                y += serifLineHeight
+        if self.pt.pcde:
+            painter.drawText(x, y, "%s." % self.pt.pcde)
+        y += serifLineHeight
 
-            x, y = LeftMargin, (pageRect.height() * 0.3)
-            painter.drawText(
-                x + 250,
-                y,
-                QtCore.QDate.currentDate(
-                ).toString(
-                    DATE_FORMAT))
-            y += sansLineHeight
-            painter.setFont(serifFont)
-            y += serifLineHeight
-            painter.drawText(
-                x, y, _("Dear %s %s,") %
-                (recall[0].title(), recall[2].title()))
-            y += serifLineHeight * 2
-            painter.drawText(x, y,
-                             _('We are writing to inform you that your dental examination is now due.'))
-            y += serifLineHeight
-            painter.drawText(
-                x,
-                y,
-                _('Please contact the surgery to arrange an appointment. *'))
-            y += serifLineHeight * 1.2
-            painter.drawText(
-                x,
-                y,
-                _('We look forward to seeing you in the near future.'))
-            painter.setPen(QtCore.Qt.black)
-            y += serifLineHeight * 2
-            painter.drawText(x, y, _("Yours sincerely,"))
-            y += serifLineHeight * 1.5
-            painter.setFont(sigFont)
-            y += serifLineHeight * 2
-            painter.drawText(x, y, "The Academy Dental Practice")
-            painter.setFont(serifFont)
-            y = pageRect.height() - 120
-            painter.drawLine(x, y, pageRect.width() - (2 * AddressMargin), y)
-            y += 2
-            font = QtGui.QFont("Helvetica", 7)
-            font.setItalic(True)
-            painter.setFont(font)
-            option = QtGui.QTextOption(QtCore.Qt.AlignCenter)
-            option.setWrapMode(QtGui.QTextOption.WordWrap)
-            painter.drawText(
-                QtCore.QRectF(x, y,
-                              pageRect.width() - (2 * AddressMargin), 31),
-                "* If you already have a future appointment with us - "
-                "please accept our apologies and ignore this letter.",
-                option)
-            page += 1
-            if page <= len(self.recalls):
-                self.printer.newPage()
-            painter.restore()
+        x, y = LeftMargin, (pageRect.height() * 0.3)
+        painter.drawText(
+            x + 250,
+            y,
+            QtCore.QDate.currentDate(
+            ).toString(
+                DATE_FORMAT))
+        y += sansLineHeight
+        painter.setFont(serifFont)
+        y += serifLineHeight
+        painter.drawText(
+            x, y, _("Dear %s %s,") %
+            (self.pt.title.title(), self.pt.sname.title()))
+        y += serifLineHeight * 2
+        painter.drawText(x, y, self.line1)
+        y += serifLineHeight
+        painter.drawText(x, y, self.line2)
+        y += serifLineHeight * 1.2
+        painter.drawText(x, y, self.line3)
+        painter.setPen(QtCore.Qt.black)
+        y += serifLineHeight * 2
+        painter.drawText(x, y, self.sign_off)
+        y += serifLineHeight * 1.5
+        painter.setFont(sigFont)
+        y += serifLineHeight * 2
+        painter.drawText(x, y, localsettings.PRACTICE_NAME)
+        painter.setFont(serifFont)
+        y = pageRect.height() - 120
+        painter.drawLine(x, y, pageRect.width() - (2 * AddressMargin), y)
+        y += 2
+        font = QtGui.QFont("Helvetica", 7)
+        font.setItalic(True)
+        painter.setFont(font)
+        option = QtGui.QTextOption(QtCore.Qt.AlignCenter)
+        option.setWrapMode(QtGui.QTextOption.WordWrap)
+        painter.drawText(
+            QtCore.QRectF(x, y,
+                          pageRect.width() - (2 * AddressMargin), 31),
+            _("* If you already have a future appointment with us - "
+              "please accept our apologies and ignore this letter."),
+            option)
+        painter.restore()
 
 if __name__ == "__main__":
-    import sys
-    localsettings.initiate()
-    app = QtGui.QApplication(sys.argv)
-    pts = (
-        ('TITLE', 'FNAME', 'SNAME', 6, 1809,
-         "6 ST MARY'S ROAD", 'KIRKHILL', '', '', '', 'IV5 7NX'),
-    )
+    import os
+    os.chdir(os.path.expanduser("~"))
 
-    recall_printer = RecallPrinter(pts)
+    class DuckPatient(object):
+        title = 'TITLE'
+        fname = 'FNAME'
+        sname = 'SNAME'
+        dnt1 = 1
+        serialno = 1
+        addr1 = '1512 Rue de la Soleil'
+        addr2 = 'Tampa'
+        addr3 = ""
+        town = "Florida"
+        county = "USA"
+        pcde = "ZIPCODE"
+
+    localsettings.initiate()
+    app = QtGui.QApplication([])
+    recall_printer = RecallPrinter(DuckPatient())
     recall_printer.print_()

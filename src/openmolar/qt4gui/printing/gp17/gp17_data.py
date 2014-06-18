@@ -402,7 +402,7 @@ class Gp17Data(object):
         except KeyError:
             print "Key Error getting dentist", self.dentist
             text = "\n"
-        for line in localsettings.practiceAddress:
+        for line in localsettings.PRACTICE_ADDRESS:
             text += line + "\n"
         try:
             text += localsettings.dentDict[self.dentist][3]

@@ -28,73 +28,89 @@ from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
-from openmolar.qt4gui.customwidgets.upper_case_line_edit \
-    import UpperCaseLineEdit
-from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
+from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
 from openmolar.dbtools import db_settings
 
 LOGGER = logging.getLogger("openmolar")
 
 
-class AddUserDialog(ExtendableDialog):
+class EditPracticeDialog(BaseDialog):
 
     def __init__(self, parent=None):
-        ExtendableDialog.__init__(self, parent)
-        self.setWindowTitle(_("Add User Dialog"))
+        BaseDialog.__init__(self, parent)
+        self.setWindowTitle(_("Edit Practice Address Dialog"))
 
-        self.top_label = WarningLabel("%s<br />%s<hr />%s" % (
-            _('Add a new user to the system?'),
-            _("This is done using initials or a short nickname."),
-            _("Must be unique and Maximum allowed in 5 characters")))
+        self.top_label = WarningLabel("%s<hr />%s" % (
+            _('Edit the Practice Name and/or address.'),
+            _("This information is used on receipts and appointment slips."),
+        ))
 
-        self.line_edit = UpperCaseLineEdit()
+        self.practice_line_edit = QtGui.QLineEdit()
+        self.practice_line_edit.setText(localsettings.PRACTICE_NAME)
 
         frame = QtGui.QFrame(self)
         layout = QtGui.QFormLayout(frame)
-        layout.addRow(_("User Initials or nickname"), self.line_edit)
+        layout.addRow(_("Practice Name"), self.practice_line_edit)
+
+        self.addr_line_edits = []
+        for i in range(7):
+            le = QtGui.QLineEdit()
+            self.addr_line_edits.append(le)
+            layout.addRow("%s %d" % (_("Address Line"), i + 1), le)
+
+            try:
+                le.setText(localsettings.PRACTICE_ADDRESS[i + 1])
+            except IndexError:
+                pass
 
         self.insertWidget(self.top_label)
         self.insertWidget(frame)
 
-        self.line_edit.textChanged.connect(self._check_enable)
-        self.line_edit.setFocus()
+        self.enableApply()
 
-        list_widget = QtGui.QListWidget()
-        list_widget.addItems(sorted(localsettings.allowed_logins))
-        self.add_advanced_widget(list_widget)
-        self.set_advanced_but_text(_("view existing users"))
+    def sizeHint(self):
+        return QtCore.QSize(400, 400)
 
-    def _check_enable(self, *args):
-        input_ = self.username
-        if input_ in localsettings.allowed_logins:
-            QtGui.QMessageBox.warning(self,
-                                      _("error"),
-                                      _("Initials/nickname mut be unique"),
-                                      )
-            self.enableApply(False)
-        else:
-            self.enableApply(input_ != "")
+    def showEvent(self, event):
+        self.practice_line_edit.setFocus()
 
     @property
-    def username(self):
-        return unicode(self.line_edit.text().toUtf8())
+    def practice_name(self):
+        return unicode(self.practice_line_edit.text().toUtf8()).strip(" ")
+
+    @property
+    def practice_address(self):
+        address_lines = []
+        for le in self.addr_line_edits:
+            line_ = unicode(le.text().toUtf8()).strip(" ")
+            if line_ != "":
+                address_lines.append(line_)
+        return "|".join(address_lines)
 
     def apply(self):
-        if db_settings.insert_login(self.username):
-            localsettings.initiateUsers()
+        changed = False
+        if self.practice_name != localsettings.PRACTICE_NAME:
+            changed = changed or db_settings.insert_practice_name(
+                self.practice_name)
+        if self.practice_address != localsettings.PRACTICE_ADDRESS:
+            changed = changed or db_settings.insert_practice_address(
+                self.practice_address)
+        if changed:
+            localsettings.initiate()
             return True
 
     def exec_(self):
-        if ExtendableDialog.exec_(self):
+        if BaseDialog.exec_(self):
             return self.apply()
         return False
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
     app = QtGui.QApplication([])
-    localsettings.initiateUsers()
+    localsettings.initiate()
 
-    dl = AddUserDialog()
-    if dl.exec_():
-        print dl.username
+    dl = EditPracticeDialog()
+    dl.exec_()
+    print dl.practice_name
+    print dl.practice_address

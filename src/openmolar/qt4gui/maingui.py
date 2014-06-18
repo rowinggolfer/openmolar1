@@ -204,24 +204,13 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.setWindowTitle("OpenMolar - %s '%s'" % (
             _("connected to"), params.database_name))
 
-        self.advise("you have %s patients" % localsettings.PT_COUNT)
-        if len(localsettings.cashbookCodesDict) < 1:
-            self.advise(_("The cbcodes table in your database is inadequate"),
-                        2)
-
-        n_active_dents = len(localsettings.activedents)
-        if not n_active_dents:
-            self.advise("%s<hr />%s" % (
-                _("you have no active dentists in your database"),
-                _('to add one click the menu item "Add a Clinician"')), 1)
-        else:
-            self.advise("%s %d %s" % (
-                        _("you have"), n_active_dents, _("active dentists")))
-        self.advise(
-            "you have %s active hygienists" % len(localsettings.activehygs))
-        self.advise("appointment search final date is %s" %
-                    localsettings.formatDate(localsettings.BOOKEND))
-
+        dl = InitialCheckDialog(self)
+        if dl.has_issues:
+            dl.exec_()
+        for message in dl.critical_messages:
+            self.advise(message, 2)
+        for message in dl.messages:
+            self.advise(message)
         self.set_surgery_mode()
         self.load_pt_statuses()
         self.loadDentistComboboxes()
@@ -2729,6 +2718,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.reset_supervisor)
         self.ui.actionAdd_User.triggered.connect(self.add_user)
         self.ui.actionAdd_Clinician.triggered.connect(self.add_clinician)
+        self.ui.actionEdit_Practice_Details.triggered.connect(
+            self.edit_practice)
 
     def signals_estimates(self):
         # Estimates and Course Management
@@ -3348,6 +3339,11 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         dl = AddClinicianDialog(self)
         if dl.exec_():
             self.initiate()
+
+    def edit_practice(self):
+        dl = EditPracticeDialog(self)
+        if dl.exec_():
+            self.advise(_("Practice Name and/or Address modified."), 1)
 
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''

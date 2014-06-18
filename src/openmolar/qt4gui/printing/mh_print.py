@@ -118,10 +118,11 @@ class MHPrint(object):
 
         y = MARGIN_TOP
 
-        for value in localsettings.MH_HEADER:
+        for value in (localsettings.PRACTICE_NAME,
+                      _("Confidential Medical History Questionaire")
+                      ):
             if not value:
                 continue
-
             y += print_text(value, y, option=QtCore.Qt.AlignCenter)
 
         print_line(y)

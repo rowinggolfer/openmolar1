@@ -83,21 +83,10 @@ def showVersion():
 if LOGGER.level == logging.DEBUG:
     showVersion()
 
-PRACTICE_NAME = "The Academy Dental Practice"
-
-APPOINTMENT_CARD_HEADER = \
-    "%s, 19 Union Street\nInverness. tel 01463 232423" % PRACTICE_NAME
-
-
+PRACTICE_NAME = _("Example Dental Practice")
 APPOINTMENT_CARD_FOOTER = _("Please try and give at least 24 hours notice") +\
     "\n" + _("if you need to change an appointment.")
 
-CORRESPONDENCE_SIG = "The Academy Dental Practice"
-
-MH_HEADER = ("The Academy Dental Practice",
-             _("Confidential Medical History Questionaire"))
-
-WINDOWS = False
 
 MESSAGE_TEMPLATE = '''
 <html>
@@ -156,15 +145,6 @@ def setChosenServer(i):
         LOGGER.warning("no server name.. config file is old format?")
 
 wkdir = determine_path()
-appt_shortcut_file = os.path.join(wkdir, "resources",
-                                  "appointment_shortcuts.xml")
-stylesheet = "file://" + os.path.join(wkdir, "resources", "style.css")
-printer_png = "file://" + os.path.join(wkdir, "resources", "icons", "ps.png")
-money_png = "file://" + os.path.join(wkdir, "resources", "icons", "vcard.png")
-LOGOPATH = "file://" + os.path.join(wkdir, "html", "images", "newlogo.png")
-resources_location = os.path.join(wkdir, "resources")
-resources_path = "file://" + resources_location
-
 if "win" in sys.platform:
     WINDOWS = True
     LOGGER.info("Windows OS detected - modifying settings")
@@ -187,6 +167,7 @@ if "win" in sys.platform:
         "://", ":///").replace(" ", "%20").replace("\\", "/")
 
 else:
+    WINDOWS = False
     if not "linux" in sys.platform:
         LOGGER.warning(
             "unknown system platform (mac?) - defaulting to linux settings")
@@ -197,6 +178,16 @@ cflocation = os.path.join(localFileDirectory, "openmolar.conf")
 LOGIN_CONF = os.path.join(localFileDirectory, "autologin.conf")
 TEMP_PDF = os.path.join(localFileDirectory, "temp.pdf")
 DOCS_DIRECTORY = os.path.join(localFileDirectory, "documents")
+
+appt_shortcut_file = os.path.join(wkdir, "resources",
+                                  "appointment_shortcuts.xml")
+stylesheet = "file://" + os.path.join(wkdir, "resources", "style.css")
+printer_png = "file://" + os.path.join(wkdir, "resources", "icons", "ps.png")
+money_png = "file://" + os.path.join(wkdir, "resources", "icons", "vcard.png")
+LOGOPATH = "file://" + os.path.join(wkdir, "html", "images", "newlogo.png")
+resources_location = os.path.join(wkdir, "resources")
+resources_path = "file://" + resources_location
+
 
 if not os.path.exists(DOCS_DIRECTORY):
     os.makedirs(DOCS_DIRECTORY)
@@ -366,12 +357,8 @@ surgeryno = -1
 CSETYPES = []
 DEFAULT_COURSETYPE = ""
 
-
-#--for debugging purposes... set this to true.- not yet implemented throughout.
-
 #-- self evident
-practiceAddress = ("The Academy Dental Practice", "19 Union Street",
-                   "Inverness", "IV1 1PP")
+PRACTICE_ADDRESS = ("The Dental Practice", "My Street", "My Town", "POST CODE")
 
 #-- this is updated whenever a patient record loads, for ease of address
 #-- manipulation
@@ -848,7 +835,7 @@ def initiate(changed_server=False):
     global message, dentDict, ops, SUPERVISOR, \
         ops_reverse, activedents, activehygs, activedent_ixs, activehyg_ixs, \
         apptix, apptix_reverse, BOOKEND, clinicianNo, clinicianInits, \
-        WIKIURL, cashbookCodesDict, PT_COUNT
+        WIKIURL, cashbookCodesDict, PT_COUNT, PRACTICE_ADDRESS, PRACTICE_NAME
 
     from openmolar.dbtools import cashbook
     from openmolar.dbtools.db_settings import SettingsFetcher
@@ -875,6 +862,9 @@ def initiate(changed_server=False):
     apptix = settings_fetcher.apptix_dict
     activedents, activedent_ixs = settings_fetcher.active_dents
     activehygs, activehyg_ixs = settings_fetcher.active_hygs
+
+    PRACTICE_NAME = settings_fetcher.practice_name
+    PRACTICE_ADDRESS = settings_fetcher.practice_address
 
     #-- set the clinician if possible
     u1 = operator.split("/")[0].strip(" ")
@@ -906,6 +896,8 @@ def initiate(changed_server=False):
     LOGGER.debug("activehygs = %s", activehygs)
     LOGGER.debug("allowed logins = %s", allowed_logins)
     LOGGER.debug("stylesheet = %s", stylesheet)
+    LOGGER.debug("practice name - %s", PRACTICE_NAME)
+    LOGGER.debug("practice address - %s", PRACTICE_ADDRESS)
 
 
 def loadFeeTables():

@@ -93,8 +93,7 @@ class apptTools(Ui_apptTools.Ui_MainWindow):
                 # now put this date into the settings database.
 
                 db_format = "%s,%s,%s" % newBookEnd.timetuple()[:3]
-                db_settings.insertData(
-                    "bookend", db_format, localsettings.operator)
+                db_settings.insertData("bookend", db_format)
 
     def removeOld(self):
         '''

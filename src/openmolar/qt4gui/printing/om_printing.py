@@ -486,12 +486,7 @@ def printrecall(om_gui):
     if om_gui.pt.serialno == 0:
         om_gui.advise("no patient selected", 1)
     else:
-        args = (
-            (om_gui.pt.title, om_gui.pt.fname, om_gui.pt.sname, om_gui.pt.dnt1,
-             om_gui.pt.serialno, om_gui.pt.addr1, om_gui.pt.addr2, om_gui.pt.addr3,
-             om_gui.pt.town, om_gui.pt.county, om_gui.pt.pcde), )
-
-        recall_printer = recallprint.RecallPrinter(args)
+        recall_printer = recallprint.RecallPrinter(om_gui.pt)
         recall_printer.print_()
 
         om_gui.pt.addHiddenNote("printed", "recall - non batch")

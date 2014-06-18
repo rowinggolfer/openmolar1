@@ -64,6 +64,8 @@ from openmolar.qt4gui.dialogs.permissions import ResetSupervisorPasswordDialog
 from openmolar.qt4gui.dialogs.first_run_dialog import FirstRunDialog
 from openmolar.qt4gui.dialogs.add_user_dialog import AddUserDialog
 from openmolar.qt4gui.dialogs.add_clinician_dialog import AddClinicianDialog
+from openmolar.qt4gui.dialogs.initial_check_dialog import InitialCheckDialog
+from openmolar.qt4gui.dialogs.edit_practice_dialog import EditPracticeDialog
 
 
 __all__ = ['AccountSeverityDialog',
@@ -85,6 +87,7 @@ __all__ = ['AccountSeverityDialog',
            'DaybookEditDialog',
            'DocumentDialog',
            'DuplicateReceiptDialog',
+           'EditPracticeDialog',
            'EditTreatmentDialog',
            'EditReferralCentresDialog',
            'EstimateEditDialog',
@@ -93,6 +96,7 @@ __all__ = ['AccountSeverityDialog',
            'FindPatientDialog',
            'FirstRunDialog',
            'HygTreatWizard',
+           'InitialCheckDialog',
            'LoadRelativesDialog',
            'LoginDialog',
            'MedNotesDialog',
