@@ -88,22 +88,6 @@ def commitPDFtoDB(om_gui, descr, serialno=None):
         om_gui.advise(_("Error saving PDF copy %s") % e, 2)
 
 
-def printDupReceipt(om_gui):
-    '''
-    print a duplicate receipt
-    '''
-    dupdate = localsettings.currentDay()
-    amount = om_gui.ui.receiptDoubleSpinBox.value()
-
-    printReceipt(om_gui, {_("Professional Services"): amount * 100},
-                 total=amount * 100, duplicate=True, dupdate=dupdate)
-
-    om_gui.pt.addHiddenNote("printed", "%s %.02f" % (
-        _("duplicate receipt for"),
-        amount))
-    om_gui.updateHiddenNotesLabel()
-
-
 def printReceipt(om_gui, valDict, total="0.00"):
     '''
     print a receipt
@@ -183,7 +167,7 @@ def printAccountsTable(om_gui):
                 if col == 1:
                     html += '<td align="right">%s</td>' % item.text()
                 elif col == 12:
-                    money = int(float(item.text()) * 100)
+                    money = localsettings.pencify(item.text())
                     money_str = localsettings.formatMoney(money)
                     html += '<td align="right">%s</td>' % money_str
                     total += money

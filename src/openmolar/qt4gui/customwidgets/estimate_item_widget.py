@@ -23,7 +23,7 @@
 # ############################################################################ #
 
 import logging
-
+import re
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
@@ -32,10 +32,6 @@ from openmolar.qt4gui.customwidgets.confirming_check_box import ConfirmingCheckB
 
 
 LOGGER = logging.getLogger("openmolar")
-
-
-def decimalise(pence):
-    return "%d.%02d" % (pence // 100, pence % 100)
 
 
 class EstimateItemWidget(QtGui.QWidget):
@@ -269,7 +265,7 @@ class EstimateItemWidget(QtGui.QWidget):
         of items.
         '''
         try:
-            newVal = int(float(arg) * 100)
+            newVal = localsettings.pencify(arg)
             if self.feesLinked and userPerforming:
                 self.ptFee_lineEdit.setText(arg)
                 self.update_ptFee(arg, False)
@@ -287,7 +283,7 @@ class EstimateItemWidget(QtGui.QWidget):
         of items.
         '''
         try:
-            newVal = int(float(arg) * 100)
+            newVal = localsettings.pencify(arg)
             if self.feesLinked and userPerforming:
                 self.fee_lineEdit.setText(arg)
                 self.update_Fee(arg, False)
@@ -334,13 +330,13 @@ class EstimateItemWidget(QtGui.QWidget):
         '''
         update the fee lineedit
         '''
-        self.fee_lineEdit.setText(decimalise(fee))
+        self.fee_lineEdit.setText(localsettings.decimalise(fee))
 
     def setPtFee(self, fee):
         '''
         update the fee lineedit
         '''
-        self.ptFee_lineEdit.setText(decimalise(fee))
+        self.ptFee_lineEdit.setText(localsettings.decimalise(fee))
 
     def setCompleted(self, arg):
         '''

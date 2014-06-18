@@ -330,7 +330,7 @@ def customAdd(om_gui, description=None):
             descr = "??"
         usercode = str(descr.replace(" ", "_"))[:20].upper()
 
-        fee = int(dl.fee_doubleSpinBox.value() * 100)
+        fee = localsettings.pencify(str(dl.fee_doubleSpinBox.value()))
 
         for i in range(no):
             pt.treatment_course.custompl += "%s " % usercode

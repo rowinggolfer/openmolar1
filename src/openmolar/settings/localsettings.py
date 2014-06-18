@@ -382,6 +382,25 @@ def hash_func(message):
     return hashlib.sha1(message).hexdigest()
 
 
+def pencify(input_):
+    '''
+    safely convert "0.29" to 29, or "1.50" to 150 etc..
+    in python int(0.29 * 100) is 28!
+    '''
+    m = re.match("(\d+)?\.?(\d)?(\d)?", input_)
+    if not m:
+        return 0
+    return int("%s%s%s" % (
+        "0" if m.groups()[0] is None else m.groups()[0],
+        "0" if m.groups()[1] is None else m.groups()[1],
+        "0" if m.groups()[2] is None else m.groups()[2])
+    )
+
+
+def decimalise(pence):
+    return "%d.%02d" % (pence // 100, pence % 100)
+
+
 def convert_deciduous(tooth):
     '''
     if the tooth is a match for ulD or llE etc..

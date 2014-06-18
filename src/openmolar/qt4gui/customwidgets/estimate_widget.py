@@ -31,7 +31,8 @@ import logging
 
 from PyQt4 import QtGui, QtCore
 
-from estimate_item_widget import decimalise, EstimateItemWidget
+from openmolar.settings import localsettings
+from estimate_item_widget import EstimateItemWidget
 
 from openmolar.qt4gui.fees import manipulate_plan
 
@@ -184,16 +185,20 @@ class EstimateWidget(QtGui.QWidget):
             total += est.fee
             ptTotal += est.ptfee
 
-        self.fees_total_le.setText(decimalise(total))
-        self.charges_total_le.setText(decimalise(ptTotal))
-        self.planned_fees_total_le.setText(decimalise(plan_total))
-        self.planned_charges_total_le.setText(decimalise(pt_plan_total))
-        self.completed_fees_total_le.setText(decimalise(comp_total))
-        self.completed_charges_total_le.setText(decimalise(pt_cmp_total))
-
-        self.interim_fees_total_le.setText(decimalise(interim_total))
+        self.fees_total_le.setText(localsettings.decimalise(total))
+        self.charges_total_le.setText(localsettings.decimalise(ptTotal))
+        self.planned_fees_total_le.setText(
+            localsettings.decimalise(plan_total))
+        self.planned_charges_total_le.setText(
+            localsettings.decimalise(pt_plan_total))
+        self.completed_fees_total_le.setText(
+            localsettings.decimalise(comp_total))
+        self.completed_charges_total_le.setText(
+            localsettings.decimalise(pt_cmp_total))
+        self.interim_fees_total_le.setText(
+            localsettings.decimalise(interim_total))
         self.interim_charges_total_le.setText(
-            decimalise(pt_interim_total))
+            localsettings.decimalise(pt_interim_total))
 
         interim_in_use = interim_total != 0 and pt_interim_total != 0
         if interim_in_use:

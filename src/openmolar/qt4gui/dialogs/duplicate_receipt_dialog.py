@@ -168,14 +168,14 @@ class DuplicateReceiptDialog(BaseDialog):
         amount = self.amount_spinbox.value()
 
         myreceipt = receiptPrint.Receipt()
-
         myreceipt.setProps(self.pt.title, self.pt.fname, self.pt.sname,
-                           self.pt.addr1, self.pt.addr2, self.pt.addr3, self.pt.town,
-                           self.pt.county, self.pt.pcde)
+                           self.pt.addr1, self.pt.addr2, self.pt.addr3,
+                           self.pt.town, self.pt.county, self.pt.pcde)
 
-        myreceipt.total = amount * 100
+        total = localsettings.pencify(str(amount))
+        myreceipt.total = total
 
-        myreceipt.receivedDict = {_("Professional Services"): amount * 100}
+        myreceipt.receivedDict = {_("Professional Services"): total}
         myreceipt.isDuplicate = True
         myreceipt.dupdate = self.dup_date_edit.date()
 
