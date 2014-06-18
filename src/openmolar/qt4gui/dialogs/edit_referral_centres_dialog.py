@@ -157,6 +157,8 @@ class EditReferralCentresDialog(BaseDialog):
         return self._referral_centres
 
     def load_existing(self, row=0):
+        if self.referral_centres == []:
+            return
         self.signals(False)
         self.list_model.clear()
         for ref_centre in self.referral_centres:
@@ -219,20 +221,29 @@ class EditReferralCentresDialog(BaseDialog):
         return lines
 
     def add_centre(self):
-        centre = referral.ReferralCentre(hash(len(self.referral_centres)),
-                                         _("New"), "", "", "", "", "", "", "", "")
+        LOGGER.debug("add_centre")
+        if self.referral_centres == []:
+            centre = referral.ReferralCentre(
+                hash(0),
+                _("Example Referral Centre"),
+                _("Dear Sir/Madam"), _("My Local Hospital"),
+                _("Main Street"), _("My Town"), "", "", "", "")
+        else:
+            centre = referral.ReferralCentre(
+                hash(len(self.referral_centres)),
+                _("New"), "", "", "", "", "", "", "", "")
         self.referral_centres.append(centre)
         rowno = len(self.referral_centres) - len(self.deleted_centres) - 1
         self.load_existing(rowno)
         self.check_for_changes()
 
     def remove_centre(self):
-        if len(self.referral_centres) == 1:
-            QtGui.QMessageBox.warning(self,
-                                      _("Warning"),
-                                      _(
-                                      "You must have at least one referral centre in the database")
-                                      )
+        if len(self.referral_centres) < 2:
+            QtGui.QMessageBox.warning(
+                self,
+                _("Warning"),
+                _("You should have at least one referral centre in the database")
+            )
             return
         self.deleted_centres.append(self.current_centre)
         self.load_existing()
