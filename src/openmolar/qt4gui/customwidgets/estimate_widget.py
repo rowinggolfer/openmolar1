@@ -542,3 +542,4 @@ if __name__ == "__main__":
 
     form.show()
     app.exec_()
+    print pt.estimates

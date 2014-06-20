@@ -3364,6 +3364,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         for l in traceback.format_exception(exc_type, exc_val, tracebackobj):
             message += l
         self.advise('UNHANDLED EXCEPTION!<hr /><pre>%s' % message, 2)
+        sys.stderr.write(message)
 
 
 def main():

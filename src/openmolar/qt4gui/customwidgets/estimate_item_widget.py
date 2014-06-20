@@ -250,13 +250,16 @@ class EstimateItemWidget(QtGui.QWidget):
         for item in self.est_items:
             item.csetype = str(arg)
 
-    def update_descr(self, arg):
+    def update_descr(self, description):
         '''
         description has been altered, alter ALL underying data
         (for multiple items)
+        jump through hoops here in case user enters a UK pound sign!
         '''
+        description = str(description.toAscii()
+                          ).decode("ascii", "replace").replace('"', '\"')
         for item in self.est_items:
-            item.description = str(arg.toAscii()).replace('"', '\"')
+            item.description = description
 
     def update_Fee(self, arg, userPerforming=True):
         '''
