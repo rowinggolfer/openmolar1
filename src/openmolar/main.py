@@ -39,7 +39,6 @@ SHORTARGS = "vq"
 LONGARGS = [
     "help",
     "version",
-    "setup",
     "firstrun",
     "ignore-schema-check",
     "no-dev-login"
@@ -54,7 +53,6 @@ USAGE = '''%s
 --help               \t : %s
 --firstrun           \t : %s
 --ignore-schema-check\t : %s
---setup              \t : %s
 --version            \t : %s
 --no-dev-login       \t : %s
 '''
@@ -68,14 +66,6 @@ def main():
     maingui.main()
 
 
-def setup():
-    '''
-    run the setup gui, which allows customisation of the app
-    '''
-    from openmolar.qt4gui.tools import new_setup
-    new_setup.main(sys.argv)
-
-
 def usage():
     '''
     called by --help, bad arguments, or no arguments
@@ -87,9 +77,7 @@ def usage():
         _("verbose logging to console (for debugging)"),
         _("show this text"),
         _("offer the firstrun config and demodatabase generation"),
-        _(
-            "proceed even if client and database versions clash (NOT ADVISABLE!)"),
-        _("takes you to the admin page"),
+        _("proceed even if client and database versions clash (NOT ADVISABLE!)"),
         _("show the versioning and exit"),
         _("Ignore dev login (advanced)")
     )
@@ -115,8 +103,6 @@ def run():
         opts = (("--help", ""),)
 
     # some backward compatibility stuff here...
-    if "setup" in sys.argv:
-        opts.append(("--setup", ""))
     if "firstrun" in sys.argv:
         opts.append(("--firstrun", ""))
 
@@ -127,10 +113,6 @@ def run():
             break
         if option == "--version":
             chosen_func = version
-            break
-        if option == "--setup":
-            LOGGER.info("setup called by command line args")
-            chosen_func = setup
             break
         if option == "--firstrun":
             localsettings.FORCE_FIRST_RUN = True
