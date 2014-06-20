@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.5.37, for debian-linux-gnu (x86_64)
 --
--- Host: localhost    Database: new_om_demo
+-- Host: localhost    Database: openmolar_demo
 -- ------------------------------------------------------
 -- Server version	5.5.37-1
 
@@ -271,7 +271,7 @@ CREATE TABLE `cbcodes` (
 
 LOCK TABLES `cbcodes` WRITE;
 /*!40000 ALTER TABLE `cbcodes` DISABLE KEYS */;
-INSERT INTO cbcodes (code, flag, descr) VALUES (1, 2, "NHS CASH"), (2, 2, "PRIVATE CASH"), (3, 2, "NHS CHEQUE"), (4, 2, "PRIVATE CHEQUE"), (5, 2, "NHS CARD"), (6, 2, "PRIVATE CARD"), (9, 2, "BANK TRANSFER"), (14, 2, "SUNDRY CASH"), (15, 2, "SUNDRY CHEQUE"), (17, 2, "SUNDRY CARD"), (21, 2, "ANNUAL HDP"), (24, 2, "OTHER"), (125, 2, "REFUND");
+INSERT INTO `cbcodes` VALUES (1,2,'NHS CASH'),(2,2,'PRIVATE CASH'),(3,2,'NHS CHEQUE'),(4,2,'PRIVATE CHEQUE'),(5,2,'NHS CARD'),(6,2,'PRIVATE CARD'),(9,2,'BANK TRANSFER'),(14,2,'SUNDRY CASH'),(15,2,'SUNDRY CHEQUE'),(17,2,'SUNDRY CARD'),(21,2,'ANNUAL HDP'),(24,2,'OTHER'),(125,2,'REFUND');
 /*!40000 ALTER TABLE `cbcodes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -367,6 +367,62 @@ LOCK TABLES `clinical_memos` WRITE;
 /*!40000 ALTER TABLE `clinical_memos` DISABLE KEYS */;
 INSERT INTO `clinical_memos` VALUES (1,1,'REC','2014-06-10 20:28:10',0,'This patient is for demonstration purposes only. Any similarity to any person, alive or dead, is entirely unintentional.');
 /*!40000 ALTER TABLE `clinical_memos` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `clinician_dates`
+--
+
+DROP TABLE IF EXISTS `clinician_dates`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `clinician_dates` (
+  `clinician_ix` smallint(5) unsigned NOT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date DEFAULT NULL,
+  `date_comments` varchar(255) DEFAULT NULL,
+  KEY `clinician_ix` (`clinician_ix`),
+  CONSTRAINT `clinician_dates_ibfk_1` FOREIGN KEY (`clinician_ix`) REFERENCES `clinicians` (`ix`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `clinician_dates`
+--
+
+LOCK TABLES `clinician_dates` WRITE;
+/*!40000 ALTER TABLE `clinician_dates` DISABLE KEYS */;
+/*!40000 ALTER TABLE `clinician_dates` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `clinicians`
+--
+
+DROP TABLE IF EXISTS `clinicians`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `clinicians` (
+  `ix` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `initials` char(5) NOT NULL,
+  `name` varchar(64) NOT NULL,
+  `formal_name` varchar(128) DEFAULT NULL,
+  `qualifications` varchar(64) DEFAULT NULL,
+  `type` smallint(5) NOT NULL DEFAULT '1',
+  `speciality` varchar(64) DEFAULT NULL,
+  `data` varchar(255) DEFAULT NULL,
+  `comments` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`ix`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `clinicians`
+--
+
+LOCK TABLES `clinicians` WRITE;
+/*!40000 ALTER TABLE `clinicians` DISABLE KEYS */;
+/*!40000 ALTER TABLE `clinicians` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -546,6 +602,30 @@ CREATE TABLE `daybook_link` (
 LOCK TABLES `daybook_link` WRITE;
 /*!40000 ALTER TABLE `daybook_link` DISABLE KEYS */;
 /*!40000 ALTER TABLE `daybook_link` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `diary_link`
+--
+
+DROP TABLE IF EXISTS `diary_link`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `diary_link` (
+  `clinician_ix` smallint(5) unsigned NOT NULL,
+  `apptix` smallint(5) unsigned NOT NULL,
+  KEY `clinician_ix` (`clinician_ix`),
+  CONSTRAINT `diary_link_ibfk_1` FOREIGN KEY (`clinician_ix`) REFERENCES `clinicians` (`ix`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `diary_link`
+--
+
+LOCK TABLES `diary_link` WRITE;
+/*!40000 ALTER TABLE `diary_link` DISABLE KEYS */;
+/*!40000 ALTER TABLE `diary_link` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1056,8 +1136,7 @@ CREATE TABLE `opid` (
 
 LOCK TABLES `opid` WRITE;
 /*!40000 ALTER TABLE `opid` DISABLE KEYS */;
-INSERT INTO `opid` VALUES ('REC');
-INSERT INTO `opid` VALUES ('USER');
+INSERT INTO `opid` VALUES ('REC'),('USER');
 /*!40000 ALTER TABLE `opid` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1297,40 +1376,6 @@ LOCK TABLES `plandata` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `practitioners`
---
-
-DROP TABLE IF EXISTS `practitioners`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `practitioners` (
-  `id` smallint(6) NOT NULL DEFAULT '0',
-  `inits` char(4) DEFAULT NULL,
-  `name` varchar(30) DEFAULT NULL,
-  `apptix` smallint(6) DEFAULT NULL,
-  `formalname` varchar(30) DEFAULT NULL,
-  `fpcno` varchar(20) DEFAULT NULL,
-  `quals` varchar(30) DEFAULT NULL,
-  `datefrom` date DEFAULT NULL,
-  `dateto` date DEFAULT NULL,
-  `flag0` tinyint(4) DEFAULT NULL,
-  `flag1` tinyint(4) DEFAULT NULL,
-  `flag2` tinyint(4) DEFAULT NULL,
-  `flag3` tinyint(4) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `practitioners`
---
-
-LOCK TABLES `practitioners` WRITE;
-/*!40000 ALTER TABLE `practitioners` DISABLE KEYS */;
-/*!40000 ALTER TABLE `practitioners` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `previous_snames`
 --
 
@@ -1434,7 +1479,7 @@ CREATE TABLE `settings` (
   `time_stamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`ix`),
   KEY `value` (`value`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1443,7 +1488,7 @@ CREATE TABLE `settings` (
 
 LOCK TABLES `settings` WRITE;
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
-INSERT INTO `settings` VALUES (1,'wikiurl','http://openmolar.com/wiki',NULL,NULL,NULL,'neil@openmolar.com','2014-06-10 17:52:59'),(2,'compatible_clients','2.6',NULL,NULL,NULL,'neil@openmolar.com','2014-06-10 17:53:20'),(3,'Schema_Version','2.6',NULL,NULL,NULL,'neil@openmolar.com','2014-06-10 17:53:35');
+INSERT INTO `settings` VALUES (1,'wikiurl','http://openmolar.com/wiki',NULL,NULL,NULL,'neil@openmolar.com','2014-06-10 17:52:59'),(2,'compatible_clients','2.7',NULL,NULL,NULL,'Update script','2014-06-20 14:27:35'),(3,'Schema_Version','2.7',NULL,NULL,NULL,'neil@openmolar.com','2014-06-10 17:53:35');
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1509,4 +1554,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-06-10 20:16:01
+-- Dump completed on 2014-06-20 15:47:36
