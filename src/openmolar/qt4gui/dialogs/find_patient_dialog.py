@@ -150,6 +150,8 @@ class FinalChoiceDialog(ExtendableDialog):
         self.table_widget.sortItems(4)
 
         self.table_widget.itemDoubleClicked.connect(self.accept)
+        self.enableApply(True)
+        self.apply_but.setText(_("Load the Selected Patient"))
 
     def sizeHint(self):
         max_width = QtGui.QApplication.desktop().screenGeometry().width() - 100
