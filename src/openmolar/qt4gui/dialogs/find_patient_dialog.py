@@ -22,6 +22,8 @@
 # #                                                                          # #
 # ############################################################################ #
 
+from __future__ import division
+
 import datetime
 import logging
 from PyQt4 import QtGui, QtCore
@@ -31,7 +33,7 @@ from openmolar.settings import localsettings
 from openmolar.dbtools import search
 
 from openmolar.qt4gui.compiled_uis import Ui_patient_finder
-from openmolar.qt4gui.compiled_uis import Ui_select_patient
+from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 
 
 class FindPatientDialog(QtGui.QDialog, Ui_patient_finder.Ui_Dialog):
@@ -55,7 +57,11 @@ class FindPatientDialog(QtGui.QDialog, Ui_patient_finder.Ui_Dialog):
         self.pcde.setText(localsettings.lastsearch[5])
 
     def exec_(self):
-        if QtGui.QDialog.exec_(self):
+        if localsettings.PT_COUNT == 0:
+            QtGui.QMessageBox.warning(self.parent(), _("warning"),
+                                      _("You have no patients in your database"))
+            return False
+        if localsettings.PT_COUNT < 5 or QtGui.QDialog.exec_(self):
             dob = self.dateEdit.date().toPyDate()
             addr = str(self.addr1.text().toAscii())
             tel = str(self.tel.text().toAscii())
@@ -72,71 +78,94 @@ class FindPatientDialog(QtGui.QDialog, Ui_patient_finder.Ui_Dialog):
             if serialno > 0:
                 self.chosen_sno = serialno
             else:
-                candidates = search.getcandidates(dob, addr, tel, sname,
-                                                  self.snameSoundex_checkBox.checkState(
-                                                  ), fname,
-                                                  self.fnameSoundex_checkBox.checkState(), pcde)
+                candidates = search.getcandidates(
+                    dob, addr, tel, sname,
+                    self.snameSoundex_checkBox.checkState(), fname,
+                    self.fnameSoundex_checkBox.checkState(), pcde
+                )
 
-                if candidates == ():
+                if candidates == () and localsettings.PT_COUNT > 5:
                     QtGui.QMessageBox.warning(self.parent(), "warning",
                                               _("no match found"))
                     return False
                 else:
-                    if len(candidates) > 1:
+                    if localsettings.PT_COUNT < 5:
+                            candidates = search.all_patients()
+                    if len(candidates) == 1:
+                        self.chosen_sno = int(candidates[0][0])
+                    else:
                         dl = FinalChoiceDialog(candidates, self)
                         if dl.exec_():
                             self.chosen_sno = dl.chosen_sno
-                    else:
-                        self.chosen_sno = int(candidates[0][0])
-
             return True
 
         return False
 
 
-class FinalChoiceDialog(QtGui.QDialog, Ui_select_patient.Ui_Dialog):
+class FinalChoiceDialog(ExtendableDialog):
     chosen_sno = None
 
     def __init__(self, candidates, parent=None):
-        QtGui.QDialog.__init__(self, parent)
-        self.setupUi(self)
-        self.tableWidget.clear()
-        self.tableWidget.setSortingEnabled(False)
-        #--good practice to disable this while loading
-        self.tableWidget.setRowCount(len(candidates))
-        headers = ('Serialno', 'Surname', 'Forename', 'dob', 'Address1',
-                   'Address2', 'POSTCODE')
+        ExtendableDialog.__init__(self, parent, remove_stretch=True)
+        self.table_widget = QtGui.QTableWidget()
+        self.table_widget.setAlternatingRowColors(True)
+        self.table_widget.setSelectionBehavior(
+            QtGui.QAbstractItemView.SelectRows)
+        self.insertWidget(self.table_widget)
 
-        widthFraction = (0, 20, 20, 15, 30, 30, 10)
-        self.tableWidget.setColumnCount(len(headers))
-        self.tableWidget.setHorizontalHeaderLabels(headers)
-        self.tableWidget.verticalHeader().hide()
-        self.tableWidget.horizontalHeader().setStretchLastSection(True)
-        row = 0
+        headers = (_('Serialno'),
+                   _('Status'),
+                   _('Title'),
+                   _('Forename'),
+                   _('Surname'),
+                   _('Birth Date'),
+                   _('Address Line 1'),
+                   _('Address Line 2'),
+                   _('Town'),
+                   _('POSTCODE'),
+                   _('Tel1'),
+                   _('Tel2'),
+                   _('Mobile')
+                   )
 
-        for col in range(len(headers)):
-            self.tableWidget.setColumnWidth(col, widthFraction[col] *
-                                           (self.width() - 100) / 130)
+        self.table_widget.clear()
+        self.table_widget.setSortingEnabled(False)
+        self.table_widget.setRowCount(len(candidates))
+        self.table_widget.setColumnCount(len(headers))
+        self.table_widget.setHorizontalHeaderLabels(headers)
+        self.table_widget.verticalHeader().hide()
+        self.table_widget.horizontalHeader().setStretchLastSection(True)
 
-        for candidate in candidates:
-            col = 0
-            for attr in candidate:
+        for row, candidate in enumerate(candidates):
+            for col, attr in enumerate(candidate):
                 if isinstance(attr, datetime.date):
                     item = QtGui.QTableWidgetItem(
                         localsettings.formatDate(attr))
                 else:
                     item = QtGui.QTableWidgetItem(str(attr))
-                self.tableWidget.setItem(row, col, item)
-                col += 1
-            row += 1
-        self.tableWidget.setCurrentCell(0, 1)
+                self.table_widget.setItem(row, col, item)
 
-        self.tableWidget.itemDoubleClicked.connect(self.accept)
+        self.table_widget.setCurrentCell(0, 1)
+        self.table_widget.setSortingEnabled(True)
+        self.table_widget.sortItems(4)
+
+        self.table_widget.itemDoubleClicked.connect(self.accept)
+
+    def sizeHint(self):
+        max_width = QtGui.QApplication.desktop().screenGeometry().width() - 100
+        return QtCore.QSize(max_width, 400)
+
+    def resizeEvent(self, event):
+        widths = (0, 10, 15, 15, 15, 15, 20, 20, 20, 15, 10, 10, 10)
+        sum_widths = sum(widths) + 30  # allow for vertical scrollbar
+        for col in range(self.table_widget.columnCount()):
+            col_width = widths[col] * self.width() / sum_widths
+            self.table_widget.setColumnWidth(col, col_width)
 
     def exec_(self):
         if QtGui.QDialog.exec_(self):
-            row = self.tableWidget.currentRow()
-            result = self.tableWidget.item(row, 0).text()
+            row = self.table_widget.currentRow()
+            result = self.table_widget.item(row, 0).text()
             self.chosen_sno = int(result)
             return True
         return False

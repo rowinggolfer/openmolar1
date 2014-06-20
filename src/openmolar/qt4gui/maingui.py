@@ -852,7 +852,9 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                      self.pt.dnt1, self.pt.dnt2)
 
         inits = localsettings.ops.get(self.pt.dnt1, "")
-        if inits in localsettings.activedents:
+        if len(localsettings.activedents) == 0:
+            self.advise(_("You have no dentists in your database."), 1)
+        elif inits in localsettings.activedents:
             self.ui.dnt1comboBox.setCurrentIndex(
                 localsettings.activedents.index(inits))
         else:
@@ -1277,6 +1279,13 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.load_receptionSummaryPage()
         self.ui.actionFix_Locked_New_Course_of_Treatment.setEnabled(False)
         #--populate dnt1 and dnt2 comboboxes
+        if not self.pt.dnt1:
+            if len(localsettings.activedents) == 1:
+                self.pt.dnt1 = localsettings.activedent_ixs[0]
+                self.advise("%s %s %s" % (_("Setting"),
+                                          localsettings.activedents[0],
+                                          _("as patient's dentist"))
+                            )
         self.load_dentComboBoxes(newPatientReload)
         self.pt.checkExemption()
         self.updateDetails()

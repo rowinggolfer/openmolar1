@@ -25,9 +25,27 @@
 '''this script connects to the database and performs searches'''
 
 import datetime
+import logging
 import sys
 from openmolar.connect import connect
 from openmolar.settings import localsettings
+
+
+LOGGER = logging.getLogger("openmolar")
+
+ALL_PATIENTS_QUERY = \
+    '''SELECT serialno, status, title, fname, sname, dob, addr1, addr2, town,
+pcde, tel1, tel2, mobile FROM patients ORDER BY sname, fname'''
+
+
+def all_patients():
+    db = connect()
+    cursor = db.cursor()
+    cursor.execute(ALL_PATIENTS_QUERY)
+    results = cursor.fetchall()
+    cursor.close()
+
+    return results
 
 
 def getcandidates(dob, addr, tel, sname, similar_sname, fname,
@@ -35,62 +53,60 @@ def getcandidates(dob, addr, tel, sname, similar_sname, fname,
     '''
     this searches the database for patients matching the given fields
     '''
-    query = ''
+    conditions = []
     values = []
     if addr != '':
-        query += '(ADDR1 like %s or ADDR2 like %s) and '
-        values.append("%" + addr + "%")
-        values.append("%" + addr + "%")
+        conditions.append('(ADDR1 like %s or ADDR2 like %s or town like %s)')
+        values += ["%" + addr + "%"] * 3
     if tel != '':
-        query += 'tel1 like %s and '
-        values.append("%" + tel + "%")
+        conditions.append('tel1 like %s or tel2 like %s or mobile like %s')
+        values += ["%" + tel + "%"] * 3
     if dob != datetime.date(1900, 1, 1):
-        query += 'dob = %s and '
+        conditions.append('dob = %s')
         values.append(dob)
     if pcde != '':
-        query += 'pcde like %s and '
+        conditions.append('pcde like %s')
         values.append("%" + pcde + "%")
     if sname != '':
         if similar_sname:
-            query += 'sname sounds like %s and '
+            conditions.append('sname sounds like %s')
             values.append(sname)
         else:
             sname += "%"
             if "'" in sname:
-                query += '(sname like %s or sname like %s) and '
+                conditions.append('(sname like %s or sname like %s)')
                 values.append(sname)
                 values.append(sname.replace("'", ""))
             elif sname[:1] == "o":
-                query += '(sname like %s or sname like %s) and '
+                conditions.append('(sname like %s or sname like %s)')
                 values.append(sname)
                 values.append("o'" + sname[1:])
             elif sname[:2] == "mc":
-                query += '(sname like %s or sname like %s) and '
+                conditions.append('(sname like %s or sname like %s)')
                 values.append(sname)
                 values.append(sname.replace("mc", "mac"))
             elif sname[:3] == "mac":
-                query += '(sname like %s or sname like %s) and '
+                conditions.append('(sname like %s or sname like %s)')
                 values.append(sname)
                 values.append(sname.replace("mac", "mc"))
             else:
-                query += 'sname like %s and '
+                conditions.append('sname like %s')
                 values.append(sname)
 
     if fname != '':
         if similar_fname:
-            query += 'fname sounds like %s and '
+            conditions.append('fname sounds like %s')
             values.append(fname)
         else:
-            query += 'fname like %s and '
+            conditions.append('fname like %s')
             values.append(fname + "%")
 
-    if query != '':
-        fields = '''serialno, sname, fname, dob, addr1, addr2, pcde, tel1,
-        tel2, mobile'''
+    if conditions:
+        conditional = "WHERE %s ORDER BY" % " AND ".join(conditions)
+        query = ALL_PATIENTS_QUERY.replace("ORDER BY", conditional)
 
-        query = "select %s from patients where %s order by sname, fname" % (
-            fields, query[0: query.rindex("and")])
-
+        LOGGER.debug(query.replace("\n", " "))
+        LOGGER.debug(values)
         db = connect()
         cursor = db.cursor()
         cursor.execute(query, tuple(values))
@@ -103,24 +119,28 @@ def getcandidates(dob, addr, tel, sname, similar_sname, fname,
 
 
 def getcandidates_from_serialnos(list_of_snos):
-    query = ""
-    for sno in list_of_snos:
-        query += "serialno=%d or " % sno
-    if query != '':
-        fields = 'serialno,sname,fname,dob, addr1,addr2,pcde,tel1,tel2,mobile'
-        query = "select %s from patients where %s order by sname,fname" % (
-            fields, query[:query.rindex("or")])
+    '''
+    this probably never actually gets called now, as it relates to a time when
+    "double appointments" were commonplace.
+    '''
+    format_snos = ",". join(('%s',) * len(list_of_snos))  # %s,%s,%s
+    conditional = "WHERE serialno in (%s) ORDER BY" % format_snos
+    query = ALL_PATIENTS_QUERY.replace("ORDER BY", conditional)
 
-        db = connect()
-        cursor = db.cursor()
-        cursor.execute(query)
-        results = cursor.fetchall()
-        cursor.close()
-        # db.close()
-        return results
-    else:
-        return()
+    db = connect()
+    cursor = db.cursor()
+    cursor.execute(query, list_of_snos)
+    results = cursor.fetchall()
+    cursor.close()
+    return results
 
 if __name__ == '__main__':
-    print getcandidates(datetime.date(1900, 1, 1), "", "", "smit", "", "", "", "")
-    # print getcandidates_from_serialnos((1,2,3,4))
+    values = (datetime.date(1969, 12, 9), "Gables", "772378",
+              "wallace", "", "neil", "", "IV2")
+    new_vals = getcandidates(*values)
+    for candidate in new_vals:
+        print candidate
+
+    snos = (1, 2, 3)
+    for candidate in getcandidates_from_serialnos(snos):
+        print candidate
