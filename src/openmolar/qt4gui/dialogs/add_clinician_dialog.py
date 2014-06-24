@@ -69,7 +69,7 @@ class AddClinicianDialog(ExtendableDialog):
         self.date_edit.setDate(localsettings.currentDay())
         self.data_lineedit = QtGui.QLineEdit()
         self.new_diary_checkbox = QtGui.QCheckBox(
-            _("Create anew diary for this clinician "
+            _("Create a new diary for this clinician "
             "(uncheck to map to an existing diary)"))
         self.new_diary_checkbox.setChecked(True)
 
