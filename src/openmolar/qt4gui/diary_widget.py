@@ -41,12 +41,12 @@ from openmolar.qt4gui.dialogs import permissions
 from openmolar.qt4gui.dialogs import choose_clinicians
 from openmolar.qt4gui.dialogs.find_patient_dialog import FinalChoiceDialog
 from openmolar.qt4gui.dialogs import begin_make_appt_dialog
+from openmolar.qt4gui.dialogs.appointments_insert_blocks_dialog \
+    import InsertBlocksDialog
 
 from openmolar.qt4gui.customwidgets import appointmentwidget
 
 from openmolar.qt4gui.printing import om_printing
-
-from openmolar.qt4gui.tools import apptTools
 
 from openmolar.qt4gui.compiled_uis import Ui_diary_widget
 
@@ -87,6 +87,7 @@ class DiaryWidget(QtGui.QWidget):
     alterAday_clipboard_date = None
 
     message_alert = None
+    laid_out = False
 
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
@@ -182,7 +183,8 @@ class DiaryWidget(QtGui.QWidget):
 
     def showEvent(self, event):
         LOGGER.debug("DiaryWidget.showEvent called")
-        # QtCore.QTimer.singleShot(10, self.layout_diary)
+        if not self.laid_out:
+            QtCore.QTimer.singleShot(10, self.layout_diary)
 
     def advise(self, arg, warning_level=0):
         '''
@@ -783,6 +785,7 @@ class DiaryWidget(QtGui.QWidget):
         OR a memo has been added
         '''
         LOGGER.debug("DiaryWidget.layout_diary")
+        self.laid_out = True
 
         date_ = self.selected_date()
         self.ui.weekCalendar.setSelectedDate(date_)
@@ -1534,15 +1537,13 @@ class DiaryWidget(QtGui.QWidget):
             if dl.getInput():
                 self.layout_weekView()
 
-    def appointmentTools(self):
+    def insert_regular_blocks(self):
         '''
-        called from the main menu
-        this just invokes a dialog which has a choice of options
+        insert blocks and appointments
         '''
-        if permissions.granted(self):
-            self.appointmentToolsWindow = QtGui.QMainWindow(self)
-            self.ui2 = apptTools.apptTools(self.appointmentToolsWindow)
-            self.appointmentToolsWindow.show()
+        dl = InsertBlocksDialog()
+        if dl.exec_():
+            dl.apply()
 
     def diary_tabWidget_nav(self, i):
         '''
@@ -1767,10 +1768,19 @@ class _testDiary(QtGui.QMainWindow):
         dw.patient_card_request.connect(self.sig_catcher)
 
         from openmolar.dbtools import patient_class
-        pt = patient_class.patient(20862)
+        pt = patient_class.patient(1)
         dw.schedule_controller.set_patient(pt)
 
         self.setCentralWidget(dw)
+
+        action1 = QtGui.QAction("clear emergency slots", self)
+        action1.triggered.connect(dw.clearTodaysEmergencyTime)
+
+        action2 = QtGui.QAction("insert regular blocks", self)
+        action2.triggered.connect(dw.insert_regular_blocks)
+
+        self.menuBar().addAction(action1)
+        self.menuBar().addAction(action2)
 
     def sig_catcher(self, *args):
         print "signal caught", args

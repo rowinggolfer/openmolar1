@@ -5074,8 +5074,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <property name="title">
      <string>&amp;Tools</string>
     </property>
-    <addaction name="actionClear_Today_s_Emergency_Slots"/>
-    <addaction name="actionAppointment_Tools"/>
     <addaction name="actionAdvanced_Record_Management"/>
     <addaction name="separator"/>
     <addaction name="actionFix_Locked_New_Course_of_Treatment"/>
@@ -5093,8 +5091,17 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <addaction name="actionAdd_Clinician"/>
     <addaction name="actionEdit_Practice_Details"/>
    </widget>
+   <widget class="QMenu" name="menu_Appointments">
+    <property name="title">
+     <string>&amp;Appointments</string>
+    </property>
+    <addaction name="actionClear_Today_s_Emergency_Slots"/>
+    <addaction name="separator"/>
+    <addaction name="actionInsert_Regular_Blocks"/>
+   </widget>
    <addaction name="menuMenu"/>
    <addaction name="menu_Prefences"/>
+   <addaction name="menu_Appointments"/>
    <addaction name="menuTools"/>
    <addaction name="menu_Help"/>
   </widget>
@@ -5126,16 +5133,6 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
    </property>
    <property name="text">
     <string>&amp;Quit</string>
-   </property>
-  </action>
-  <action name="actionClear_Today_s_Emergency_Slots">
-   <property name="text">
-    <string>Clear Today's Emergency Slots</string>
-   </property>
-  </action>
-  <action name="actionAppointment_Tools">
-   <property name="text">
-    <string>Appointment Tools</string>
    </property>
   </action>
   <action name="actionChange_Language">
@@ -5320,6 +5317,16 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <action name="actionEdit_Practice_Details">
    <property name="text">
     <string>Edit Practice Details</string>
+   </property>
+  </action>
+  <action name="actionClear_Today_s_Emergency_Slots">
+   <property name="text">
+    <string>Clear Today's Emergency Slots</string>
+   </property>
+  </action>
+  <action name="actionInsert_Regular_Blocks">
+   <property name="text">
+    <string>Insert Regular Blocks</string>
    </property>
   </action>
  </widget>

@@ -30,10 +30,10 @@ from openmolar.settings import localsettings
 from openmolar.dbtools import appointments
 
 
-class adayData():
+class adayData(object):
 
     '''
-    a custom data structure to stor data
+    a custom data structure to store data
     '''
 
     def __init__(self, dent):

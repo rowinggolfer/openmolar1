@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/main.ui'
 #
-# Created: Fri Jun 13 10:31:50 2014
+# Created: Mon Jun 23 13:41:48 2014
 #      by: PyQt4 UI code generator 4.11
 #
 # WARNING! All changes made in this file will be lost!
@@ -2840,6 +2840,8 @@ class Ui_MainWindow(object):
         self.menu_History.setObjectName(_fromUtf8("menu_History"))
         self.menuTools = QtGui.QMenu(self.menubar)
         self.menuTools.setObjectName(_fromUtf8("menuTools"))
+        self.menu_Appointments = QtGui.QMenu(self.menubar)
+        self.menu_Appointments.setObjectName(_fromUtf8("menu_Appointments"))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(MainWindow)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
@@ -2862,12 +2864,6 @@ class Ui_MainWindow(object):
             QtGui.QIcon.Off)
         self.action_Quit.setIcon(icon19)
         self.action_Quit.setObjectName(_fromUtf8("action_Quit"))
-        self.actionClear_Today_s_Emergency_Slots = QtGui.QAction(MainWindow)
-        self.actionClear_Today_s_Emergency_Slots.setObjectName(
-            _fromUtf8("actionClear_Today_s_Emergency_Slots"))
-        self.actionAppointment_Tools = QtGui.QAction(MainWindow)
-        self.actionAppointment_Tools.setObjectName(
-            _fromUtf8("actionAppointment_Tools"))
         self.actionChange_Language = QtGui.QAction(MainWindow)
         self.actionChange_Language.setObjectName(
             _fromUtf8("actionChange_Language"))
@@ -2963,6 +2959,12 @@ class Ui_MainWindow(object):
         self.actionEdit_Practice_Details = QtGui.QAction(MainWindow)
         self.actionEdit_Practice_Details.setObjectName(
             _fromUtf8("actionEdit_Practice_Details"))
+        self.actionClear_Today_s_Emergency_Slots = QtGui.QAction(MainWindow)
+        self.actionClear_Today_s_Emergency_Slots.setObjectName(
+            _fromUtf8("actionClear_Today_s_Emergency_Slots"))
+        self.actionInsert_Regular_Blocks = QtGui.QAction(MainWindow)
+        self.actionInsert_Regular_Blocks.setObjectName(
+            _fromUtf8("actionInsert_Regular_Blocks"))
         self.menuMenu.addAction(self.action_Open_Patient)
         self.menuMenu.addAction(self.action_save_patient)
         self.menuMenu.addSeparator()
@@ -3000,8 +3002,6 @@ class Ui_MainWindow(object):
         self.menu_Prefences.addAction(self.menuPrinting.menuAction())
         self.menu_Prefences.addSeparator()
         self.menu_Prefences.addAction(self.menuMode.menuAction())
-        self.menuTools.addAction(self.actionClear_Today_s_Emergency_Slots)
-        self.menuTools.addAction(self.actionAppointment_Tools)
         self.menuTools.addAction(self.actionAdvanced_Record_Management)
         self.menuTools.addSeparator()
         self.menuTools.addAction(self.actionFix_Locked_New_Course_of_Treatment)
@@ -3018,8 +3018,13 @@ class Ui_MainWindow(object):
         self.menuTools.addAction(self.actionAdd_User)
         self.menuTools.addAction(self.actionAdd_Clinician)
         self.menuTools.addAction(self.actionEdit_Practice_Details)
+        self.menu_Appointments.addAction(
+            self.actionClear_Today_s_Emergency_Slots)
+        self.menu_Appointments.addSeparator()
+        self.menu_Appointments.addAction(self.actionInsert_Regular_Blocks)
         self.menubar.addAction(self.menuMenu.menuAction())
         self.menubar.addAction(self.menu_Prefences.menuAction())
+        self.menubar.addAction(self.menu_Appointments.menuAction())
         self.menubar.addAction(self.menuTools.menuAction())
         self.menubar.addAction(self.menu_Help.menuAction())
         self.label_9.setBuddy(self.addr3Edit)
@@ -3501,14 +3506,12 @@ class Ui_MainWindow(object):
         self.menuDaybook.setTitle(_("&Daybook"))
         self.menu_History.setTitle(_("&History"))
         self.menuTools.setTitle(_("&Tools"))
+        self.menu_Appointments.setTitle(_("&Appointments"))
         self.action_save_patient.setText(_("&Export Patient to disk"))
         self.action_Open_Patient.setText(_("&Import Patient from disk"))
         self.action_About.setText(_("About &OpenMolar"))
         self.action_About_QT.setText(_("&About QT"))
         self.action_Quit.setText(_("&Quit"))
-        self.actionClear_Today_s_Emergency_Slots.setText(
-            _("Clear Today\'s Emergency Slots"))
-        self.actionAppointment_Tools.setText(_("Appointment Tools"))
         self.actionChange_Language.setText(_("Select Interface Language"))
         self.actionFull_Screen_Mode_Ctrl_Alt_F.setText(
             _("Full Screen Mode (Ctrl-Alt-F)"))
@@ -3547,6 +3550,9 @@ class Ui_MainWindow(object):
         self.actionAdd_User.setText(_("Add User"))
         self.actionAdd_Clinician.setText(_("Add Clinician"))
         self.actionEdit_Practice_Details.setText(_("Edit Practice Details"))
+        self.actionClear_Today_s_Emergency_Slots.setText(
+            _("Clear Today\'s Emergency Slots"))
+        self.actionInsert_Regular_Blocks.setText(_("Insert Regular Blocks"))
 
 from PyQt4 import QtWebKit
 from openmolar.qt4gui import resources_rc

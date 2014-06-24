@@ -30,6 +30,10 @@ from openmolar.connect import connect, ProgrammingError, OperationalError
 
 LOGGER = logging.getLogger("openmolar")
 
+INSERT_APPT_QUERY = '''INSERT INTO aslot (adate,apptix,start,end,name,serialno,
+code0,code1,code2,note,flag0,flag1,flag2,flag3)
+VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+
 
 class FreeSlot(object):
 
@@ -1339,16 +1343,13 @@ code2, note, flag0, flag1, flag2, flag3):
 
     db = connect()
     cursor = db.cursor()
-    query = '''INSERT INTO aslot (adate,apptix,start,end,name,serialno,
-    code0,code1,code2,note,flag0,flag1,flag2,flag3)
-    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
 
     values = (make_date, apptix, start, end, name, serialno, code0,
     code1, code2, note, flag0, flag1, flag2, flag3)
 
     result = False
     try:
-        result = cursor.execute(query, values)
+        result = cursor.execute(INSERT_APPT_QUERY, values)
     except OperationalError as exc:
         LOGGER.exception("couldn't insert into aslot %s %s %s serialno %d" % (
             make_date, apptix, start, serialno))

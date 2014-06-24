@@ -2696,12 +2696,12 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.actionTable_View_For_Charting.toggled.connect(
             self.showChartTable)
         self.ui.actionClear_Today_s_Emergency_Slots.triggered.connect(
-            self.diary_widget.clearTodaysEmergencyTime)
+            self.clear_todays_emergencies)
+        self.ui.actionInsert_Regular_Blocks.triggered.connect(
+            self.insert_regular_blocks)
         self.ui.actionTest_Print_a_GP17.triggered.connect(self.testGP17)
         self.ui.actionNHS_Form_Settings.triggered.connect(
             self.nhsformOptionsDialog)
-        self.ui.actionAppointment_Tools.triggered.connect(
-            self.diary_widget.appointmentTools)
         self.ui.actionPrint_Daylists.triggered.connect(self.daylistPrintWizard)
         self.ui.actionAdvanced_Record_Management.triggered.connect(
             self.advancedRecordTools)
@@ -3353,6 +3353,14 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         dl = EditPracticeDialog(self)
         if dl.exec_():
             self.advise(_("Practice Name and/or Address modified."), 1)
+
+    def clear_todays_emergencies(self):
+        self.show_diary()
+        self.diary_widget.clearTodaysEmergencyTime()
+
+    def insert_regular_blocks(self):
+        self.show_diary()
+        self.diary_widget.insert_regular_blocks()
 
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''

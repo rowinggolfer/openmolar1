@@ -60,20 +60,12 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
         self.block = True
         self.tabWidget.setCurrentIndex(0)
 
-        QtCore.QObject.connect(self.changePt_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.changePt)
-
-        QtCore.QObject.connect(self.start_timeEdit,
-                               QtCore.SIGNAL("verifiedTime"), self.changedTimes)
-
-        QtCore.QObject.connect(self.finish_timeEdit,
-                               QtCore.SIGNAL("verifiedTime"), self.changedTimes)
-
-        QtCore.QObject.connect(self.appointment_timeEdit,
-                               QtCore.SIGNAL("verifiedTime"), self.changedStart)
-
-        QtCore.QObject.connect(self.length_spinBox,
-                               QtCore.SIGNAL("valueChanged (int)"), self.changedLength)
+        self.changePt_pushButton.clicked.connect(self.changePt)
+        self.start_timeEdit.time_changed_signal.connect(self.changedTimes)
+        self.finish_timeEdit.time_changed_signal.connect(self.changedTimes)
+        self.appointment_timeEdit.time_changed_signal.connect(
+            self.changedStart)
+        self.length_spinBox.valueChanged.connect(self.changedLength)
 
         self.earliestStart = None
         self.latestFinish = None
