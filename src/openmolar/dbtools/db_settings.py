@@ -82,7 +82,7 @@ where value=%s'''
 def insert_login(opid):
     db = connect.connect()
     cursor = db.cursor()
-    result = cursor.execute(INSERT_OPID_QUERY, opid)
+    result = cursor.execute(INSERT_OPID_QUERY, (opid,))
     cursor.close()
     return result
 
