@@ -135,7 +135,7 @@ class AppointmentWidget(QtGui.QFrame):
         self.setOutOfOffice(False)
 
         self.setMinimumSize(self.minimumSizeHint())
-        self.setMaximumSize(self.maximumSizeHint())
+        # self.setMaximumSize(self.maximumSizeHint())
         self.signals()
 
     def setOutOfOffice(self, val):

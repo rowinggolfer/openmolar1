@@ -114,25 +114,31 @@ class DiaryWidget(QtGui.QWidget):
         #-appointment OVerview widget
         self.ui.apptoverviews = []
 
-        for day in range(7):
+        for frame in (self.ui.appt_OV_Frame1,
+                      self.ui.appt_OV_Frame2,
+                      self.ui.appt_OV_Frame3,
+                      self.ui.appt_OV_Frame4,
+                      self.ui.appt_OV_Frame5,
+                      self.ui.appt_OV_Frame6,
+                      self.ui.appt_OV_Frame7
+                      ):
             bw = AppointmentOverviewWidget("0820", "1910", 10, 3, self)
             self.ui.apptoverviews.append(bw)
 
-        i = 0
-        for frame in (self.ui.appt_OV_Frame1,
-                      self.ui.appt_OV_Frame2, self.ui.appt_OV_Frame3,
-                      self.ui.appt_OV_Frame4, self.ui.appt_OV_Frame5,
-                      self.ui.appt_OV_Frame6, self.ui.appt_OV_Frame7):
             hlayout = QtGui.QHBoxLayout(frame)
             hlayout.setMargin(2)
-            hlayout.addWidget(self.ui.apptoverviews[i])
-            i += 1
+            hlayout.addWidget(bw)
 
         self.ui.apptoverviewControls = []
 
-        for widg in (self.ui.day1_frame, self.ui.day2_frame,
-                     self.ui.day3_frame, self.ui.day4_frame, self.ui.day5_frame,
-                     self.ui.day6_frame, self.ui.day7_frame):
+        for widg in (self.ui.day1_frame,
+                     self.ui.day2_frame,
+                     self.ui.day3_frame,
+                     self.ui.day4_frame,
+                     self.ui.day5_frame,
+                     self.ui.day6_frame,
+                     self.ui.day7_frame
+                     ):
             hlayout = QtGui.QHBoxLayout(widg)
             hlayout.setMargin(0)
             control = aptOVcontrol.control()
