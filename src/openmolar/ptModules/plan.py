@@ -123,24 +123,25 @@ def summary(pt):
     returns html set showing a summary of planned or completed treatment
     '''
 
-    if pt.treatment_course is None:
+    if pt.treatment_course is None or pt.treatment_course.accd is None:
         return ""
 
-    retarg = '''<html><body><head>
+    retarg = '''<html><head>
     <link rel="stylesheet" href="%s" type="text/css">
-    </head>\n''' % localsettings.stylesheet
+    </head>\n<body>''' % localsettings.stylesheet
+
     if not pt.underTreatment:
         retarg += "<H4>%s</H4>" % _("Previous Course")
     if pt.treatment_course.accd is not None:
         retarg += '%s %s<br />' % (
             _("Start"),
             localsettings.formatDate(pt.treatment_course.accd))
-    if pt.treatment_course.cmpd is not None:
-        retarg += '%s %s<br />' % (
-            _('End'),
-            localsettings.formatDate(pt.treatment_course.cmpd))
-    else:
-        retarg += '<b>%s</b><br />' % _("ONGOING")
+        if pt.treatment_course.cmpd is not None:
+            retarg += '%s %s<br />' % (
+                _('End'),
+                localsettings.formatDate(pt.treatment_course.cmpd))
+        else:
+            retarg += '<b>%s</b><br />' % _("ONGOING")
 
     if pt.treatment_course.ftr:
         retarg += '<font color="red">%s</font><br />' % _(
