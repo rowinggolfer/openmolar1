@@ -152,14 +152,15 @@ class FinalChoiceDialog(ExtendableDialog):
         self.table_widget.itemDoubleClicked.connect(self.accept)
         self.enableApply(True)
         self.apply_but.setText(_("Load the Selected Patient"))
+        self.setMinimumWidth(
+            QtGui.QApplication.desktop().screenGeometry().width()-20)
 
     def sizeHint(self):
-        max_width = QtGui.QApplication.desktop().screenGeometry().width() - 100
-        return QtCore.QSize(max_width, 400)
+        return QtCore.QSize(self.minimumWidth(), 400)
 
     def resizeEvent(self, event):
-        widths = (0, 10, 15, 15, 15, 15, 20, 20, 20, 15, 10, 10, 10)
-        sum_widths = sum(widths) + 30  # allow for vertical scrollbar
+        widths = (0, 12, 12, 15, 15, 15, 25, 20, 20, 15, 10, 10, 10)
+        sum_widths = sum(widths) + 10  # allow for vertical scrollbar
         for col in range(self.table_widget.columnCount()):
             col_width = widths[col] * self.width() / sum_widths
             self.table_widget.setColumnWidth(col, col_width)
