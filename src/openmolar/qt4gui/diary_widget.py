@@ -43,6 +43,8 @@ from openmolar.qt4gui.dialogs.find_patient_dialog import FinalChoiceDialog
 from openmolar.qt4gui.dialogs import begin_make_appt_dialog
 from openmolar.qt4gui.dialogs.appointments_insert_blocks_dialog \
     import InsertBlocksDialog
+from openmolar.qt4gui.dialogs.appointments_memo_dialog \
+    import AppointmentsMemoDialog
 
 from openmolar.qt4gui.customwidgets import appointmentwidget
 
@@ -147,11 +149,8 @@ class DiaryWidget(QtGui.QWidget):
 
         self.ui.weekView_splitter.setSizes([600, 10])
 
-        self.appt_clinician_selector = dent_hyg_selector.dentHygSelector(
-            localsettings.activedents, localsettings.activehygs)
-
-        self.monthClinicianSelector = dent_hyg_selector.dentHygSelector(
-            localsettings.activedents, localsettings.activehygs)
+        self.appt_clinician_selector = dent_hyg_selector.dentHygSelector()
+        self.monthClinicianSelector = dent_hyg_selector.dentHygSelector()
 
         #--customise the appointment widget calendar
         self.ui.dayCalendar = calendars.controlCalendar()
@@ -187,9 +186,17 @@ class DiaryWidget(QtGui.QWidget):
         self.ticker.start(30000)  # fire every 30 seconds
         self.ticker.timeout.connect(self.triangles)
 
+    def initiate(self):
+        LOGGER.debug("initialising diary clinicians")
+        for selector in (self.appt_clinician_selector,
+                         self.monthClinicianSelector):
+            selector.set_dents(localsettings.activedents)
+            selector.set_hygs(localsettings.activehygs)
+
     def showEvent(self, event):
-        LOGGER.debug("DiaryWidget.showEvent called")
+        LOGGER.debug("ShowEvent called laid_out = %s", self.laid_out)
         if not self.laid_out:
+            self.initiate()
             QtCore.QTimer.singleShot(10, self.layout_diary)
 
     def advise(self, arg, warning_level=0):
@@ -637,11 +644,10 @@ class DiaryWidget(QtGui.QWidget):
     def apptOVheaderclick(self, arg):
         '''
         a click on the dentist portion of the appointment overview widget
+        current implementation has little value!
         '''
-
-        # TODO should I abandon this?
         apptix, adate = arg
-        self.advise("week header clicked %s %s" % (apptix, adate), 1)
+        LOGGER.debug("week header clicked apptix=%s date=%s", apptix, adate)
 
     def offer_appointment_card(self):
         result = QtGui.QMessageBox.question(self,
@@ -738,22 +744,6 @@ class DiaryWidget(QtGui.QWidget):
             number_cleared = appointments.clearEms(localsettings.currentDay())
             self.advise("Cleared %d emergency slots" % number_cleared, 1)
             self.layout_diary()
-
-    def updateDayMemos(self, memos):
-        '''
-        user has added some memos
-        '''
-        d = self.selected_date().toPyDate()
-        appointments.setMemos(d, memos)
-        self.layout_diary()
-
-    def addpubHol(self, details):
-        '''
-        user has update/added a pub holiday
-        '''
-        d = self.selected_date().toPyDate()
-        appointments.setPubHol(d, details)
-        self.layout_diary()
 
     def add_appointmentwidget(self):
         LOGGER.debug("initiating a new AppointmentWidget")
@@ -1338,7 +1328,7 @@ class DiaryWidget(QtGui.QWidget):
         returns a list
         '''
         retlist = []
-        for dent in self.monthClinicianSelector.getSelectedClinicians():
+        for dent in self.monthClinicianSelector.selectedClinicians:
             retlist.append(localsettings.apptix.get(dent))
         return tuple(retlist)
 
@@ -1635,6 +1625,29 @@ class DiaryWidget(QtGui.QWidget):
         '''
         return self.ui.diary_tabWidget.currentIndex() == 4
 
+    def memo_dialog(self, date_):
+        dl = AppointmentsMemoDialog(date_, self)
+        if dl.exec_():
+            dl.apply()
+            self.layout_diary()
+
+    def edit_public_hol(self, date_):
+        '''
+        enter/modify the stored public holiday field
+        '''
+        LOGGER.debug("edit pub hol for %s", date_)
+        current = appointments.getBankHol(date_)
+        new, result = QtGui.QInputDialog.getText(
+            self,
+            _("Public Holidays"),
+            _("Enter the information for ") + localsettings.longDate(date_),
+            QtGui.QLineEdit.Normal,
+            current)
+        new_value = unicode(new.toUtf8())
+        if result and current != new_value:
+            appointments.setPubHol(date_, new_value)
+            self.layout_diary()
+
     def init_signals(self):
         self.ui.diary_tabWidget.currentChanged.connect(
             self.diary_tabWidget_nav)
@@ -1723,13 +1736,10 @@ class DiaryWidget(QtGui.QWidget):
                                self.ui.dayCalendar.setSelectedDate)
 
         for cal in (self.ui.yearView, self.ui.monthView):
-            QtCore.QObject.connect(cal, QtCore.SIGNAL("selectedDate"),
-                                   self.ui.dayCalendar.setSelectedDate)
-            QtCore.QObject.connect(cal, QtCore.SIGNAL("add_memo"),
-                                   self.updateDayMemos)
-
-        QtCore.QObject.connect(self.ui.yearView,
-                               QtCore.SIGNAL("add_pub_hol"), self.addpubHol)
+            cal.selected_date_signal.connect(
+                self.ui.dayCalendar.setSelectedDate)
+            cal.memo_dialog_signal.connect(self.memo_dialog)
+            cal.public_holiday_signal.connect(self.edit_public_hol)
 
         self.ui.aptOVprevmonth.clicked.connect(self.aptOV_monthBack)
         self.ui.aptOVnextmonth.clicked.connect(self.aptOV_monthForward)
@@ -1755,13 +1765,9 @@ class DiaryWidget(QtGui.QWidget):
                          self.apptOVheaderclick)
 
         for control in self.ui.apptoverviewControls:
-            self.connect(control,
-                         QtCore.SIGNAL("clicked"),
-                         self.aptOVlabelClicked)
-
-            self.connect(control,
-                         QtCore.SIGNAL("right-clicked"),
-                         self.aptOVlabelRightClicked)
+            control.dayview_signal.connect(self.aptOVlabelClicked)
+            control.edit_hours_signal.connect(self.aptOVlabelRightClicked)
+            control.edit_memo_signal.connect(self.memo_dialog)
 
 
 class _testDiary(QtGui.QMainWindow):
@@ -1770,7 +1776,7 @@ class _testDiary(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self, parent)
 
         dw = DiaryWidget()
-
+        dw.initiate()
         dw.patient_card_request.connect(self.sig_catcher)
 
         from openmolar.dbtools import patient_class
@@ -1792,10 +1798,9 @@ class _testDiary(QtGui.QMainWindow):
         print "signal caught", args
 
 if __name__ == "__main__":
+    LOGGER.setLevel(logging.DEBUG)
     import gettext
-    import sys
-
-    sys.argv.append("-v")
+    import gettext
     gettext.install("openmolar")
 
     localsettings.initiate()

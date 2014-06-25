@@ -224,6 +224,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.forum_timer.start(60000)  # fire every minute
         self.forum_timer.timeout.connect(self.checkForNewForumPosts)
         self.set_referral_centres()
+        self.diary_widget.initiate()
 
     def check_first_run(self):
         if os.path.exists(localsettings.global_cflocation):

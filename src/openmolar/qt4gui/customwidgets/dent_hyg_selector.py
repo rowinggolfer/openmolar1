@@ -27,11 +27,11 @@ from PyQt4 import QtGui, QtCore
 
 class dentHygSelector(QtGui.QTreeWidget):
 
-    def __init__(self, dents, hygs):
+    def __init__(self):
         QtGui.QTreeWidget.__init__(self)
         self.setHeaderHidden(True)
-        self.dents = dents
-        self.hygs = hygs
+        self.dents = []
+        self.hygs = []
         self.root = QtGui.QTreeWidgetItem(self, ["All Clinicians"])
         self.root.setCheckState(0, QtCore.Qt.Checked)
 
@@ -42,21 +42,24 @@ class dentHygSelector(QtGui.QTreeWidget):
         self.hyg_root.setCheckState(0, QtCore.Qt.Checked)
 
         self.dent_cbs = {}
+        self.hyg_cbs = {}
+
+        self.expandAll()
+        self.signals(True)
+
+    def set_dents(self, dents):
+        self.dents = dents
         for dent in self.dents:
             i = QtGui.QTreeWidgetItem(self.dent_root, [dent])
             i.setCheckState(0, QtCore.Qt.Checked)
             self.dent_cbs[dent] = i
 
-        self.hyg_cbs = {}
+    def set_hygs(self, hygs):
+        self.hygs = hygs
         for hyg in self.hygs:
             i = QtGui.QTreeWidgetItem(self.hyg_root, [hyg])
             i.setCheckState(0, QtCore.Qt.Checked)
             self.hyg_cbs[hyg] = i
-
-        self.expandAll()
-        self.selectedDents = dents
-        self.selectedHygs = hygs
-        self.signals(True)
 
     def signals(self, connect):
         if connect:
@@ -88,21 +91,14 @@ class dentHygSelector(QtGui.QTreeWidget):
         elif item == self.hyg_root:
             self.checkAll(self.hyg_root.checkState(0), ignoreDents=True)
 
-        self.selectedDents = []
-        self.selectedHygs = []
-
         allDentsChecked = QtCore.Qt.Checked
         for dent in self.dent_cbs:
-            if self.dent_cbs[dent].checkState(0):
-                self.selectedDents.append(dent)
-            else:
+            if not self.dent_cbs[dent].checkState(0):
                 allDentsChecked = QtCore.Qt.Unchecked
 
         allHygsChecked = QtCore.Qt.Checked
         for hyg in self.hyg_cbs:
-            if self.hyg_cbs[hyg].checkState(0):
-                self.selectedHygs.append(hyg)
-            else:
+            if not self.hyg_cbs[hyg].checkState(0):
                 allHygsChecked = QtCore.Qt.Unchecked
 
         self.dent_root.setCheckState(0, allDentsChecked)
@@ -118,22 +114,35 @@ class dentHygSelector(QtGui.QTreeWidget):
         self.signals(True)
         self.emit(QtCore.SIGNAL("selectionChanged"))
 
-    def getSelectedDents(self):
-        return self.selectedDents
+    @property
+    def selectedDents(self):
+        for initials, cb in self.dent_cbs.iteritems():
+            if cb.checkState(0):
+                yield initials
 
-    def getSelectedHygs(self):
-        return self.selectedHygs
+    @property
+    def selectedHygs(self):
+        for initials, cb in self.hyg_cbs.iteritems():
+            if cb.checkState(0):
+                yield initials
 
-    def getSelectedClinicians(self):
-        return self.selectedDents + self.selectedHygs
+    @property
+    def selectedClinicians(self):
+        for clinician in self.selectedDents:
+            yield clinician
+        for clinician in self.selectedHygs:
+            yield clinician
 
     def allChecked(self):
         return self.root.checkState(0) == QtCore.Qt.Checked
 
 if __name__ == "__main__":
     app = QtGui.QApplication([])
-    dents = ["Neil", "Bea", "Helen", "Andy"]
+    dents = ["Neil", "Bea", "Helen"]
     hygs = ["Rosie", "Sally", "Ariana"]
-    w = dentHygSelector(dents, hygs)
+    w = dentHygSelector()
+    w.set_dents(dents)
+    w.set_hygs(hygs)
     w.show()
     app.exec_()
+    print list(w.selectedClinicians)

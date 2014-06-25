@@ -22,8 +22,13 @@
 # #                                                                          # #
 # ############################################################################ #
 
+from functools import partial
+import logging
+
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
+
+LOGGER = logging.getLogger("openmolar")
 
 
 class control(QtGui.QLabel):
@@ -31,6 +36,9 @@ class control(QtGui.QLabel):
     '''
     a custom label for the top of the appointment overview widgets
     '''
+    dayview_signal = QtCore.pyqtSignal(object)
+    edit_hours_signal = QtCore.pyqtSignal(object)
+    edit_memo_signal = QtCore.pyqtSignal(object)
 
     def __init__(self, parent=None):
         super(control, self).__init__(parent)
@@ -38,6 +46,8 @@ class control(QtGui.QLabel):
         self.memo = ""
         self.setWordWrap(True)
         self.date = QtCore.QDate(1900, 1, 1)
+
+        self.recent_double_click = False
 
     def setDate(self, arg):
         '''
@@ -61,10 +71,7 @@ class control(QtGui.QLabel):
             str = "<center><b>%s</b><br />%s</center>" % (day, self.memo)
         else:
             str = "<center><b>%s</b></center>" % day
-
         self.setText(str)
-        self.setToolTip('''<center>Left click to go to<br />%s<br />
-        <br />Right click for admin options</center>''' % day)
 
     def mouseMoveEvent(self, e):
         self.setStyleSheet("background:white")
@@ -72,29 +79,60 @@ class control(QtGui.QLabel):
     def leaveEvent(self, e):
         self.setStyleSheet("")
 
-    def mousePressEvent(self, e):
-        but = e.button()
-        if but == 1:
-            self.emit(QtCore.SIGNAL("clicked"), self.date)
-        elif but == 2:
-            self.emit(QtCore.SIGNAL("right-clicked"), self.date)
-        else:
-            print "unknown mousePressEvent", but
+    def mousePressEvent(self, event):
+        QtCore.QTimer.singleShot(200,
+                                 partial(self.raise_context_menu, event.globalPos()))
+
+    def raise_context_menu(self, point):
+        if not self.recent_double_click:
+            menu = QtGui.QMenu(self)
+            action = menu.addAction(_("Switch to day view of this date"))
+            action.triggered.connect(self.call_day_view)
+            menu.setDefaultAction(action)
+            menu.addSeparator()
+            action = menu.addAction(_("Edit Memos"))
+            action.triggered.connect(self.call_edit_memo)
+            action = menu.addAction(_("Edit Clinician Hours"))
+            action.triggered.connect(self.call_edit_hours)
+            menu.exec_(point)
+
+    def mouseDoubleClickEvent(self, event):
+        LOGGER.debug("doubleclick")
+        self.recent_double_click = True
+        self.call_day_view()
+        QtCore.QTimer.singleShot(500, self.reset_double_click)
+
+    def reset_double_click(self):
+        self.recent_double_click = False
+
+    def call_day_view(self):
+        LOGGER.debug("Call for Day View")
+        self.dayview_signal.emit(self.date)
+
+    def call_edit_hours(self):
+        self.edit_hours_signal.emit(self.date)
+
+    def call_edit_memo(self):
+        self.edit_memo_signal.emit(self.date.toPyDate())
+
+
+class _TestBook(QtGui.QWidget):
+
+    def __init__(self, parent=None):
+        QtGui.QWidget.__init__(self, parent)
+        self.control = control()
+        self.control.setDate(QtCore.QDate.currentDate().addDays(3))
+        layout = QtGui.QVBoxLayout(self)
+        layout.addWidget(self.control)
+        layout.addWidget(QtGui.QTextEdit())
+
+    def sizeHint(self):
+        return QtCore.QSize(100, 400)
 
 if __name__ == "__main__":
-    def test(a):
-        print "left click", a.toString()
+    LOGGER.setLevel(logging.DEBUG)
 
-    def test2(a):
-        print "right click", a.toString()
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    Form = QtGui.QWidget()
-    ui = control(Form)
-    ui.setDate(QtCore.QDate.currentDate())
-    QtCore.QObject.connect(ui, QtCore.SIGNAL("clicked"), test)
-    QtCore.QObject.connect(ui, QtCore.SIGNAL("right-clicked"), test2)
-
-    Form.show()
-
-    sys.exit(app.exec_())
+    app = QtGui.QApplication([])
+    widg = _TestBook()
+    widg.show()
+    app.exec_()

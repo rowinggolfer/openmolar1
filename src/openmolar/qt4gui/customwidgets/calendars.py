@@ -25,13 +25,11 @@
 from __future__ import division
 import calendar
 import datetime
+from functools import partial
 import sys
 
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
-
-from openmolar.qt4gui.compiled_uis import Ui_memo_item
-from openmolar.qt4gui.compiled_uis import Ui_editmemos
 
 CENTRE = QtGui.QTextOption(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)
 RIGHT = QtGui.QTextOption(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
@@ -128,99 +126,23 @@ class weekCalendar(controlCalendar):
             painter.fillRect(rect, self.color)
 
 
-class calDialogs():
+class monthCalendar(QtGui.QWidget):
 
     '''
-    a sub class for month and year calendars
+    A month calendar
     '''
-
-    def __init__(self):
-        pass
-
-    def publicHolidayEnter(parent):
-        '''
-        enter/modify the stored public holiday field
-        '''
-        d = parent.selectedDate
-        print "edit pub hol for", d
-        datekey = "%d%02d" % (d.month, d.day)
-        current = parent.headingdata.get(datekey, "")
-        new, result = QtGui.QInputDialog.getText(parent, _("Public Holidays"),
-                                                 _("Enter the information for ") + localsettings.longDate(
-                                                     d),
-                                                 QtGui.QLineEdit.Normal, current)
-        if result and current != str(new.toAscii()):
-            parent.emit(QtCore.SIGNAL("add_pub_hol"), str(new.toAscii()))
-
-    def raisememoDialog(parent):
-        '''
-        allow user to input a memo
-        '''
-        Dialog = QtGui.QDialog(parent)
-        dl = Ui_editmemos.Ui_Dialog()
-        dl.setupUi(Dialog)
-        d = parent.selectedDate
-        header_text = "%s" % localsettings.longDate(d)
-        datekey = "%d%02d" % (d.month, d.day)
-        if datekey in parent.headingdata:
-            header_text += "<br>%s" % parent.headingdata[datekey]
-
-        dl.label.setText(header_text)
-        dl.layout = QtGui.QVBoxLayout(dl.scrollArea)
-        dl.layout.setSpacing(0)
-        key = "%d%02d" % (parent.selectedDate.month, parent.selectedDate.day)
-
-        memoDict = {}
-        if key in parent.data:
-            memoDict = parent.data[key]
-
-        memowidget_dict = {}
-        for dentix in parent.dents:
-            if dentix in memoDict:
-                memo = memoDict[dentix].memo
-            else:
-                memo = ""
-
-            if dentix == 0:
-                dl.lineEdit.setText(memo)
-                memowidget_dict[0] = dl.lineEdit
-            else:
-                widg = QtGui.QWidget()
-                memoitem = Ui_memo_item.Ui_Form()
-                memoitem.setupUi(widg)
-                memoitem.label.setText(
-                    localsettings.apptix_reverse.get(dentix, "??"))
-
-                memoitem.lineEdit.setText(memo)
-
-                dl.layout.addWidget(widg)
-
-                memowidget_dict[dentix] = memoitem.lineEdit
-
-        spacerItem = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum,
-                                       QtGui.QSizePolicy.Expanding)
-        dl.layout.addItem(spacerItem)
-
-        if Dialog.exec_():
-            retarg = []
-            memo = str(dl.lineEdit.text().toAscii())
-            for dent in parent.dents:
-                memo = str(memowidget_dict[dent].text().toAscii())
-                if memo != memoDict.get(dent, ""):
-                    retarg.append((dent, memo),)
-            # print retarg
-            parent.emit(QtCore.SIGNAL("add_memo"), tuple(retarg))
-
-
-class monthCalendar(QtGui.QWidget, calDialogs):
+    memo_dialog_signal = QtCore.pyqtSignal(object)
+    public_holiday_signal = QtCore.pyqtSignal(object)
+    selected_date_signal = QtCore.pyqtSignal(object)
 
     def __init__(self, parent=None):
         '''
         initiate the widget
         '''
         super(monthCalendar, self).__init__(parent)
-        self.setSizePolicy(QtGui.QSizePolicy(
-                           QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
+        self.setSizePolicy(
+            QtGui.QSizePolicy(
+                QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
         self.parent = parent
         self.rowNo = 1
         self.colNo = 1
@@ -373,7 +295,19 @@ class monthCalendar(QtGui.QWidget, calDialogs):
         d = self.getDateFromPosition(event.x(), event.y())
         if d and d != self.selectedDate:
             self.setSelectedDate(d)
-            self.emit(QtCore.SIGNAL("selectedDate"), d)
+            self.selected_date_signal.emit(d)
+        else:
+            menu = QtGui.QMenu(self)
+            action = menu.addAction(_("Edit day memos"))
+            action2 = menu.addAction(_("Edit Public Holiday information"))
+
+            action.triggered.connect(
+                partial(self.memo_dialog_signal.emit, self.selectedDate))
+            action2.triggered.connect(
+                partial(self.public_holiday_signal.emit, self.selectedDate))
+
+            menu.setDefaultAction(action)
+            menu.exec_(event.globalPos())
 
     def mouseDoubleClickEvent(self, event):
         '''
@@ -382,9 +316,9 @@ class monthCalendar(QtGui.QWidget, calDialogs):
         d = self.getDateFromPosition(event.x(), event.y())
         if d and d != self.selectedDate:
             self.setSelectedDate(d)
-            self.emit(QtCore.SIGNAL("selectedDate"), d)
+            self.selected_date_signal.emit(d)
         if d:
-            self.raisememoDialog()
+            self.memo_dialog_signal.emit(d)
 
     def leaveEvent(self, event):
         '''
@@ -559,11 +493,14 @@ class monthCalendar(QtGui.QWidget, calDialogs):
                          self.bankHolColwidth + self.vheaderwidth, self.height())
 
 
-class yearCalendar(QtGui.QWidget, calDialogs):
+class yearCalendar(QtGui.QWidget):
 
     '''
     a pyqt4 custom widget to show a year calendar
     '''
+    memo_dialog_signal = QtCore.pyqtSignal(object)
+    public_holiday_signal = QtCore.pyqtSignal(object)
+    selected_date_signal = QtCore.pyqtSignal(object)
 
     def __init__(self, parent=None):
         '''
@@ -683,30 +620,6 @@ class yearCalendar(QtGui.QWidget, calDialogs):
         if d != self.highlightedDate:
             self.highlightedDate = d
             self.update()
-        advisory = ""
-        if d:
-            datekey = "%d%02d" % (d.month, d.day)
-            if datekey in self.headingdata:
-                advisory += "<h3>%s</h3><hr />" % self.headingdata[datekey]
-            if datekey in self.data:
-                for ix in self.data[datekey].keys():
-                    dent = self.data[datekey].get(ix)
-                    if dent:
-                        if ix == 0:
-                            advisory += "<h3>%s</h3>" % dent.memo
-                        else:
-                            if not dent.flag:
-                                if dent.memo:
-                                    advisory += "%s\t\t%s <br />" % (
-                                        dent.initials, dent.memo)
-                            else:
-                                times = "%s - %s" % (dent.start, dent.end)
-                                advisory += "%s\t%s\t%s <br />" % (
-                                    dent.initials, times, dent.memo)
-            if advisory.endswith(" <br />"):
-                advisory = advisory.rstrip(" <br />")
-
-        QtGui.QToolTip.showText(event.globalPos(), advisory)
 
     def mousePressEvent(self, event):
         '''
@@ -716,20 +629,19 @@ class yearCalendar(QtGui.QWidget, calDialogs):
         if d:
             if d != self.selectedDate:
                 self.setSelectedDate(d)
-                self.emit(QtCore.SIGNAL("selectedDate"), d)
-            if event.button() == 2:
+                self.selected_date_signal.emit(d)
+            else:
                 menu = QtGui.QMenu(self)
-                menu.addAction(_("Edit day memos"))
-                menu.addAction(_("Edit Public Holiday information"))
-                self.rightClickMenuResult(menu.exec_(event.globalPos()))
+                action = menu.addAction(_("Edit day memos"))
+                action2 = menu.addAction(_("Edit Public Holiday information"))
 
-    def rightClickMenuResult(self, result):
-        if not result:
-            return
-        if result.text() == _("Edit day memos"):
-            self.raisememoDialog()
-        elif result.text() == _("Edit Public Holiday information"):
-            self.publicHolidayEnter()
+                action.triggered.connect(
+                    partial(self.memo_dialog_signal.emit, self.selectedDate))
+                action2.triggered.connect(
+                    partial(self.public_holiday_signal.emit, self.selectedDate))
+
+                menu.setDefaultAction(action)
+                menu.exec_(event.globalPos())
 
     def getDayData(self):
         '''
@@ -752,9 +664,9 @@ class yearCalendar(QtGui.QWidget, calDialogs):
         d = self.getDateFromPosition(event.x(), event.y())
         if d and d != self.selectedDate:
             self.setSelectedDate(d)
-            self.emit(QtCore.SIGNAL("selectedDate"), d)
+            self.selected_date_signal.emit(d)
         if d:
-            self.raisememoDialog()
+            self.memo_dialog_signal.emit(self.selectedDate)
 
     def leaveEvent(self, event):
         '''

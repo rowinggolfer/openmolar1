@@ -456,7 +456,7 @@ class DayAppointmentData(DaySummary):
                 for app in self.dentAppointments(dent):
                     if (not ignore_emergency or
                     not(app[4] == 0 and app[3].lower() == "emergency")
-                            ):
+                        ):
                         appt_times_list.append((app[1], app[2]))
                 if appt_times_list:
                     slotlist += slots(self.date, dent, self.getStart(dent),
@@ -837,6 +837,22 @@ def getBankHol(adate):
         # in case their is no bank holiday table.
         retarg = "couldn't get Bank Holiday details"
     return retarg
+
+
+def getMemos(adate):
+    '''
+    get Memos for one specific date
+    '''
+    db = connect()
+    cursor = db.cursor()
+
+    query = '''SELECT apptix, memo FROM aday WHERE adate=%s'''
+    cursor.execute(query, (adate, ))
+    dict_ = {}
+    for apptix, memo in cursor.fetchall():
+        dict_[apptix] = memo
+    cursor.close()
+    return dict_
 
 
 def getGlobalMemo(date):

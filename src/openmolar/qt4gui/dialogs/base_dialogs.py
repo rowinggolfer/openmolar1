@@ -62,14 +62,16 @@ class BaseDialog(QtGui.QDialog):
         self.dirty = False
         self.enableApply(False)
 
-        self.spacer = QtGui.QSpacerItem(0, 100, QtGui.QSizePolicy.Expanding,
-                                        QtGui.QSizePolicy.Expanding)
-        self.layout_.addItem(self.spacer)
+        if not remove_stretch:
+            self.spacer = QtGui.QSpacerItem(
+                0, 100, QtGui.QSizePolicy.Expanding,
+                QtGui.QSizePolicy.Expanding)
+            self.layout_.addItem(self.spacer)
+            self.insertpoint_offset = 2
+        else:
+            self.spacer = None
+            self.insertpoint_offset = 1
         self.layout_.addWidget(self.button_box)
-        self.insertpoint_offset = 2
-
-        if remove_stretch:
-            self.remove_spacer()
 
     def sizeHint(self):
         '''
@@ -81,15 +83,16 @@ class BaseDialog(QtGui.QDialog):
         '''
         Overwrite this function inherited from QWidget
         '''
-        return QtCore.QSize(300, 300)
+        return QtCore.QSize(300, 600)
 
     def remove_spacer(self):
         '''
         If this is called, then the spacer added at init is removed.
         sometimes the spacer mucks up dialogs
         '''
-        self.layout_.removeItem(self.spacer)
-        self.insertpoint_offset = 1
+        if self.spacer is not None:
+            self.layout_.removeItem(self.spacer)
+            self.insertpoint_offset = 1
 
     @property
     def abandon_message(self):
