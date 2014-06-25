@@ -71,7 +71,7 @@ class CloseCourseDialog(BaseDialog):
         self.insertWidget(question_label)
 
         if ftr:
-            self.layout().insertStretch(100)
+            self.layout().insertStretch(4, 200)
             self.insertWidget(self.ftr_checkbox)
 
         self.enableApply()

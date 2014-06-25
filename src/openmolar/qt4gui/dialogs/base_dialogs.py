@@ -64,7 +64,7 @@ class BaseDialog(QtGui.QDialog):
 
         if not remove_stretch:
             self.spacer = QtGui.QSpacerItem(
-                0, 100, QtGui.QSizePolicy.Expanding,
+                0, 50, QtGui.QSizePolicy.Expanding,
                 QtGui.QSizePolicy.Expanding)
             self.layout_.addItem(self.spacer)
             self.insertpoint_offset = 2
