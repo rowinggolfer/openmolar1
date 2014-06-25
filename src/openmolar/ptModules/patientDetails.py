@@ -104,7 +104,7 @@ def details(pt, Saved=True):
             <br />''' % localsettings.resources_path
 
         else:
-            html += '%s = %s <br />' % (_("UNKNOWN COURSETYPE", pt.cset))
+            html += '%s = %s <br />' % (_("UNKNOWN COURSETYPE"), pt.cset)
 
         html += "%s<br />" % pt.fee_table.briefName
         try:
