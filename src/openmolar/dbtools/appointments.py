@@ -456,7 +456,7 @@ class DayAppointmentData(DaySummary):
                 for app in self.dentAppointments(dent):
                     if (not ignore_emergency or
                     not(app[4] == 0 and app[3].lower() == "emergency")
-                        ):
+                            ):
                         appt_times_list.append((app[1], app[2]))
                 if appt_times_list:
                     slotlist += slots(self.date, dent, self.getStart(dent),
@@ -1603,51 +1603,42 @@ def future_slots(startdate, enddate, dents, override_emergencies=False):
     get a list of possible appointment positions
     (between startdate and enddate) that can be offered to the patient
     '''
-    if dents == ():
+    if len(dents) == 0:
         return ()
 
     db = connect()
     cursor = db.cursor()
-    values = [startdate, enddate]
+    values = [startdate, enddate] + list(dents)
 
-    mystr = " and ("
-    for dent in dents:
-        mystr += "apptix=%s or "
-        values.append(dent)
-    mystr = mystr[0:mystr.rindex(" or")] + ")"
-
-    if override_emergencies:
-        emer_sql = ' and name!="emergency" '
-    else:
-        emer_sql = ""
+    format_dents = ",".join(('%s',) * len(dents))  # %s, %s, %s
 
     fullquery = '''SELECT adate, apptix, start, end FROM aday
-    WHERE adate>=%%s AND adate<=%%s AND (flag=1 OR flag= 2) %s
-    ORDER BY adate''' % mystr
+    WHERE adate>=%%s AND adate<=%%s AND (flag=1 OR flag= 2) AND apptix in (%s)
+    ORDER BY adate''' % format_dents
 
     cursor.execute(fullquery, values)
-
     possible_days = cursor.fetchall()
+    cursor.close()
+    cursor = db.cursor()
+
     #--get days when a suitable appointment is possible
-    query = ""
+    #--flag0!=72 necessary to avoid zero length apps like pain/double/fam
+
+    query = '''select start, end from aslot
+    where adate = %%s and apptix = %%s and flag0!=72 %s order by start
+    ''' % (' and name!="emergency" ' if override_emergencies else "")
+
     slotlist = []
     #--now get data for those days so that we can find slots within
     for day in possible_days:
         adate, apptix, daystart, dayfin = day
         values = (adate, apptix)
-        query = '''select start, end from aslot
-        where adate = %%s and apptix = %%s and flag0!=72 %s order by start
-        ''' % emer_sql
 
-        #--flag0!=72 necessary to avoid zero length apps like pain/double/fam
         cursor.execute(query, values)
-
         results = cursor.fetchall()
-        slotlist += slots(
-            adate, apptix, daystart, results, dayfin)
+        slotlist += slots(adate, apptix, daystart, results, dayfin)
 
     cursor.close()
-    # db.close()
     return slotlist
 
 if __name__ == "__main__":
