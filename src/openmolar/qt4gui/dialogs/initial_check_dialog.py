@@ -30,6 +30,8 @@ from openmolar.settings import localsettings
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 
+from openmolar.dbtools import appointments
+
 LOGGER = logging.getLogger("openmolar")
 
 
@@ -84,13 +86,25 @@ class InitialCheckDialog(ExtendableDialog):
                 example_name)
             self.form_layout.addRow(message, but)
 
+        if len(appointments.future_slots(localsettings.currentDay(),
+                                         localsettings.BOOKEND,
+                                         localsettings.apptix.values(),
+                                         override_emergencies=True)
+               ) == 0:
+            but = QtGui.QPushButton(_("Why is this?"))
+            but.clicked.connect(self.show_appt_space)
+            message = _("You have no appointment space in your diary!")
+            self.form_layout.addRow(message, but)
+
         return True
 
     @property
     def critical_messages(self):
         if len(localsettings.cashbookCodesDict) < 1:
-            yield _("The cbcodes table in your database is inadequate."
-                    "This will create problems when accepting payments")
+            yield "%s<br />%s" % (
+                _("The cbcodes table in your database is inadequate."),
+                _("This will create problems when accepting payments.")
+            )
 
     @property
     def messages(self):
@@ -114,6 +128,18 @@ class InitialCheckDialog(ExtendableDialog):
     def show_edit_practice(self):
         self.advise(
             _("Once the application is open, click on Tools - > Menu - > Edit Practice Details"))
+
+    def show_appt_space(self):
+        self.advise("<h4>%s</h4><ul><li>%s</li><li>%s</li><li>%s</li><li>%s</li></ul>" % (
+            _("This could be for a variety of reasons"),
+            _(
+                "You need to have at least one clinician with an appointment book"),
+            _(
+                "No Clinicians have any days contracted to work in the practice?"),
+            _("Perhaps all future clinical time is already booked?"),
+            _(
+                "The BOOKEND value (last day to search for appointments) may simply need adjusting"),
+        ))
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)

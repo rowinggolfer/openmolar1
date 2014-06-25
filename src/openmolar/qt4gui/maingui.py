@@ -205,10 +205,10 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             _("connected to"), params.database_name))
 
         dl = InitialCheckDialog(self)
+        for message in dl.critical_messages:
+            self.advise("%s<hr />%s" % (_("CRITICAL MESSAGE"), message), 2)
         if dl.has_issues:
             dl.exec_()
-        for message in dl.critical_messages:
-            self.advise(message, 2)
         for message in dl.messages:
             self.advise(message)
         self.set_surgery_mode()
