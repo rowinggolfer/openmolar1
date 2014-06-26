@@ -34,6 +34,13 @@ INSERT_APPT_QUERY = '''INSERT INTO aslot (adate,apptix,start,end,name,serialno,
 code0,code1,code2,note,flag0,flag1,flag2,flag3)
 VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
 
+APPOINTMENTS_QUERY = '''
+SELECT start, end, name, concat(title," ",fname," ",sname),
+new_patients.serialno, concat(code0," ",code1," ",code2),
+note, cset
+FROM new_patients right join aslot on new_ patients.serialno=aslot.serialno
+WHERE adate = %s and apptix = %s  order by start'''
+
 
 class FreeSlot(object):
 
@@ -456,7 +463,7 @@ class DayAppointmentData(DaySummary):
                 for app in self.dentAppointments(dent):
                     if (not ignore_emergency or
                     not(app[4] == 0 and app[3].lower() == "emergency")
-                            ):
+                        ):
                         appt_times_list.append((app[1], app[2]))
                 if appt_times_list:
                     slotlist += slots(self.date, dent, self.getStart(dent),
@@ -1040,12 +1047,7 @@ def printableDaylistData(adate, dent):
         retlist.append(daydata[0][2])
         dayend = daydata[0][1]
         #--now get data for those days so that we can find slots within
-        query = '''SELECT start,end,name,
-        concat(patients.title," ",patients.fname," ",patients.sname),
-        patients.serialno,concat(code0," ",code1," ",code2),note,patients.cset
-        FROM patients right join aslot on patients.serialno=aslot.serialno
-        WHERE adate = %s and apptix = %s  order by start'''
-        cursor.execute(query, values)
+        cursor.execute(APPOINTMENTS_QUERY, values)
 
         results = cursor.fetchall()
 

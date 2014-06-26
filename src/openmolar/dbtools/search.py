@@ -35,7 +35,7 @@ LOGGER = logging.getLogger("openmolar")
 
 ALL_PATIENTS_QUERY = \
     '''SELECT serialno, status, title, fname, sname, dob, addr1, addr2, town,
-pcde, tel1, tel2, mobile FROM patients ORDER BY sname, fname'''
+pcde, tel1, tel2, mobile FROM new_patients ORDER BY sname, fname'''
 
 
 def all_patients():

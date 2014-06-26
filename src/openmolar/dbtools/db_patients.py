@@ -32,7 +32,7 @@ from openmolar.settings.localsettings import PatientNotFoundError
 
 
 def name(serialno):
-    query = 'SELECT title, fname, sname from patients where serialno = %s'
+    query = 'SELECT title, fname, sname from new_patients where serialno = %s'
 
     db = connect()
     cursor = db.cursor()

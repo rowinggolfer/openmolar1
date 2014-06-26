@@ -172,7 +172,7 @@ if __name__ == "__main__":
                     "making a slightly bad query... let's check we get a warning")
                 cursor = dbc.cursor()
                 cursor.execute(
-                    'update patients set dob="196912091" where serialno=4')
+                    'update new_patients set dob="196912091" where serialno=4')
                 cursor.close()
         except Exception as exc:
             LOGGER.exception("exception caught?")

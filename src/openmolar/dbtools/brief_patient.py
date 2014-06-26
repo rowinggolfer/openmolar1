@@ -32,7 +32,7 @@ from openmolar.dbtools.appt_prefs import ApptPrefs
 LOGGER = logging.getLogger("openmolar")
 
 QUERY = '''SELECT title, fname, sname, dob, cset, dnt1, dnt2
-from patients where serialno = %s'''
+from new_patients where serialno = %s'''
 
 
 class BriefPatient(object):

@@ -27,7 +27,7 @@ from openmolar import connect
 
 LOGGER = logging.getLogger("openmolar")
 
-QUERY = "select distinct status from patients"
+QUERY = "select distinct status from new_patients"
 
 
 class DistinctStatuses(object):
@@ -42,12 +42,12 @@ class DistinctStatuses(object):
             rows = cursor.fetchall()
             cursor.close()
 
-            self._distinct_statuses = []
+            self._distinct_statuses = set(["", _("DECEASED")])
             for row in sorted(rows):
                 if row[0] not in (None, "BAD DEBT"):
-                    self._distinct_statuses.append(row[0])
+                    self._distinct_statuses.add(row[0])
 
-        return self._distinct_statuses
+        return sorted(self._distinct_statuses)
 
 if __name__ == "__main__":
     ds = DistinctStatuses()

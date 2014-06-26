@@ -39,7 +39,7 @@ def commit(pt):
 
     sqlcommand = "insert into patients SET %s serialno=%%s" % sqlcond
 
-    query = "select max(serialno) from patients"
+    query = "select max(serialno) from new_patients"
 
     Attempts = 0
     while True:

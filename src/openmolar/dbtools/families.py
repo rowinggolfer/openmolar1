@@ -26,21 +26,22 @@ from openmolar.connect import connect
 from openmolar.settings import localsettings
 
 QUERY = '''select serialno, title, fname, sname,
-addr1, addr2, addr3, town, county, pcde, dob, status, tel1 from patients
+addr1, addr2, addr3, town, county, pcde, dob, status, tel1 from new_patients
 where familyno = %s order by dob'''
 
 PATIENT_QUERY = QUERY.replace("familyno", "serialno")
 
-LINK_QUERY = 'update patients set familyno=%s where serialno=%s'
+LINK_QUERY = 'update new_patients set familyno=%s where serialno=%s'
 
-SYNC_QUERY = '''update patients set
+SYNC_QUERY = '''update new_patients set
 addr1=%s, addr2=%s, addr3=%s, town=%s, county=%s, pcde=%s
 where familyno=%s'''
 
-NEXT_FAMILYNO_QUERY = "select max(familyno)+1 from patients"
-NEW_GROUP_QUERY = "update patients set familyno=%s where serialno=%s"
+NEXT_FAMILYNO_QUERY = "select max(familyno)+1 from new_patients"
+NEW_GROUP_QUERY = "update new_patients set familyno=%s where serialno=%s"
 
-DELETE_FAMILYNO_QUERY = "update patients set familyno=NULL where familyno=%s"
+DELETE_FAMILYNO_QUERY = \
+    "update new_patients set familyno=NULL where familyno=%s"
 
 ADDRESS_MATCH_QUERY = '''select
     case when addr1 = %s then 4 else 0 end +
@@ -50,11 +51,11 @@ ADDRESS_MATCH_QUERY = '''select
     case when town like %s then 1 else 0 end +
     case when pcde = %s then 5 else 0 end as matches ,
     serialno, title, fname, sname, dob, addr1, addr2, addr3, town, pcde
-from patients
+from new_patients
 where
 addr1 like %s or
-((addr2 != "" and addr2 is not NULL) and addr2 like %s) or
-((town != "" and town is not NULL) and town like %s)or
+(addr2 != "" and addr2 like %s) or
+(town != "" and town like %s) or
 (pcde=%s and pcde != "")
 order by matches desc
 limit 12

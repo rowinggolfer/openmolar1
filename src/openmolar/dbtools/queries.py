@@ -22,23 +22,32 @@
 # #                                                                          # #
 # ############################################################################ #
 
-PATIENT_QUERY = '''SELECT pf0, pf1, pf2, pf3, pf4, pf5, pf6, pf7, pf8, pf9,
-pf10, pf11, pf12, pf14, pf15, pf16, pf17, pf18, pf19, money0, money1, money2,
-money3, money4, money5, money6, money7, money8, money9, money10,
-pd0, pd1, pd2, pd3, pd4, pd5, pd6, pd7, pd8, pd9, pd10, pd11, pd12, pd13,
-pd14, sname, fname, title, sex, dob, addr1, addr2, addr3, pcde, tel1, tel2,
-occup, nhsno, cnfd, cset, dnt1, dnt2, courseno0, courseno1,
-ur8st, ur7st, ur6st, ur5st, ur4st, ur3st, ur2st, ur1st, ul1st, ul2st, ul3st,
-ul4st, ul5st, ul6st, ul7st, ul8st, ll8st, ll7st, ll6st, ll5st, ll4st, ll3st,
-ll2st, ll1st, lr1st, lr2st, lr3st, lr4st, lr5st, lr6st, lr7st, lr8st, dent0,
-dent1, dent2, dent3, dmask, minstart, maxend, billdate, billct, billtype,
-pf20, money11, pf13, familyno, memo, town, county, mobile, fax, email1,
-email2, status, source, enrolled, archived, initaccept, lastreaccept,
-lastclaim, expiry, cstatus, transfer, pstatus, courseno2
-from patients where serialno = %s'''
+PATIENT_QUERY_FIELDS = (
+"money0", "money1", "money2", "money3", "money4", "money5", "money6", "money7", "money8", "money9", "money10",
+"pd0", "pd1", "pd2", "pd3", "pd4", "pd5", "pd6", "pd7", "pd8", "pd9", "pd10", "pd11", "pd12", "pd13",
+"pd14", "sname", "fname", "title", "sex", "dob", "addr1", "addr2", "addr3", "pcde", "tel1", "tel2",
+"occup", "nhsno", "cnfd", "cset", "dnt1", "dnt2", "courseno0",
+"ur8", "ur7", "ur6", "ur5", "ur4", "ur3", "ur2", "ur1", "ul1", "ul2", "ul3",
+"ul4", "ul5", "ul6", "ul7", "ul8", "ll8", "ll7", "ll6", "ll5", "ll4", "ll3",
+"ll2", "ll1", "lr1", "lr2", "lr3", "lr4", "lr5", "lr6", "lr7", "lr8", "dent0",
+"dent1", "dent2", "dent3", "billdate", "billct", "billtype",
+"money11", "familyno", "memo", "town", "county", "mobile", "fax", "email1",
+"email2", "status", "initaccept", "lastreaccept",
+"lastclaim", "expiry", "cstatus", "transfer", "pstatus"
+)
+
+PATIENT_QUERY = '''SELECT %s
+from new_patients
+left join patient_money on serialno = patient_money.pt_sno
+left join static_chart on serialno = static_chart.pt_sno
+left join patient_dates on serialno = patient_dates.pt_sno
+left join patient_nhs on serialno = patient_nhs.pt_sno
+where serialno = %%s''' % ", ".join(PATIENT_QUERY_FIELDS)
 
 FUTURE_EXAM_QUERY = '''select count(*) from aslot
 where serialno=%s
 and (code0="EXAM" or code1="EXAM" or code2="EXAM") and adate >= CURDATE()'''
 
 PSN_QUERY = "select psn from previous_snames where serialno=%s order by ix desc"
+
+FAMILY_COUNT_QUERY = "select count(*) from new_patients where familyno=%s"

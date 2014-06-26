@@ -34,7 +34,7 @@ from openmolar.settings import localsettings
 
 LOGGER = logging.getLogger("openmolar")
 
-PT_COUNT_QUERY = "select count(*) from patients"
+PT_COUNT_QUERY = "select count(*) from new_patients"
 # PRACTITIONERS_QUERY = "select id, inits, apptix from practitioners"
 DENTIST_DATA_QUERY = "select id,inits,name,formalname,fpcno,quals from practitioners where flag0=1"
 # APPTIX_QUERY = "select apptix,inits from practitioners where flag3=1"
@@ -71,11 +71,11 @@ VALUES (%s, %s)
 ''')
 
 INSERT_SETTING_QUERY = \
-'''INSERT INTO settings (value, data, modified_by, time_stamp)
+    '''INSERT INTO settings (value, data, modified_by, time_stamp)
 values (%s, %s, %s, NOW())'''
 
 UPDATE_SETTING_QUERY = \
-'''UPDATE settings SET data = %s, modified_by = %s, time_stamp = NOW()
+    '''UPDATE settings SET data = %s, modified_by = %s, time_stamp = NOW()
 where value=%s'''
 
 
@@ -85,6 +85,7 @@ def insert_login(opid):
     result = cursor.execute(INSERT_OPID_QUERY, (opid,))
     cursor.close()
     return result
+
 
 def insertData(value, data, user=None):
     '''
@@ -101,6 +102,7 @@ def insertData(value, data, user=None):
     cursor.close()
     return True
 
+
 def updateData(value, data, user=None):
     '''
     update a setting - if no update occurs, will insert
@@ -116,8 +118,10 @@ def updateData(value, data, user=None):
         return True
     return insertData(value, data, user)
 
+
 def insert_practice_name(practice_name):
     return insertData("practice name", practice_name)
+
 
 def insert_practice_address(address):
     return insertData("practice address", address)

@@ -39,7 +39,7 @@ from openmolar.dbtools.est_logger import EstLogger
 from openmolar.dbtools import estimates as db_estimates
 
 from openmolar.dbtools.queries import \
-    PATIENT_QUERY, FUTURE_EXAM_QUERY, PSN_QUERY
+    PATIENT_QUERY_FIELDS, PATIENT_QUERY, FUTURE_EXAM_QUERY, PSN_QUERY, FAMILY_COUNT_QUERY
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -51,47 +51,31 @@ dateFields = ("dob", "pd0", "pd1", "pd2", "pd3", "pd4", "pd5", "pd6",
 nullDate = None
 
 patientTableAtts = (
-    'pf0', 'pf1', 'pf2', 'pf3', 'pf4', 'pf5', 'pf6', 'pf7', 'pf8', 'pf9', 'pf10', 'pf11',
-    'pf12', 'pf14', 'pf15', 'pf16', 'pf17', 'pf18', 'pf19',
-    'money0', 'money1', 'money2', 'money3', 'money4', 'money5', 'money6', 'money7',
-    'money8', 'money9', 'money10',
-    'pd0', 'pd1', 'pd2', 'pd3', 'pd4', 'pd5', 'pd6', 'pd7', 'pd8', 'pd9', 'pd10', 'pd11',
-    'pd12', 'pd13', 'pd14',
-    'sname', 'fname', 'title', 'sex', 'dob', 'addr1', 'addr2', 'addr3', 'pcde', 'tel1',
-    'tel2', 'occup',
-    'nhsno', 'cnfd', 'cset', 'dnt1', 'dnt2', 'courseno0', 'courseno1',
+    'sname', 'fname', 'title', 'sex', 'dob',
+    'addr1', 'addr2', 'addr3', 'pcde', 'town', 'county',
+    'tel1', 'tel2', 'mobile', 'fax', 'email1', 'email2',
+    'occup', 'nhsno', 'cnfd', 'cset', 'dnt1', 'dnt2', 'courseno0',
+    'billdate', 'billct', 'billtype', 'familyno', 'memo', 'status'
+)
+
+money_table_atts = ('money0', 'money1', 'money2', 'money3', 'money4',
+    'money5', 'money6', 'money7', 'money8', 'money9', 'money10', 'money11')
+
+nhs_table_atts = ('initaccept', 'lastreaccept', 'lastclaim', 'expiry',
+    'cstatus', 'transfer', 'pstatus')
+
+static_table_atts = (
     'ur8st', 'ur7st', 'ur6st', 'ur5st', 'ur4st', 'ur3st', 'ur2st', 'ur1st',
     'ul1st', 'ul2st', 'ul3st', 'ul4st', 'ul5st', 'ul6st', 'ul7st', 'ul8st',
     'll8st', 'll7st', 'll6st', 'll5st', 'll4st', 'll3st', 'll2st', 'll1st',
     'lr1st', 'lr2st', 'lr3st', 'lr4st', 'lr5st', 'lr6st', 'lr7st', 'lr8st',
-    'dent0', 'dent1', 'dent2', 'dent3',
-    'dmask', 'minstart', 'maxend', 'billdate', 'billct',
-    'billtype', 'pf20', 'money11', 'pf13', 'familyno', 'memo',
-    'town', 'county', 'mobile', 'fax', 'email1', 'email2', 'status', 'source',
-    'enrolled', 'archived',
-    'initaccept', 'lastreaccept', 'lastclaim', 'expiry', 'cstatus', 'transfer',
-    'pstatus', 'courseno2')
+    'dent0', 'dent1', 'dent2', 'dent3')
+
+date_table_atts = (
+    'pd0', 'pd1', 'pd2', 'pd3', 'pd4', 'pd5', 'pd6', 'pd7', 'pd8', 'pd9',
+    'pd10', 'pd11', 'pd12', 'pd13', 'pd14')
 
 exemptionTableAtts = ('exemption', 'exempttext')
-
-patientTableVals = (
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    nullDate, nullDate, nullDate, nullDate, nullDate, nullDate, nullDate,
-    nullDate, nullDate, nullDate, nullDate, nullDate, nullDate, nullDate, nullDate,
-    '', '', '', '', nullDate, '', '', '', '', '', '', '',
-    '', nullDate, '', '', 0, 0, 0, 0,
-    '', '', '', '', '', '', '', '',
-    '', '', '', '', '', '', '', '',
-    '', '', '', '', '', '', '', '',
-    '', '', '', '', '', '', '', '',
-    0, 0, 0, 0,
-    'YYYYYYY', 0, 0, nullDate, 0, None,
-    0, 0, 0, 0, '', '',
-    '', '', '', '', '', '', '', '',
-    nullDate, 0,
-    nullDate, nullDate, nullDate, nullDate, 0, nullDate,
-    0, 0)
 
 bpeTableAtts = ('bpedate', 'bpe')
 bpeTableVals = (nullDate, '', ())
@@ -112,6 +96,14 @@ decidmouth = ['***', '***', '***', 'ulE', 'ulD', 'ulC', 'ulB', 'ulA',
 
 clinical_memos = ("synopsis",)
 
+_atts = []
+for att in PATIENT_QUERY_FIELDS:
+    if re.match("[ul][lr]\d$", att):
+        _atts.append(att + "st")
+    else:
+        _atts.append(att)
+patient_query_atts = tuple(_atts)
+
 
 class patient(object):
 
@@ -126,25 +118,6 @@ class patient(object):
 
         # patient table atts
         self.courseno0 = None
-        self.pf0 = 0
-        self.pf1 = 0
-        self.pf2 = 0
-        self.pf3 = 0
-        self.pf4 = 0
-        self.pf5 = 0
-        self.pf6 = 0
-        self.pf7 = 0
-        self.pf8 = 0
-        self.pf9 = 0
-        self.pf10 = 0
-        self.pf11 = 0
-        self.pf12 = 0
-        self.pf14 = 0
-        self.pf15 = 0
-        self.pf16 = 0
-        self.pf17 = 0
-        self.pf18 = 0
-        self.pf19 = 0
         self.money0 = 0
         self.money1 = 0
         self.money2 = 0
@@ -188,7 +161,6 @@ class patient(object):
         self.cset = ''
         self.dnt1 = 0
         self.dnt2 = 0
-        self.courseno1 = 0
         self.ur8st = ''
         self.ur7st = ''
         self.ur6st = ''
@@ -225,15 +197,10 @@ class patient(object):
         self.dent1 = 0
         self.dent2 = 0
         self.dent3 = 0
-        self.dmask = "YYYYYYY"
-        self.minstart = 0
-        self.maxend = 0
         self.billdate = None
         self.billct = 0
         self.billtype = None
-        self.pf20 = 0
         self.money11 = 0
-        self.pf13 = 0
         self.familyno = localsettings.last_family_no
         self.memo = ''
         self.town = ''
@@ -243,9 +210,6 @@ class patient(object):
         self.email1 = ''
         self.email2 = ''
         self.status = ''
-        self.source = ''
-        self.enrolled = ''
-        self.archived = None
         self.initaccept = 0
         self.lastreaccept = None
         self.lastclaim = None
@@ -253,7 +217,6 @@ class patient(object):
         self.cstatus = None
         self.transfer = 0
         self.pstatus = None
-        self.courseno2 = 0
 
         # TABLE 'mnhist'#######
         self.chgdate = nullDate   # date 	YES 	 	None
@@ -303,7 +266,7 @@ class patient(object):
         if values == ():
             raise localsettings.PatientNotFoundError
 
-        for i, att in enumerate(patientTableAtts):
+        for i, att in enumerate(patient_query_atts):
             value = values[0][i]
             if value is not None:
                 self.__dict__[att] = value
@@ -785,8 +748,7 @@ class patient(object):
         if self._n_family_members is None:
             db = connect.connect()
             cursor = db.cursor()
-            cursor.execute("select count(*) from patients where familyno=%s",
-                (self.familyno,))
+            cursor.execute(FAMILY_COUNT_QUERY, (self.familyno,))
             self._n_family_members = cursor.fetchone()[0]
 
         return self._n_family_members
@@ -808,7 +770,7 @@ class patient(object):
         '''
         these are what is copied over into pt.dbstate
         '''
-        return (patientTableAtts +
+        return (patient_query_atts +
             exemptionTableAtts + bpeTableAtts + mnhistTableAtts +
             clinical_memos + (
                 "fees", "estimate_charges", "serialno", "estimates",

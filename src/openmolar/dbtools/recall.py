@@ -35,6 +35,16 @@ HEADERS = (
     _("County"), _("PostCode"), _("Dentist"), _("Family No"), _("Recall Date"))
 
 
+# note the word CONDITIONS in this query - replaced dynamically at runtime
+RECALL_QUERY = '''
+select new_patients.serialno, title, fname, sname, dnt1, familyno, dob,
+addr1, addr2, addr3, town, county, pcde, recdent
+from new_patients join appt_prefs
+on new_patients.serialno = appt_prefs.serialno
+where CONDITIONS and status != "DECEASED"
+order by familyno DESC, addr1, dob, fname, sname'''
+
+
 class RecalledPatient(object):
 
     '''
@@ -142,14 +152,8 @@ def getpatients(conditions="", values=()):
     '''
     assert isinstance(conditions, bytes), "conditions must be a string"
     assert isinstance(values, tuple), "values must be a tuple"
-    query = '''
-    select patients.serialno, title, fname, sname, dnt1, familyno, dob,
-    addr1, addr2, addr3, town, county, pcde, recdent
-    from patients join appt_prefs on patients.serialno = appt_prefs.serialno
-    where CONDITIONS and status != "DECEASED"
-    order by familyno DESC, addr1, dob, fname, sname'''
 
-    query = query.replace("CONDITIONS", conditions)
+    query = RECALL_QUERY.replace("CONDITIONS", conditions)
 
     db = connect()
     cursor = db.cursor()
@@ -176,7 +180,7 @@ def getpatients(conditions="", values=()):
 
 if __name__ == "__main__":
     localsettings.initiate()
-    conditions = "recd>=%s and recd<=%s and dnt1=%s"
+    conditions = "recdent>=%s and recdent<=%s and dnt1=%s"
     values = date(2012, 7, 1), date(2012, 7, 31), 6
     patients = getpatients(conditions, values)
     print patients

@@ -72,8 +72,14 @@ def all_changes(pt, changes):
 
     sqlcommands = {}
     estimate_commands = {}
-    patchanges, patvalues = "", []
+    patchanges, patvalues = [], []
+    static_changes, static_values = [], []
+    date_changes, date_values = [], []
+    nhs_changes, nhs_values = [], []
     trtchanges, trtvalues = "", []
+
+    # money handled slightly differently. more complex query.
+    money_changes, money_values = "", []
 
     for change in changes:
         if change == "courseno":
@@ -81,12 +87,29 @@ def all_changes(pt, changes):
 
         elif change in ("money0, money1"):
             diff = pt.__dict__[change] - pt.dbstate.__dict__[change]
-            patvalues.append(diff)
-            patchanges += '%s = %s + %%s,' % (change, change)
+            money_values.append(diff)
+            money_changes += '%s = %s + %%s,' % (change, change)
+
+        elif change in patient_class.money_table_atts:
+            money_changes += "%s = %%s, " % change
+            money_values.append(pt.__dict__[change])
 
         elif change in patient_class.patientTableAtts:
+            # patchanges += '%s = %%s,' % change
+            patchanges.append(change)
             patvalues.append(pt.__dict__[change])
-            patchanges += '%s = %%s,' % change
+
+        elif change in patient_class.date_table_atts:
+            date_changes.append(change)
+            date_values.append(pt.__dict__[change])
+
+        elif change in patient_class.static_table_atts:
+            static_changes.append(change.rstrip("st"))
+            static_values.append(pt.__dict__[change])
+
+        elif change in patient_class.nhs_table_atts:
+            nhs_changes.append(change)
+            nhs_values.append(pt.__dict__[change])
 
         elif (change in patient_class.exemptionTableAtts and
               not exemptionsHandled):
@@ -122,12 +145,51 @@ def all_changes(pt, changes):
         elif change == "estimates":
             pass  # dealt with below
 
-    if patchanges != "":
+    if patchanges:
+        query = "update new_patients SET %s where serialno=%%s" % \
+            ", ".join(["%s = %%s" % change for change in patchanges])
         patvalues.append(pt.serialno)
-        query = "update patients SET %s where serialno=%%s" % (
-            patchanges.strip(","))
-
         sqlcommands['patients'] = ((query, patvalues),)
+
+    if static_changes:
+        LOGGER.warning(
+            "applying static_changes %s values %s",
+            static_changes,
+            static_values)
+        query = "update static_chart SET %s where pt_sno=%%s" % \
+            ", ".join(["%s = %%s" % change for change in static_changes])
+        static_values.append(pt.serialno)
+        sqlcommands['static'] = ((query, static_values),)
+
+    if nhs_changes:
+        LOGGER.warning(
+            "applying nhs_changes %s values %s",
+            nhs_changes,
+            nhs_values)
+        query = "update patient_nhs SET %s where pt_sno=%%s" % \
+            ", ".join(["%s = %%s" % change for change in nhs_changes])
+        nhs_values.append(pt.serialno)
+        sqlcommands['nhs'] = ((query, nhs_values),)
+
+    if date_changes:
+        LOGGER.warning(
+            "applying date_changes %s values %s",
+            date_changes,
+            date_values)
+        query = "update patient_dates SET %s where pt_sno=%%s" % \
+            ", ".join(["%s = %%s" % change for change in date_changes])
+        date_values.append(pt.serialno)
+        sqlcommands['patient_dates'] = ((query, date_values),)
+
+    if money_changes:
+        LOGGER.warning(
+            "applying money_changes %s values %s",
+            money_changes,
+            money_values)
+        query = "update patient_money SET %s where pt_sno=%%s" % \
+            money_changes.rstrip(",")
+        money_values.append(pt.serialno)
+        sqlcommands['patient_money'] = ((query, money_values),)
 
     if trtchanges != "":
         trtvalues.append(pt.serialno)
@@ -149,8 +211,8 @@ def all_changes(pt, changes):
                     try:
                         cursor.execute(query, values)
                     except Exception as exc:
-                        LOGGER.exception("error executing query %s" % query)
-                        result = False
+                        LOGGER.error("error executing query %s" % query)
+                        raise exc
 
             cursor.close()
 
@@ -230,42 +292,50 @@ def toNotes(serialno, newnotes):
     return rows > 0
 
 
-def discreet_changes(pt_changed, changes):
+def discreet_changes(pt, changes):
     '''
     this updates only the selected atts
     (usually called by automated proc such as recalls...
     and accounts) only updates the patients table
     '''
-    LOGGER.debug("write changes - discreet changes")
-
-    sqlcond = ""
+    LOGGER.warning("discreet changes sno=%s %s", pt.serialno, changes)
+    if not changes:
+        LOGGER.error("no changes passed")
+    values = []
     for change in changes:
-        value = pt_changed.__dict__[change]
-        LOGGER.debug("discreet change %s %s" % (change, type(value)))
-        if change in patient_class.dateFields:
-            if value != "" and value is not None:
-                sqlcond += '%s="%s" ,' % (change, value)
-        elif value is None:
-            sqlcond += '%s=NULL ,' % change
-        elif type(value) in (int, int):
-            sqlcond += '%s=%s ,' % (change, value)
-        else:
-            sqlcond += '%s="%s" ,' % (change, value)
+        values.append(pt.__dict__[change])
+    values.append(pt.serialno)
 
-    sqlcommand = "update patients SET %s where serialno=%%s" % (
-        sqlcond.strip(","))
+    query = "update new_patients SET %s where serialno=%%s" % \
+        ", ".join(["%s = %%s" % change for change in changes])
 
-    LOGGER.debug("%s (%s,)" % (sqlcommand, pt_changed.serialno))
+    db = connect()
+    cursor = db.cursor()
+    cursor.execute(query, values)
+    db.commit()
+    cursor.close()
+    return True
 
-    result = True
-    if sqlcond != "":
-        db = connect()
-        cursor = db.cursor()
-        try:
-            cursor.execute(sqlcommand, (pt_changed.serialno,))
-            db.commit()
-        except Exception as e:
-            LOGGER.exception("unable to write discreet changes")
-            result = False
-        cursor.close()
-    return result
+
+def discreet_money_changes(pt, changes):
+    '''
+    update patient_monet attributes.
+    '''
+    LOGGER.warning("discreet_money_changes sno=%s %s", pt.serialno, changes)
+    if not changes:
+        LOGGER.error("no changes passed!")
+        return
+    values = []
+    for change in changes:
+        values.append(pt.__dict__[change])
+    values.append(pt.serialno)
+
+    query = "update patient_money SET %s where pt_sno=%%s" % \
+            ", ".join(["%s = %%s" % change for change in changes])
+
+    db = connect()
+    cursor = db.cursor()
+    cursor.execute(query, values)
+    db.commit()
+    cursor.close()
+    return True

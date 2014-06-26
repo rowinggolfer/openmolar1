@@ -555,8 +555,8 @@ def printSelectedAccounts(om_gui):
                     printpt.addHiddenNote(
                         "printed", "account - tone %s" % tone)
 
-                    patient_write_changes.discreet_changes(printpt, (
-                                                           "billct", "billdate", "billtype"))
+                    patient_write_changes.discreet_changes(
+                        printpt, ("billct", "billdate", "billtype"))
 
                     patient_write_changes.toNotes(sno,
                                                   printpt.HIDDENNOTES)
