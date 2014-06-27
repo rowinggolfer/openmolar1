@@ -37,7 +37,7 @@ def commit(pt):
             sqlcond += '%s = %%s,' % attr
             values.append(value)
 
-    sqlcommand = "insert into patients SET %s serialno=%%s" % sqlcond
+    sqlcommand = "insert into new_patients SET %s serialno=%%s" % sqlcond
 
     query = "select max(serialno) from new_patients"
 
@@ -64,7 +64,7 @@ def commit(pt):
             newSerialno = -1
 
         Attempts += 1
-        if Attemps > 20:
+        if Attempts > 20:
             break
     # db.close()
     return newSerialno
