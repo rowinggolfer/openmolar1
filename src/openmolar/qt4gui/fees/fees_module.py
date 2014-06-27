@@ -357,7 +357,7 @@ def makeBadDebt(om_gui):
         om_gui.pt.resetAllMonies()
         om_gui.pt.status = "BAD DEBT"
         om_gui.ui.notesEnter_textEdit.setText(
-            _("changed patients status to BAD DEBT")
+            _("changed patient's status to BAD DEBT")
         )
 
         om_gui.updateStatus()

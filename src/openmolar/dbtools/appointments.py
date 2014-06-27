@@ -38,7 +38,7 @@ APPOINTMENTS_QUERY = '''
 SELECT start, end, name, concat(title," ",fname," ",sname),
 new_patients.serialno, concat(code0," ",code1," ",code2),
 note, cset
-FROM new_patients right join aslot on new_ patients.serialno=aslot.serialno
+FROM new_patients right join aslot on new_patients.serialno=aslot.serialno
 WHERE adate = %s and apptix = %s  order by start'''
 
 
