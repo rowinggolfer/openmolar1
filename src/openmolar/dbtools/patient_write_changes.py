@@ -79,19 +79,14 @@ def all_changes(pt, changes):
     trtchanges, trtvalues = "", []
 
     # money handled slightly differently. more complex query.
-    money_changes, money_values = "", []
+    money_changes, money_values = [], []
 
     for change in changes:
         if change == "courseno":
             pass  # these values should never get munged.
 
-        elif change in ("money0, money1"):
-            diff = pt.__dict__[change] - pt.dbstate.__dict__[change]
-            money_values.append(diff)
-            money_changes += '%s = %s + %%s,' % (change, change)
-
         elif change in patient_class.money_table_atts:
-            money_changes += "%s = %%s, " % change
+            money_changes.append(change)
             money_values.append(pt.__dict__[change])
 
         elif change in patient_class.patientTableAtts:
@@ -156,40 +151,70 @@ def all_changes(pt, changes):
             "applying static_changes %s values %s",
             static_changes,
             static_values)
-        query = "update static_chart SET %s where pt_sno=%%s" % \
+        query = '''insert into static_chart (pt_sno, %s) values (%%s, %s)
+        on duplicate key update %s''' % (
+            ", ".join(static_changes),
+            ", ".join(("%s",) * len(static_changes)),
             ", ".join(["%s = %%s" % change for change in static_changes])
-        static_values.append(pt.serialno)
-        sqlcommands['static'] = ((query, static_values),)
+        )
+        values = [pt.serialno] + static_values * 2
+        sqlcommands['static'] = ((query, values),)
 
     if nhs_changes:
         LOGGER.warning(
             "applying nhs_changes %s values %s",
             nhs_changes,
             nhs_values)
-        query = "update patient_nhs SET %s where pt_sno=%%s" % \
+        query = '''insert into patient_nhs (pt_sno, %s) values (%%s, %s)
+        on duplicate key update %s''' % (
+            ", ".join(nhs_changes),
+            ", ".join(("%s",) * len(nhs_changes)),
             ", ".join(["%s = %%s" % change for change in nhs_changes])
-        nhs_values.append(pt.serialno)
-        sqlcommands['nhs'] = ((query, nhs_values),)
+        )
+        values = [pt.serialno] + nhs_values * 2
+        sqlcommands['nhs'] = ((query, values),)
 
     if date_changes:
         LOGGER.warning(
             "applying date_changes %s values %s",
             date_changes,
             date_values)
-        query = "update patient_dates SET %s where pt_sno=%%s" % \
+        query = '''insert into patient_dates (pt_sno, %s) values (%%s, %s)
+        on duplicate key update %s''' % (
+            ", ".join(date_changes),
+            ", ".join(("%s",) * len(date_changes)),
             ", ".join(["%s = %%s" % change for change in date_changes])
-        date_values.append(pt.serialno)
-        sqlcommands['patient_dates'] = ((query, date_values),)
+        )
+        values = [pt.serialno] + date_values * 2
+        sqlcommands['patient_dates'] = ((query, values),)
 
     if money_changes:
+        update_money_values = []
+        update_query = "update "
+        for i, change in enumerate(money_changes):
+            if change in ("money0", "money1"):
+                diff = pt.__dict__[change] - pt.dbstate.__dict__[change]
+                update_money_values.append(diff)
+                update_query += "%s=%s +%%s, " % (change, change)
+            else:
+                update_money_values.append(money_values[i])
+                update_query += "%s=%%s, " % change
+
         LOGGER.warning(
-            "applying money_changes %s values %s",
+            "applying money_changes %s values %s addition_values %s",
             money_changes,
-            money_values)
-        query = "update patient_money SET %s where pt_sno=%%s" % \
-            money_changes.rstrip(",")
-        money_values.append(pt.serialno)
-        sqlcommands['patient_money'] = ((query, money_values),)
+            money_values,
+            update_money_values)
+        query = '''insert into patient_money (pt_sno, %s) values (%%s, %s)
+        on duplicate key %s''' % (
+            ", ".join(money_changes),
+            ", ".join(("%s",) * len(money_changes)),
+            update_query.rstrip(", ")
+        )
+        values = [pt.serialno] + money_values + update_money_values
+        LOGGER.debug(query.replace("\n", " "))
+        LOGGER.debug(values)
+        sqlcommands['patient_money'] = ((query, values),)
 
     if trtchanges != "":
         trtvalues.append(pt.serialno)

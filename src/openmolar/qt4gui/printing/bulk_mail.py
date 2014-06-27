@@ -54,8 +54,6 @@ FAMILY_BODY = '''%s\n%s''' % (
 
 SIGN_OFF = _("Yours sincerely,")
 
-SIGNATURE = localsettings.PRACTICE_NAME
-
 FOOTER = _('''* If you already have a future appointment with us -
 please accept our apologies and ignore this letter.''')
 
@@ -584,7 +582,7 @@ class bulkMails(object):
                 20, sign_off_rect.height(), 0, sig_font_height)
             painter.save()
             painter.setFont(sigFont)
-            painter.drawText(sig_rect, SIGNATURE, option)
+            painter.drawText(sig_rect, localsettings.PRACTICE_NAME, option)
             if DEBUG:
                 painter.drawRect(sig_rect.adjusted(2, 2, -2, -2))
             painter.restore()

@@ -332,6 +332,13 @@ class SchemaUpdater(BaseDialog, Advisor):
             self.dbu = upmod.DatabaseUpdater(self.pb)
             self.apply_update()
 
+        # UPDATE TO SCHEMA 2.9 ########################
+        self.next_version = "2.9"
+        if self.current_version < self.next_version:
+            from openmolar.schema_upgrades import schema2_8to2_9 as upmod
+            self.dbu = upmod.DatabaseUpdater(self.pb)
+            self.apply_update()
+
         self.dbu = None
         if schema_version.getVersion() == localsettings.CLIENT_SCHEMA_VERSION:
             self.success()
