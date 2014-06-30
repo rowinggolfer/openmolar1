@@ -81,9 +81,6 @@ from openmolar.qt4gui.phrasebook.phrasebook_dialog import PhraseBookDialog
 from openmolar.qt4gui.phrasebook.phrasebook_dialog import PHRASEBOOKS
 from openmolar.qt4gui.phrasebook.phrasebook_editor import PhrasebookEditor
 
-# secondary applications
-from openmolar.qt4gui.tools import recordtools
-
 #--database modules
 #--(do not even think of making db queries from ANYWHERE ELSE)
 from openmolar.dbtools import appointments
@@ -1920,8 +1917,13 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.advise(_("no record selected"), 1)
         else:
             if permissions.granted(self):
-                dl = recordtools.recordTools(self)
-                dl.exec_()
+                dl = AdvancedRecordManagementDialog(self.pt, self)
+                if dl.exec_():
+                    LOGGER.warning(
+                        "Applying changes from AdvancedRecordManagementDialog")
+                    dl.apply()
+                    self.updateDetails()
+                    self.updateHiddenNotesLabel()
 
     def apptBook_fontSize(self):
         '''

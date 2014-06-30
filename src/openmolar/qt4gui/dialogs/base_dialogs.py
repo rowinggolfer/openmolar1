@@ -83,7 +83,7 @@ class BaseDialog(QtGui.QDialog):
         '''
         Overwrite this function inherited from QWidget
         '''
-        return QtCore.QSize(300, 600)
+        return QtCore.QSize(300, 300)
 
     def remove_spacer(self):
         '''
@@ -135,13 +135,17 @@ class BaseDialog(QtGui.QDialog):
         if role == QtGui.QDialogButtonBox.ApplyRole:
             self.accept()
         else:
-            if not self.check_before_reject_if_dirty:
-                self.reject()
-            if (not self.dirty or QtGui.QMessageBox.question(self,
+            self.reject()
+
+    def reject(self):
+        if not (self.check_before_reject_if_dirty and self.dirty):
+            QtGui.QDialog.reject(self)
+        else:
+            if QtGui.QMessageBox.question(self,
                _("Confirm"), self.abandon_message,
                 QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                    QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes):
-                self.reject()
+                    QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
+                QtGui.QDialog.reject(self)
 
     def enableApply(self, enable=True):
         '''

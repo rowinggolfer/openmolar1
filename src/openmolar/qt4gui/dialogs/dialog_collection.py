@@ -66,11 +66,12 @@ from openmolar.qt4gui.dialogs.add_user_dialog import AddUserDialog
 from openmolar.qt4gui.dialogs.add_clinician_dialog import AddClinicianDialog
 from openmolar.qt4gui.dialogs.initial_check_dialog import InitialCheckDialog
 from openmolar.qt4gui.dialogs.edit_practice_dialog import EditPracticeDialog
-
+from openmolar.qt4gui.dialogs.advanced_record_management_dialog import AdvancedRecordManagementDialog
 
 __all__ = ['AccountSeverityDialog',
            'AddClinicianDialog',
            'AddUserDialog',
+           'AdvancedRecordManagementDialog',
            'AdvancedTxPlanningDialog',
            'AlterTodaysNotesDialog',
            'AssistantSelectDialog',

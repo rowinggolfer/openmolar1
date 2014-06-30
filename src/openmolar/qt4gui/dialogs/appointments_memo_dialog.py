@@ -112,8 +112,11 @@ class AppointmentsMemoDialog(ExtendableDialog):
                 self.le_dict[apptix].setText(memo)
             except KeyError:
                 LOGGER.warning("couldn't display memo for apptix %s", apptix)
-        self.dirty = self._dirty
         self.enableApply(True)
+
+    def reject(self):
+        self.dirty = self._dirty
+        ExtendableDialog.reject(self)
 
     @property
     def _dirty(self):
