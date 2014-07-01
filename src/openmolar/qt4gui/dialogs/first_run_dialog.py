@@ -61,6 +61,7 @@ DB_USER = "openmolar"
 DB_PASS = "password"
 DB_NAME = "openmolar"
 
+
 class _InputPage(QtGui.QWidget):
 
     def __init__(self, parent=None):
@@ -99,13 +100,13 @@ class PageZero(_InputPage):
     def __init__(self, parent=None):
         _InputPage.__init__(self, parent)
 
-        message = "%s<ul><li>%s</li><li>%s</li><li>%s</li><li>%s</li></ul>" %(
+        message = "%s<ul><li>%s</li><li>%s</li><li>%s</li><li>%s</li></ul>" % (
             _("This Dialog will help you"),
-           _("secure openmolar with a password"),
+            _("secure openmolar with a password"),
             _("note the location of your mysql/mariadb server"),
-           _("install a blank database schema if required."),
-           _("save a settings file so you do not have to endure this again!")
-           )
+            _("install a blank database schema if required."),
+            _("save a settings file so you do not have to endure this again!")
+        )
         self.label.setText(message)
 
         message2 = _("Click Next to continue, or Quit to leave OpenMolar now.")
@@ -116,22 +117,23 @@ class PageZero(_InputPage):
     @property
     def header_text(self):
         return "<b>%s</b><hr />%s" % (
-        _("This appears to be your first running of OpenMolar."),
-        _("We need to save a few settings to continue.")
+            _("This appears to be your first running of OpenMolar."),
+            _("We need to save a few settings to continue.")
         )
+
 
 class PageOne(_InputPage):
 
     def __init__(self, parent=None):
         _InputPage.__init__(self, parent)
 
-        message = "%s<br />%s<br /><br /><em>%s</em>" %(
+        message = "%s<br />%s<br /><br /><em>%s</em>" % (
             _("You may wish to enter a password which will hereafter be required"
-            " to login to the OpenMolar application"),
+              " to login to the OpenMolar application"),
             _("This password will help prevent an unauthorised person"
-            " accessing any sensitive data."),
+              " accessing any sensitive data."),
             _("If your data is simply demonstration data, "
-            "this can be left blank"))
+              "this can be left blank"))
         self.label.setText(message)
 
         layout = QtGui.QFormLayout(self.frame)
@@ -170,23 +172,25 @@ class PageOne(_InputPage):
     def error_message(self):
         return _("Passwords don't match!")
 
+
 class PageTwo(_InputPage):
 
     def __init__(self, parent=None):
         _InputPage.__init__(self, parent)
 
-        message = "%s<br />%s<br />%s" %(
+        message = "%s<br />%s<br />%s" % (
             _("OpenMolar is simply a database client."),
             _("It requires a database server such as MySQL or MariaDB."),
             _("Please enter the hostname and port number "
-            "where your server can be reached.")
-            )
+              "where your server can be reached.")
+        )
 
         message1 = "** %s\n\n (%s)" % (
-        _("If you do not have a mysql/mariadb server on your computer"
-        " or local network, please quit this setup, "
-        "and install one now!"),
-        _("Make a note of the root password you create during this set up.")
+            _("If you do not have a mysql/mariadb server on your computer"
+              " or local network, please quit this setup, "
+              "and install one now!"),
+            _(
+                "Make a note of the root password you create during this set up.")
         )
         self.label.setText(message)
 
@@ -227,7 +231,7 @@ class PageTwo(_InputPage):
         for le in (self.line_edit1, self.line_edit2):
             if le.text() == "":
                 return False
-        return self.port != None
+        return self.port is not None
 
     @property
     def error_message(self):
@@ -275,16 +279,17 @@ class PageThree(_InputPage):
     def create_new(self):
         return self.radio_button1.isChecked()
 
+
 class PageFour(_InputPage):
 
     def __init__(self, parent=None):
         _InputPage.__init__(self, parent)
 
-        message = "%s<br />%s" %(
+        message = "%s<br />%s" % (
             _("Please enter connection criteria for the database."),
             _("If the user and/or database does not exist, "
-            "you will be given an opportunity to create them ")
-            )
+              "you will be given an opportunity to create them ")
+        )
         self.label.setText(message)
 
         layout = QtGui.QFormLayout(self.frame)
@@ -325,6 +330,7 @@ class PageFour(_InputPage):
             if le.text() == "":
                 return False
         return True
+
     @property
     def error_message(self):
         message = "%s<ul>" % _("The Following errors were found")
@@ -339,21 +345,22 @@ class PageFour(_InputPage):
 
 
 class PageFive(_InputPage):
+
     def __init__(self, parent=None):
         _InputPage.__init__(self, parent)
 
         message = "%s<br />%s" % (
-        _("To create a database, and set the privileges for user, "
-        "OpenMolar must log into mysql as a privileged mysql user."),
-        _("OpenMolar does NOT store this username or password.")
+            _("To create a database, and set the privileges for user, "
+              "OpenMolar must log into mysql as a privileged mysql user."),
+            _("OpenMolar does NOT store this username or password.")
         )
 
         message2 = "%s<br /><em>%s</em>" % (
             _("Please enter the username and password of a "
-            "privileged mysql user."),
+              "privileged mysql user."),
             _("(note - on most mysql setups, login by 'root' is only allowed"
-            " on localhost)")
-            )
+              " on localhost)")
+        )
 
         self.label.setText(message)
 
@@ -373,7 +380,7 @@ class PageFive(_InputPage):
     @property
     def header_text(self):
         return "<b>%s</b>" % _(
-        "Step 5b - Create an authenticated user and database")
+            "Step 5b - Create an authenticated user and database")
 
     def showEvent(self, event):
         self.line_edit2.setFocus()
@@ -398,6 +405,7 @@ class PageFive(_InputPage):
             message += "<li>%s</li>" % _("Password Field is Blank")
 
         return message + "</ul>"
+
 
 class PageSix(_InputPage):
 
@@ -437,49 +445,50 @@ class PageSix(_InputPage):
         try:
             from openmolar import create_db
             if (create_db.exists_already(
-                                self.dialog.host,
-                                self.dialog.port,
-                                self.dialog.db_name,
-                                self.dialog.privileged_user_pass,
-                                self.dialog.privileged_user
-                                ) and
-            QtGui.QMessageBox.question(self, _("Confirm"),
-            "%s '%s' %s<hr />%s" % (_("A database named"),
-                            self.dialog.db_name,
-                            _("exists already"),
-                            _("Overwrite this database?")),
-            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
-            QtGui.QMessageBox.No) == QtGui.QMessageBox.No):
+                self.dialog.host,
+               self.dialog.port,
+               self.dialog.db_name,
+               self.dialog.privileged_user_pass,
+               self.dialog.privileged_user
+                ) and
+               QtGui.QMessageBox.question(self, _("Confirm"),
+                                          "%s '%s' %s<hr />%s" % (_("A database named"),
+                                                                  self.dialog.db_name,
+                                                                  _(
+                                                                  "exists already"),
+                                                                  _("Overwrite this database?")),
+                                          QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                                          QtGui.QMessageBox.No) == QtGui.QMessageBox.No):
                 self.dialog.database_exists_already()
                 return
             self.timer1.start(10)  # 1/100thsecond
 
             self.progress_bar.setValue(10)
             create_db.create_database(
-                                self.dialog.host,
-                                self.dialog.port,
-                                self.dialog.db_user,
-                                self.dialog.db_pass,
-                                self.dialog.db_name,
-                                self.dialog.privileged_user_pass,
-                                self.dialog.privileged_user
-                                )
+                self.dialog.host,
+                self.dialog.port,
+                self.dialog.db_user,
+                self.dialog.db_pass,
+                self.dialog.db_name,
+                self.dialog.privileged_user_pass,
+                self.dialog.privileged_user
+            )
 
             self.progress_bar.setValue(50)
             PB_LIMIT = 90
             create_db.create_tables(self.dialog.host,
-                                            self.dialog.port,
-                                            self.dialog.db_user,
-                                            self.dialog.db_pass,
-                                            self.dialog.db_name,
-                                            )
+                                    self.dialog.port,
+                                    self.dialog.db_user,
+                                    self.dialog.db_pass,
+                                    self.dialog.db_name,
+                                    )
 
             self.progress_bar.setValue(100)
             QtGui.QMessageBox.information(
                 self,
-                 _("Success!"),
+                _("Success!"),
                 _("Database created successfully!")
-                )
+            )
             self.db_created = True
             self.dialog.next()
         except Exception as exc:
@@ -488,20 +497,21 @@ class PageSix(_InputPage):
             QtGui.QMessageBox.warning(self, _("Error"), message)
             self.db_created = False
 
+
 class PageSeven(_InputPage):
 
     def __init__(self, parent=None):
         _InputPage.__init__(self, parent)
 
         message = _("Testing connection")
-        self.label.setText(message)
+        self.label.setText(message + ".......")
 
         layout = QtGui.QVBoxLayout(self.frame)
 
     @property
     def header_text(self):
         return "<b>%s</b>" % _(
-        "Final Step - Test Connection &amp; Write Config File")
+            "Final Step - Test Connection &amp; Write Config File")
 
     def showEvent(self, event):
         QtCore.QTimer.singleShot(100, self.test_connection)
@@ -519,21 +529,15 @@ class PageSeven(_InputPage):
             result = db.open
             db.close()
             self.dialog.wait(False)
-            QtGui.QMessageBox.information(
-                self,
-                 _("Success!"),
-                _("The Database accepted the connection")
-                )
-
+            self.label.setText(_("Your database is accepting connections!"))
             return True
         except Exception as exc:
             self.dialog.wait(False)
             LOGGER.exception("connection attempt failed")
-            QtGui.QMessageBox.warning(
-                self,
-                 _("Warning!"),
-                _("The Database refused the connection")
-                )
+            self.label.setText("<b>%s</b>" % (
+                _("WARNING"),
+                _("Your database is NOT accepting connections!"))
+            )
             return False
         finally:
             self.dialog.wait(False)
@@ -544,7 +548,6 @@ class FirstRunDialog(BaseDialog):
     def __init__(self, parent=None):
         BaseDialog.__init__(self, parent)
         self.setWindowTitle(_("First Run Dialog"))
-
 
         self.top_label = WarningLabel("FirstRun")
 
@@ -558,7 +561,7 @@ class FirstRunDialog(BaseDialog):
         self.page5 = PageFive(self)
         page6 = PageSix(self)
         self.page7 = PageSeven(self)
-        #accept_page = AcceptPage(self)
+        # accept_page = AcceptPage(self)
 
         self.wizard_widget.addWidget(page0)
         self.wizard_widget.addWidget(self.page1)
@@ -568,7 +571,7 @@ class FirstRunDialog(BaseDialog):
         self.wizard_widget.addWidget(self.page5)
         self.wizard_widget.addWidget(page6)
         self.wizard_widget.addWidget(self.page7)
-        #self.wizard_widget.addWidget(accept_page)
+        # self.wizard_widget.addWidget(accept_page)
 
         self.insertWidget(self.top_label)
         self.insertWidget(self.wizard_widget)
@@ -577,7 +580,6 @@ class FirstRunDialog(BaseDialog):
             _("Next"), self.button_box.ActionRole)
         self.back_but = self.button_box.addButton(
             _("Back"), self.button_box.ActionRole)
-
 
         self.apply_but.hide()
         self.back_but.hide()
@@ -621,16 +623,16 @@ class FirstRunDialog(BaseDialog):
         i = self.wizard_widget.currentIndex()
         if not self.current_page.is_completed:
             QtGui.QMessageBox.warning(self,
-                                    _("error"),
-                                    self.current_page.error_message)
+                                      _("error"),
+                                      self.current_page.error_message)
             new_i = i
         elif i == 4 and not self.page3.create_new:
-            new_i = i+3
+            new_i = i + 3
         elif i == 7:
             self.finish()
             return
         else:
-            new_i = i+1
+            new_i = i + 1
         self.wizard_widget.setCurrentIndex(new_i)
         self.set_labels()
 
@@ -638,10 +640,10 @@ class FirstRunDialog(BaseDialog):
         i = self.wizard_widget.currentIndex()
         if i == 0:
             new_i = 0
-        elif i == 7: #shouldn't happen?
-            new_i = 0 #don't create a database by hitting "back"
+        elif i == 7:  # shouldn't happen?
+            new_i = 0  # don't create a database by hitting "back"
         else:
-            new_i = i-1
+            new_i = i - 1
         self.wizard_widget.setCurrentIndex(new_i)
         self.set_labels()
 

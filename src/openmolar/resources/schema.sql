@@ -990,6 +990,59 @@ LOCK TABLES `mnhist` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `new_patients`
+--
+
+DROP TABLE IF EXISTS `new_patients`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `new_patients` (
+  `serialno` int(11) NOT NULL,
+  `sname` varchar(30) DEFAULT NULL,
+  `fname` varchar(30) DEFAULT NULL,
+  `title` varchar(30) DEFAULT NULL,
+  `sex` char(1) DEFAULT NULL,
+  `dob` date DEFAULT NULL,
+  `addr1` varchar(30) NOT NULL DEFAULT '',
+  `addr2` varchar(30) NOT NULL DEFAULT '',
+  `addr3` varchar(30) NOT NULL DEFAULT '',
+  `town` varchar(30) NOT NULL DEFAULT '',
+  `county` varchar(30) NOT NULL DEFAULT '',
+  `pcde` varchar(30) NOT NULL DEFAULT '',
+  `tel1` varchar(30) NOT NULL DEFAULT '',
+  `tel2` varchar(30) NOT NULL DEFAULT '',
+  `mobile` varchar(30) NOT NULL DEFAULT '',
+  `fax` varchar(30) NOT NULL DEFAULT '',
+  `email1` varchar(50) NOT NULL DEFAULT '',
+  `email2` varchar(50) NOT NULL DEFAULT '',
+  `occup` varchar(30) NOT NULL DEFAULT '',
+  `nhsno` varchar(30) NOT NULL DEFAULT '',
+  `cnfd` date DEFAULT NULL,
+  `cset` varchar(10) DEFAULT NULL,
+  `dnt1` smallint(6) DEFAULT NULL,
+  `dnt2` smallint(6) DEFAULT NULL,
+  `courseno0` int(11) DEFAULT NULL,
+  `billdate` date DEFAULT NULL,
+  `billct` tinyint(3) unsigned DEFAULT NULL,
+  `billtype` char(1) DEFAULT NULL,
+  `familyno` int(11) DEFAULT NULL,
+  `memo` varchar(255) NOT NULL DEFAULT '',
+  `status` varchar(30) NOT NULL DEFAULT '',
+  PRIMARY KEY (`serialno`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `new_patients`
+--
+
+LOCK TABLES `new_patients` WRITE;
+/*!40000 ALTER TABLE `new_patients` DISABLE KEYS */;
+INSERT INTO `new_patients` VALUES (1,'PATIENT','EXAMPLE','MR','M','1969-12-09','19 UNION STREET','','','INVERNESS','SCOTLAND, UK','IV1 1PP','','','','','','','','',NULL,'P',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','');
+/*!40000 ALTER TABLE `new_patients` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `newdocsprinted`
 --
 
@@ -1141,44 +1194,14 @@ INSERT INTO `opid` VALUES ('REC'),('USER');
 UNLOCK TABLES;
 
 --
--- Table structure for table `patients`
+-- Table structure for table `patient_dates`
 --
 
-DROP TABLE IF EXISTS `patients`;
+DROP TABLE IF EXISTS `patient_dates`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `patients` (
-  `serialno` int(11) NOT NULL,
-  `pf0` tinyint(4) DEFAULT NULL,
-  `pf1` tinyint(4) DEFAULT NULL,
-  `pf2` tinyint(4) DEFAULT NULL,
-  `pf3` tinyint(4) DEFAULT NULL,
-  `pf4` tinyint(4) DEFAULT NULL,
-  `pf5` tinyint(4) DEFAULT NULL,
-  `pf6` tinyint(4) DEFAULT NULL,
-  `pf7` tinyint(4) DEFAULT NULL,
-  `pf8` tinyint(4) DEFAULT NULL,
-  `pf9` tinyint(4) DEFAULT NULL,
-  `pf10` tinyint(4) DEFAULT NULL,
-  `pf11` tinyint(4) DEFAULT NULL,
-  `pf12` tinyint(4) DEFAULT NULL,
-  `pf14` tinyint(4) DEFAULT NULL,
-  `pf15` tinyint(4) DEFAULT NULL,
-  `pf16` tinyint(4) DEFAULT NULL,
-  `pf17` tinyint(4) DEFAULT NULL,
-  `pf18` tinyint(4) DEFAULT NULL,
-  `pf19` tinyint(4) DEFAULT NULL,
-  `money0` int(11) DEFAULT NULL,
-  `money1` int(11) DEFAULT NULL,
-  `money2` int(11) DEFAULT NULL,
-  `money3` int(11) DEFAULT NULL,
-  `money4` int(11) DEFAULT NULL,
-  `money5` int(11) DEFAULT NULL,
-  `money6` int(11) DEFAULT NULL,
-  `money7` int(11) DEFAULT NULL,
-  `money8` int(11) DEFAULT NULL,
-  `money9` int(11) DEFAULT NULL,
-  `money10` int(11) DEFAULT NULL,
+CREATE TABLE `patient_dates` (
+  `pt_sno` int(11) NOT NULL,
   `pd0` date DEFAULT NULL,
   `pd1` date DEFAULT NULL,
   `pd2` date DEFAULT NULL,
@@ -1194,84 +1217,66 @@ CREATE TABLE `patients` (
   `pd12` date DEFAULT NULL,
   `pd13` date DEFAULT NULL,
   `pd14` date DEFAULT NULL,
-  `sname` varchar(30) DEFAULT NULL,
-  `fname` varchar(30) DEFAULT NULL,
-  `title` varchar(30) DEFAULT NULL,
-  `sex` char(1) DEFAULT NULL,
-  `dob` date DEFAULT NULL,
-  `addr1` varchar(30) DEFAULT NULL,
-  `addr2` varchar(30) DEFAULT '',
-  `addr3` varchar(30) DEFAULT '',
-  `pcde` varchar(30) DEFAULT NULL,
-  `tel1` varchar(30) DEFAULT NULL,
-  `tel2` varchar(30) DEFAULT NULL,
-  `occup` varchar(30) DEFAULT NULL,
-  `nhsno` varchar(30) DEFAULT NULL,
-  `cnfd` date DEFAULT NULL,
-  `cset` varchar(10) DEFAULT NULL,
-  `dnt1` smallint(6) DEFAULT NULL,
-  `dnt2` smallint(6) DEFAULT NULL,
-  `courseno0` int(11) DEFAULT NULL,
-  `courseno1` int(11) DEFAULT NULL,
-  `exempttext` varchar(50) DEFAULT NULL,
-  `ur8st` varchar(34) DEFAULT NULL,
-  `ur7st` varchar(34) DEFAULT NULL,
-  `ur6st` varchar(34) DEFAULT NULL,
-  `ur5st` varchar(34) DEFAULT NULL,
-  `ur4st` varchar(34) DEFAULT NULL,
-  `ur3st` varchar(34) DEFAULT NULL,
-  `ur2st` varchar(34) DEFAULT NULL,
-  `ur1st` varchar(34) DEFAULT NULL,
-  `ul1st` varchar(34) DEFAULT NULL,
-  `ul2st` varchar(34) DEFAULT NULL,
-  `ul3st` varchar(34) DEFAULT NULL,
-  `ul4st` varchar(34) DEFAULT NULL,
-  `ul5st` varchar(34) DEFAULT NULL,
-  `ul6st` varchar(34) DEFAULT NULL,
-  `ul7st` varchar(34) DEFAULT NULL,
-  `ul8st` varchar(34) DEFAULT NULL,
-  `ll8st` varchar(34) DEFAULT NULL,
-  `ll7st` varchar(34) DEFAULT NULL,
-  `ll6st` varchar(34) DEFAULT NULL,
-  `ll5st` varchar(34) DEFAULT NULL,
-  `ll4st` varchar(34) DEFAULT NULL,
-  `ll3st` varchar(34) DEFAULT NULL,
-  `ll2st` varchar(34) DEFAULT NULL,
-  `ll1st` varchar(34) DEFAULT NULL,
-  `lr1st` varchar(34) DEFAULT NULL,
-  `lr2st` varchar(34) DEFAULT NULL,
-  `lr3st` varchar(34) DEFAULT NULL,
-  `lr4st` varchar(34) DEFAULT NULL,
-  `lr5st` varchar(34) DEFAULT NULL,
-  `lr6st` varchar(34) DEFAULT NULL,
-  `lr7st` varchar(34) DEFAULT NULL,
-  `lr8st` varchar(34) DEFAULT NULL,
-  `dent0` tinyint(4) DEFAULT NULL,
-  `dent1` tinyint(4) DEFAULT NULL,
-  `dent2` tinyint(4) DEFAULT NULL,
-  `dent3` tinyint(4) DEFAULT NULL,
-  `exmpt` varchar(10) DEFAULT NULL,
-  `dmask` char(7) DEFAULT NULL,
-  `minstart` smallint(6) DEFAULT NULL,
-  `maxend` smallint(6) DEFAULT NULL,
-  `billdate` date DEFAULT NULL,
-  `billct` tinyint(3) unsigned DEFAULT NULL,
-  `billtype` char(1) DEFAULT NULL,
-  `pf20` tinyint(4) DEFAULT NULL,
-  `money11` int(11) DEFAULT NULL,
-  `pf13` tinyint(4) DEFAULT NULL,
-  `familyno` int(11) DEFAULT NULL,
-  `memo` varchar(255) DEFAULT NULL,
-  `town` varchar(30) DEFAULT '',
-  `county` varchar(30) DEFAULT '',
-  `mobile` varchar(30) DEFAULT NULL,
-  `fax` varchar(30) DEFAULT NULL,
-  `email1` varchar(50) DEFAULT NULL,
-  `email2` varchar(50) DEFAULT NULL,
-  `status` varchar(30) DEFAULT NULL,
-  `source` varchar(30) DEFAULT NULL,
-  `enrolled` date DEFAULT NULL,
-  `archived` tinyint(4) DEFAULT '0',
+  UNIQUE KEY `pt_sno` (`pt_sno`),
+  CONSTRAINT `patient_dates_ibfk_1` FOREIGN KEY (`pt_sno`) REFERENCES `new_patients` (`serialno`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `patient_dates`
+--
+
+LOCK TABLES `patient_dates` WRITE;
+/*!40000 ALTER TABLE `patient_dates` DISABLE KEYS */;
+INSERT INTO `patient_dates` VALUES (1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+/*!40000 ALTER TABLE `patient_dates` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `patient_money`
+--
+
+DROP TABLE IF EXISTS `patient_money`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `patient_money` (
+  `pt_sno` int(11) NOT NULL,
+  `money0` int(11) NOT NULL DEFAULT '0',
+  `money1` int(11) NOT NULL DEFAULT '0',
+  `money2` int(11) NOT NULL DEFAULT '0',
+  `money3` int(11) NOT NULL DEFAULT '0',
+  `money4` int(11) NOT NULL DEFAULT '0',
+  `money5` int(11) NOT NULL DEFAULT '0',
+  `money6` int(11) NOT NULL DEFAULT '0',
+  `money7` int(11) NOT NULL DEFAULT '0',
+  `money8` int(11) NOT NULL DEFAULT '0',
+  `money9` int(11) NOT NULL DEFAULT '0',
+  `money10` int(11) NOT NULL DEFAULT '0',
+  `money11` int(11) NOT NULL DEFAULT '0',
+  UNIQUE KEY `pt_sno` (`pt_sno`),
+  CONSTRAINT `patient_money_ibfk_1` FOREIGN KEY (`pt_sno`) REFERENCES `new_patients` (`serialno`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `patient_money`
+--
+
+LOCK TABLES `patient_money` WRITE;
+/*!40000 ALTER TABLE `patient_money` DISABLE KEYS */;
+INSERT INTO `patient_money` VALUES (1,0,0,0,0,0,0,0,0,0,0,0,0);
+/*!40000 ALTER TABLE `patient_money` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `patient_nhs`
+--
+
+DROP TABLE IF EXISTS `patient_nhs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `patient_nhs` (
+  `pt_sno` int(11) NOT NULL,
   `initaccept` date DEFAULT NULL,
   `lastreaccept` date DEFAULT NULL,
   `lastclaim` date DEFAULT NULL,
@@ -1279,21 +1284,18 @@ CREATE TABLE `patients` (
   `cstatus` tinyint(3) unsigned DEFAULT NULL,
   `transfer` date DEFAULT NULL,
   `pstatus` tinyint(3) unsigned DEFAULT NULL,
-  `courseno2` int(11) DEFAULT NULL,
-  PRIMARY KEY (`serialno`),
-  KEY `sname` (`sname`,`fname`),
-  KEY `familyno` (`familyno`)
+  UNIQUE KEY `pt_sno` (`pt_sno`),
+  CONSTRAINT `patient_nhs_ibfk_1` FOREIGN KEY (`pt_sno`) REFERENCES `new_patients` (`serialno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `patients`
+-- Dumping data for table `patient_nhs`
 --
 
-LOCK TABLES `patients` WRITE;
-/*!40000 ALTER TABLE `patients` DISABLE KEYS */;
-INSERT INTO `patients` VALUES (1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'PATIENT','EXAMPLE','MR','M','1969-12-09','19 UNION STREET','','','IV1 1PP',NULL,NULL,NULL,NULL,NULL,'P',NULL,NULL,NULL,NULL,NULL,'UE ',NULL,'MO,CO ','MOD ','B,GL ','MI ','CR,LAVA ','PV ','IM/TIT IM/ABUT  CR,V1 ',NULL,NULL,'GI/MOD RT ',NULL,NULL,NULL,'UE ','UE ',NULL,'MOL,CO ',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'OL,CO ','B ','FS ','UE ',NULL,16,NULL,NULL,NULL,'YYYYYYY',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'INVERNESS','SCOTLAND, UK',NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
-/*!40000 ALTER TABLE `patients` ENABLE KEYS */;
+LOCK TABLES `patient_nhs` WRITE;
+/*!40000 ALTER TABLE `patient_nhs` DISABLE KEYS */;
+/*!40000 ALTER TABLE `patient_nhs` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1488,8 +1490,68 @@ CREATE TABLE `settings` (
 
 LOCK TABLES `settings` WRITE;
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
-INSERT INTO `settings` VALUES (1,'wikiurl','http://openmolar.com/wiki',NULL,NULL,NULL,'neil@openmolar.com','2014-06-10 17:52:59'),(2,'compatible_clients','2.7',NULL,NULL,NULL,'Update script','2014-06-20 14:27:35'),(3,'Schema_Version','2.7',NULL,NULL,NULL,'neil@openmolar.com','2014-06-10 17:53:35');
+INSERT INTO `settings` VALUES (1,'wikiurl','http://openmolar.com/wiki',NULL,NULL,NULL,'neil@openmolar.com','2014-06-10 17:52:59'),(2,'Schema_Version','2.9',NULL,NULL,NULL,'neil@openmolar.com','2014-07-01 12:51:30');
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `static_chart`
+--
+
+DROP TABLE IF EXISTS `static_chart`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `static_chart` (
+  `pt_sno` int(11) NOT NULL,
+  `dent0` tinyint(4) DEFAULT NULL,
+  `dent1` tinyint(4) DEFAULT NULL,
+  `dent2` tinyint(4) DEFAULT NULL,
+  `dent3` tinyint(4) DEFAULT NULL,
+  `ur1` varchar(34) NOT NULL DEFAULT '',
+  `ur2` varchar(34) NOT NULL DEFAULT '',
+  `ur3` varchar(34) NOT NULL DEFAULT '',
+  `ur4` varchar(34) NOT NULL DEFAULT '',
+  `ur5` varchar(34) NOT NULL DEFAULT '',
+  `ur6` varchar(34) NOT NULL DEFAULT '',
+  `ur7` varchar(34) NOT NULL DEFAULT '',
+  `ur8` varchar(34) NOT NULL DEFAULT '',
+  `ul1` varchar(34) NOT NULL DEFAULT '',
+  `ul2` varchar(34) NOT NULL DEFAULT '',
+  `ul3` varchar(34) NOT NULL DEFAULT '',
+  `ul4` varchar(34) NOT NULL DEFAULT '',
+  `ul5` varchar(34) NOT NULL DEFAULT '',
+  `ul6` varchar(34) NOT NULL DEFAULT '',
+  `ul7` varchar(34) NOT NULL DEFAULT '',
+  `ul8` varchar(34) NOT NULL DEFAULT '',
+  `lr1` varchar(34) NOT NULL DEFAULT '',
+  `lr2` varchar(34) NOT NULL DEFAULT '',
+  `lr3` varchar(34) NOT NULL DEFAULT '',
+  `lr4` varchar(34) NOT NULL DEFAULT '',
+  `lr5` varchar(34) NOT NULL DEFAULT '',
+  `lr6` varchar(34) NOT NULL DEFAULT '',
+  `lr7` varchar(34) NOT NULL DEFAULT '',
+  `lr8` varchar(34) NOT NULL DEFAULT '',
+  `ll1` varchar(34) NOT NULL DEFAULT '',
+  `ll2` varchar(34) NOT NULL DEFAULT '',
+  `ll3` varchar(34) NOT NULL DEFAULT '',
+  `ll4` varchar(34) NOT NULL DEFAULT '',
+  `ll5` varchar(34) NOT NULL DEFAULT '',
+  `ll6` varchar(34) NOT NULL DEFAULT '',
+  `ll7` varchar(34) NOT NULL DEFAULT '',
+  `ll8` varchar(34) NOT NULL DEFAULT '',
+  UNIQUE KEY `pt_sno` (`pt_sno`),
+  CONSTRAINT `static_chart_ibfk_1` FOREIGN KEY (`pt_sno`) REFERENCES `new_patients` (`serialno`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `static_chart`
+--
+
+LOCK TABLES `static_chart` WRITE;
+/*!40000 ALTER TABLE `static_chart` DISABLE KEYS */;
+INSERT INTO `static_chart` VALUES (1,NULL,16,NULL,NULL,'PV ','CR,LAVA ','MI ','B,GL ','MOD ','MO,CO ','','UE ','IM/TIT IM/ABUT  CR,V1 ','','','GI/MOD RT ','','','','UE ','','','','','OL,CO ','B ','FS ','UE ','','','','','','MOL,CO ','','UE ');
+/*!40000 ALTER TABLE `static_chart` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1554,4 +1616,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-06-20 15:47:36
+-- Dump completed on 2014-07-01 13:52:09
