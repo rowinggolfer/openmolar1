@@ -147,7 +147,6 @@ setup(
                 'openmolar.qt4gui.phrasebook',
                 'openmolar.qt4gui.printing',
                 'openmolar.qt4gui.printing.gp17',
-                'openmolar.qt4gui.tools',
                 'openmolar.settings',
                 'openmolar.ptModules'],
     package_data={'openmolar': ['resources/icons/*.*',
