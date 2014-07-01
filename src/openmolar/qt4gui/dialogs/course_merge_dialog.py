@@ -35,7 +35,7 @@ LOGGER = logging.getLogger("openmolar")
 class CourseMergeDialog(ExtendableDialog):
 
     def __init__(self, serialno, courseno1, courseno2, parent=None):
-        ExtendableDialog.__init__(self, parent)
+        ExtendableDialog.__init__(self, parent, remove_stretch=True)
         assert courseno1 > courseno2, "courses in wrong order"
         self.serialno = serialno
         self.courseno1 = courseno1
@@ -55,11 +55,16 @@ class CourseMergeDialog(ExtendableDialog):
         self.courseno2_browser = QtGui.QTextBrowser()
         self.preview_browser = QtGui.QTextBrowser()
 
+        self.splitter = QtGui.QSplitter()
+        self.splitter.setOrientation(QtCore.Qt.Vertical)
+
         self.insertWidget(header_label)
         self.insertWidget(self.polling_label)
-        self.insertWidget(self.courseno1_browser)
-        self.insertWidget(self.courseno2_browser)
-        self.insertWidget(self.preview_browser)
+        self.insertWidget(self.splitter)
+
+        self.splitter.addWidget(self.courseno1_browser)
+        self.splitter.addWidget(self.courseno2_browser)
+        self.splitter.addWidget(self.preview_browser)
 
         self.adv_widget = QtGui.QLabel(_("No advanced options available"))
         self.add_advanced_widget(self.adv_widget)
@@ -78,8 +83,10 @@ class CourseMergeDialog(ExtendableDialog):
         self.tx_course2 = treatment_course.TreatmentCourse(self.serialno,
                                                            self.courseno2)
         self.polling_label.hide()
-        self.courseno1_browser.setHtml(self.tx_course1.to_html())
-        self.courseno2_browser.setHtml(self.tx_course2.to_html())
+        course1_html = self.tx_course1.to_html()
+        course2_html = self.tx_course2.to_html()
+        self.courseno1_browser.setHtml(course1_html)
+        self.courseno2_browser.setHtml(course2_html)
         if self.tx_course1.examt and self.tx_course2.examt:
             message = _("Courses can't be merged, both have examinations")
         else:
@@ -87,6 +94,12 @@ class CourseMergeDialog(ExtendableDialog):
                                          self.merged_course.to_html()
                                          )
         self.preview_browser.setText(message)
+        sizes = [(course1_html.count("<tr>") + 1) * 300,
+                 (course1_html.count("<tr>") + 1) * 300,
+                 (message.count("<tr>") + 1) * 300]
+        self.splitter.setSizes(sizes)
+        LOGGER.debug(sizes)
+
         self.enableApply(self._merged_course is not None)
 
     @property
@@ -102,7 +115,8 @@ class CourseMergeDialog(ExtendableDialog):
             new_course = copy.deepcopy(self.tx_course2)
             if self.tx_course1.accd < new_course.accd:
                 new_course.accd = self.tx_course1.accd
-            if self.tx_course1.cmpd > new_course.cmpd:
+            if (new_course.cmpd is not None or
+               self.tx_course1.cmpd > new_course.cmpd):
                 new_course.cmpd = self.tx_course1.cmpd
             if (new_course.examd is None or
                (self.tx_course1.examd and

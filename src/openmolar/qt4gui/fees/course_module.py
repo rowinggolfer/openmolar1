@@ -25,6 +25,7 @@
 '''
 functions to open a course, close a course, or check if one is needed.
 '''
+import datetime
 import logging
 
 from PyQt4 import QtGui, QtCore
@@ -70,9 +71,10 @@ def newCourseNeeded(om_gui):
               " using this record, use menu-&gt;tools-&gt;"
               "Fix Locked New Course of Treatment"))
         om_gui.advise(message, 1)
-
+    elif course_should_be_resumed(om_gui):
+        return False
     elif setupNewCourse(om_gui):
-        LOGGER.info("new course started with accd of '%s'" %
+        LOGGER.info("new course started with accd of '%s'",
                     om_gui.pt.treatment_course.accd)
         return False
     else:
@@ -126,27 +128,28 @@ def setupNewCourse(om_gui):
 
 
 def apply_new_courseno(om_gui, new_courseno, accd=None):
-        new_course = om_gui.pt.new_tx_course(new_courseno)
-        # om_gui.pt.dbstate.treatment_course = new_course
-        om_gui.pt.treatment_course.setAccd(accd)
-        # force a recheck for the new course date
-        om_gui.pt.forget_fee_table()
-        om_gui.pt.estimates = []
-        om_gui.load_newEstPage()
-        om_gui.ui.planChartWidget.clear(keepSelection=True)
-        om_gui.ui.completedChartWidget.clear(keepSelection=True)
-        om_gui.updateDetails()
-        om_gui.load_clinicalSummaryPage()
-        om_gui.load_receptionSummaryPage()
-        om_gui.pt.addHiddenNote("open_course")
-        om_gui.updateHiddenNotesLabel()
-        message = "%s<hr />%s <em>%s</em>" % (
-            _("Successfully started new course of treatment"),
-            _("Using Feescale"),
-            om_gui.pt.fee_table.briefName
-        )
-        om_gui.advise(message)
-        return True
+    new_course = om_gui.pt.new_tx_course(new_courseno)
+    # om_gui.pt.dbstate.treatment_course = new_course
+    om_gui.pt.treatment_course.setAccd(accd)
+    # force a recheck for the new course date
+    om_gui.pt.forget_fee_table()
+    om_gui.pt.estimates = []
+    om_gui.load_newEstPage()
+    om_gui.ui.planChartWidget.clear(keepSelection=True)
+    om_gui.ui.completedChartWidget.clear(keepSelection=True)
+    om_gui.updateDetails()
+    om_gui.load_clinicalSummaryPage()
+    om_gui.load_receptionSummaryPage()
+    om_gui.pt.addHiddenNote("open_course")
+    om_gui.updateHiddenNotesLabel()
+    message = "%s<hr />%s <em>%s</em>" % (
+        _("Successfully started new course of treatment"),
+        _("Using Feescale"),
+        om_gui.pt.fee_table.briefName
+    )
+    om_gui.debug_browser_refresh_func = None
+    om_gui.advise(message)
+    return True
 
 
 def prompt_close_course(om_gui):
@@ -212,6 +215,7 @@ def closeCourse(om_gui, leaving=False):
         plan.completedFillsToStatic(om_gui.pt)
         if not leaving:
             om_gui.refresh_charts()
+            om_gui.debug_browser_refresh_func = None
 
         return True
 
@@ -228,6 +232,34 @@ def offerFinalPaperWork(om_gui):
         form_printer.print_(final_paperwork=True)
 
 
+def course_should_be_resumed(om_gui):
+    '''
+    see if it would make more sense to resume a course rather than start a new
+    one.
+    '''
+
+    if not om_gui.pt.treatment_course.cmpd:
+        return False
+    elapsed = localsettings.currentDay() - om_gui.pt.treatment_course.cmpd
+    if elapsed > datetime.timedelta(days=7):
+        return False
+    elif elapsed == datetime.timedelta(days=0):
+        message = _("A course was closed earlier today.")
+    elif elapsed == datetime.timedelta(days=1):
+        message = _("A course was closed yesterday.")
+    else:
+        message = _("A course was closed less than a week ago.")
+
+    if QtGui.QMessageBox.question(
+        om_gui,
+        _("Question"),
+        "%s<hr />%s" % (message, _("Would you like to resume this course?")),
+        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+            QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
+            return resumeCourse(om_gui)
+    return False
+
+
 def resumeCourse(om_gui):
     '''
     resume the previous treatment course
@@ -235,7 +267,7 @@ def resumeCourse(om_gui):
     if QtGui.QMessageBox.question(
         om_gui,
         _("Confirm"),
-        _("Resume the previous course of treatment?"),
+        _("Are you sure you wish to Resume the previous course of treatment?"),
         QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
             QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
 
@@ -245,6 +277,7 @@ def resumeCourse(om_gui):
         om_gui.pt.addHiddenNote("resume_course")
         om_gui.updateHiddenNotesLabel()
         plan.reverse_completedFillsToStatic(om_gui.pt)
+        om_gui.debug_browser_refresh_func = None
         return True
 
 

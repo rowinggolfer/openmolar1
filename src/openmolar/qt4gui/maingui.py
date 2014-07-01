@@ -193,6 +193,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.reloadButton.setEnabled(False)
         self.ui.relatedpts_pushButton.setEnabled(False)
 
+        self.debug_browser_refresh_func = None
+
         self.forum_timer = QtCore.QTimer()
         QtCore.QTimer.singleShot(100, self.check_first_run)
 
@@ -693,6 +695,9 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         elif ci == 8:  # -- perio tab
             LOGGER.debug("perio interface being rewritten")
 
+        elif ci == 9:  # -- history tab
+            self.refresh_debug_browser()
+
         self.wait(False)
 
     def update_plan_est(self):
@@ -1177,7 +1182,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         if serialno in (0, None):
             self.update_family_label()
             return
-
+        LOGGER.info("loading record %s", serialno)
         if self.pt and serialno == self.pt.serialno and not newPatientReload:
             self.ui.main_tabWidget.setCurrentIndex(0)
             self.advise(_("Patient already loaded"))
@@ -1328,6 +1333,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         if self.ui.tabWidget.currentIndex() == 4:  # clinical summary
             self.ui.summaryChartWidget.update()
         self.ui.debugBrowser.setText("")
+        self.debug_browser_refresh_func = None
 
         self.update_family_label()
         self.medalert()
@@ -1994,9 +2000,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         fees_module.expandFees(self)
 
     def plan_page_course_but_clicked(self):
-        if self.pt.underTreatment:  # shouldn't happen
-            return
-        course_module.setupNewCourse(self)
+        course_module.newCourseNeeded(self)
 
     def closeTx_pushButton_clicked(self):
         '''
@@ -2048,6 +2052,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         '''
         add Xray items to COMPLETED tx
         '''
+        if course_module.newCourseNeeded(self):
+            return
         manipulate_plan.xrayAdd(self, complete=True)
 
     def addPerioItems(self):
@@ -2312,15 +2318,17 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         '''
         show all past payments for a patient
         '''
-        html = paymentHistory.details(self.pt.serialno)
-        self.ui.debugBrowser.setText(html)
+        self.debug_browser_refresh_func = partial(
+            paymentHistory.details, self.pt.serialno)
+        self.refresh_debug_browser()
 
     def pastTreatment_clicked(self):
         '''
         show all past estimates for a patient
         '''
-        html = daybookHistory.details(self.pt.serialno)
-        self.ui.debugBrowser.setText(html)
+        self.debug_browser_refresh_func = partial(
+            daybookHistory.details, self.pt.serialno)
+        self.refresh_debug_browser()
 
     def pastCourses_clicked(self):
         '''
@@ -2329,37 +2337,46 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         '''
         dl = CourseHistoryOptionsDialog(self)
         if dl.exec_():
-            html = courseHistory.details(
-                self.pt.serialno, dl.include_estimates, dl.include_daybook)
-            self.ui.debugBrowser.setText(html)
+            self.debug_browser_refresh_func = partial(
+                courseHistory.details,
+                self.pt.serialno,
+                self.pt.courseno0 if self.pt.underTreatment else None,
+                dl.include_estimates,
+                dl.include_daybook
+            )
+            self.refresh_debug_browser()
 
     def pastEstimates_clicked(self):
         '''
         show all past estimates for a patient
         '''
-        html = estimatesHistory.details(self.pt.serialno)
-        self.ui.debugBrowser.setText(html)
+        self.debug_browser_refresh_func = partial(
+            estimatesHistory.details, self.pt.serialno)
+        self.refresh_debug_browser()
 
     def NHSClaims_clicked(self):
         '''
         show all past NHS claims for a patient
         '''
-        html = nhs_claims.details(self.pt.serialno)
-        self.ui.debugBrowser.setText(html)
+        self.debug_browser_refresh_func = partial(
+            nhs_claims.details, self.pt.serialno)
+        self.refresh_debug_browser()
 
     def show_memo_history(self):
         '''
         show all memos for a patient
         '''
-        html = memos.html_history(self.pt.serialno)
-        self.ui.debugBrowser.setText(html)
+        self.debug_browser_refresh_func = partial(
+            memos.html_history, self.pt.serialno)
+        self.refresh_debug_browser()
 
     def show_estimate_versioning(self):
         '''
         show how the current estimate has changed
         '''
-        html = est_logger.html_history(self.pt.courseno0)
-        self.ui.debugBrowser.setText(html)
+        self.debug_browser_refresh_func = partial(
+            est_logger.html_history, self.pt.serialno)
+        self.refresh_debug_browser()
 
     def nhsClaimsShortcut(self):
         '''
@@ -2387,8 +2404,9 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             txtype = None
 
         changesOnly = self.ui.ptAtts_checkBox.isChecked()
-        html = debug_html.toHtml(self.pt, txtype, changesOnly)
-        self.ui.debugBrowser.setText(html)
+        self.debug_browser_refresh_func = partial(
+            debug_html.toHtml, self.pt, txtype, changesOnly)
+        self.refresh_debug_browser()
 
     def cashbookView(self):
         '''
@@ -3257,23 +3275,40 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.advise(daybook.filter_help_text(), 1)
 
     def allow_all_history_edits(self, bool_value):
-        self.edit_currtrtmt2(bool_value)
+        self.edit_currtrtmt2(bool_value, False)
         self.ui.actionEdit_Courses.setChecked(bool_value)
-        self.edit_estimates(bool_value)
+        self.edit_estimates(bool_value, False)
         self.ui.actionEdit_Estimates.setChecked(bool_value)
-        self.allow_edit_daybook(bool_value)
+        self.allow_edit_daybook(bool_value, False)
+        self.refresh_debug_browser()
 
-    def edit_currtrtmt2(self, bool_value):
+    def edit_currtrtmt2(self, bool_value, refresh=True):
         courseHistory.ALLOW_EDIT = bool_value
+        if refresh:
+            self.refresh_debug_browser()
 
-    def allow_edit_daybook(self, bool_value):
+    def allow_edit_daybook(self, bool_value, refresh=True):
         self.ui.actionAllow_Edit_Treatment.setChecked(bool_value)
         self.ui.actionAllow_Edit.setChecked(bool_value)
         daybook.ALLOW_TX_EDITS = bool_value
         daybookHistory.ALLOW_TX_EDITS = bool_value
+        if refresh:
+            self.refresh_debug_browser()
 
-    def edit_estimates(self, bool_value):
+    def edit_estimates(self, bool_value, refresh=True):
         estimatesHistory.ALLOW_EDIT = bool_value
+        if refresh:
+            self.refresh_debug_browser()
+
+    def refresh_debug_browser(self):
+        '''
+        update the debug browser
+        '''
+        LOGGER.debug("refreshing debug %s", self.debug_browser_refresh_func)
+        if self.debug_browser_refresh_func is None:
+            self.ui.debugBrowser.setText("")
+        else:
+            self.ui.debugBrowser.setText(self.debug_browser_refresh_func())
 
     def set_browser_source(self, url):
         '''

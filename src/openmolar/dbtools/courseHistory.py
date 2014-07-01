@@ -39,16 +39,23 @@ from openmolar.ptModules.course_checker import CourseChecker
 
 LOGGER = logging.getLogger("openmolar")
 
-QUERY = '''SELECT courseno from currtrtmt2 where serialno = %s
-order by courseno desc, accd desc'''
+QUERY = '''SELECT courseno FROM currtrtmt2 WHERE serialno=%s
+ORDER BY courseno desc, accd desc'''
 
 ALLOW_EDIT = False
 
 
-def _get_courses(sno):
+def _get_courses(sno, current_csno):
+    # query allows exclusion of current course.
+    if current_csno is None:
+        query = QUERY
+        values = (sno,)
+    else:
+        query = QUERY.replace("ORDER", " AND courseno!=%s ORDER")
+        values = (sno, current_csno)
     db = connect()
     cursor = db.cursor()
-    cursor.execute(QUERY, (sno,))
+    cursor.execute(query, values)
     rows = cursor.fetchall()
     cursor.close()
 
@@ -56,11 +63,11 @@ def _get_courses(sno):
         yield TreatmentCourse(sno, row[0])
 
 
-def details(sno, include_estimates=False, include_daybook=False):
+def details(sno, current_csno, include_estimates=False, include_daybook=False):
     '''
     returns an html page showing pt's Treatment History along with estimates
     '''
-    courses = list(_get_courses(sno))
+    courses = list(_get_courses(sno, current_csno))
     estimates_list = estimatesHistory.getEsts(sno) if include_estimates else []
     daybook_list = list(daybook.all_data(sno)) if include_daybook else []
     daybook_course_guesses = {}
@@ -72,6 +79,13 @@ def details(sno, include_estimates=False, include_daybook=False):
         len(courses),
         _("found")
     )
+
+    if current_csno is not None:
+        html += "<strong>%s %s %s</strong><br />" % (
+            _("Ignoring course number"),
+            current_csno,
+            _("as this is active")
+        )
 
     days_elapsed = None
 
@@ -182,14 +196,16 @@ def details(sno, include_estimates=False, include_daybook=False):
         try:
             prev_course = courses[i + 1]
             if ALLOW_EDIT:
-                merge_link = '<br /><a href="merge_courses?%s+%s">%s</a>' % (
+                merge_link = '<br /><a href="merge_courses?%s+%s">%s?</a>' % (
                     course.courseno, prev_course.courseno,
-                    _("Merge with following course")
+                    _("Merge with previous course")
                 )
                 course_html = course_html.replace("<!--merge-->", merge_link)
             days_elapsed = (course.accd - prev_course.cmpd).days
         except IndexError:
             days_elapsed = None
+            pass
+        except TypeError:
             pass
         finally:
             course_html += '<br /><hr /><br />'
@@ -230,4 +246,4 @@ if __name__ == "__main__":
     from gettext import gettext as _
     # ALLOW_EDIT = True
     localsettings.initiate()
-    print details(17322, True, True).encode("ascii", "replace")
+    print details(27107, 0, True, True).encode("ascii", "replace")
