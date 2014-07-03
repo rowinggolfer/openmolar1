@@ -2750,6 +2750,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.actionAdd_Clinician.triggered.connect(self.add_clinician)
         self.ui.actionEdit_Practice_Details.triggered.connect(
             self.edit_practice)
+        self.ui.actionEdit_Standard_Letters.triggered.connect(
+            self.edit_standard_letters)
 
     def signals_estimates(self):
         # Estimates and Course Management
@@ -3391,6 +3393,11 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         dl = EditPracticeDialog(self)
         if dl.exec_():
             self.advise(_("Practice Name and/or Address modified."), 1)
+
+    def edit_standard_letters(self):
+        dl = EditStandardLettersDialog(self)
+        if dl.exec_():
+            CorrespondenceDialog.LETTERS = None
 
     def clear_todays_emergencies(self):
         self.show_diary()

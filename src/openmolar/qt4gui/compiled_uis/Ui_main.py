@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/main.ui'
 #
-# Created: Mon Jun 23 13:41:48 2014
+# Created: Wed Jul  2 22:18:57 2014
 #      by: PyQt4 UI code generator 4.11
 #
 # WARNING! All changes made in this file will be lost!
@@ -1500,6 +1500,8 @@ class Ui_MainWindow(object):
         self.chartsTableWidget.setSelectionBehavior(
             QtGui.QAbstractItemView.SelectItems)
         self.chartsTableWidget.setObjectName(_fromUtf8("chartsTableWidget"))
+        self.chartsTableWidget.setColumnCount(0)
+        self.chartsTableWidget.setRowCount(0)
         self.horizontalLayout_4.addWidget(self.chartsTableWidget)
         self.stackedWidget.addWidget(self.table)
         self.charts = QtGui.QWidget()
@@ -2363,6 +2365,8 @@ class Ui_MainWindow(object):
             QtGui.QAbstractItemView.SelectRows)
         self.accounts_tableWidget.setObjectName(
             _fromUtf8("accounts_tableWidget"))
+        self.accounts_tableWidget.setColumnCount(0)
+        self.accounts_tableWidget.setRowCount(0)
         self.gridLayout_9.addWidget(self.accounts_tableWidget, 1, 0, 1, 5)
         spacerItem20 = QtGui.QSpacerItem(
             746,
@@ -2965,6 +2969,9 @@ class Ui_MainWindow(object):
         self.actionInsert_Regular_Blocks = QtGui.QAction(MainWindow)
         self.actionInsert_Regular_Blocks.setObjectName(
             _fromUtf8("actionInsert_Regular_Blocks"))
+        self.actionEdit_Standard_Letters = QtGui.QAction(MainWindow)
+        self.actionEdit_Standard_Letters.setObjectName(
+            _fromUtf8("actionEdit_Standard_Letters"))
         self.menuMenu.addAction(self.action_Open_Patient)
         self.menuMenu.addAction(self.action_save_patient)
         self.menuMenu.addSeparator()
@@ -3006,18 +3013,19 @@ class Ui_MainWindow(object):
         self.menuTools.addSeparator()
         self.menuTools.addAction(self.actionFix_Locked_New_Course_of_Treatment)
         self.menuTools.addSeparator()
-        self.menuTools.addAction(self.actionSet_Clinician)
         self.menuTools.addAction(self.actionSet_Assistant)
+        self.menuTools.addAction(self.actionSet_Clinician)
         self.menuTools.addAction(self.actionSet_Surgery_Number)
+        self.menuTools.addAction(self.actionReset_Supervisor_Password)
         self.menuTools.addSeparator()
+        self.menuTools.addAction(self.actionEdit_Feescales)
         self.menuTools.addAction(self.actionEdit_Phrasebooks)
         self.menuTools.addAction(self.actionEdit_Referral_Centres)
-        self.menuTools.addAction(self.actionEdit_Feescales)
+        self.menuTools.addAction(self.actionEdit_Standard_Letters)
+        self.menuTools.addAction(self.actionEdit_Practice_Details)
         self.menuTools.addSeparator()
-        self.menuTools.addAction(self.actionReset_Supervisor_Password)
         self.menuTools.addAction(self.actionAdd_User)
         self.menuTools.addAction(self.actionAdd_Clinician)
-        self.menuTools.addAction(self.actionEdit_Practice_Details)
         self.menu_Appointments.addAction(
             self.actionClear_Today_s_Emergency_Slots)
         self.menu_Appointments.addSeparator()
@@ -3553,6 +3561,7 @@ class Ui_MainWindow(object):
         self.actionClear_Today_s_Emergency_Slots.setText(
             _("Clear Today\'s Emergency Slots"))
         self.actionInsert_Regular_Blocks.setText(_("Insert Regular Blocks"))
+        self.actionEdit_Standard_Letters.setText(_("Edit Standard Letters"))
 
 from PyQt4 import QtWebKit
 from openmolar.qt4gui import resources_rc

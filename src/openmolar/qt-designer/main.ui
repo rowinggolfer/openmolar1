@@ -5078,18 +5078,19 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <addaction name="separator"/>
     <addaction name="actionFix_Locked_New_Course_of_Treatment"/>
     <addaction name="separator"/>
-    <addaction name="actionSet_Clinician"/>
     <addaction name="actionSet_Assistant"/>
+    <addaction name="actionSet_Clinician"/>
     <addaction name="actionSet_Surgery_Number"/>
+    <addaction name="actionReset_Supervisor_Password"/>
     <addaction name="separator"/>
+    <addaction name="actionEdit_Feescales"/>
     <addaction name="actionEdit_Phrasebooks"/>
     <addaction name="actionEdit_Referral_Centres"/>
-    <addaction name="actionEdit_Feescales"/>
+    <addaction name="actionEdit_Standard_Letters"/>
+    <addaction name="actionEdit_Practice_Details"/>
     <addaction name="separator"/>
-    <addaction name="actionReset_Supervisor_Password"/>
     <addaction name="actionAdd_User"/>
     <addaction name="actionAdd_Clinician"/>
-    <addaction name="actionEdit_Practice_Details"/>
    </widget>
    <widget class="QMenu" name="menu_Appointments">
     <property name="title">
@@ -5327,6 +5328,11 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <action name="actionInsert_Regular_Blocks">
    <property name="text">
     <string>Insert Regular Blocks</string>
+   </property>
+  </action>
+  <action name="actionEdit_Standard_Letters">
+   <property name="text">
+    <string>Edit Standard Letters</string>
    </property>
   </action>
  </widget>

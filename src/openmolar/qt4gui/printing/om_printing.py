@@ -37,17 +37,15 @@ from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings, utilities
 
 from openmolar.ptModules import estimates
-from openmolar.ptModules import standardletter
 
 from openmolar.dbtools import docsprinted
 from openmolar.dbtools import appointments
 from openmolar.dbtools import patient_class
 from openmolar.dbtools import patient_write_changes
 from openmolar.dbtools import referral
+from openmolar.dbtools import standard_letter
 
-from openmolar.qt4gui.compiled_uis import Ui_enter_letter_text
 from openmolar.qt4gui.compiled_uis import Ui_daylist_print
-from openmolar.qt4gui.compiled_uis import Ui_ortho_ref_wizard
 
 #--modules which use qprinter
 from openmolar.qt4gui.printing import receiptPrint
@@ -61,6 +59,7 @@ from openmolar.qt4gui.printing import accountPrint
 from openmolar.qt4gui.printing import estimatePrint
 from openmolar.qt4gui.printing.mh_print import MHPrint
 
+from openmolar.qt4gui.dialogs.correspondence_dialog import CorrespondenceDialog
 from openmolar.qt4gui.dialogs.print_record_dialog import PrintRecordDialog
 
 LOGGER = logging.getLogger("openmolar")
@@ -118,26 +117,25 @@ def printLetter(om_gui):
     if om_gui.pt.serialno == 0:
         om_gui.advise(_("no patient selected"), 1)
         return
-    html = standardletter.getHtml(om_gui.pt)
-    Dialog = QtGui.QDialog()
-    dl = Ui_enter_letter_text.Ui_Dialog()
-    dl.setupUi(Dialog)
-    dl.textEdit.setHtml(html)
-    referred_pt = om_gui.pt
-    Dialog.show()
+    html = standard_letter.getHtml(om_gui.pt)
+    dl = CorrespondenceDialog(html, om_gui.pt, parent=None)
+    dl.show()
 
-    if Dialog.exec_():
-        html = dl.textEdit.toHtml()
-        myclass = letterprint.letter(html)
-        myclass.printpage()
-        html = str(html.toAscii())
-        docsprinted.add(referred_pt.serialno, "std letter (html)", html)
-        referred_pt.addHiddenNote("printed", "std letter")
-        if referred_pt == om_gui.pt:
-            if om_gui.ui.prevCorres_treeWidget.isVisible():
-                om_gui.docsPrintedInit()
-        else:
-            referred_pt.toNotes(referred_pt.serialno, referred_pt.HIDDENNOTES)
+    if dl.exec_():
+        letter = letterprint.letter(dl.text)
+        if letter.printpage():
+            docsprinted.add(dl.pt.serialno,
+                            "%s (html)" % dl.letter_description,
+                            dl.text)
+            dl.pt.addHiddenNote("printed",
+                                "%s %s" % (_("letter"), dl.letter_description)
+                                )
+            if dl.pt == om_gui.pt:
+                if om_gui.ui.prevCorres_treeWidget.isVisible():
+                    om_gui.docsPrintedInit()
+                    om_gui.updateHiddenNotesLabel()
+            else:
+                dl.pt.toNotes(dl.pt.serialno, dl.pt.HIDDENNOTES)
 
 
 def printAccountsTable(om_gui):
@@ -211,7 +209,7 @@ def customEstimate(om_gui, html=""):
         om_gui.advise(_("no patient selected"), 1)
         return
     if html == "":
-        html = standardletter.getHtml(om_gui.pt)
+        html = standard_letter.getHtml(om_gui.pt)
         pt_total = 0
         ehtml = "<br />%s" % _(
             "Estimate for your current course of treatment.")
@@ -266,24 +264,19 @@ def htmlEditor(om_gui, type="", html="", version=0):
     '''
     raise a dialog to print an html editor
     '''
-    Dialog = QtGui.QDialog(om_gui)
-    dl = Ui_enter_letter_text.Ui_Dialog()
-    dl.setupUi(Dialog)
-    dl.textEdit.setHtml(html)
-    if Dialog.exec_():
-        html = dl.textEdit.toHtml()
-        myclass = letterprint.letter(html)
-        myclass.printpage()
+    dl = CorrespondenceDialog(html, om_gui.pt, preformatted=False, parent=None)
+    dl.show()
 
-        html = str(dl.textEdit.toHtml().toAscii())
-
-        docsprinted.add(
-            om_gui.pt.serialno,
-            "%s (html)" %
-            type,
-            html,
-            version +
-            1)
+    if dl.exec_():
+        letter = letterprint.letter(dl.text)
+        if letter.printpage():
+            if dl.has_edits:
+                docsprinted.add(
+                    dl.pt.serialno,
+                    "%s(html)" % type,
+                    dl.text,
+                    version + 1
+                )
         return True
 
 
@@ -294,50 +287,24 @@ def printReferral(om_gui):
         om_gui.advise("no patient selected", 1)
         return
     desc = om_gui.ui.referralLettersComboBox.currentText()
-    # todo re-enable this
-    # if "Ortho" in desc:
-    #    orthoWizard(om_gui)
-    #    return
+
     html = referral.getHtml(desc, om_gui.pt)
-    Dialog = QtGui.QDialog()  # ,  QtCore.Qt.WindowMinimizeButtonHint)
-    dl = Ui_enter_letter_text.Ui_Dialog()
-    dl.setupUi(Dialog)
-    dl.textEdit.setHtml(html)
-    referred_pt = om_gui.pt
-    Dialog.show()
-    if Dialog.exec_():
-        html = dl.textEdit.toHtml()
-        myclass = letterprint.letter(html)
-        myclass.printpage()
-        docsprinted.add(referred_pt.serialno, "referral (html)", html)
-        referred_pt.addHiddenNote("printed", "referral")
-        om_gui.updateHiddenNotesLabel()
+    dl = CorrespondenceDialog(html, om_gui.pt, preformatted=False, parent=None)
+    dl.show()
+    if dl.exec_():
+        letter = letterprint.letter(dl.text)
+        if letter.printpage():
+            docsprinted.add(dl.pt.serialno, "%s referral (html)" % desc, html)
+            dl.pt.addHiddenNote("printed", "referral")
 
-        if referred_pt == om_gui.pt:
-            if om_gui.ui.prevCorres_treeWidget.isVisible():
-                om_gui.docsPrintedInit()
-        else:
-            referred_pt.toNotes(referred_pt.serialno, referred_pt.HIDDENNOTES)
+            if dl.pt == om_gui.pt:
+                if om_gui.ui.prevCorres_treeWidget.isVisible():
+                    om_gui.docsPrintedInit()
+                    om_gui.updateHiddenNotesLabel()
+            else:
+                dl.pt.toNotes(dl.pt.serialno, dl.pt.HIDDENNOTES)
 
-
-def orthoWizard(om_gui):
-    '''prints a referal letter controlled by referal.xml file'''
-    desc = om_gui.ui.referralLettersComboBox.currentText()
-    html = referral.getHtml(desc, om_gui.pt)
-
-    Dialog = QtGui.QDialog(om_gui)
-    dl = Ui_ortho_ref_wizard.Ui_Dialog()
-    dl.setupUi(Dialog)
-    dl.notes_textEdit.setHtml(html)
-    if Dialog.exec_():
-        html = dl.textEdit.toHtml()
-        myclass = letterprint.letter(html)
-        myclass.printpage()
-        docsprinted.add(om_gui.pt.serialno, "referral (html)", html)
-        om_gui.pt.addHiddenNote("printed", "referral")
-        if om_gui.ui.prevCorres_treeWidget.isVisible():
-            om_gui.docsPrintedInit()
-        om_gui.updateHiddenNotesLabel()
+        return True
 
 
 def printChart(om_gui):
@@ -572,3 +539,13 @@ def historyPrint(om_gui):
     html = om_gui.ui.debugBrowser.toHtml()
     myclass = bookprint.printBook(html)
     myclass.printpage()
+
+
+if __name__ == "__main__":
+    import os
+    from openmolar.dbtools import patient_class
+    os.chdir(os.path.expanduser("~"))
+    app = QtGui.QApplication([])
+    widg = QtGui.QWidget()
+    widg.pt = patient_class.patient(1)
+    printLetter(widg)

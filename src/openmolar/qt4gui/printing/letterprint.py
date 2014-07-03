@@ -35,7 +35,7 @@ class letter():
     def printpage(self, askfirst=True):
         dialog = QtGui.QPrintDialog(self.printer)
         if askfirst and not dialog.exec_():
-            return
+            return False
         document = QtGui.QTextDocument()
         document.setHtml(self.html)
         document.print_(self.printer)
