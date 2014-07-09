@@ -242,7 +242,7 @@ def forumReply(om_gui):
         post = forum.post()
         post.parent_ix = parentix
         post.topic = dl.topic_lineEdit.text().toAscii()
-        post.comment = dl.comment_textEdit.toPlainText().toAscii()[:255]
+        post.comment = dl.comment_textEdit.toPlainText().toAscii()
         post.inits = dl.from_comboBox.currentText()
         post.recipient = dl.to_comboBox.currentText()
         forum.commitPost(post)
