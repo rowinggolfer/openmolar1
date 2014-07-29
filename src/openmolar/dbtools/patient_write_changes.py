@@ -319,48 +319,11 @@ def toNotes(serialno, newnotes):
 
 def discreet_changes(pt, changes):
     '''
-    this updates only the selected atts
-    (usually called by automated proc such as recalls...
-    and accounts) only updates the patients table
+    this is actually a duplication of the all-changes function, and writes only
+    the changes passed.
+    the only reason to keep it is for the extra message posted to the log.
     '''
     LOGGER.warning("discreet changes sno=%s %s", pt.serialno, changes)
     if not changes:
         LOGGER.error("no changes passed")
-    values = []
-    for change in changes:
-        values.append(pt.__dict__[change])
-    values.append(pt.serialno)
-
-    query = "update new_patients SET %s where serialno=%%s" % \
-        ", ".join(["%s = %%s" % change for change in changes])
-
-    db = connect()
-    cursor = db.cursor()
-    cursor.execute(query, values)
-    db.commit()
-    cursor.close()
-    return True
-
-
-def discreet_money_changes(pt, changes):
-    '''
-    update patient_monet attributes.
-    '''
-    LOGGER.warning("discreet_money_changes sno=%s %s", pt.serialno, changes)
-    if not changes:
-        LOGGER.error("no changes passed!")
-        return
-    values = []
-    for change in changes:
-        values.append(pt.__dict__[change])
-    values.append(pt.serialno)
-
-    query = "update patient_money SET %s where pt_sno=%%s" % \
-            ", ".join(["%s = %%s" % change for change in changes])
-
-    db = connect()
-    cursor = db.cursor()
-    cursor.execute(query, values)
-    db.commit()
-    cursor.close()
-    return True
+    return all_changes(pt, changes)

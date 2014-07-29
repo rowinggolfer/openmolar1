@@ -134,10 +134,10 @@ def takePayment(om_gui):
                                           paymentPt.HIDDENNOTES)
 
             LOGGER.debug("writing payment notes")
-            if (patient_write_changes.discreet_money_changes(
+            if (patient_write_changes.discreet_changes(
                 paymentPt, ("money2", "money3", "money11")) and
             om_gui.pt.serialno != 0
-                ):
+                    ):
                 LOGGER.debug("updating patient's stored money values")
                 om_gui.pt.dbstate.money2 = om_gui.pt.money2
                 om_gui.pt.dbstate.money3 = om_gui.pt.money3
