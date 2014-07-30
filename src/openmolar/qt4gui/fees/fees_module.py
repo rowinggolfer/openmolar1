@@ -130,9 +130,6 @@ def takePayment(om_gui):
                 LOGGER.debug(
                     "Payment patient is not loaded. skipping receipt offer.")
 
-            patient_write_changes.toNotes(paymentPt.serialno,
-                                          paymentPt.HIDDENNOTES)
-
             LOGGER.debug("writing payment notes")
             if (patient_write_changes.discreet_changes(
                 paymentPt, ("money2", "money3", "money11")) and
@@ -143,7 +140,6 @@ def takePayment(om_gui):
                 om_gui.pt.dbstate.money3 = om_gui.pt.money3
                 om_gui.pt.dbstate.money11 = om_gui.pt.money11
 
-            paymentPt.clearHiddenNotes()
             om_gui.updateDetails()
             om_gui.updateHiddenNotesLabel()
             LOGGER.info("PAYMENT ALL DONE!")
