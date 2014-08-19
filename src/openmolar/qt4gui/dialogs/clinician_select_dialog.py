@@ -83,7 +83,7 @@ class ClinicianSelectDialog(QtGui.QDialog):
                 input = QtGui.QMessageBox.question(
                     self,
                     _("Confirm"),
-                   _("Set assistant as") +
+                   _("Set Clinician as") +
                    " %s?" % chosen,
                    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
                    QtGui.QMessageBox.Yes)
