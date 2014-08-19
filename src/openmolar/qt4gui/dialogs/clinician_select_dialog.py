@@ -40,8 +40,8 @@ class ClinicianSelectDialog(QtGui.QDialog):
         self.listwidget.setSelectionMode(
             QtGui.QAbstractItemView.SingleSelection)
 
-        clinicians = [_("NONE")] + localsettings.activedents + \
-            localsettings.activehygs
+        clinicians = [_("NONE")] + list(localsettings.activedents) + \
+            list(localsettings.activehygs)
         self.listwidget.addItems(clinicians)
 
         try:
@@ -76,15 +76,17 @@ class ClinicianSelectDialog(QtGui.QDialog):
             localsettings.clinicianNo = localsettings.ops_reverse.get(
                 chosen, 0)
             curr_operator = localsettings.operator.split("/")
-            u2 = curr_operator[-1]
+            u2 = curr_operator[0]
             if u2 == chosen:
                 u2 = ""
             if u2:
-                input = QtGui.QMessageBox.question(self, _("Confirm"),
-                                                   _("Set assistant as") +
-                                                   " %s?" % u2,
-                                                   QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                                                   QtGui.QMessageBox.Yes)
+                input = QtGui.QMessageBox.question(
+                    self,
+                    _("Confirm"),
+                   _("Set assistant as") +
+                   " %s?" % chosen,
+                   QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                   QtGui.QMessageBox.Yes)
                 if input == QtGui.QMessageBox.No:
                     u2 = ""
             localsettings.setOperator(chosen, u2)
