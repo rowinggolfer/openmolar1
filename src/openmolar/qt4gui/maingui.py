@@ -2375,7 +2375,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         show how the current estimate has changed
         '''
         self.debug_browser_refresh_func = partial(
-            est_logger.html_history, self.pt.serialno)
+            est_logger.html_history, self.pt.courseno0)
         self.refresh_debug_browser()
 
     def nhsClaimsShortcut(self):
