@@ -125,21 +125,17 @@ def getPosts(user=None, include_closed=False):
     gets all active rows from a forum table
     '''
     global HIGHESTID
-    filter = ""
-    if not include_closed:
-        filter += ' open '
+    conditions, values = ["open"], [not include_closed]
     if user:
-        if filter == "":
-            filter += "and"
-        filter += ' recipient = ' + user
-    if filter != "":
-        filter = "where " + filter
+        conditions.append('recipient')
+        values.append(user)
     db = connect.connect()
     cursor = db.cursor()
     query = ('SELECT ix, parent_ix, topic, inits, fdate, recipient, comment '
-             'FROM forum %s ORDER BY parent_ix, ix' % filter)
+             'FROM forum where %s ORDER BY parent_ix, ix' %
+            " and ".join(["%s=%%s"%val for val in conditions]))
 
-    cursor.execute(query)
+    cursor.execute(query, values)
     rows = cursor.fetchall()
     cursor.close()
 
@@ -167,6 +163,6 @@ def getPosts(user=None, include_closed=False):
     return retarg
 
 if __name__ == "__main__":
-    posts = getPosts()
+    posts = getPosts(user="NW")
     for post in posts:
         print post.parent_ix, post.ix, post.topic
