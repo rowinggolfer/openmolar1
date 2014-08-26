@@ -321,6 +321,7 @@ test_complex_codes = [
 class DuckCourse(object):
     accd = date(1969, 12, 9)
     cmpd = date(2015, 12, 9)
+    ftr = True
 
 
 class DuckPatient(object):
