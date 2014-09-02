@@ -63,6 +63,13 @@ EXAMPLE_RESULT = '''
 </html>
 '''
 
+HEADERS = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+       'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+       'Accept-Encoding': 'none',
+       'Accept-Language': 'en-US,en;q=0.8',
+       'Connection': 'keep-alive'}
+
 TODAYS_LOOKUPS = {}  # {"IV1 1PP": "SIMD Area: 1"}
 
 
@@ -151,12 +158,11 @@ class ChildSmileDialog(BaseDialog):
         try:
             QtGui.QApplication.instance().setOverrideCursor(
                 QtCore.Qt.WaitCursor)
-            req = urllib2.Request(url)
-            response = urllib2.urlopen(req, timeout=10)
+            req = urllib2.Request(url, headers=HEADERS)
+            response = urllib2.urlopen(req, timeout=20)
             result = response.read()
             self.result = self._parse_result(result)
         except urllib2.URLError as exc:
-            raise socket.timeout(exc)
             LOGGER.error("url error polling NHS website?")
             self.result = _("Error polling website")
         except socket.timeout as e:
@@ -190,6 +196,7 @@ class ChildSmileDialog(BaseDialog):
                                                      4, 1, 5)
         if not result:
             self.reject()
+        self.result += " - Manually entered SIMD of %d" % simd
         return simd
 
     @property
