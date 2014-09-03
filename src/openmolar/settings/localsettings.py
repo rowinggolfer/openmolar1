@@ -45,8 +45,8 @@ SUPERVISOR = "c1219df26de403348e211a314ff2fce58aa6e28d"
 
 DBNAME = "default"
 
-# updated 3.7.2014
-CLIENT_SCHEMA_VERSION = "3.0"
+# updated 3.9.2014
+CLIENT_SCHEMA_VERSION = "3.1"
 
 DB_SCHEMA_VERSION = "unknown"
 

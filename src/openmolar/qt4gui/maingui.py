@@ -1381,13 +1381,12 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         else:
             self.ui.medNotes_pushButton.setStyleSheet("")
 
-        if self.pt.MH is not None:
-            mhdate = self.pt.MH[13]
-            if mhdate is None:
-                chkdate = ""
-            else:
-                chkdate = " - %s" % localsettings.formatDate(mhdate)
-            self.ui.medNotes_pushButton.setText("MedNotes%s" % chkdate)
+        mhdate = self.pt.mh_chkdate
+        if mhdate is None:
+            chkdate = ""
+        else:
+            chkdate = " - %s" % localsettings.formatDate(mhdate)
+        self.ui.medNotes_pushButton.setText("MedNotes%s" % chkdate)
 
         self.enableEdit(True)
 
@@ -1710,11 +1709,10 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         if self.pt.serialno == 0:
             self.advise("no patient selected", 1)
             return
-
-        dl = MedNotesDialog(self.pt, self)
+        dl = MedicalHistoryDialog(self.pt, self)
         if dl.exec_():
             dl.apply()
-            self.advise("Updated Medical Notes")
+            self.advise(_("Updated/Checked Medical Notes"))
             self.medalert()
             self.updateHiddenNotesLabel()
 

@@ -35,7 +35,7 @@ from openmolar.qt4gui.dialogs.assistant_select_dialog import AssistantSelectDial
 from openmolar.qt4gui.dialogs.clinician_select_dialog import ClinicianSelectDialog
 from openmolar.qt4gui.dialogs.duplicate_receipt_dialog import DuplicateReceiptDialog
 from openmolar.qt4gui.dialogs.save_discard_cancel import SaveDiscardCancelDialog
-from openmolar.qt4gui.dialogs.med_notes_dialog import MedNotesDialog
+from openmolar.qt4gui.dialogs.medical_history_dialog import MedicalHistoryDialog
 from openmolar.qt4gui.dialogs.choose_tooth_dialog import ChooseToothDialog
 from openmolar.qt4gui.dialogs.exam_wizard import ExamWizard
 from openmolar.qt4gui.dialogs.hygTreatWizard import HygTreatWizard
@@ -104,7 +104,8 @@ __all__ = ['AccountSeverityDialog',
            'InitialCheckDialog',
            'LoadRelativesDialog',
            'LoginDialog',
-           'MedNotesDialog',
+           #'MedNotesDialog',
+           'MedicalHistoryDialog',
            'NHSFormsConfigDialog',
            'ResetSupervisorPasswordDialog',
            'RecallDialog',

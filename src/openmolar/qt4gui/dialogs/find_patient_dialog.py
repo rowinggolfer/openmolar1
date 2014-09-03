@@ -104,6 +104,7 @@ class FindPatientDialog(QtGui.QDialog, Ui_patient_finder.Ui_Dialog):
 
 class FinalChoiceDialog(ExtendableDialog):
     chosen_sno = None
+    FILTER = True
 
     def __init__(self, candidates, parent=None):
         ExtendableDialog.__init__(self, parent, remove_stretch=True)
@@ -113,30 +114,53 @@ class FinalChoiceDialog(ExtendableDialog):
             QtGui.QAbstractItemView.SelectRows)
         self.insertWidget(self.table_widget)
 
-        headers = (_('Serialno'),
-                   _('Status'),
-                   _('Title'),
-                   _('Forename'),
-                   _('Surname'),
-                   _('Birth Date'),
-                   _('Address Line 1'),
-                   _('Address Line 2'),
-                   _('Town'),
-                   _('POSTCODE'),
-                   _('Tel1'),
-                   _('Tel2'),
-                   _('Mobile')
-                   )
+        self.headers = (_('Serialno'),
+                        _('Status'),
+                        _('Title'),
+                        _('Forename'),
+                        _('Surname'),
+                        _('Birth Date'),
+                        _('Address Line 1'),
+                        _('Address Line 2'),
+                        _('Town'),
+                        _('POSTCODE'),
+                        _('Tel1'),
+                        _('Tel2'),
+                        _('Mobile')
+                        )
+        self._candidates = candidates
+        self.hidden_count = 0
+        self.load_candidates()
+        self.table_widget.itemDoubleClicked.connect(self.accept)
+        self.enableApply(True)
+        self.apply_but.setText(_("Load the Selected Patient"))
+        self.setMinimumWidth(
+            QtGui.QApplication.desktop().screenGeometry().width() - 20)
 
+    def _screened_candidates(self):
+        self.hidden_count = 0
+        for candidate in self._candidates:
+            if candidate[1] == "":
+                yield candidate
+            else:
+                self.hidden_count += 1
+
+    @property
+    def candidates(self):
+        if not self.FILTER:
+            return self._candidates
+        return list(self._screened_candidates())
+
+    def load_candidates(self):
         self.table_widget.clear()
         self.table_widget.setSortingEnabled(False)
-        self.table_widget.setRowCount(len(candidates))
-        self.table_widget.setColumnCount(len(headers))
-        self.table_widget.setHorizontalHeaderLabels(headers)
+        self.table_widget.setRowCount(len(self.candidates))
+        self.table_widget.setColumnCount(len(self.headers))
+        self.table_widget.setHorizontalHeaderLabels(self.headers)
         self.table_widget.verticalHeader().hide()
         self.table_widget.horizontalHeader().setStretchLastSection(True)
 
-        for row, candidate in enumerate(candidates):
+        for row, candidate in enumerate(self.candidates):
             for col, attr in enumerate(candidate):
                 if isinstance(attr, datetime.date):
                     item = QtGui.QTableWidgetItem(
@@ -145,15 +169,10 @@ class FinalChoiceDialog(ExtendableDialog):
                     item = QtGui.QTableWidgetItem(str(attr))
                 self.table_widget.setItem(row, col, item)
 
-        self.table_widget.setCurrentCell(0, 1)
         self.table_widget.setSortingEnabled(True)
         self.table_widget.sortItems(4)
-
-        self.table_widget.itemDoubleClicked.connect(self.accept)
-        self.enableApply(True)
-        self.apply_but.setText(_("Load the Selected Patient"))
-        self.setMinimumWidth(
-            QtGui.QApplication.desktop().screenGeometry().width()-20)
+        self.table_widget.setCurrentCell(0, 1)
+        self.set_more_but_text()
 
     def sizeHint(self):
         return QtCore.QSize(self.minimumWidth(), 400)
@@ -164,6 +183,30 @@ class FinalChoiceDialog(ExtendableDialog):
         for col in range(self.table_widget.columnCount()):
             col_width = widths[col] * self.width() / sum_widths
             self.table_widget.setColumnWidth(col, col_width)
+
+    def set_more_but_text(self):
+        if self.FILTER:
+            self.more_but.setText(
+                "%s (%d %s)" % (
+                    _("Include ALL Patients"),
+                    self.hidden_count,
+                    _("are hidden")
+                ))
+            self.more_but.setStyleSheet("color:red")
+        else:
+            self.more_but.setText(_("Show only active Patients"))
+            self.more_but.setStyleSheet("")
+        self.more_but.setChecked(self.FILTER)
+
+    def _clicked(self, but):
+        '''
+        overwrite :doc:`ExtendableDialog` _clicked
+        '''
+        if but == self.more_but:
+            FinalChoiceDialog.FILTER = not self.FILTER
+            self.load_candidates()
+            return
+        ExtendableDialog._clicked(self, but)
 
     def exec_(self):
         if QtGui.QDialog.exec_(self):

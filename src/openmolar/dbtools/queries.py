@@ -51,3 +51,5 @@ and (code0="EXAM" or code1="EXAM" or code2="EXAM") and adate >= CURDATE()'''
 PSN_QUERY = "select psn from previous_snames where serialno=%s order by ix desc"
 
 FAMILY_COUNT_QUERY = "select count(*) from new_patients where familyno=%s"
+
+QUICK_MED_QUERY = 'select alert, chkdate from medhist where pt_sno=%s order by ix desc limit 1'

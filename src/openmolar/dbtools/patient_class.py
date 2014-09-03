@@ -38,8 +38,9 @@ from openmolar.dbtools.plan_data import PlanData
 from openmolar.dbtools.est_logger import EstLogger
 from openmolar.dbtools import estimates as db_estimates
 
-from openmolar.dbtools.queries import \
-    PATIENT_QUERY_FIELDS, PATIENT_QUERY, FUTURE_EXAM_QUERY, PSN_QUERY, FAMILY_COUNT_QUERY
+from openmolar.dbtools.queries import (
+    PATIENT_QUERY_FIELDS, PATIENT_QUERY, FUTURE_EXAM_QUERY,
+    PSN_QUERY, FAMILY_COUNT_QUERY, QUICK_MED_QUERY)
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -235,8 +236,8 @@ class patient(object):
         self.bpedate = nullDate
         self.chartdate = nullDate
         self.notes_dict = {}
-        self.MH = ()
         self.MEDALERT = False
+        self.mh_chkdate = None
         self.HIDDENNOTES = []
         self.chartgrid = {}
         self._fee_table = None
@@ -299,15 +300,11 @@ class patient(object):
 
         self.getNotesTuple()
 
-        query = 'select drnm,adrtel,curmed,oldmed,allerg,heart,lungs,' +\
-            'liver,kidney,bleed,anaes,other,alert,chkdate from mednotes' +\
-            ' where serialno=%s'
-        cursor.execute(query, (self.serialno,))
-
-        self.MH = cursor.fetchone()
-        if self.MH is not None:
-            self.MEDALERT = self.MH[12]
-
+        cursor.execute(QUICK_MED_QUERY, (self.serialno,))
+        try:
+            self.MEDALERT, self.mh_chkdate = cursor.fetchone()
+        except TypeError:
+            pass
         cursor.close()
         # db.close()
 
@@ -640,7 +637,12 @@ class patient(object):
                 claims.append(est)
         return claims
 
-    def addHiddenNote(self, ntype, note="", attempt_delete=False):
+    def addHiddenNote(
+        self,
+        ntype,
+     note="",
+     attempt_delete=False,
+     one_only=False):
         '''
         re-written for schema 1.9
         '''
@@ -692,6 +694,10 @@ class patient(object):
                 self.HIDDENNOTES.remove(reversing_note)
             except ValueError:
                 self.HIDDENNOTES.append(HN)
+
+        if one_only:
+            while self.HIDDENNOTES.count(HN) > 1:
+                self.HIDDENNOTES.remove(HN)
 
     def clearHiddenNotes(self):
         self.HIDDENNOTES = []
@@ -774,7 +780,7 @@ class patient(object):
             exemptionTableAtts + bpeTableAtts + mnhistTableAtts +
             clinical_memos + (
                 "fees", "estimate_charges", "serialno", "estimates",
-            "appt_prefs", "treatment_course", "chartgrid"))
+                "appt_prefs", "treatment_course", "chartgrid"))
 
     @property
     def USER_CHANGEABLE_ATTRIBUTES(self):
