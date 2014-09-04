@@ -136,7 +136,7 @@ class MedicalHistoryDialog(BaseDialog):
         meds_frame = QtGui.QFrame()
         meds_frame.setMaximumHeight(120)
         layout = QtGui.QFormLayout(meds_frame)
-        layout.addRow(_("Medcations"), self.meds_text_edit)
+        layout.addRow(_("Medications"), self.meds_text_edit)
         layout.addRow(_("Medication Comments"), self.meds_line_edit)
 
         l_frame = QtGui.QFrame()
@@ -184,8 +184,6 @@ class MedicalHistoryDialog(BaseDialog):
         QtCore.QTimer.singleShot(10, self.load_mh)
         self.enableApply()
 
-        # self.meds_text_edit.editing_finished.connect(self.check_new_meds)
-
     def load_mh(self):
         self.mh = medhist.get_mh(self.pt.serialno)
         if self.is_new_mh:
@@ -201,6 +199,8 @@ class MedicalHistoryDialog(BaseDialog):
         set_text(self.meds_line_edit, self.mh.medication_comments)
         set_text(self.allergies_line_edit, self.mh.allergies)
         set_text(self.heart_line_edit, self.mh.heart)
+        set_text(self.diabetes_line_edit, self.mh.diabetes)
+        set_text(self.arthritis_line_edit, self.mh.arthritis)
         set_text(self.respiratory_line_edit, self.mh.respiratory)
         set_text(self.bleeding_line_edit, self.mh.bleeding)
         set_text(self.infection_line_edit, self.mh.infectious_disease)
@@ -219,10 +219,6 @@ class MedicalHistoryDialog(BaseDialog):
         self.meds_text_edit.setText(
             "\n".join(sorted(self.mh.medications.keys())) + "\n")
 
-        #'warning_card',
-        #'warning_card_details',
-        #      'chkdate',
-        #      'time_stamp'
 
     @property
     def is_new_mh(self):
@@ -232,7 +228,7 @@ class MedicalHistoryDialog(BaseDialog):
         QtGui.QMessageBox.information(self, _("message"), message)
 
     def sizeHint(self):
-        return QtCore.QSize(900, 700)
+        return QtCore.QSize(1100, 700)
 
     def showEvent(self, event):
         self.meds_text_edit.setFocus()
@@ -301,42 +297,28 @@ class MedicalHistoryDialog(BaseDialog):
                 LOGGER.debug("deleted medication %s", med)
         self.new_mh = medhist.MedHist(
             None,  # ix
-            unicode(
-                self.warning_line_edit.text().toUtf8()),
-           #warning_card
-            meds_dict,  # medications
-            unicode(
-                self.meds_line_edit.text().toUtf8()),
-              #medication_comments
-            unicode(self.allergies_line_edit.text().toUtf8()),  # allergies
-            unicode(self.respiratory_line_edit.text().toUtf8()),  # respiratory
-            unicode(self.heart_line_edit.text().toUtf8()),  # heart
-            unicode(self.diabetes_line_edit.text().toUtf8()),  # diabetes
-            unicode(self.arthritis_line_edit.text().toUtf8()),  # arthritis
-            unicode(self.bleeding_line_edit.text().toUtf8()),  # bleeding
-            unicode(
-                self.infection_line_edit.text().toUtf8()),
-         #infectious_disease
-            unicode(
-                self.endocarditis_line_edit.text().toUtf8()),
-            #endocarditis
-            unicode(self.liver_line_edit.text().toUtf8()),  # liver
-            unicode(self.anaesthetic_line_edit.text().toUtf8()),  # anaesthetic
-            unicode(
-                self.joint_line_edit.text().toUtf8()),
-             #joint_replacement
-            unicode(
-                self.heart_surgery_line_edit.text().toUtf8()),
-            #heart_surgery
-            unicode(
-                self.brain_surgery_line_edit.text().toUtf8()),
-            #brain_surgery
-            unicode(self.hospitalised_line_edit.text().toUtf8()),  # hospital
-            unicode(self.cjd_line_edit.text().toUtf8()),  # cjd
-            unicode(self.other_line_edit.text().toUtf8()),  # other
-            self.med_alert_cb.isChecked(),  # alert
-            localsettings.currentDay(),  # chkdate
-            None  # time_stamp
+            unicode(self.warning_line_edit.text().toUtf8()),
+            meds_dict,
+            unicode(self.meds_line_edit.text().toUtf8()),
+            unicode(self.allergies_line_edit.text().toUtf8()),
+            unicode(self.respiratory_line_edit.text().toUtf8()),
+            unicode(self.heart_line_edit.text().toUtf8()),
+            unicode(self.diabetes_line_edit.text().toUtf8()),
+            unicode(self.arthritis_line_edit.text().toUtf8()),
+            unicode(self.bleeding_line_edit.text().toUtf8()),
+            unicode(self.infection_line_edit.text().toUtf8()),
+            unicode(self.endocarditis_line_edit.text().toUtf8()),
+            unicode(self.liver_line_edit.text().toUtf8()),
+            unicode(self.anaesthetic_line_edit.text().toUtf8()),
+            unicode(self.joint_line_edit.text().toUtf8()),
+            unicode(self.heart_surgery_line_edit.text().toUtf8()),
+            unicode(self.brain_surgery_line_edit.text().toUtf8()),
+            unicode(self.hospitalised_line_edit.text().toUtf8()),
+            unicode(self.cjd_line_edit.text().toUtf8()),
+            unicode(self.other_line_edit.text().toUtf8()),
+            self.med_alert_cb.isChecked(),
+            localsettings.currentDay(),
+            None
         )
         return result
 
@@ -372,7 +354,7 @@ class MedicalHistoryDialog(BaseDialog):
             else:
                 BaseDialog.reject(self)
                 return
-        elif self.is_new_mh:
+        elif self.is_new_mh and not self.has_edits:
             if QtGui.QMessageBox.question(
                 self,
                 _("question"),
@@ -399,11 +381,12 @@ class MedicalHistoryDialog(BaseDialog):
     def reject(self):
         self.get_new_mh(rejecting=True)
         if self.has_edits:
-            if QtGui.QMessageBox.question(self,
-                                          _("Confirm"),
-                                          _("Abandon your changes?"),
-                                          QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                                          QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
+            if QtGui.QMessageBox.question(
+                  self,
+                  _("Confirm"),
+                  _("Abandon your changes?"),
+                  QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                  QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
                 return
         BaseDialog.reject(self)
 
@@ -429,7 +412,7 @@ if __name__ == "__main__":
     from openmolar.settings.localsettings import PatientNotFoundError
 
     LOGGER.setLevel(logging.DEBUG)
-    i = 29833
+    i = 16539
     try:
         pt = patient_class.patient(i)
     except PatientNotFoundError:
