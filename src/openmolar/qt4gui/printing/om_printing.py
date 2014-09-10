@@ -281,8 +281,9 @@ def htmlEditor(om_gui, type="", html="", version=0):
 
 
 def printReferral(om_gui):
-    '''prints a referal letter controlled by referal.xml file'''
-    # TODO this file should really be in the sql database
+    '''
+    prints a referal letter
+    '''
     if om_gui.pt.serialno == 0:
         om_gui.advise("no patient selected", 1)
         return
@@ -294,7 +295,9 @@ def printReferral(om_gui):
     if dl.exec_():
         letter = letterprint.letter(dl.text)
         if letter.printpage():
-            docsprinted.add(dl.pt.serialno, "%s referral (html)" % desc, html)
+            docsprinted.add(dl.pt.serialno,
+                            "%s referral (html)" % desc,
+                            dl.text)
             dl.pt.addHiddenNote("printed", "referral")
 
             if dl.pt == om_gui.pt:
