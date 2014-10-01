@@ -131,14 +131,16 @@ def takePayment(om_gui):
                     "Payment patient is not loaded. skipping receipt offer.")
 
             LOGGER.debug("writing payment notes")
+            om_gui.pt.reset_billing()
             if (patient_write_changes.discreet_changes(
-                paymentPt, ("money2", "money3", "money11")) and
-            om_gui.pt.serialno != 0
-                    ):
+                paymentPt,
+                ("money2", "money3", "money11", "billdate", "billct", "billtype"))
+               and om_gui.pt.serialno != 0):
                 LOGGER.debug("updating patient's stored money values")
                 om_gui.pt.dbstate.money2 = om_gui.pt.money2
                 om_gui.pt.dbstate.money3 = om_gui.pt.money3
                 om_gui.pt.dbstate.money11 = om_gui.pt.money11
+                om_gui.pt.dbstate.reset_billing()
 
             om_gui.updateDetails()
             om_gui.updateHiddenNotesLabel()
@@ -350,6 +352,7 @@ def makeBadDebt(om_gui):
     if result == QtGui.QMessageBox.Yes:
         #--what is owed
         om_gui.pt.money11 = om_gui.pt.fees
+        om_gui.pt.force_money_changes = True
         om_gui.pt.resetAllMonies()
         om_gui.pt.status = "BAD DEBT"
         om_gui.ui.notesEnter_textEdit.setText(
@@ -361,17 +364,21 @@ def makeBadDebt(om_gui):
 
 
 def populateAccountsTable(om_gui):
+    om_gui.advise(_("Loading Accounts Table"))
+    om_gui.wait()
     rows = accounts.details()
     om_gui.ui.accounts_tableWidget.clear()
     om_gui.ui.accounts_tableWidget.setSortingEnabled(False)
     om_gui.ui.accounts_tableWidget.setRowCount(len(rows))
     headers = ("Dent", "Serialno", "", "First", "Last", "DOB", "Memo",
-               "Last Appt", "Last Bill", "Type", "Number", "T/C", "Fees", "A", "B",
+               "Last Tx", "Last Bill", "Type", "Number", "T/C", "Fees", "A", "B",
                "C")
 
     om_gui.ui.accounts_tableWidget.setColumnCount(len(headers))
     om_gui.ui.accounts_tableWidget.setHorizontalHeaderLabels(headers)
     om_gui.ui.accounts_tableWidget.verticalHeader().hide()
+    om_gui.ui.accounts_tableWidget.horizontalHeader().setStretchLastSection(
+        True)
     rowno = 0
     total = 0
     for row in rows:
@@ -397,10 +404,11 @@ def populateAccountsTable(om_gui):
                     # item.setText(localsettings.formatMoney(d))
 
                 elif col == 11:
-                    if d > 0:
-                        item.setText("N")
+                    if d is None:
+                        item.setText(_("Under Treatment"))
                     else:
-                        item.setText("Y")
+                        item.setData(QtCore.Qt.DisplayRole,
+                                     QtCore.QVariant(QtCore.QDate(d)))
                 else:
                     item.setText(str(d).title())
                 om_gui.ui.accounts_tableWidget.setItem(rowno, col, item)
@@ -415,3 +423,4 @@ def populateAccountsTable(om_gui):
     for i in range(om_gui.ui.accounts_tableWidget.columnCount()):
         om_gui.ui.accounts_tableWidget.resizeColumnToContents(i)
     om_gui.ui.accountsTotal_doubleSpinBox.setValue(total / 100)
+    om_gui.wait(False)

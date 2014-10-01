@@ -134,7 +134,7 @@ class patient(object):
         self.pd1 = None
         self.pd2 = None
         self.pd3 = None
-        self.pd4 = None
+        self.pd4 = None  # this field is no longer used (last treatment date)
         self.pd5 = None
         self.pd6 = None
         self.pd7 = None
@@ -249,6 +249,7 @@ class patient(object):
         self._most_recent_daybook_entry = None
         self._has_exam_booked = None
         self._previous_surnames = None
+        self.monies_reset = False
 
         if self.serialno == 0:
             return
@@ -564,6 +565,7 @@ class patient(object):
                 self.chartgrid[pos] = decidmouth[mouth.index(pos)]
 
     def apply_fees(self):
+        LOGGER.debug("Applying Fees")
         if "N" in self.cset:
             self.money0 = self.dbstate.money0 + self.fees_accrued
         else:
@@ -615,25 +617,30 @@ class patient(object):
 
     def resetAllMonies(self):
         '''
-        zero's everything except money11 (bad debt)
+        gets money1 and money 0 from apply_fees,
+        then equalises money3 and money2 accordingly.
+        zero's everything else
+        money11 (bad debt) is left unaltered.
         '''
-        self.money0 = 0
-        self.money1 = 0
-        self.money9 = 0
-        self.money10 = 0
-        self.money2 = 0
-        self.money3 = 0
-        self.money8 = 0
-
         self.dbstate.money0 = 0
         self.dbstate.money1 = 0
+        self.monies_reset = True
+
+        self.money0 = 0
+        self.money1 = 0
+        self.apply_fees()
+        self.money9 = 0
+        self.money10 = 0
+        self.money2 = self.money0
+        self.money3 = self.money1
+        self.money8 = 0
 
     def nhs_claims(self, completed_only=True):
         claims = []
         for est in self.estimates:
             if (est.csetype.startswith("N") and
                (not completed_only or est.completed == 2)
-                    ):
+                ):
                 claims.append(est)
         return claims
 
@@ -706,6 +713,12 @@ class patient(object):
         self.billdate = localsettings.currentDay()
         self.billct += 1
         self.billtype = tone
+
+    def reset_billing(self):
+        if self.fees == 0:
+            self.billdate = None
+            self.billct = None
+            self.billtype = None
 
     def treatmentOutstanding(self):
         return (self.treatment_course and

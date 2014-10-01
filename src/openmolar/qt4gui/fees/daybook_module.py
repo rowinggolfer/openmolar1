@@ -124,9 +124,6 @@ def updateDaybook(om_gui):
         daybook.add(om_gui.pt.serialno, om_gui.pt.cset, dent, trtid,
                     daybookdict, feesa, feesb, hashes)
 
-        LOGGER.debug("daybook_module - updating pd4")
-        om_gui.pt.pd4 = localsettings.currentDay()
-
 
 def daybookView(om_gui, print_=False):
     dent1 = str(om_gui.ui.daybookDent1ComboBox.currentText())

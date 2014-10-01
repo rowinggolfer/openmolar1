@@ -49,6 +49,10 @@ SYNOPSIS_INS_QUERY = '''
 insert into clinical_memos (serialno, synopsis, author, datestamp)
 values (%s, %s, %s, NOW())'''
 
+RESET_MONEY_QUERY = '''
+insert into patient_money (pt_sno, money0, money1) values (%s, %s, %s)
+on duplicate key update money0=%s, money1=%s'''
+
 
 def all_changes(pt, changes):
     LOGGER.debug("writing_changes to patient - %s" % str(changes))
@@ -327,3 +331,13 @@ def discreet_changes(pt, changes):
     if not changes:
         LOGGER.error("no changes passed")
     return all_changes(pt, changes)
+
+
+def reset_money(pt):
+    if pt.monies_reset:
+        values = (pt.serialno,) + (pt.dbstate.money0, pt.dbstate.money1) * 2
+        db = connect()
+        cursor = db.cursor()
+        cursor.execute(RESET_MONEY_QUERY, values)
+        cursor.close()
+    return False

@@ -1782,6 +1782,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         if self.editPageVisited:
             #-- only make changes if user has visited this tab
             self.apply_editpage_changes()
+        self.pt.monies_reset = patient_write_changes.reset_money(self.pt)
         uc = self.unsavedChanges()
         if uc != []:
             LOGGER.info(
@@ -2174,7 +2175,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         '''
         user has decided to reclassify a patient as a "bad debt" patient
         '''
-        fees_module.makeBadDebt(self)
+        if permissions.granted():
+            fees_module.makeBadDebt(self)
 
     def loadAccountsTable_clicked(self):
         '''
@@ -2653,7 +2655,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         '''
         a function to connect all the receptionists buttons
         '''
-        self.ui.printAccount_pushButton.clicked.connect(self.printaccount)
+        self.ui.printAccount_pushButton.pressed.connect(self.printaccount)
         self.ui.printEst_pushButton.clicked.connect(self.printEstimate)
         self.ui.printRecall_pushButton.clicked.connect(self.printrecall)
         self.ui.takePayment_pushButton.clicked.connect(

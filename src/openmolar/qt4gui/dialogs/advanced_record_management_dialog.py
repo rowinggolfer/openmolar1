@@ -22,7 +22,6 @@
 # #                                                                          # #
 # ############################################################################ #
 
-
 import logging
 
 from PyQt4 import QtGui, QtCore
@@ -64,6 +63,8 @@ class AdvancedRecordManagementDialog(BaseDialog):
             self.pt.pd10,
             self.pt.billdate)
 
+        self.ui.money0_spinBox.setEnabled(False)
+        self.ui.money1_spinBox.setEnabled(False)
         self.check_before_reject_if_dirty = True
 
     def sizeHint(self):

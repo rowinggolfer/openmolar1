@@ -29,13 +29,17 @@ module to retrieve a list of patients who owe money
 from openmolar.settings import localsettings
 from openmolar.connect import connect
 
-QUERY = '''select dnt1, serialno, cset, fname, sname, dob, memo, pd4,
-billdate, billtype, billct, courseno0,
+QUERY = '''select dnt1, new_patients.serialno, cset, fname, sname, dob, memo,
+tx_date, billdate, billtype, billct, cmpd,
 (money0 + money1 + money9 + money10 - money2 - money3 - money8) as fees
-from new_patients join patient_money on serialno = patient_money.pt_sno
-join patient_dates on serialno = patient_dates.pt_sno
+from new_patients
+join patient_money on new_patients.serialno = patient_money.pt_sno
+join currtrtmt2 on new_patients.courseno0 = currtrtmt2.courseno
+join (select serialno, max(date) as tx_date from daybook group by serialno)
+as t on new_patients.serialno = t.serialno
 where (money0 + money1 + money9 + money10 - money2 - money3 - money8) > 0
-order by pd4 desc'''
+order by tx_date desc
+'''
 
 
 def details():
@@ -51,4 +55,5 @@ def details():
 
 if __name__ == "__main__":
     localsettings.initiate()
-    print details()
+    for row in details():
+        print row
