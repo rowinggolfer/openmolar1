@@ -117,7 +117,7 @@ class AlterTodaysNotesDialog(BaseDialog):
         self.enableApply()
 
     def apply_changed(self):
-        lines = (unicode(self.text_edit.toPlainText())).split("\n")
+        lines = unicode(self.text_edit.toPlainText()).strip(" \n)").split("\n")
         short_lines = []
         for note in lines:
             while len(note) > 79:
@@ -132,7 +132,7 @@ class AlterTodaysNotesDialog(BaseDialog):
                     #--ok, no option (unlikely to happen though)
                 short_lines.append(note[:pos])
                 note = note[pos + 1:]
-            short_lines.append(note + "\n")
+            short_lines.append(note.strip(" \n") + "\n")
 
         values = []
         i = 0
@@ -151,8 +151,10 @@ class AlterTodaysNotesDialog(BaseDialog):
         cursor.close()
 
         if len(short_lines) > i:
-            patient_write_changes.toNotes(self.sno,
-                                          [("newNOTE", n) for n in short_lines[i:]])
+            patient_write_changes.toNotes(
+                self.sno,
+                [("newNOTE", n) for n in short_lines[i:]]
+                )
 
     def exec_(self):
         if BaseDialog.exec_(self):
