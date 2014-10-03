@@ -732,13 +732,6 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         Other pages are disabled.
         '''
         if self.pt.serialno != 0:
-            LOGGER.debug("updating last_address_details")
-            localsettings.LAST_ADDRESS = (
-                self.pt.sname, self.pt.addr1, self.pt.addr2,
-                self.pt.addr3, self.pt.town, self.pt.county,
-                self.pt.pcde, self.pt.tel1)
-            LOGGER.debug("details are %s", str(localsettings.LAST_ADDRESS))
-
             # print "clearing record"
             self.ui.dobEdit.setDate(QtCore.QDate(1900, 1, 1))
             self.ui.detailsBrowser.setText("")
@@ -896,6 +889,9 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         '''
         called by the user clicking the new patient button
         '''
+        if self.pt:
+            localsettings.LAST_ADDRESS = self.pt.address_tuple
+            localsettings.last_family_no = self.pt.familyno
         new_patient_gui.enterNewPatient(self)
 
     def checkNewPatient(self):
@@ -1192,9 +1188,19 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.advise(_("Not loading patient"))
             return
 
+        if self.pt:
+            current_address = self.pt.address_tuple
+        else:
+            current_address = localsettings.LAST_ADDRESS
+
         try:
+            # update saved last address
             self.pt = patient_class.patient(serialno)
             self.pt_diary_widget.set_patient(self.pt)
+            if (current_address == localsettings.BLANK_ADDRESS or
+               self.pt.address_tuple != current_address):
+                localsettings.LAST_ADDRESS = current_address
+                localsettings.last_family_no = self.pt.familyno
 
             try:
                 self.loadpatient(newPatientReload=newPatientReload)
@@ -3117,7 +3123,6 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                 _("Member(s)")
             )
             message_2 += " (%d)" % (self.pt.n_family_members - 1)
-            localsettings.last_family_no = self.pt.familyno
         elif self.pt.serialno == 0:
             message = _("No Patient Loaded")
         else:

@@ -362,7 +362,8 @@ PRACTICE_ADDRESS = ("The Dental Practice", "My Street", "My Town", "POST CODE")
 
 #-- this is updated whenever a patient record loads, for ease of address
 #-- manipulation
-LAST_ADDRESS = ("",) * 8
+BLANK_ADDRESS = ("",) * 8
+LAST_ADDRESS = BLANK_ADDRESS
 
 #-- 1 less dialog box for these lucky people
 defaultPrinterforGP17 = False

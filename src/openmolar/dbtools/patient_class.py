@@ -900,6 +900,11 @@ class patient(object):
                 if tx_hash == hash_:
                     yield est
 
+    @property
+    def address_tuple(self):
+        return (self.sname, self.addr1, self.addr2,
+                self.addr3, self.town, self.county,
+                self.pcde, self.tel1)
 
 if __name__ == "__main__":
     '''testing stuff'''

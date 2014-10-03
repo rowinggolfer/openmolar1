@@ -34,15 +34,16 @@ LOGGER = logging.getLogger("openmolar")
 
 
 def check_use_family(om_gui):
-    if localsettings.LAST_ADDRESS == ("",) * 8:
+    if localsettings.LAST_ADDRESS == localsettings.BLANK_ADDRESS:
+        LOGGER.warning("New Patient - No previous record details found")
         return
-    result = QtGui.QMessageBox.question(om_gui,
-                                        _("Question"),
-                                        _(
-                                        "Use details from the previous record?"),
-                                        QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                                        QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes
-    if result:
+    if QtGui.QMessageBox.question(
+            om_gui,
+            _("Question"),
+            _(
+            "Use details from the previous record?"),
+            QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+            QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
         dup_tup = localsettings.LAST_ADDRESS
         om_gui.ui.addr1Edit.setText(dup_tup[1])
         om_gui.ui.addr2Edit.setText(dup_tup[2])

@@ -143,11 +143,13 @@ class AutoAddressDialog(BaseDialog):
         if self.tel1_cb.isChecked():
             self.om_gui.ui.tel1Edit.setText(self.tel1_le.text())
 
+        self.om_gui.advise(_("Address changes applied"), 1)
+
     def sizeHint(self):
         return QtCore.QSize(600, 350)
 
     def exec_(self):
-        if localsettings.LAST_ADDRESS == ("",) * 8:
+        if localsettings.LAST_ADDRESS == localsettings.BLANK_ADDRESS:
             self.om_gui.advise(_("No previous address details found"), 1)
         elif BaseDialog.exec_(self):
             return True
