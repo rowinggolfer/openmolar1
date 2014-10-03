@@ -76,8 +76,11 @@ class chartLineEdit(QtGui.QLineEdit):
         deletes all props
         '''
         new_props = []
+        found = False
         for ex_prop in self.propListFromText():
-            if ex_prop.upper() != prop:
+            if not found and ex_prop.upper() == prop.upper():
+                found = True
+            else:
                 new_props.append(ex_prop)
         self.updateFromPropList(new_props)
 
