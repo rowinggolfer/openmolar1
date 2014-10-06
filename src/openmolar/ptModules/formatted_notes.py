@@ -101,7 +101,7 @@ def get_notes_for_date(lines, full_notes=False):
                 "<", "&lt;").replace(">", "&gt;")
         else:
             if "TC" in ntype:
-                txs.append((ntype, noteline))
+                txs.append((ntype, noteline.strip("\n")))
             elif ntype == "UNCOMPLETED":
                 rev_txs.append((ntype, noteline))
             elif full_notes:
@@ -193,10 +193,10 @@ def notes(notes_dict, full_notes=True):
     retarg = HEADER + '''
         <table class="notes_table">
             <tr>
-                <th class = "date">Date</th>
-                <th class = "ops">ops</th>
-                <th class = "tx">Tx</th>
-                <th class = "notes">Notes</th>
+                <th class="date">Date</th>
+                <th class="ops">ops</th>
+                <th class="tx">Tx</th>
+                <th class="notes">Notes</th>
         '''
 
     keys = notes_dict.keys()
@@ -204,7 +204,7 @@ def notes(notes_dict, full_notes=True):
     if full_notes and show_metadata:
         retarg += '<th class="reception">metadata</th>'
 
-    retarg += '</tr>'
+    retarg += '</tr>\n'
 
     previousdate = ""  # necessary to group notes on same day
     rowspan = 1
@@ -213,14 +213,16 @@ def notes(notes_dict, full_notes=True):
         date, op = key
         data = notes_dict[key]
         tx, notes, metadata = get_notes_for_date(data, full_notes)
-        newline += "<tr>"
+        if tx == "" and notes == "" and not show_metadata:
+            continue
+        newline += "<tr>\n"
         if date != previousdate:
             previousdate = date
             rowspan = 1
             retarg += newline
             link = ""
 
-            newline = '<td class="date">%s %s</td>' % (
+            newline = '        <td class="date">%s %s</td>' % (
                 localsettings.notesDate(date), link)
         else:
             # alter the previous html, so that the rows are spanned
@@ -235,14 +237,15 @@ def notes(notes_dict, full_notes=True):
            op == localsettings.operator):
             subline += '<br /><a href="edit_notes?||SNO||">%s</a>' % _("Edit")
 
-        newline += '''%s</td>
+        newline += '''
+        %s</td>
         <td class="tx">%s</td>
         <td width="70%%" class="notes">%s</td>''' % (subline, tx, notes)
 
         if show_metadata:
-            newline += '<td class="reception">%s</td></tr>' % metadata
+            newline += '<td class="reception">%s</td>\n</tr>\n' % metadata
         else:
-            newline += '</tr>'
+            newline += '\n</tr>\n'
     retarg += newline
     retarg += '</table></div></body></html>'
 

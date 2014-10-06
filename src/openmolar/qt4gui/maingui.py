@@ -1829,15 +1829,13 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                 #--result will be a "line number" or -1 if unsuccessful write
                 self.ui.notesEnter_textEdit.setText("")
                 self.ui.hiddenNotes_label.setText("")
-                self.pt.getNotesTuple()
                 #--reload the notes
-                html = formatted_notes.notes(self.pt.notes_dict)
-                self.ui.notesSummary_webView.setHtml(html)
-
+                self.pt.getNotesTuple()
                 if self.ui.tabWidget.currentIndex() == 3:
                     self.load_receptionSummaryPage()
-
-                if self.ui.tabWidget.currentIndex() == 5:
+                elif self.ui.tabWidget.currentIndex() == 4:
+                    self.load_notes_summary()
+                elif self.ui.tabWidget.currentIndex() == 5:
                     self.updateNotesPage()
             else:
                 #--exception writing to db
