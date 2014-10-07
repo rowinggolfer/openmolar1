@@ -380,12 +380,12 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         '''
         comments combobox has been nav'd
         '''
-        if arg == _("ADD COMMENTS"):
+        if _("ADD COMMENTS") in arg:
             return
-        elif arg == _("DELETE COMMENTS"):
+        elif arg == _("DELETE ALL COMMENTS"):
             self.lineEdit.deleteComments()
         else:
-            newComment = "%s" % arg.replace(" ", "_")
+            newComment = "!%s" % arg.replace(" ", "_")
             self.lineEdit.addItem(newComment)
 
         self.comments_comboBox.setCurrentIndex(0)

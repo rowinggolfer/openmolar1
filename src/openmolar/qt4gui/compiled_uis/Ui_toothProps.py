@@ -3,8 +3,8 @@
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/toothProps.ui'
 #
-# Created: Sat Dec 14 19:08:51 2013
-#      by: PyQt4 UI code generator 4.10.3
+# Created: Tue Oct  7 12:56:25 2014
+#      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -91,7 +91,9 @@ class Ui_Form(object):
         self.editframe.setObjectName(_fromUtf8("editframe"))
         self.verticalLayout.addWidget(self.editframe)
         self.comments_comboBox = QtGui.QComboBox(Form)
+        self.comments_comboBox.setEditable(True)
         self.comments_comboBox.setObjectName(_fromUtf8("comments_comboBox"))
+        self.comments_comboBox.addItem(_fromUtf8(""))
         self.comments_comboBox.addItem(_fromUtf8(""))
         self.comments_comboBox.addItem(_fromUtf8(""))
         self.comments_comboBox.addItem(_fromUtf8(""))
@@ -212,7 +214,7 @@ class Ui_Form(object):
         self.cb_scrollArea.setWidgetResizable(True)
         self.cb_scrollArea.setObjectName(_fromUtf8("cb_scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 144, 147))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 144, 149))
         self.scrollAreaWidgetContents.setObjectName(
             _fromUtf8("scrollAreaWidgetContents"))
         self.cb_scrollArea.setWidget(self.scrollAreaWidgetContents)
@@ -225,16 +227,17 @@ class Ui_Form(object):
         Form.setWindowTitle(_("Form"))
         self.clear_pushButton.setToolTip(_("delete tooth data"))
         self.comments_comboBox.setItemText(0, _("ADD COMMENTS"))
-        self.comments_comboBox.setItemText(1, _("!KUO"))
-        self.comments_comboBox.setItemText(2, _("!Mobile Tooth"))
-        self.comments_comboBox.setItemText(3, _("!Early Caries"))
-        self.comments_comboBox.setItemText(4, _("!Filling Missing"))
-        self.comments_comboBox.setItemText(5, _("!Chipped"))
-        self.comments_comboBox.setItemText(6, _("!Cracked"))
-        self.comments_comboBox.setItemText(7, _("!Poor Prognosis"))
-        self.comments_comboBox.setItemText(8, _("!Extract Soon"))
-        self.comments_comboBox.setItemText(9, _("!Implant required"))
-        self.comments_comboBox.setItemText(10, _("DELETE COMMENTS"))
+        self.comments_comboBox.setItemText(1, _("KUO"))
+        self.comments_comboBox.setItemText(2, _("Mobile Tooth"))
+        self.comments_comboBox.setItemText(3, _("Early Caries"))
+        self.comments_comboBox.setItemText(4, _("Filling Missing"))
+        self.comments_comboBox.setItemText(5, _("Chipped"))
+        self.comments_comboBox.setItemText(6, _("Cracked"))
+        self.comments_comboBox.setItemText(7, _("Poor Prognosis"))
+        self.comments_comboBox.setItemText(8, _("Extract Soon"))
+        self.comments_comboBox.setItemText(9, _("Sensitive"))
+        self.comments_comboBox.setItemText(10, _("Non Vital"))
+        self.comments_comboBox.setItemText(11, _("DELETE ALL COMMENTS"))
         self.am_pushButton.setText(_("AM"))
         self.co_pushButton.setText(_("CO"))
         self.gl_pushButton.setText(_("GL"))

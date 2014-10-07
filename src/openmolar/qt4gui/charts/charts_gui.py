@@ -30,6 +30,7 @@ from __future__ import division
 
 import copy
 import logging
+import re
 
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
@@ -202,14 +203,20 @@ def selectChartedTooth(om_gui, x, y):
     '''
     only one tooth can be 'selected'
     '''
-    om_gui.ui.planChartWidget.setSelected(x, y, showSelection=
-                                          om_gui.selectedChartWidget == "pl")
+    om_gui.ui.planChartWidget.setSelected(
+        x,
+        y,
+     showSelection=om_gui.selectedChartWidget == "pl")
 
-    om_gui.ui.completedChartWidget.setSelected(x, y, showSelection=
-                                               om_gui.selectedChartWidget == "cmp")
+    om_gui.ui.completedChartWidget.setSelected(
+        x,
+        y,
+     showSelection=om_gui.selectedChartWidget == "cmp")
 
-    om_gui.ui.staticChartWidget.setSelected(x, y, showSelection=
-                                            om_gui.selectedChartWidget == "st")
+    om_gui.ui.staticChartWidget.setSelected(
+        x,
+        y,
+     showSelection=om_gui.selectedChartWidget == "st")
 
 
 def bpe_table(om_gui, arg):

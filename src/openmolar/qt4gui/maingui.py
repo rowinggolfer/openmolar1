@@ -540,7 +540,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
     def flipDeciduous(self):
         '''
-        toggle the selected tooth's deciduos state
+        toggle the selected tooth's deciduous state
         '''
         charts_gui.flipDeciduous(self)
 
@@ -570,7 +570,16 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         user has clicked on the delete all option from a tooth's right click
         menu
         '''
-        self.advise("add comments for tooth %s not working yet" % tooth)
+        cb = self.ui.toothPropsWidget.comments_comboBox
+        comment, result = QtGui.QInputDialog.getItem(
+            self,
+            _("Add comment"),
+            "%s %s" % (_("Add a comment to tooth"), tooth.upper()),
+            [cb.itemText(i) for i in range(1, cb.count())],
+            current=-1,
+            editable=True)
+        if result:
+            self.ui.toothPropsWidget.comments(comment)
 
     def chooseTooth(self):
         '''
@@ -2757,7 +2766,6 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.actionEdit_Standard_Letters.triggered.connect(
             self.edit_standard_letters)
         self.ui.actionEdit_Feescales.triggered.connect(self.feetable_xml)
-
 
     def signals_estimates(self):
         # Estimates and Course Management

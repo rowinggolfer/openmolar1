@@ -142,6 +142,9 @@
    </item>
    <item>
     <widget class="QComboBox" name="comments_comboBox">
+     <property name="editable">
+      <bool>true</bool>
+     </property>
      <item>
       <property name="text">
        <string>ADD COMMENTS</string>
@@ -149,52 +152,57 @@
      </item>
      <item>
       <property name="text">
-       <string>!KUO</string>
+       <string>KUO</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>!Mobile Tooth</string>
+       <string>Mobile Tooth</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>!Early Caries</string>
+       <string>Early Caries</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>!Filling Missing</string>
+       <string>Filling Missing</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>!Chipped</string>
+       <string>Chipped</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>!Cracked</string>
+       <string>Cracked</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>!Poor Prognosis</string>
+       <string>Poor Prognosis</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>!Extract Soon</string>
+       <string>Extract Soon</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>!Implant required</string>
+       <string>Sensitive</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>DELETE COMMENTS</string>
+       <string>Non Vital</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>DELETE ALL COMMENTS</string>
       </property>
      </item>
     </widget>
@@ -533,7 +541,7 @@
         <x>0</x>
         <y>0</y>
         <width>144</width>
-        <height>147</height>
+        <height>149</height>
        </rect>
       </property>
      </widget>
