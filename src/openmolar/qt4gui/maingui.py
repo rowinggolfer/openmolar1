@@ -2756,6 +2756,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.edit_practice)
         self.ui.actionEdit_Standard_Letters.triggered.connect(
             self.edit_standard_letters)
+        self.ui.actionEdit_Feescales.triggered.connect(self.feetable_xml)
+
 
     def signals_estimates(self):
         # Estimates and Course Management
