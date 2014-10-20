@@ -29,7 +29,7 @@ import gettext
 
 if "neil" in os.path.expanduser("~"):
     FORMAT = \
-        '%(levelname)s {%(filename)s:%(lineno)d} %(funcName)s  - %(message)s'
+        '%(levelname)s {%(filename)s:%(lineno)d} %(funcName)s\t- %(message)s'
 else:
     FORMAT = '%(levelname)s - %(message)s'
 

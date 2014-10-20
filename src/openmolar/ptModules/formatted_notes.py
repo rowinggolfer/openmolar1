@@ -104,6 +104,10 @@ def get_notes_for_date(lines, full_notes=False):
                 txs.append((ntype, noteline.strip("\n")))
             elif ntype == "UNCOMPLETED":
                 rev_txs.append((ntype, noteline))
+            elif ntype == "UPDATED:Medical Notes":
+                mh_message = (_("MED"), noteline.strip("\n"))
+                if not mh_message in txs:
+                    txs.insert(0, mh_message)
             elif full_notes:
                 if "RECEIVED" in ntype:
                     receipt_text = noteline.replace("sundries 0.00", "")
@@ -142,9 +146,13 @@ def get_rec_summary(lines):
     '''
     note = ""
     for ntype, noteline in lines:
+        LOGGER.debug("%s %s", ntype, noteline)
         if "PRINTED" in ntype:
             note += '<img src=%s height="12" align="right"> %s<br />' % (
                 localsettings.printer_png, noteline)
+        elif "UPDATED" in ntype:
+            note += '<img src=%s height="12" align="right"> %s<br />' % (
+                localsettings.medical_png, noteline)
         elif "RECEIVED:" in ntype:
             noteline = noteline.replace("sundries 0.00", "")
             noteline = noteline.replace("treatment 0.00", "")
@@ -267,6 +275,7 @@ def todays_notes(serialno):
     return html
 
 if __name__ == "__main__":
+    import datetime
     LOGGER.setLevel(logging.DEBUG)
     from openmolar.dbtools import patient_class
     try:
@@ -275,4 +284,7 @@ if __name__ == "__main__":
         serialno = 1
 
     notes_ = notes(patient_class.patient(serialno).notes_dict)
+    print notes_.encode("ascii", "replace")
+    notes = rec_notes(
+        patient_class.patient(serialno).notes_dict, datetime.date(2010,1,1))
     print notes_.encode("ascii", "replace")

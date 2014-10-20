@@ -137,6 +137,9 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
     fee_table_tester = None
     phrasebook_editor = None
     entering_new_patient = False
+    reception_notes_loaded = False
+    summary_notes_loaded = False
+    notes_loaded = False
 
     def __init__(self, parent=None):
         QtGui.QMainWindow.__init__(self, parent)
@@ -742,6 +745,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         '''
         if self.pt.serialno != 0:
             # print "clearing record"
+            self.forget_notes_loaded()
             self.ui.dobEdit.setDate(QtCore.QDate(1900, 1, 1))
             self.ui.detailsBrowser.setText("")
             self.ui.notes_webView.setHtml("")
@@ -787,23 +791,6 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.ui.tabWidget.setCurrentIndex(4)
         else:
             self.ui.tabWidget.setCurrentIndex(3)
-
-    def load_clinicalSummaryPage(self):
-        self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
-
-    def load_receptionSummaryPage(self):
-        '''
-        load the reception views
-        '''
-        if self.pt.serialno == 0:
-            self.ui.reception_textBrowser.setHtml(localsettings.message)
-        else:
-            html_ = reception_summary.html(self.pt)
-            self.ui.reception_textBrowser.setText(html_)
-            self.pt_diary_widget.layout_ptDiary()
-            note = formatted_notes.rec_notes(self.pt.notes_dict,
-                                             self.pt.treatment_course.accd)
-            self.ui.recNotes_webView.setHtml(note)
 
     def webviewloaded(self):
         '''
@@ -1267,19 +1254,57 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.ui.summary_notes_checkBox.isChecked()
 
     def updateNotesPage(self):
+        i = self.ui.tabWidget.currentIndex()
+        LOGGER.debug("update notes page called, ignore=%s", i!=5)
+        if i !=5 or self.notes_loaded:
+            return
         self.set_note_preferences()
         note_html = formatted_notes.notes(self.pt.notes_dict)
         self.ui.notes_webView.setHtml(note_html)
 
         page = self.ui.notes_webView.page()
         page.setLinkDelegationPolicy(page.DelegateAllLinks)
+        self.notes_loaded = True
+
+    def load_receptionSummaryPage(self):
+        '''
+        load the reception views
+        '''
+        i = self.ui.tabWidget.currentIndex()
+        LOGGER.debug(
+        "update reception Summary page called, ignore=%s", i!=3)
+        if self.pt.serialno == 0:
+            self.ui.reception_textBrowser.setHtml(localsettings.message)
+        elif i == 3:
+            html_ = reception_summary.html(self.pt)
+            self.ui.reception_textBrowser.setText(html_)
+            self.pt_diary_widget.layout_ptDiary()
+            if not self.reception_notes_loaded:
+                note = formatted_notes.rec_notes(
+                    self.pt.notes_dict,
+                    self.pt.treatment_course.accd
+                    )
+                self.ui.recNotes_webView.setHtml(note)
+                self.reception_notes_loaded = True
+
+    def load_clinicalSummaryPage(self):
+        i = self.ui.tabWidget.currentIndex()
+        LOGGER.debug("load clinical summary page called, ignore=%s", i!=4)
+        if i == 4:
+            self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
+            self.load_notes_summary()
 
     def load_notes_summary(self):
+        i = self.ui.tabWidget.currentIndex()
+        LOGGER.debug("load clinical summary notes called, ignore=%s", i!=4)
+        if i != 4 or self.summary_notes_loaded:
+            return
         self.set_note_preferences()
         note_html = formatted_notes.summary_notes(self.pt.notes_dict)
         self.ui.notesSummary_webView.setHtml(note_html)
         page = self.ui.notesSummary_webView.page()
         page.setLinkDelegationPolicy(page.DelegateAllLinks)
+        self.summary_notes_loaded = True
 
     def loadpatient(self, newPatientReload=False):
         '''
@@ -1294,7 +1319,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.ui.tabWidget.setCurrentIndex(4)
         else:
             self.ui.tabWidget.setCurrentIndex(3)
-            self.load_receptionSummaryPage()
+        self.forget_notes_loaded()
         self.ui.actionFix_Locked_New_Course_of_Treatment.setEnabled(False)
         #--populate dnt1 and dnt2 comboboxes
         if not self.pt.dnt1:
@@ -1308,7 +1333,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.pt.checkExemption()
         self.updateDetails()
         self.ui.synopsis_lineEdit.setText(self.pt.synopsis)
-        self.load_notes_summary()
+        self.load_clinicalSummaryPage()
+        self.load_receptionSummaryPage()
 
         self.ui.notes_webView.setHtml("")
         self.ui.notesEnter_textEdit.setText("")
@@ -1840,16 +1866,22 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                 self.ui.hiddenNotes_label.setText("")
                 #--reload the notes
                 self.pt.getNotesTuple()
-                if self.ui.tabWidget.currentIndex() == 3:
-                    self.load_receptionSummaryPage()
-                elif self.ui.tabWidget.currentIndex() == 4:
-                    self.load_notes_summary()
-                elif self.ui.tabWidget.currentIndex() == 5:
-                    self.updateNotesPage()
+                self.load_notes()
             else:
                 #--exception writing to db
                 self.advise("error writing notes to database... sorry!", 2)
         self.updateDetails()
+
+    def forget_notes_loaded(self):
+        self.reception_notes_loaded = False
+        self.summary_notes_loaded = False
+        self.notes_loaded = False
+
+    def load_notes(self):
+        self.forget_notes_loaded()
+        self.load_receptionSummaryPage()
+        self.load_notes_summary()
+        self.updateNotesPage()
 
     def enableEdit(self, arg=True):
         '''
@@ -2980,8 +3012,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                    self.ui.notes_includeTimestamps_checkBox,
                    self.ui.notes_includeMetadata_checkBox,
                    self.ui.summary_notes_checkBox):
-            rb.toggled.connect(self.updateNotesPage)
-            rb.toggled.connect(self.load_notes_summary)
+            rb.toggled.connect(self.load_notes)
 
     def signals_tabs(self, connect=True):
         '''

@@ -150,22 +150,8 @@ if "win" in sys.platform:
     LOGGER.info("Windows OS detected - modifying settings")
     #-- sorry about this... but cross platform is a goal :(
     global_cflocation = 'C:\\Program Files\\openmolar\\openmolar.conf'
-    localFileDirectory = os.path.join(os.environ.get("HOMEPATH"), ".openmolar")
-    #-- this next line is necessary because I have to resort to relative
-    #-- imports for the css stuff eg... ../resources/style.css
-    #-- on linux, the root is always /  on windows... ??
-    os.chdir(wkdir)
-    resources_path = resources_path.replace(
-        "://", ":///").replace(" ", "%20").replace("\\", "/")
-    stylesheet = stylesheet.replace(
-        "://", ":///").replace(" ", "%20").replace("\\", "/")
-    printer_png = printer_png.replace(
-        "://", ":///").replace(" ", "%20").replace("\\", "/")
-    money_png = money_png.replace(
-        "://", ":///").replace(" ", "%20").replace("\\", "/")
-    LOGOPATH = LOGOPATH.replace(
-        "://", ":///").replace(" ", "%20").replace("\\", "/")
-
+    localFileDirectory = os.path.join(
+        os.environ.get("HOMEPATH",""), ".openmolar")
 else:
     WINDOWS = False
     if not "linux" in sys.platform:
@@ -183,10 +169,29 @@ appt_shortcut_file = os.path.join(wkdir, "resources",
                                   "appointment_shortcuts.xml")
 stylesheet = "file://" + os.path.join(wkdir, "resources", "style.css")
 printer_png = "file://" + os.path.join(wkdir, "resources", "icons", "ps.png")
+medical_png = "file://" + os.path.join(wkdir, "resources", "icons", "med.png")
 money_png = "file://" + os.path.join(wkdir, "resources", "icons", "vcard.png")
 LOGOPATH = "file://" + os.path.join(wkdir, "html", "images", "newlogo.png")
 resources_location = os.path.join(wkdir, "resources")
 resources_path = "file://" + resources_location
+
+if WINDOWS:
+    #-- this next line is necessary because I have to resort to relative
+    #-- imports for the css stuff eg... ../resources/style.css
+    #-- on linux, the root is always /  on windows... ??
+
+    os.chdir(wkdir)
+    resources_path = resources_path.replace(
+        "://", ":///").replace(" ", "%20").replace("\\", "/")
+    stylesheet = stylesheet.replace(
+        "://", ":///").replace(" ", "%20").replace("\\", "/")
+    printer_png = printer_png.replace(
+        "://", ":///").replace(" ", "%20").replace("\\", "/")
+    money_png = money_png.replace(
+        "://", ":///").replace(" ", "%20").replace("\\", "/")
+    LOGOPATH = LOGOPATH.replace(
+        "://", ":///").replace(" ", "%20").replace("\\", "/")
+
 
 
 if not os.path.exists(DOCS_DIRECTORY):
