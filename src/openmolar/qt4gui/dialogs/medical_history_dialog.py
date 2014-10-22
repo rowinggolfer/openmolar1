@@ -370,11 +370,11 @@ class MedicalHistoryDialog(BaseDialog):
         if self.has_edits:
             self.pt.addHiddenNote(
                 "mednotes", _("Updated Medical History"), one_only=True)
-            self.save_mh()
         elif self.is_new_mh or self.checked_only:
             self.update_chkdate()
             self.pt.addHiddenNote(
                 "mednotes", _("Checked Medical History"), one_only=True)
+        self.save_mh()
         self.pt.mh_chkdate = self.new_mh.chkdate
         self.pt.MEDALERT = self.new_mh.alert
 

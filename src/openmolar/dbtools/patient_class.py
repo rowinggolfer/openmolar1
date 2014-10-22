@@ -81,10 +81,6 @@ exemptionTableAtts = ('exemption', 'exempttext')
 bpeTableAtts = ('bpedate', 'bpe')
 bpeTableVals = (nullDate, '', ())
 
-mnhistTableAtts = ('chgdate', 'ix', 'note')
-
-notesTableAtts = ('lineno', 'line')
-
 mouth = ['ul8', 'ul7', 'ul6', 'ul5', 'ul4', 'ul3', 'ul2', 'ul1',
          'ur1', 'ur2', 'ur3', 'ur4', 'ur5', 'ur6', 'ur7', 'ur8',
          'lr8', 'lr7', 'lr6', 'lr5', 'lr4', 'lr3', 'lr2', 'lr1',
@@ -218,11 +214,6 @@ class patient(object):
         self.cstatus = None
         self.transfer = 0
         self.pstatus = None
-
-        # TABLE 'mnhist'#######
-        self.chgdate = nullDate   # date 	YES 	 	None
-        self.ix = 0  # tinyint(3) unsigned 	YES 	 	None
-        self.note = ''  # varchar(60) 	YES 	 	None
 
         self.estimates = []
 
@@ -790,8 +781,7 @@ class patient(object):
         these are what is copied over into pt.dbstate
         '''
         return (patient_query_atts +
-            exemptionTableAtts + bpeTableAtts + mnhistTableAtts +
-            clinical_memos + (
+            exemptionTableAtts + bpeTableAtts + clinical_memos + (
                 "fees", "estimate_charges", "serialno", "estimates",
                 "appt_prefs", "treatment_course", "chartgrid"))
 
