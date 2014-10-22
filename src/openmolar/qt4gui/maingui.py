@@ -736,6 +736,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
         #--go to either "reception" or "clinical summary"
         self.gotoDefaultTab()
+        self.load_notes()
 
     def clearRecord(self):
         '''
@@ -762,8 +763,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                           self.ui.summaryChartWidget):
                 chart.clear()
                 chart.update()
-            self.ui.notesSummary_webView.setHtml(localsettings.message)
-            self.ui.reception_textBrowser.setHtml(localsettings.message)
+            self.ui.notesSummary_webView.setHtml("")
+            self.ui.reception_textBrowser.setHtml("")
             self.ui.recNotes_webView.setHtml("")
             self.ui.chartsTableWidget.clear()
             # self.diary_widget.schedule_controller.clear()
@@ -780,6 +781,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                 self.load_editpage()
                 self.editPageVisited = False
         else:
+            self.load_notes()
             self.pt.familyno = None
         self.update_family_label()
 
@@ -1297,14 +1299,17 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
     def load_notes_summary(self):
         i = self.ui.tabWidget.currentIndex()
         LOGGER.debug("load clinical summary notes called, ignore=%s", i!=4)
-        if i != 4 or self.summary_notes_loaded:
-            return
-        self.set_note_preferences()
-        note_html = formatted_notes.summary_notes(self.pt.notes_dict)
-        self.ui.notesSummary_webView.setHtml(note_html)
-        page = self.ui.notesSummary_webView.page()
-        page.setLinkDelegationPolicy(page.DelegateAllLinks)
-        self.summary_notes_loaded = True
+        if i != 4:
+            LOGGER.debug("ignoring clinical summary notes load - tab hidden")
+        elif self.pt.serialno == 0:
+            self.ui.notesSummary_webView.setHtml(localsettings.message)
+        elif not self.summary_notes_loaded:
+            self.set_note_preferences()
+            note_html = formatted_notes.summary_notes(self.pt.notes_dict)
+            self.ui.notesSummary_webView.setHtml(note_html)
+            page = self.ui.notesSummary_webView.page()
+            page.setLinkDelegationPolicy(page.DelegateAllLinks)
+            self.summary_notes_loaded = True
 
     def loadpatient(self, newPatientReload=False):
         '''
@@ -2615,8 +2620,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             if dl.exec_():
                 if patient_loaded:
                     self.pt.getNotesTuple()
-                    self.updateNotesPage()
-                    self.load_notes_summary()
+                    self.load_notes()
 
     def show_diary(self):
         '''
