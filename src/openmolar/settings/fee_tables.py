@@ -542,9 +542,12 @@ class FeeTable(object):
         '''
         shortcuts which are used in association with 'other' items
         '''
+        items = {}
         for item in self.feesDict.values():
             if item.pt_attribute == "other":
-                yield ("other", item.shortcut)
+                items[item.description.lower()] = item.shortcut
+        for key in sorted(items.keys()):
+            yield ("other", items[key])
 
 
 class FeeItem(object):
