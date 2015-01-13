@@ -35,15 +35,22 @@ HTML_TEMPLATE = u'''
 <head><link rel="stylesheet" href="%s" type="text/css">
 </head>
 <body>
+<!-- HEADER -->
+{{CONTENT}}
+</body>
+</html>
+''' % localsettings.stylesheet
+
+
+ACTIVE_HTML_TEMPLATE = HTML_TEMPLATE.replace("{{CONTENT}}", '''
 {{HEADER}}
 <hr />
 {{TREATMENTS}}
 <hr />
 {{PAYMENTS}}
-</html>
-</body>
-''' % localsettings.stylesheet
+''')
 
+UNKNOWN_DENT = ("??", _("Unknown"), _("Unknown"), "", "")
 
 def header_html(pt):
 
@@ -67,19 +74,75 @@ def payments_html(pt):
         %s ''' % paymentHistory.summary_details(
         pt.serialno, pt.treatment_course.accd)
 
-
-def html(pt):
-    html_ = HTML_TEMPLATE.replace("{{TREATMENTS}}", treatment_html(pt))
+def active_course_html(pt):
+    html_ = ACTIVE_HTML_TEMPLATE.replace("{{TREATMENTS}}", treatment_html(pt))
     html_ = html_.replace("{{PAYMENTS}}", payments_html(pt))
     html_ = html_.replace("{{HEADER}}", header_html(pt))
 
     return html_
 
+def summary_html(pt):
+    key_values = []
+    key_values.append((
+        _("Contract Dentist"),
+        localsettings.dentDict.get(pt.dnt1, UNKNOWN_DENT)[1]
+        ))
+
+    days = (localsettings.currentDay() - pt.first_note_date).days
+    if days < 365:
+        duration = _("recently")
+    elif days < 730:
+        duration = _("last year")
+    else:
+        duration = "%s %s" % (days//365, _("years ago."))
+
+    key_values.append((
+        _("Joined the practice"),
+        duration
+        ))
+
+    key_values.append((
+        _("Last Treatment"),
+        localsettings.formatDate(pt.last_treatment_date)
+        ))
+
+    key_values.append((
+        _("Exam Due"),
+        _("YES!") if pt.exam_due else _("No")
+        ))
+
+    key_values.append((
+        _("Has seen hygienist on"),
+        "%s %s" % (pt.n_hyg_visits, _("Occasions"))
+        ))
+
+    content = "<ul>"
+    for key, value in key_values:
+        content += "<li><b>%s</b> - %s</li>" % (key, value)
+    content += "</ul>"
+    html_ = HTML_TEMPLATE.replace("{{CONTENT}}", content)
+
+    return html_
+
+def finished_today_html(pt):
+    return active_course_html(pt).replace(
+        "<!-- HEADER -->",
+        _("COMPLETED COURSE TODAY")
+        )
+
+def html(pt, summary=True):
+    if summary:
+        return summary_html(pt)
+
+    if pt.last_treatment_date == localsettings.currentDay():
+        return finished_today_html(pt)
+    return active_course_html(pt)
+
 if __name__ == '__main__':
     from openmolar.dbtools.patient_class import patient
     localsettings.initiate()
 
-    pt = patient(1314)
+    pt = patient(26041)
     html = html(pt)
     html = html.encode("ascii", "replace")
     print html

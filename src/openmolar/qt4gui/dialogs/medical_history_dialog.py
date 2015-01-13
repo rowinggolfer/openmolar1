@@ -409,14 +409,14 @@ class MedicalHistoryDialog(BaseDialog):
 if __name__ == "__main__":
     app = QtGui.QApplication([])
     from openmolar.dbtools import patient_class
-    from openmolar.settings.localsettings import PatientNotFoundError
 
     LOGGER.setLevel(logging.DEBUG)
     i = 16539
     try:
         pt = patient_class.patient(i)
-    except PatientNotFoundError:
+    except localsettings.PatientNotFoundError:
         LOGGER.warning("no such serialno %s", i)
+        sys.exit()
     dl = MedicalHistoryDialog(pt)
     if dl.exec_():
         LOGGER.debug("dialogl accepted")

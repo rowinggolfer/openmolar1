@@ -140,7 +140,7 @@ def get_notes_for_date(lines, full_notes=False):
     return s_t_l(tx), s_t_l(note), s_t_l(metadata)
 
 
-def get_rec_summary(lines):
+def get_rec_summary(op, lines):
     '''
     this is the reception summary (what has been charged and/or printed)
     '''
@@ -158,7 +158,9 @@ def get_rec_summary(lines):
             noteline = noteline.replace("treatment 0.00", "")
             note += '<img src=%s height="12" align="right"> %s<br />' % (
                 localsettings.money_png, noteline)
-
+        elif "REC" in op and ntype=="newNOTE":
+            note += '<em>%s</em>' % (
+            noteline.replace("<", "&lt;").replace(">", "&gt>"))
     return s_t_l(note)
 
 
@@ -178,8 +180,8 @@ def rec_notes(notes_dict, startdate=None):
     for key in keys:
         date, op = key
         if startdate and date >= startdate:
-            data = notes_dict[key]
-            note = get_rec_summary(data)
+            lines = notes_dict[key]
+            note = get_rec_summary(op, lines)
             if note:
                 retarg += '<tr><td>%s</td><td>%s</td></tr>' % (
                     localsettings.formatDate(date), note)

@@ -238,9 +238,11 @@ class patient(object):
         self.treatment_course = None
         self.est_logger = None
         self._most_recent_daybook_entry = None
+        self._first_note_date = None
         self._has_exam_booked = None
         self._previous_surnames = None
         self.monies_reset = False
+        self._n_hyg_visits = None
 
         if self.serialno == 0:
             return
@@ -321,6 +323,10 @@ class patient(object):
         return self.appt_prefs.recall_active
 
     @property
+    def exam_due(self):
+        return self.recall_active and self.recd < localsettings.currentDay()
+
+    @property
     def recd(self):
         return self.appt_prefs.recdent
 
@@ -350,6 +356,36 @@ class patient(object):
             cursor.close()
             self._most_recent_daybook_entry = max_date
         return self._most_recent_daybook_entry
+
+    @property
+    def first_note_date(self):
+        '''
+        returns teh first date found in the patient notes
+        '''
+        if self._first_note_date is None:
+            min_date = localsettings.currentDay()
+            db = connect.connect()
+            cursor = db.cursor()
+            query = 'select min(ndate) from formatted_notes where serialno=%s'
+            if cursor.execute(query, (self.serialno,)):
+                min_date = cursor.fetchone()[0]
+            cursor.close()
+            self._first_note_date = min_date
+        return self._first_note_date
+
+    @property
+    def n_hyg_visits(self):
+        if self._n_hyg_visits is None:
+            self._n_hyg_visits = 0
+            db = connect.connect()
+            cursor = db.cursor()
+            query = '''select count(*) from
+            (select date from daybook where serialno=%s and
+            trtid in %s group by date) as t;'''
+            if cursor.execute(query, (self.serialno, localsettings.hyg_ixs)):
+                self._n_hyg_visits = cursor.fetchone()[0]
+            cursor.close()
+        return self._n_hyg_visits
 
     def forget_exam_booked(self):
         self._has_exam_booked = None

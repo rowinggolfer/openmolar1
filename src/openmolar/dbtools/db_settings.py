@@ -282,6 +282,7 @@ class SettingsFetcher(object):
         self.apptix_dict, self.apptix_reverse = {}, {}
         active_dent_initials, active_dent_ixs = [], []
         active_hyg_initials, active_hyg_ixs = [], []
+        archived_dents, archived_hygs = [], []
         self.dentist_data = {}
 
         self.cursor.execute(CLINICIANS_QUERY)
@@ -303,6 +304,11 @@ class SettingsFetcher(object):
                 elif type_ in (2, 3):   # hygienist and therapist
                     active_hyg_initials.append(initials)
                     active_hyg_ixs.append(ix)
+            else:
+                if type_ == 1:
+                    archived_dents.append(ix)
+                elif type_ == 2:
+                    archived_hygs.append(ix)
             if type_ == 1:
                 list_no = ""
                 if data:
@@ -319,6 +325,8 @@ class SettingsFetcher(object):
 
         self.active_dents = tuple(active_dent_initials), tuple(active_dent_ixs)
         self.active_hygs = tuple(active_hyg_initials), tuple(active_hyg_ixs)
+        self.archived_dents = tuple(archived_dents)
+        self.archived_hygs = tuple(archived_hygs)
 
 if __name__ == "__main__":
     sf = SettingsFetcher()

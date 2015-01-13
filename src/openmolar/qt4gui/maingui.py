@@ -216,8 +216,6 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.set_surgery_mode()
         self.load_pt_statuses()
         self.loadDentistComboboxes()
-        self.ui.reception_textBrowser.setHtml(localsettings.message)
-        self.ui.notesSummary_webView.setHtml(localsettings.message)
         self.ui.forumViewFilter_comboBox.addItems(
             localsettings.allowed_logins)
 
@@ -764,10 +762,9 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                 chart.clear()
                 chart.update()
             self.ui.notesSummary_webView.setHtml("")
-            self.ui.reception_textBrowser.setHtml("")
-            self.ui.recNotes_webView.setHtml("")
+            self.ui.reception_webview.setHtml("")
+            self.ui.reception_webview2.setHtml("")
             self.ui.chartsTableWidget.clear()
-            # self.diary_widget.schedule_controller.clear()
             self.ui.notesEnter_textEdit.setHtml("")
 
             self.ui.medNotes_pushButton.setStyleSheet("")
@@ -1276,18 +1273,53 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         LOGGER.debug(
         "update reception Summary page called, ignore=%s", i!=3)
         if self.pt.serialno == 0:
-            self.ui.reception_textBrowser.setHtml(localsettings.message)
+            self.ui.med_questionaire_label.setText("")
+            self.hide_reception_right_panel()
         elif i == 3:
-            html_ = reception_summary.html(self.pt)
-            self.ui.reception_textBrowser.setText(html_)
             self.pt_diary_widget.layout_ptDiary()
-            if not self.reception_notes_loaded:
-                note = formatted_notes.rec_notes(
+
+            mhdate = self.pt.mh_chkdate
+            if mhdate is None:
+                message = _("MH has never been checked!")
+                style_ = "color: %s" % colours.med_warning
+            else:
+                chkdate = localsettings.formatDate(mhdate)
+                message = "%s %s" % (_("Checked"), chkdate)
+                if (localsettings.currentDay() - mhdate).days > 178:
+                    style_ = "color: %s" % colours.med_warning
+                else:
+                    style_ = ""
+
+            self.ui.med_questionaire_label.setStyleSheet(style_)
+            self.ui.med_questionaire_label.setText(message)
+        self.load_reception_notes()
+
+    def load_reception_notes(self):
+        if self.pt.serialno == 0:
+            self.ui.reception_webview.setHtml(localsettings.message)
+            self.ui.reception_webview2.setHtml("")
+        elif not self.reception_notes_loaded:
+            is_summary = self.ui.reception_view_checkBox.isChecked()
+            if is_summary:
+                self.ui.reception_webview2.setHtml("hidden")
+                self.hide_reception_right_panel()
+            else:
+                html_ = formatted_notes.rec_notes(
                     self.pt.notes_dict,
                     self.pt.treatment_course.accd
                     )
-                self.ui.recNotes_webView.setHtml(note)
-                self.reception_notes_loaded = True
+                self.ui.reception_webview2.setHtml(html_)
+                self.hide_reception_right_panel(False)
+            html_ = reception_summary.html(self.pt, is_summary)
+            self.ui.reception_webview.setHtml(html_)
+
+            self.reception_notes_loaded = True
+
+    def reception_view_checkBox_clicked(self):
+        LOGGER.debug("user called reception refresh summary=%s",
+            self.ui.reception_view_checkBox.isChecked())
+        self.reception_notes_loaded = False
+        self.load_reception_notes()
 
     def load_clinicalSummaryPage(self):
         i = self.ui.tabWidget.currentIndex()
@@ -1338,6 +1370,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.pt.checkExemption()
         self.updateDetails()
         self.ui.synopsis_lineEdit.setText(self.pt.synopsis)
+        self.ui.reception_view_checkBox.setChecked(not self.pt.underTreatment)
         self.load_clinicalSummaryPage()
         self.load_receptionSummaryPage()
 
@@ -1562,7 +1595,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         else:
             self.ui.tabWidget.setCurrentIndex(3)
 
-        self.ui.recNotes_webView.setHtml("")
+        self.ui.reception_webview2.setHtml("")
 
         today = QtCore.QDate().currentDate()
         self.ui.daybookEndDateEdit.setDate(today)
@@ -1947,8 +1980,17 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
         if not arg:
             self.ui.medNotes_pushButton.setText("MedNotes")
+        #self.hide_reception_right_panel(not arg)
 
         self.updateDetails()
+
+    def hide_reception_right_panel(self, hide=True):
+        LOGGER.debug("Hide reception right panel %s", hide)
+        width = self.ui.reception_splitter.width()
+        if hide:
+            self.ui.reception_splitter.setSizes([width, 0])
+        else:
+            self.ui.reception_splitter.setSizes([3 * width / 4, width / 4])
 
     def changeLanguage(self):
         '''
@@ -2710,13 +2752,16 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.takePayment_pushButton.clicked.connect(
             self.takePayment_pushButton_clicked)
         self.ui.printGP17_pushButton.clicked.connect(self.printGP17_clicked)
+        self.ui.med_questionaire_print_pushbutton.clicked.connect(self.printMH)
+        self.ui.reception_view_checkBox.clicked.connect(
+            self.reception_view_checkBox_clicked)
 
     def signals_notes(self):
         '''
         all the notes browsers need to send a signal when they have loaded
         so that they can be scrolled to the end
         '''
-        for wv in (self.ui.recNotes_webView,
+        for wv in (self.ui.reception_webview2,
                    self.ui.notes_webView,
                    self.ui.notesSummary_webView):
             wv.loadFinished.connect(self.webviewloaded)

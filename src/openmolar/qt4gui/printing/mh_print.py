@@ -444,7 +444,9 @@ class MHPrint(object):
 
 
 if __name__ == "__main__":
-    # DEBUG = True
+    import os
+    os.chdir(os.path.expanduser("~"))
+
     localsettings.initiate()
     app = QtGui.QApplication([])
     from openmolar.dbtools.patient_class import patient

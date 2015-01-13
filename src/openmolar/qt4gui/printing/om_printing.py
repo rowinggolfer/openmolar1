@@ -61,6 +61,7 @@ from openmolar.qt4gui.printing.mh_print import MHPrint
 
 from openmolar.qt4gui.dialogs.correspondence_dialog import CorrespondenceDialog
 from openmolar.qt4gui.dialogs.print_record_dialog import PrintRecordDialog
+from openmolar.qt4gui.dialogs.mh_form_dialog import MHFormDialog
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -461,13 +462,10 @@ def printNotes(om_gui):
 
 
 def print_mh_form(om_gui):
-    if om_gui.pt.serialno == 0:
-        om_gui.advise("no patient selected", 1)
-        return
-    LOGGER.info("print MH form for %s" % om_gui.pt.serialno)
-    mh_printer = MHPrint(om_gui.pt, om_gui)
-    mh_printer.print_()
-
+    pt = None if om_gui.pt.serialno == 0 else om_gui.pt
+    dl = MHFormDialog(pt, om_gui)
+    if dl.exec_():
+        dl.apply()
 
 def print_mh_forms(serialnos, om_gui):
     for serialno in serialnos:

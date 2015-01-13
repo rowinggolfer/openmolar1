@@ -839,7 +839,6 @@ def force_reconnect():
         connect.mainconnection.close()
     connect.params.reload()
 
-
 def initiateUsers(changed_server=False):
     '''
     just grab user names. necessary because the db schema could be OOD here
@@ -859,6 +858,7 @@ def initiate(changed_server=False):
     LOGGER.debug("initiating settings from database")
     global message, dentDict, ops, SUPERVISOR, \
         ops_reverse, activedents, activehygs, activedent_ixs, activehyg_ixs, \
+        dent_ixs, hyg_ixs, \
         apptix, apptix_reverse, BOOKEND, clinicianNo, clinicianInits, \
         WIKIURL, cashbookCodesDict, PT_COUNT, PRACTICE_ADDRESS, PRACTICE_NAME
 
@@ -887,6 +887,8 @@ def initiate(changed_server=False):
     apptix = settings_fetcher.apptix_dict
     activedents, activedent_ixs = settings_fetcher.active_dents
     activehygs, activehyg_ixs = settings_fetcher.active_hygs
+    dent_ixs = settings_fetcher.archived_dents + activedent_ixs
+    hyg_ixs = settings_fetcher.archived_hygs + activehyg_ixs
 
     PRACTICE_NAME = settings_fetcher.practice_name
     PRACTICE_ADDRESS = settings_fetcher.practice_address
@@ -917,6 +919,8 @@ def initiate(changed_server=False):
     LOGGER.debug("ops_reverse = %s", ops_reverse)
     LOGGER.debug("apptix = %s", apptix)
     LOGGER.debug("apptix_reverse = %s", apptix_reverse)
+    LOGGER.debug("dent_ixs = %s", dent_ixs)
+    LOGGER.debug("hyg_ixs = %s", hyg_ixs)
     LOGGER.debug("activedents = %s", activedents)
     LOGGER.debug("activehygs = %s", activehygs)
     LOGGER.debug("allowed logins = %s", allowed_logins)
