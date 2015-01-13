@@ -1424,7 +1424,8 @@ class DiaryWidget(QtGui.QWidget):
                 self.advise(_("Error Removing from Appointment Book"), 2)
                 self.layout_dayView()
 
-        self.pt_diary_changed.emit(self.pt.serialno)
+        if self.pt is not None:
+            self.pt_diary_changed.emit(self.pt.serialno)
 
     def clearEmergencySlot(self, arg):
         '''
