@@ -273,6 +273,7 @@ def xrayAdd(om_gui, complete=False):
     # offerTreatmentItems is a generator, so the list conversion here
     # is so that the dialog get raised before the
     #"were these xrays taken today question
+
     chosen_treatments = list(offerTreatmentItems(om_gui, mylist, complete))
 
     if not chosen_treatments:
@@ -286,10 +287,33 @@ def xrayAdd(om_gui, complete=False):
         if input == QtGui.QMessageBox.Yes:
             complete = True
 
-    add_treatments_to_plan(om_gui, chosen_treatments, complete)
+    completed_planned_warning_required = False
+    # complete any xrays already planned.
+    if complete:
+        pt = om_gui.pt
+        courseno = pt.treatment_course.courseno
+        for xray, trt in chosen_treatments:
+            if trt in pt.treatment_course.xraypl:
+                n_txs = pt.treatment_course.xraycmp.split(" ").count(trt) + 1
+                hash_ = localsettings.hash_func(
+                    "%sxray%s%s" %
+                    (courseno, n_txs, trt))
+                tx_hash = TXHash(hash_)
+                tx_hash_complete(om_gui, tx_hash)
+                completed_planned_warning_required = True
+            else:
+                add_treatments_to_plan(om_gui, ((xray, trt),), True)
+    else:
+        add_treatments_to_plan(om_gui, chosen_treatments, False)
+
     if om_gui.ui.tabWidget.currentIndex() == 4:  # clinical summary
         om_gui.load_clinicalSummaryPage()
+    else:
+        om_gui.ui.completed_listView.model().reset()
 
+    if completed_planned_warning_required:
+        om_gui.advise(
+            _("Some of the xrays you completed were already planned."), 1)
 
 def denture_add(om_gui):
     dl = DentureDialog(om_gui)

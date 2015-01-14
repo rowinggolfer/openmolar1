@@ -54,7 +54,7 @@ DETAILS_QUERY = '''select DATE_FORMAT(date,'%s'), daybook.serialno,
         concat (fname, " ", sname), coursetype, dntid,
         trtid, diagn, perio, anaes, misc, ndu, ndl, odu, odl, other, chart,
         feesa, feesb, feesc, id
-        from daybook join patients on daybook.serialno = patients.serialno
+        from daybook join new_patients on daybook.serialno = new_patients.serialno
         where {{DENT CONDITIONS}}
         date >= %%s and date <= %%s {{FILTERS}} order by date''' % (
     localsettings.OM_DATE_FORMAT.replace("%", "%%"))

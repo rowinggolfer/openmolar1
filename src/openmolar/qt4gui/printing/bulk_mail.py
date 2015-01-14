@@ -54,9 +54,11 @@ FAMILY_BODY = '''%s\n%s''' % (
 
 SIGN_OFF = _("Yours sincerely,")
 
-FOOTER = _('''* If you already have a future appointment with us -
-please accept our apologies and ignore this letter.''')
+PS_TEXT = _('* P.S If you already have a future appointment with us - '
+            'please accept our apologies and ignore this letter.')
 
+FOOTER = _('We are currently accepting new patients to the practice.'
+           'We would be delighted if you would recommend us to your friends and family.')
 
 try:
     filepath = os.path.join(localsettings.localFileDirectory,
@@ -67,16 +69,6 @@ try:
 except IOError:
     LOGGER.warning("no recall footer found in '%s'" % filepath)
     CUSTOM_TEXT = ""
-
-try:
-    filepath = os.path.join(localsettings.localFileDirectory,
-                            "recall_postscript.txt")
-    f = open(filepath, "r")
-    PS_TEXT = f.read()
-    f.close()
-except IOError:
-    LOGGER.warning("no recall ps found in %s" % filepath)
-    PS_TEXT = ""
 
 
 class OMLetter(object):
@@ -438,14 +430,14 @@ class bulkMails(object):
         if not dialog.exec_():
             return
 
-        font = QtGui.QFont("Sans", 11)
+        font = QtGui.QFont("Helvetica", 11)
         fm = QtGui.QFontMetrics(font)
         line_height = fm.height()
 
         italic_font = QtGui.QFont(font)
         italic_font.setItalic(True)
 
-        sigFont = QtGui.QFont("URW Chancery L", 15)
+        sigFont = QtGui.QFont("URW Chancery L", 18)
         sigFont.setBold(True)
         sig_font_height = QtGui.QFontMetrics(sigFont).height() * 1.2
 
@@ -458,8 +450,8 @@ class bulkMails(object):
 
         ADDRESS_LEFT = 80
         ADDRESS_HEIGHT = 140
-        FOOTER_HEIGHT = 150
-        DATE_HEIGHT = 1 * line_height
+        FOOTER_HEIGHT = 180
+        DATE_HEIGHT = 2 * line_height
         BODY_HEIGHT = pageRect.height() - (
             TOP + ADDRESS_HEIGHT + FOOTER_HEIGHT + DATE_HEIGHT)
 
@@ -591,7 +583,7 @@ class bulkMails(object):
             line_count = PS_TEXT.count("\n") + 2
             ps_rect = QtCore.QRectF(
                 body_rect.bottomLeft().x(),
-                sig_rect.bottomLeft().y() + line_height,
+                sig_rect.bottomLeft().y() + line_height*2,
                 bodyRect.width(), line_height * line_count)
 
             painter.setFont(font)
@@ -601,7 +593,7 @@ class bulkMails(object):
                 painter.drawRect(ps_rect.adjusted(2, 2, -2, -2))
 
             # footer
-            option = QtGui.QTextOption(QtCore.Qt.AlignCenter)
+            option = QtGui.QTextOption(QtCore.Qt.AlignHCenter)
             option.setWrapMode(QtGui.QTextOption.WordWrap)
 
             painter.drawLine(footerRect.topLeft(), footerRect.topRight())
@@ -633,8 +625,8 @@ if __name__ == "__main__":
 
     om_gui = maingui.OpenmolarGui()
 
-    conditions = "recd>=%s and recd<=%s and dnt1=%s"
-    values = date(2012, 7, 1), date(2012, 7, 13), 6
+    conditions = "new_patients.serialno=%s"
+    values =  (1,)
     patients = recall.getpatients(conditions, values)
 
     letters = bulkMails(om_gui)
