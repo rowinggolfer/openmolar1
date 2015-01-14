@@ -145,6 +145,11 @@ def update_daybook_after_estimate_change(values):
     cursor.execute(query, (daybook_id,))
     feesa, feesb = cursor.fetchone()
 
+    # this next situation occurs if all treatments hashes related to
+    # the daybook row have been deleted
+    if (feesa, feesb) == (None, None):
+        feesa, feesb = 0, 0
+
     LOGGER.debug(
         "updating row with feesa, feesb = %s and %s" %
         (feesa, feesb))
