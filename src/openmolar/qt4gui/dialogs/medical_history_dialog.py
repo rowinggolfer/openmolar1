@@ -30,6 +30,7 @@ from openmolar.settings import localsettings
 from openmolar.dbtools import medhist
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 from openmolar.qt4gui.customwidgets.completer_textedit import CompletionTextEdit
+
 LOGGER = logging.getLogger("openmolar")
 
 
@@ -219,7 +220,6 @@ class MedicalHistoryDialog(BaseDialog):
         self.meds_text_edit.setText(
             "\n".join(sorted(self.mh.medications.keys())) + "\n")
 
-
     @property
     def is_new_mh(self):
         return self.mh.ix is None
@@ -382,7 +382,7 @@ class MedicalHistoryDialog(BaseDialog):
         self.get_new_mh(rejecting=True)
         if self.has_edits:
             if QtGui.QMessageBox.question(
-                  self,
+                self,
                   _("Confirm"),
                   _("Abandon your changes?"),
                   QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
