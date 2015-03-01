@@ -3,3 +3,4 @@
 builds/*
 dist/*
 MANIFEST
+.ropeproject
