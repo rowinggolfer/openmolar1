@@ -1,33 +1,34 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
-'''this module has one purpose... provide a connection to the mysqldatabase
-using 3rd party MySQLdb module'''
+'''
+this module has one purpose...
+provide a connection to the mysqldatabase using 3rd party MySQLdb module
+'''
 
 import base64
 import logging
-import sys
 import time
 import subprocess
 from xml.dom import minidom
@@ -38,14 +39,14 @@ from openmolar.settings import localsettings
 
 LOGGER = logging.getLogger("openmolar")
 
-if __name__ == "__main__":
-    LOGGER.setLevel(logging.DEBUG)
-
 mainconnection = None
 
 
 class DB_Params(object):
 
+    '''
+    this class provides the attributes needed by MySQLdb to connect
+    '''
     def __init__(self):
         self.host = ""
         self.port = 0
@@ -91,7 +92,7 @@ class DB_Params(object):
             "dbname")[0].firstChild.data
 
         if not self.use_ssl:
-            #-- to enable ssl... add <ssl>True</ssl> to the conf file
+            # - to enable ssl... add <ssl>True</ssl> to the conf file
             LOGGER.debug("using ssl")
         else:
             LOGGER.warning("not using ssl (you really should!)")
@@ -100,6 +101,9 @@ class DB_Params(object):
 
     @property
     def kwargs(self):
+        '''
+        provides its own attributes in a form acceptable to MySQLdb
+        '''
         kwargs = {
             "host": self.host,
             "port": self.port,
@@ -110,9 +114,10 @@ class DB_Params(object):
             "charset": "utf8"
         }
         if self.use_ssl:
-                #-- note, dictionary could have up to 5 params.
-            #-- ca, cert, key, capath and cipher
-            #-- however, IIUC, just using ca will encrypt the data
+            # - note, ssl_settings maps to a dictionary
+            # - which can have up to 5 params.
+            # - ca, cert, key, capath and cipher
+            # - however, IIUC, just using ca will encrypt the data
             kwargs["ssl_settings"] = {'ca': '/etc/mysql/ca-cert.pem'}
         return kwargs
 
@@ -156,6 +161,7 @@ def connect():
     raise exc
 
 if __name__ == "__main__":
+    LOGGER.setLevel(logging.DEBUG)
     LOGGER.debug("using conffile -  %s" % localsettings.cflocation)
     for i in range(1, 11):
         try:
@@ -168,13 +174,13 @@ if __name__ == "__main__":
                 # close the db... let's check it reconnects
                 dbc.close()
             if i == 4:
-                LOGGER.debug(
-                    "making a slightly bad query... let's check we get a warning")
+                LOGGER.debug("making a slightly bad query... "
+                             "let's check we get a warning")
                 cursor = dbc.cursor()
                 cursor.execute(
                     'update new_patients set dob="196912091" where serialno=4')
                 cursor.close()
-        except Exception as exc:
+        except Exception:
             LOGGER.exception("exception caught?")
         time.sleep(5)
 

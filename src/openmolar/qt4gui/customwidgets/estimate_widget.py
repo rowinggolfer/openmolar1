@@ -1,38 +1,38 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 this module provides a custom widget "EstimateWidget"
 '''
 
-import functools
 import logging
 
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
-from estimate_item_widget import EstimateItemWidget
+from openmolar.qt4gui.customwidgets.estimate_item_widget \
+    import EstimateItemWidget
 
 from openmolar.qt4gui.fees import manipulate_plan
 
@@ -264,11 +264,11 @@ class EstimateWidget(QtGui.QWidget):
 
         row = 1
         for est in sorted(self.ests):
-            #- check to see if similar items exist already, if not, add a
-            #- widget
+            # - check to see if similar items exist already, if not, add a
+            # - widget
 
             if self.expandAll or not self.can_add_to_existing_item_widget(est):
-                #--creates a widget
+                # --creates a widget
                 widg = EstimateItemWidget(self)
                 widg.addItem(est)
 
@@ -445,7 +445,8 @@ class EstimateWidget(QtGui.QWidget):
         for hash_, att_, tx in self.pt.tx_hash_tups:
             if check_att == att_ and tx == check_tx and hash_ != tx_hash.hash:
                 LOGGER.warning(
-                    "Special code checked via estimate widget, not allowing check")
+                    "Special code checked via estimate widget"
+                    ", not allowing check")
                 if completing:
                     func_ = manipulate_plan.complete_txs
                 else:
