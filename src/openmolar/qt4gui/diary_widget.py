@@ -1541,6 +1541,7 @@ class DiaryWidget(QtGui.QWidget):
         dl = InsertBlocksDialog()
         if dl.exec_():
             dl.apply()
+            self.layout_diary()
 
     def diary_tabWidget_nav(self, i):
         '''
