@@ -344,18 +344,18 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                     _('This client was written for schema version'),
                     localsettings.CLIENT_SCHEMA_VERSION,
                     _('and your database is now at'),
-                    sv.
+                    sv,
                     _('However, the differences are not critical, and you can '
                       'continue if you wish'),
                     _('It would still be wise to update this client ASAP'),
                     _('Do you wish to continue?'))
 
-                if QtGui.QMessageBox.question(
-                    self,
-                    _("Proceed without upgrade?"),
-                    message,
-                    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                        QtGui.QMessageBox.Yes) == QtGui.QMessageBox.No:
+                if (QtGui.QMessageBox.question(
+                        self,
+                        _("Proceed without upgrade?"),
+                        message,
+                        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                        QtGui.QMessageBox.Yes) == QtGui.QMessageBox.No):
                     QtGui.QApplication.instance().closeAllWindows()
 
     def resizeEvent(self, event):
