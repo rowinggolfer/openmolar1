@@ -993,7 +993,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                 QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
                 QtGui.QMessageBox.Yes)
             if result == QtGui.QMessageBox.Yes:
-                html, version = docspprinirinted.getData(ix)
+                html, version = docsprinted.getData(ix)
                 type_ = item.text(1).replace("(html)", "")
                 if om_printing.htmlEditor(self, type_, html, version):
                     self.docsPrintedInit()
