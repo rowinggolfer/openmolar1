@@ -778,7 +778,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         if self.enteringNewPatient():
             return
         if not self.okToLeaveRecord():
-            print "not clearing record"
+            LOGGER.debug("not clearing record")
             return
         self.clearRecord()
         # -disable much of the UI
@@ -795,7 +795,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         Other pages are disabled.
         '''
         if self.pt.serialno != 0:
-            print "clearing record"
+            LOGGER.debug("clearing record")
             self.forget_notes_loaded()
             self.ui.dobEdit.setDate(QtCore.QDate(1900, 1, 1))
             self.ui.detailsBrowser.setText("")
@@ -826,7 +826,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
             self.loadedPatient_label.setText("No Patient Loaded")
             if self.editPageVisited:
-                print "blanking edit page fields"
+                LOGGER.debug("blanking edit page fields")
                 self.load_editpage()
                 self.editPageVisited = False
             self.clear_record_in_use()
@@ -964,7 +964,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         '''
         load the docsprinted listWidget
         '''
-        print "(re)loading docs printed"
+        LOGGER.debug("(re)loading docs printed")
         self.ui.prevCorres_treeWidget.clear()
         self.ui.prevCorres_treeWidget.setHeaderLabels(
             ["Date", "Type", "Version", "Index"])
@@ -993,7 +993,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                 QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
                 QtGui.QMessageBox.Yes)
             if result == QtGui.QMessageBox.Yes:
-                html, version = docsprinted.getData(ix)
+                html, version = docspprinirinted.getData(ix)
                 type_ = item.text(1).replace("(html)", "")
                 if om_printing.htmlEditor(self, type_, html, version):
                     self.docsPrintedInit()
@@ -1012,12 +1012,11 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                     f.write(data)
                     f.close()
                     localsettings.openPDF()
-                except Exception as e:
-                    print "view PDF error"
-                    print Exception, e
+                except Exception:  # general exception used as could be many
+                    LOGGER.exception("view PDF error")
                     self.advise(_("error reviewing PDF file"), 1)
         else:  # unknown data type... probably plain text.
-            print "other type of doc"
+            LOGGER.info("other type of doc")
             data = docsprinted.getData(ix)[0]
             if data is None:
                 data = _(
@@ -1066,7 +1065,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         called by a double click on the imported documents listview
         '''
         ix = int(item.text(4))
-        print "opening file index ", ix
+        LOGGER.debug("opening file index %s", ix)
         result = QtGui.QMessageBox.question(
             self,
             _("Re-open"),
@@ -1082,9 +1081,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                     f.write(data[0])
                 f.close()
                 localsettings.openFile(fpath)
-            except Exception as e:
-                print "unable to open stored document"
-                print Exception, e
+            except Exception:
+                LOGGER.exception("unable to open stored document")
                 self.advise(_("error opening document"), 1)
 
     def load_todays_patients_combobox(self):
@@ -1263,7 +1261,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                 self.advise(u"<b>%s</b><hr /><pre>%s" % (message, e), 2)
 
         except localsettings.PatientNotFoundError:
-            print "NOT FOUND ERROR"
+            LOGGER.exception("Patient Not Found - %s", serialno)
             self.advise(_("error getting serialno") + " %d - " % serialno +
                         _("please check this number is correct?"), 1)
         except Exception as exc:
@@ -1728,7 +1726,6 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         if self.enteringNewPatient():
             return
         if not self.okToLeaveRecord():
-            print "not loading"
             self.advise(_("Not loading patient"))
             return
         filename = QtGui.QFileDialog.getOpenFileName()
@@ -1940,8 +1937,11 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
             else:
                 self.advise("Error applying changes... please retry", 2)
-                print "error saving changes to record %s" % self.pt.serialno,
-                print result, str(uc)
+                LOGGER.warning(
+                    "error saving record %s changes are %s",
+                    self.pt.serialno,
+                    "\n".join(uc)
+                )
 
         if "New Notes" in uc:
             newnote = str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
