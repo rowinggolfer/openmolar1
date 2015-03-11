@@ -1,29 +1,34 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
+
+'''
+patient_class.py
+'''
 
 from copy import deepcopy
 import datetime
+from gettext import gettext as _
 import logging
 import re
 import sys
@@ -37,17 +42,19 @@ from openmolar.dbtools.treatment_course import TreatmentCourse
 from openmolar.dbtools.plan_data import PlanData
 from openmolar.dbtools.est_logger import EstLogger
 from openmolar.dbtools import estimates as db_estimates
+from openmolar.dbtools import records_in_use
 
 from openmolar.dbtools.queries import (
     PATIENT_QUERY_FIELDS, PATIENT_QUERY, FUTURE_EXAM_QUERY,
-    PSN_QUERY, FAMILY_COUNT_QUERY, QUICK_MED_QUERY)
+    PSN_QUERY, FAMILY_COUNT_QUERY, QUICK_MED_QUERY, SYNOPSIS_QUERY)
 
 LOGGER = logging.getLogger("openmolar")
 
-dateFields = ("dob", "pd0", "pd1", "pd2", "pd3", "pd4", "pd5", "pd6",
-              "pd7", "pd8", "pd9", "pd10", "pd11", "pd12", "pd13", "pd14", "cnfd",
-              "recd", "billdate", "enrolled", "initaccept", "lastreaccept", "lastclaim",
-              "expiry", "transfer", "chartdate", "accd", "cmpd", "examd", "bpedate")
+dateFields = (
+    "dob", "pd0", "pd1", "pd2", "pd3", "pd4", "pd5", "pd6",
+    "pd7", "pd8", "pd9", "pd10", "pd11", "pd12", "pd13", "pd14", "cnfd",
+    "recd", "billdate", "enrolled", "initaccept", "lastreaccept", "lastclaim",
+    "expiry", "transfer", "chartdate", "accd", "cmpd", "examd", "bpedate")
 
 nullDate = None
 
@@ -59,22 +66,28 @@ patientTableAtts = (
     'billdate', 'billct', 'billtype', 'familyno', 'memo', 'status'
 )
 
-money_table_atts = ('money0', 'money1', 'money2', 'money3', 'money4',
-    'money5', 'money6', 'money7', 'money8', 'money9', 'money10', 'money11')
+money_table_atts = (
+    'money0', 'money1', 'money2', 'money3', 'money4', 'money5', 'money6',
+    'money7', 'money8', 'money9', 'money10', 'money11'
+)
 
-nhs_table_atts = ('initaccept', 'lastreaccept', 'lastclaim', 'expiry',
-    'cstatus', 'transfer', 'pstatus')
+nhs_table_atts = (
+    'initaccept', 'lastreaccept', 'lastclaim', 'expiry',
+    'cstatus', 'transfer', 'pstatus'
+)
 
 static_table_atts = (
     'ur8st', 'ur7st', 'ur6st', 'ur5st', 'ur4st', 'ur3st', 'ur2st', 'ur1st',
     'ul1st', 'ul2st', 'ul3st', 'ul4st', 'ul5st', 'ul6st', 'ul7st', 'ul8st',
     'll8st', 'll7st', 'll6st', 'll5st', 'll4st', 'll3st', 'll2st', 'll1st',
     'lr1st', 'lr2st', 'lr3st', 'lr4st', 'lr5st', 'lr6st', 'lr7st', 'lr8st',
-    'dent0', 'dent1', 'dent2', 'dent3')
+    'dent0', 'dent1', 'dent2', 'dent3'
+)
 
 date_table_atts = (
     'pd0', 'pd1', 'pd2', 'pd3', 'pd4', 'pd5', 'pd6', 'pd7', 'pd8', 'pd9',
-    'pd10', 'pd11', 'pd12', 'pd13', 'pd14')
+    'pd10', 'pd11', 'pd12', 'pd13', 'pd14'
+)
 
 exemptionTableAtts = ('exemption', 'exempttext')
 
@@ -95,7 +108,7 @@ clinical_memos = ("synopsis",)
 
 _atts = []
 for att in PATIENT_QUERY_FIELDS:
-    if re.match("[ul][lr]\d$", att):
+    if re.match(r"[ul][lr]\d$", att):
         _atts.append(att + "st")
     else:
         _atts.append(att)
@@ -104,6 +117,9 @@ patient_query_atts = tuple(_atts)
 
 class patient(object):
 
+    '''
+    this class pulls information from the database into a python object.
+    '''
     def __init__(self, sno):
         '''
         initiate the class with default variables, then load from database
@@ -261,11 +277,11 @@ class patient(object):
         if values == ():
             raise localsettings.PatientNotFoundError
 
-        for i, att in enumerate(patient_query_atts):
+        for i, att_ in enumerate(patient_query_atts):
             value = values[0][i]
             if value is not None:
-                self.__dict__[att] = value
-            elif att == "familyno":
+                self.__dict__[att_] = value
+            elif att_ == "familyno":
                 self.familyno = 0
 
         query = '''select exemption, exempttext from exemptions
@@ -302,7 +318,7 @@ class patient(object):
         cursor.close()
         # db.close()
 
-        #-- load from plandata
+        # - load from plandata
         self.plandata.getFromDB()
 
         self.appt_prefs = ApptPrefs(self.serialno)
@@ -344,8 +360,8 @@ class patient(object):
     @property
     def last_treatment_date(self):
         max_date = localsettings.currentDay()
-        if (self.treatment_course.cmp_txs !=
-        self.dbstate.treatment_course.cmp_txs):
+        if self.treatment_course.cmp_txs != \
+                self.dbstate.treatment_course.cmp_txs:
             return max_date
         if self._most_recent_daybook_entry is None:
             db = connect.connect()
@@ -424,7 +440,6 @@ class patient(object):
             # use today
             on_date = localsettings.currentDay()
 
-        day = self.dob.day
         try:
             nextbirthday = datetime.date(on_date.year, self.dob.month,
                                          self.dob.day)
@@ -487,12 +502,12 @@ class patient(object):
                 cse_accd = self.treatment_course.accd
             for table in reversed(localsettings.FEETABLES.tables.values()):
                 LOGGER.debug(
-                    "checking feescale %s to see if suitable a feetable" % (
-                        table))
+                    "checking feescale %s to see if suitable a feetable",
+                    table)
 
                 start, end = table.startDate, table.endDate
-                LOGGER.debug("categories, start, end = %s, %s, %s" % (
-                    table.categories, start, end))
+                LOGGER.debug("categories, start, end = %s, %s, %s",
+                             table.categories, start, end)
                 if end is None:
                     end = localsettings.currentDay()
 
@@ -500,7 +515,7 @@ class patient(object):
                     self._fee_table = table
 
             if self._fee_table is None:
-                #-- no matching table found, use the default.
+                # - no matching table found, use the default.
                 LOGGER.warning("NO SUITABLE FEETABLE FOUND, RETURNING DEFAULT")
                 self._fee_table = localsettings.FEETABLES.default_table
 
@@ -514,33 +529,41 @@ class patient(object):
         self.est_logger = EstLogger(self.courseno0)
 
     def getSynopsis(self):
+        '''
+        the synopsis line is displayed on the clinical summary page
+        '''
         db = connect.connect()
         cursor = db.cursor()
-        fields = clinical_memos
-        query = ""
-        for field in fields:
-            query += field + ","
-        query = query.strip(",")
         try:
-            if cursor.execute(
-                'SELECT %s from clinical_memos where serialno=%d' % (query,
-                                                                     self.serialno)):
+            if cursor.execute(SYNOPSIS_QUERY, (self.serialno,)):
                 self.synopsis = cursor.fetchall()[-1][0]
-        except connect.OperationalError as e:
-            'necessary because the column is missing is db schema 1.4'
-            print "WARNING -", e
+        except connect.OperationalError:
+            # - necessary because the column is missing is db schema 1.4
+            LOGGER.warning("invalid schema for getSynopsis")
 
     @property
     def underTreatment(self):
+        '''
+        a boolean value stating whether the patient has a continuing treatment
+        plan
+        '''
         return (self.treatment_course is not None and
                 self.treatment_course.underTreatment)
 
     @property
     def max_tx_courseno(self):
+        '''
+        a patient who has had many courses of treatment, this gets the
+        latest
+        '''
         return self.treatment_course.max_tx_courseno
 
     @property
     def newer_course_found(self):
+        '''
+        check for a newer course in the currtrtmt2 table than the one loaded
+        at startup.
+        '''
         return self.treatment_course.newer_course_found
 
     def getNotesTuple(self):
@@ -582,6 +605,11 @@ class patient(object):
         self.updateChartgrid()
 
     def updateChartgrid(self):
+        '''
+        a legacy issue with openmolar is the way teeth are saved as present
+        is as 4 bytes (32 bits = 32 teeth). very frugal storage, but requires
+        a fair deal of client computation :(
+        '''
         grid = ""
         for quad in (self.dent1, self.dent0, self.dent3, self.dent2):
             grid += dec_perm.fromSignedByte(quad)
@@ -592,6 +620,9 @@ class patient(object):
                 self.chartgrid[pos] = decidmouth[mouth.index(pos)]
 
     def apply_fees(self):
+        '''
+        update the money owed.
+        '''
         LOGGER.debug("Applying Fees")
         if "N" in self.cset:
             self.money0 = self.dbstate.money0 + self.fees_accrued
@@ -600,25 +631,31 @@ class patient(object):
 
     @property
     def fees(self):
+        '''
+        calculate what money is due.
+        '''
         return int(self.money0 + self.money1 + self.money9 + self.money10 +
                    self.money11 - self.money2 - self.money3 - self.money8)
 
     @property
     def fees_accrued(self):
+        '''
+        what fees have changed since load.
+        '''
         old_estimate_charges = 0
         if self.courseno0 == self.dbstate.courseno0:
             old_estimate_charges = self.dbstate.estimate_charges
 
         accrued_fees = self.estimate_charges - old_estimate_charges
-        LOGGER.debug("fees_accrued = (new-existing) = %d - %d = %d" % (
-            self.estimate_charges,
-            old_estimate_charges,
-            accrued_fees)
-        )
+        LOGGER.debug("fees_accrued = (new-existing) = %d - %d = %d",
+                     self.estimate_charges, old_estimate_charges, accrued_fees)
         return accrued_fees
 
     @property
     def estimate_charges(self):
+        '''
+        charges for all completed treatments.
+        '''
         charges = 0
         for est in self.estimates:
             if est.completed == 2:
@@ -663,25 +700,26 @@ class patient(object):
         self.money8 = 0
 
     def nhs_claims(self, completed_only=True):
+        '''
+        nhs items from the estimates.
+        if completed_only is False, then include planned items.
+        '''
         claims = []
         for est in self.estimates:
-            if (est.csetype.startswith("N") and
-               (not completed_only or est.completed == 2)
-                ):
+            if est.csetype.startswith("N") and \
+                    (not completed_only or est.completed == 2):
                 claims.append(est)
         return claims
 
-    def addHiddenNote(
-        self,
-        ntype,
-     note="",
-     attempt_delete=False,
-     one_only=False):
+    def addHiddenNote(self, ntype, note="", attempt_delete=False,
+                      one_only=False):
         '''
         re-written for schema 1.9
         '''
-        LOGGER.info("(ntype='%s',note='%s', attempt_delete='%s'",
-                ntype, note, attempt_delete)
+        LOGGER.info(
+            "addHiddenNote - ntype='%s',note='%s', attempt_delete='%s'",
+            ntype, note, attempt_delete
+        )
 
         HN = ()
         if ntype == "payment":
@@ -734,40 +772,64 @@ class patient(object):
                 self.HIDDENNOTES.remove(HN)
 
     def clearHiddenNotes(self):
+        '''
+        reset self.HIDDENNOTES
+        '''
         self.HIDDENNOTES = []
 
     def updateBilling(self, tone):
+        '''
+        update the last billdate and tone of invoice
+        '''
         self.billdate = localsettings.currentDay()
         self.billct += 1
         self.billtype = tone
 
     def reset_billing(self):
+        '''
+        if patients account is now is order, reset all billing params
+        '''
         if self.fees == 0:
             self.billdate = None
             self.billct = None
             self.billtype = None
 
     def treatmentOutstanding(self):
+        '''
+        does the patient have treatmentOutstanding?
+        returns a boolean
+        '''
         return (self.treatment_course and
-        self.treatment_course.has_treatment_outstanding)
+                self.treatment_course.has_treatment_outstanding)
 
     def checkExemption(self):
+        '''
+        see if the patient's exemption requires removal.
+        '''
         if (self.exemption == "S" and
-        self.getAge(self.treatment_course.accd)[0] > 19):
+                self.getAge(self.treatment_course.accd)[0] > 19):
             self.exemption = ""
             self.load_warnings.append(_("Student Exemption removed"))
+        elif (self.exemption == "A" and
+              self.getAge(self.treatment_course.accd)[0] > 18):
+            self.exemption = ""
+            self.load_warnings.append(_("Age Exemption removed"))
         else:
             return True
 
     @property
     def name_id(self):
-        return u"%s - %s" % (
-            self.name, self.serialno)
+        '''
+        name and serialno
+        '''
+        return u"%s - %s" % (self.name, self.serialno)
 
     @property
     def name(self):
-        return u"%s %s %s" % (
-            self.title, self.fname, self.sname)
+        '''
+        patients name in a readable form
+        '''
+        return u"%s %s %s" % (self.title, self.fname, self.sname)
 
     @property
     def psn(self):
@@ -781,6 +843,10 @@ class patient(object):
 
     @property
     def previous_surnames(self):
+        '''
+        previous surnames are stored.
+        ## TODO - check this is used.
+        '''
         if self._previous_surnames is None:
             db = connect.connect()
             cursor = db.cursor()
@@ -791,6 +857,9 @@ class patient(object):
 
     @property
     def n_family_members(self):
+        '''
+        how many members are linked to this patient's familyno
+        '''
         if self._n_family_members is None:
             db = connect.connect()
             cursor = db.cursor()
@@ -801,6 +870,9 @@ class patient(object):
 
     @property
     def under_capitation(self):
+        '''
+        under capitation if regular NHS patient and under 18.
+        '''
         if self.cset != "N":
             return False
         years, months = self.age_course_start
@@ -808,6 +880,9 @@ class patient(object):
         return years < 17 or (years == 17 and months < 11)
 
     def new_tx_course(self, new_courseno):
+        '''
+        start a new treatment course
+        '''
         self.courseno0 = new_courseno
         self.treatment_course = TreatmentCourse(self.serialno, new_courseno)
 
@@ -816,10 +891,10 @@ class patient(object):
         '''
         these are what is copied over into pt.dbstate
         '''
-        return (patient_query_atts +
-            exemptionTableAtts + bpeTableAtts + clinical_memos + (
-                "fees", "estimate_charges", "serialno", "estimates",
-                "appt_prefs", "treatment_course", "chartgrid"))
+        return (patient_query_atts + exemptionTableAtts + bpeTableAtts +
+                clinical_memos + ("fees", "estimate_charges", "serialno",
+                                  "estimates", "appt_prefs",
+                                  "treatment_course", "chartgrid"))
 
     @property
     def USER_CHANGEABLE_ATTRIBUTES(self):
@@ -828,35 +903,40 @@ class patient(object):
         which is generated during take_snapshot
         used to determine whether the patient has been edited.
         '''
-        for att in self.COPIED_ATTRIBUTES:
-            # if att not in ("treatment_course", "estimates", "chartgrid"):
-            yield att
+        for att_ in self.COPIED_ATTRIBUTES:
+            # if att_ not in ("treatment_course", "estimates", "chartgrid"):
+            yield att_
 
     @property
     def changes(self):
+        '''
+        what has changed since the patient was loaded
+        '''
         changes = []
-        for att in self.USER_CHANGEABLE_ATTRIBUTES:
-            new_value = self.__dict__.get(att, "")
-            db_value = self.dbstate.__dict__.get(att, "")
+        for att_ in self.USER_CHANGEABLE_ATTRIBUTES:
+            new_value = self.__dict__.get(att_, "")
+            db_value = self.dbstate.__dict__.get(att_, "")
             if new_value != db_value:
-                message = "Altered pt.%s" % att.ljust(20)
-                if att not in ("treatment_course", "estimates"):
+                message = "Altered pt.%s" % att_.ljust(20)
+                if att_ not in ("treatment_course", "estimates"):
                     message += (
                         " ORIG = '%s' NEW = '%s'" % (db_value, new_value))
                 LOGGER.debug(message)
-                changes.append(att)
+                changes.append(att_)
         return changes
 
     def take_snapshot(self):
-        # create a snapshot of this class, copying all attributes that the
-        # user can change
+        '''
+        create a snapshot of this class, copying all attributes that the
+        user can change
+        '''
         memo = {}
         cls = self.__class__
         snapshot = cls.__new__(cls)
         memo[id(self)] = snapshot
-        for att, v in self.__dict__.items():
-            if att in self.COPIED_ATTRIBUTES:
-                setattr(snapshot, att, deepcopy(v, memo))
+        for att_, val_ in self.__dict__.items():
+            if att_ in self.COPIED_ATTRIBUTES:
+                setattr(snapshot, att_, deepcopy(val_, memo))
         self.dbstate = snapshot
 
         LOGGER.debug("snapshot of %s taken" % self)
@@ -876,10 +956,14 @@ class patient(object):
 
     @property
     def has_new_course(self):
+        '''
+        if the initial state has no course, or a lower course number,
+        this is true.
+        '''
         if self.treatment_course and self.dbstate.treatment_course is None:
             return True
         return (self.treatment_course.courseno !=
-               self.dbstate.treatment_course.courseno)
+                self.dbstate.treatment_course.courseno)
 
     @property
     def tx_hash_tups(self):
@@ -887,17 +971,17 @@ class patient(object):
         a list of unique hashes of all treatment on the current treatment plan
         returns a tuple (unique hash, attribute, treatment)
         '''
-        for hash_, att, tx in self.treatment_course._get_tx_hashes():
-            if re.match("[ul][lr][1-8]", att):
-                att = self.chartgrid.get(att)
-            yield hash_, att, tx
+        for hash_, att_, tx in self.treatment_course._get_tx_hashes():
+            if re.match("[ul][lr][1-8]", att_):
+                att_ = self.chartgrid.get(att_)
+            yield hash_, att_, tx
 
     @property
     def completed_tx_hash_tups(self):
-        for hash_, att, tx in self.treatment_course.completed_tx_hash_tups:
-            if re.match("[ul][lr][1-8]", att):
-                att = self.chartgrid.get(att)
-            yield hash_, att, tx
+        for hash_, att_, tx in self.treatment_course.completed_tx_hash_tups:
+            if re.match("[ul][lr][1-8]", att_):
+                att_ = self.chartgrid.get(att_)
+            yield hash_, att_, tx
 
     @property
     def completed_tx_hashes(self):
@@ -909,8 +993,8 @@ class patient(object):
 
     @property
     def has_planned_perio_txs(self):
-        for hash_, att, tx in self.planned_tx_hash_tups:
-            if att == "perio":
+        for hash_, att_, tx in self.planned_tx_hash_tups:
+            if att_ == "perio":
                 return True
         return False
 
@@ -932,11 +1016,21 @@ class patient(object):
                 self.addr3, self.town, self.county,
                 self.pcde, self.tel1)
 
+    def set_record_in_use(self):
+        records_in_use.set_in_use(self.serialno)
+
+    def lock_record_in_use(self):
+        records_in_use.set_locked(self.serialno)
+
+    def clear_lock(self):
+        records_in_use.clear_lock(self.serialno)
+
+
 if __name__ == "__main__":
-    '''testing stuff'''
+    # testing stuff
     try:
-        serialno = int(sys.argv[len(sys.argv) - 1])
-    except:
+        serialno = int(sys.argv[-1])
+    except ValueError:
         serialno = 1
 
     LOGGER.setLevel(logging.DEBUG)
@@ -952,7 +1046,7 @@ if __name__ == "__main__":
             print "%s '%s'" % (att.ljust(20), pt.__dict__[att])
 
     localsettings.loadFeeTables()
-    pt.fee_table
+    print pt.fee_table
 
     pt.take_snapshot()
     print list(pt.tx_hash_tups)

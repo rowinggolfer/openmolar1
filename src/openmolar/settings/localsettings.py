@@ -31,7 +31,6 @@ import os
 import re
 import subprocess
 import sys
-import types
 
 from xml.dom import minidom
 
@@ -45,8 +44,8 @@ SUPERVISOR = "c1219df26de403348e211a314ff2fce58aa6e28d"
 
 DBNAME = "default"
 
-# updated 3.9.2014
-CLIENT_SCHEMA_VERSION = "3.1"
+# updated 2nd March 2015
+CLIENT_SCHEMA_VERSION = "3.2"
 
 DB_SCHEMA_VERSION = "unknown"
 
@@ -126,7 +125,7 @@ def determine_path():
         retarg = os.path.dirname(os.path.dirname(os.path.abspath(root)))
         return retarg
     except:
-        #-- this shouldn't happen!
+        # - this shouldn't happen!
         print "no __file__ variable found !!!!"
         return os.path.dirname(os.getcwd())
 
@@ -148,13 +147,13 @@ wkdir = determine_path()
 if "win" in sys.platform:
     WINDOWS = True
     LOGGER.info("Windows OS detected - modifying settings")
-    #-- sorry about this... but cross platform is a goal :(
+    # - sorry about this... but cross platform is a goal :(
     global_cflocation = 'C:\\Program Files\\openmolar\\openmolar.conf'
     localFileDirectory = os.path.join(
-        os.environ.get("HOMEPATH",""), ".openmolar")
+        os.environ.get("HOMEPATH", ""), ".openmolar")
 else:
     WINDOWS = False
-    if not "linux" in sys.platform:
+    if "linux" not in sys.platform:
         LOGGER.warning(
             "unknown system platform (mac?) - defaulting to linux settings")
     global_cflocation = '/etc/openmolar/openmolar.conf'
@@ -176,9 +175,9 @@ resources_location = os.path.join(wkdir, "resources")
 resources_path = "file://" + resources_location
 
 if WINDOWS:
-    #-- this next line is necessary because I have to resort to relative
-    #-- imports for the css stuff eg... ../resources/style.css
-    #-- on linux, the root is always /  on windows... ??
+    # - this next line is necessary because I have to resort to relative
+    # - imports for the css stuff eg... ../resources/style.css
+    # - on linux, the root is always /  on windows... ??
 
     os.chdir(wkdir)
     resources_path = resources_path.replace(
@@ -193,14 +192,13 @@ if WINDOWS:
         "://", ":///").replace(" ", "%20").replace("\\", "/")
 
 
-
 if not os.path.exists(DOCS_DIRECTORY):
     os.makedirs(DOCS_DIRECTORY)
 
 # this is updated if correct password is given
 successful_login = False
 
-#-- these permissions are for certain admin duties.
+# - these permissions are for certain admin duties.
 permissionsRaised = False
 permissionExpire = datetime.datetime.now()
 
@@ -265,10 +263,10 @@ If not, see <a href = "http://www.gnu.org/licenses">
 http://www.gnu.org/licenses</a>.</p>'''
 
 
-#-- this variable is used when using DATE_FORMAT from the database
-#-- this is done by cashbook and daybook etc...
-#-- my preference is the UK style dd/mm/YYYY
-#-- feel free to change this!!!
+# - this variable is used when using DATE_FORMAT from the database
+# - this is done by cashbook and daybook etc...
+# - my preference is the UK style dd/mm/YYYY
+# - feel free to change this!!!
 
 OM_DATE_FORMAT = r"%d/%m/%Y"
 try:
@@ -276,23 +274,23 @@ try:
 except AttributeError:  # will happen on windows
     OM_DATE_FORMAT = r"%d/%m/%Y"
 
-#-- ditto the qt one
+# - ditto the qt one
 QDATE_FORMAT = "dddd, d MMMM yyyy"
 
-#-- updated at login
+# - updated at login
 operator = "unknown"
 allowed_logins = []
 
-#-- this list is used for navigating back and forth through the list
+# - this list is used for navigating back and forth through the list
 recent_snos = []
 recent_sno_index = -1
 last_family_no = 0
 
-#-- update whenever a manual search is made
-#-- sname,fname dob... etc
+# - update whenever a manual search is made
+# - sname,fname dob... etc
 lastsearch = ("", "", datetime.date(1900, 1, 1), "", "", "")
 
-#-- used to load combobboxes etc....
+# - used to load combobboxes etc....
 activedents = []
 activehygs = []
 activedent_ixs = ()
@@ -304,27 +302,27 @@ clinicianInits = ""
 earliestStart = datetime.time(8, 0)
 latestFinish = datetime.time(20, 0)
 
-#--this dictionary is upated when this file is initiate -
-#--it links dentist keys with practioners
-#--eg ops[1] = "JJ"
+# -this dictionary is upated when this file is initiate -
+# -it links dentist keys with practioners
+# -eg ops[1] = "JJ"
 ops = {}
 
-#--keys/dents the other way round.
+# -keys/dents the other way round.
 ops_reverse = {}
 apptix = {}
-#--this dictionary is upated when this file is initiate -
-#--it links appointment keys with practioners
-#--eg app[13]="jj"
+# -this dictionary is upated when this file is initiate -
+# -it links appointment keys with practioners
+# -eg app[13]="jj"
 
 apptix_reverse = {}
 
-#-- set a latest possible date for appointments to be made
-#--(necessary if a very long appointment goes right on through)
-#-- would get maximum recursion, quite quickly!
+# - set a latest possible date for appointments to be made
+# -(necessary if a very long appointment goes right on through)
+# - would get maximum recursion, quite quickly!
 # todo - this will need to change!!!!
 BOOKEND = datetime.date.today() + datetime.timedelta(days=183)
 
-#--treatment codes..
+# -treatment codes..
 
 apptTypes = (
     _("EXAM"),
@@ -347,34 +345,34 @@ apptTypes = (
     _("XLA")
 )
 
-#-- default appt font size
+# - default appt font size
 appointmentFontSize = 8
 
 message = ""
 dentDict = {}
 
-#-- surgery or reception machine?
+# - surgery or reception machine?
 station = "surgery"
-#-- openmolar needs to know where it is when calling x-rays
+# - openmolar needs to know where it is when calling x-rays
 surgeryno = -1
 
-#-- pt's are "private, independent, NHS etc...."
+# - pt's are "private, independent, NHS etc...."
 CSETYPES = []
 DEFAULT_COURSETYPE = ""
 
-#-- self evident
+# - self evident
 PRACTICE_ADDRESS = ("The Dental Practice", "My Street", "My Town", "POST CODE")
 
-#-- this is updated whenever a patient record loads, for ease of address
-#-- manipulation
+# - this is updated whenever a patient record loads, for ease of address
+# - manipulation
 BLANK_ADDRESS = ("",) * 8
 LAST_ADDRESS = BLANK_ADDRESS
 
-#-- 1 less dialog box for these lucky people
+# - 1 less dialog box for these lucky people
 defaultPrinterforGP17 = False
 
-#-- my own class of excpetion, for when a serialno is called
-#--from the database and no match is found
+# - my own class of excpetion, for when a serialno is called
+# -from the database and no match is found
 
 
 class PatientNotFoundError(Exception):
@@ -617,7 +615,7 @@ def notesDate(d):
         return rd
     try:
         return rd[rd.index(",") + 1:]
-    except Exception as exc:
+    except Exception:
         return "error getting date"
 
 
@@ -799,8 +797,8 @@ def getLocalSettings():
             LOGGER.debug("unknown surgery number")
         dom.unlink()
     else:
-        #-- no file found..
-        #--so create a settings file.
+        # - no file found..
+        # -so create a settings file.
         f = open(localSets, "w")
         f.write(LOCALSETTINGS_TEMPLATE)
         f.close()
@@ -838,6 +836,7 @@ def force_reconnect():
         LOGGER.warning("closing connection to previously chosen database")
         connect.mainconnection.close()
     connect.params.reload()
+
 
 def initiateUsers(changed_server=False):
     '''
@@ -893,7 +892,7 @@ def initiate(changed_server=False):
     PRACTICE_NAME = settings_fetcher.practice_name
     PRACTICE_ADDRESS = settings_fetcher.practice_address
 
-    #-- set the clinician if possible
+    # - set the clinician if possible
     u1 = operator.split("/")[0].strip(" ")
     if u1 in activedents + activehygs:
         clinicianNo = ops_reverse.get(u1)
@@ -903,16 +902,16 @@ def initiate(changed_server=False):
 
     getLocalSettings()
 
-    message = MESSAGE_TEMPLATE % (stylesheet,
-                                  LOGOPATH,
-                                  LOGOPATH,
-                                  _("Welcome to OpenMolar!"),
-                                  _("Version"),
-                                  VERSION,
-                                  _(
-                                  "Your Data is Accessible, and the server reports no issues."),
-                                  _("Have a great day!")
-                                  )
+    message = MESSAGE_TEMPLATE % (
+        stylesheet,
+        LOGOPATH,
+        LOGOPATH,
+        _("Welcome to OpenMolar!"),
+        _("Version"),
+        VERSION,
+        _("Your Data is Accessible, and the server reports no issues."),
+        _("Have a great day!")
+        )
 
     LOGGER.debug("LOCALSETTINGS")
     LOGGER.debug("ops = %s", ops)

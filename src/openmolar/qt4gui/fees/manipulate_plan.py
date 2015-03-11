@@ -1,38 +1,39 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 provides code to add Xrays, perio items......etc
 to the treatment plan
 '''
 
+from gettext import gettext as _
 import re
 import logging
 
 from functools import partial
 
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui
 
 from openmolar.settings import localsettings
 from openmolar.ptModules.estimates import TXHash, Estimate
@@ -272,7 +273,7 @@ def xrayAdd(om_gui, complete=False):
     )
     # offerTreatmentItems is a generator, so the list conversion here
     # is so that the dialog get raised before the
-    #"were these xrays taken today question
+    # were these xrays taken today question
 
     chosen_treatments = list(offerTreatmentItems(om_gui, mylist, complete))
 
@@ -280,10 +281,13 @@ def xrayAdd(om_gui, complete=False):
         return
 
     if not complete:
-        input = QtGui.QMessageBox.question(om_gui, _("question"),
-                                           _("Were these xrays taken today?"),
-                                           QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                                           QtGui.QMessageBox.No)
+        input = QtGui.QMessageBox.question(
+            om_gui,
+            _("question"),
+            _("Were these xrays taken today?"),
+            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+            QtGui.QMessageBox.No
+        )
         if input == QtGui.QMessageBox.Yes:
             complete = True
 
@@ -314,6 +318,7 @@ def xrayAdd(om_gui, complete=False):
     if completed_planned_warning_required:
         om_gui.advise(
             _("Some of the xrays you completed were already planned."), 1)
+
 
 def denture_add(om_gui):
     dl = DentureDialog(om_gui)
@@ -433,17 +438,19 @@ def cmp_viewer_context_menu(om_gui, att, values, point):
     value = values[0]
 
     if att == "exam":
-        hash = localsettings.hash_func("%sexam1%s" % (
-            om_gui.pt.treatment_course.courseno,
-            om_gui.pt.treatment_course.examt))
+        hash_ = localsettings.hash_func("%sexam1%s" % (
+                                        om_gui.pt.treatment_course.courseno,
+                                        om_gui.pt.treatment_course.examt))
         tx_hash = TXHash(hash_, True)
         rev_func = partial(tx_hash_reverse, om_gui, tx_hash)
     else:
         rev_func = partial(reverse_txs, om_gui, ((att, value),))
         message = "%s %s %s" % (_("Reverse and Delete"), att, value)
         delete_action = QtGui.QAction(message, qmenu)
-        delete_action.triggered.connect(partial(
-            remove_treatments_from_plan_and_est, om_gui, ((att, value), ), True))
+        delete_action.triggered.connect(
+            partial(remove_treatments_from_plan_and_est,
+                    om_gui, ((att, value), ), True)
+        )
 
     message = "%s %s %s" % (_("Reverse"), att, value)
     reverse_action = QtGui.QAction(message, qmenu)
@@ -553,9 +560,13 @@ def fromFeeTable(om_gui, fee_item, sub_index):
             _("for this item"),
             _("The patient's default table is"),
             table.briefName)
-        if QtGui.QMessageBox.question(om_gui, _("Confirm"), message,
-                                      QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
-                                      QtGui.QMessageBox.Ok) == QtGui.QMessageBox.Ok:
+        if QtGui.QMessageBox.question(
+            om_gui,
+            _("Confirm"),
+            message,
+            QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
+            QtGui.QMessageBox.Ok
+        ) == QtGui.QMessageBox.Ok:
             return fee_item.table
 
     LOGGER.debug("fee_item %s, sub_index %s" % (fee_item, sub_index))
@@ -571,10 +582,8 @@ def fromFeeTable(om_gui, fee_item, sub_index):
 
     att_ = fee_item.pt_attribute
     if att_ == "chart":
-        update_charts_needed = True
         atts = om_gui.chooseTooth()
     else:
-        update_charts_needed = False
         atts = [att_]
 
     if fee_item.shortcut is None or fee_item.is_regex:
@@ -583,11 +592,12 @@ def fromFeeTable(om_gui, fee_item, sub_index):
         shortcut = fee_item.shortcut
 
     if table == pt.fee_table and shortcut != "!FEE" and att_ != "exam":
-        message = "%s %s<hr />%s" % (
-            _("You appear to be adding a relatively straightforward code to the"
-              " ""patient's treatment plan using their default feescale"),
+        message = "%s %s<hr />%s" % (_(
+            "You appear to be adding a relatively straightforward code to the"
+            " patient's treatment plan using their default feescale"),
             _("It is normally advisable to add this code conventionally."),
-            _("Would you like to do this now?"))
+            _("Would you like to do this now?")
+        )
 
         mb = QtGui.QMessageBox(None)
         mb.setWindowTitle(_("Confirm"))
@@ -610,8 +620,10 @@ def fromFeeTable(om_gui, fee_item, sub_index):
                 txs.append((att, shortcut))
                 message += "<li>%s %s</li>" % (att, shortcut)
             add_treatments_to_plan(om_gui, txs)
-            om_gui.advise("%s <ul>%s</ul>%s" % (_("Treatments"), message,
-                                                _("were added conventionally")), 1)
+            om_gui.advise(
+                "%s <ul>%s</ul>%s" % (_("Treatments"),
+                                      message,
+                                      _("were added conventionally")), 1)
             return
         elif result == mb.Cancel:
             LOGGER.info("Feescale addition abandoned by user")
@@ -663,7 +675,8 @@ def fromFeeTable(om_gui, fee_item, sub_index):
         tx_hash = TXHash(hash_)
 
         add_treatment_to_estimate(om_gui, att, shortcut, dentid, [tx_hash],
-                                  fee_item.itemcode, cset, descr, fee, pt_fee, table)
+                                  fee_item.itemcode, cset, descr, fee,
+                                  pt_fee, table)
 
     om_gui.advise(u"<b>%s</b> %s (%s)" % (
         fee_item.description, _("added to estimate"), _("from feescale")), 1)
@@ -793,7 +806,6 @@ def complex_shortcut_removal_handled(om_gui, att, shortcut, n_txs, tx_hash):
             LOGGER.debug(
                 "%s %s is a complex shortcut with %d removal_cases" % (
                     att, shortcut, len(complex_shortcut.removal_cases)))
-            handled = False
             for case in complex_shortcut.removal_cases:
                 m = re.match("n_txs=(\d+)", case.condition)
                 m2 = re.match("n_txs>(\d+)", case.condition)
@@ -803,10 +815,10 @@ def complex_shortcut_removal_handled(om_gui, att, shortcut, n_txs, tx_hash):
                     n_txs = number_of_chart_matches()
 
                 if not (case.condition == "True" or
-                       (m and int(m.groups()[0]) == n_txs) or
-                       (m2 and n_txs > int(m2.groups()[0])) or
-                       (m3 and int(m3.groups()[0]) < n_txs < int(
-                           m3.groups()[1]))
+                        (m and int(m.groups()[0]) == n_txs) or
+                        (m2 and n_txs > int(m2.groups()[0])) or
+                        (m3 and int(m3.groups()[0]) < n_txs < int(
+                            m3.groups()[1]))
                         ):
                     continue
 
@@ -1281,14 +1293,13 @@ def tx_hash_reverse(om_gui, tx_hash):
 
 
 if __name__ == "__main__":
-    #-- test code
+    # - test code
 
     localsettings.initiate()
     localsettings.loadFeeTables()
     localsettings.station = "reception"
 
     from openmolar.qt4gui import maingui
-    from openmolar.dbtools import patient_class
     LOGGER.setLevel(logging.DEBUG)
 
     app = QtGui.QApplication([])

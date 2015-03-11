@@ -1,35 +1,33 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 This is a convenience module so that maingui can simply import *
 '''
 
-from openmolar.qt4gui.dialogs import saveMemo
-# from openmolar.qt4gui.dialogs import permissions
-from openmolar.qt4gui.dialogs import select_language
-
+from openmolar.qt4gui.dialogs.saveMemo import SaveMemoDialog
+from openmolar.qt4gui.dialogs.select_language import LanguageDialog
 from openmolar.qt4gui.dialogs.newBPE import BPE_Dialog
 from openmolar.qt4gui.dialogs.assistant_select_dialog import AssistantSelectDialog
 from openmolar.qt4gui.dialogs.clinician_select_dialog import ClinicianSelectDialog
@@ -102,14 +100,15 @@ __all__ = ['AccountSeverityDialog',
            'FirstRunDialog',
            'HygTreatWizard',
            'InitialCheckDialog',
+           'LanguageDialog',
            'LoadRelativesDialog',
            'LoginDialog',
-           #'MedNotesDialog',
            'MedicalHistoryDialog',
            'NHSFormsConfigDialog',
            'ResetSupervisorPasswordDialog',
            'RecallDialog',
            'SaveDiscardCancelDialog',
+           'SaveMemoDialog',
            ]
 
 if __name__ == "__main__":

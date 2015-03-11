@@ -1,53 +1,81 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
+'''
+OpenMolar has has many contributions towards translation.
+Language selection should be automatic on statup (using locale)
+However this dialog provides a way of demonstrating the other languages.
+'''
 import gettext
 import os
 import logging
+from gettext import gettext as _
 
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui
 from openmolar.qt4gui.compiled_uis import Ui_choose_language
 
 LOGGER = logging.getLogger("openmolar")
 
 
-def getCurrentLanguage():
-    '''
-    get the current language in use
-    '''
-    cl = os.environ.get('LANG')
-    if cl and "." in cl:
-        cl = cl[:cl.index(".")]
-    return cl
+class LanguageDialog(Ui_choose_language.Ui_Dialog, QtGui.QDialog):
 
+    '''
+    A dialog to allow user selection from available translations
+    '''
 
-def getAvailableLanguages():
-    '''
-    return a list of installed languages - I do this manually at the moment :(
-    '''
-    available = sorted([
-                       _("English (United Kingdom)") + " - en_GB",
+    _curr_lang = None
+
+    def __init__(self, parent=None):
+        QtGui.QDialog.__init__(self, parent)
+        self.setupUi(self)
+        self.radioboxes = []
+        vbox = QtGui.QVBoxLayout(self.frame)
+        for language in self.available_languages:
+            rb = QtGui.QRadioButton(language)
+            if self.current_language in language.split(" - "):
+                rb.setChecked(True)
+            self.radioboxes.append(rb)
+            vbox.addWidget(rb)
+
+    @property
+    def current_language(self):
+        '''
+        get the current language in use
+        '''
+        if self._curr_lang is None:
+            self._curr_lang = os.environ.get('LANG')
+            if self._curr_lang and "." in self._curr_lang:
+                self._curr_lang = self._curr_lang[:self._curr_lang.index(".")]
+        return self._curr_lang
+
+    @property
+    def available_languages(self):
+        '''
+        return a list of installed languages
+        - I do this manually at the moment :(
+        '''
+        return sorted([_("English (United Kingdom)") + " - en_GB",
                        _("English (Australia)") + " - en_AUS",
                        _("Afrikaans") + " - af",
                        _("Danish") + " - da",
@@ -63,70 +91,45 @@ def getAvailableLanguages():
                        _("Spanish") + " - es",
                        _("Turkish") + " - tr",
                        _("Romanian") + " - ro",
-                       _("Greek") + " - el",
-                       ])
-    return available
+                       _("Greek") + " - el"])
 
-
-def setLanguage(lang):
-    '''
-    install the language chosen
-    '''
-    lang = lang.split(" - ")[1]
-    lang1 = gettext.translation('openmolar', languages=[lang, ])
-    try:
-        print "trying install your environment language", lang1
+    def setLanguage(self, lang):
+        '''
+        install the language chosen
+        '''
+        lang = lang.split(" - ")[1]
         lang1 = gettext.translation('openmolar', languages=[lang, ])
-        lang1.install(unicode=True)
-    except IOError:
-        LOGGER.exception("%s not found, sorry" % lang1)
-        gettext.install('openmolar', unicode=True)
-
-
-class language_dialog(Ui_choose_language.Ui_Dialog):
-
-    def __init__(self, dialog, parent=None):
-        self.setupUi(dialog)
-        self.dialog = dialog
-        currentlanguage = getCurrentLanguage()
-        self.radioboxes = []
-        vbox = QtGui.QVBoxLayout(self.frame)
-        for language in getAvailableLanguages():
-            rb = QtGui.QRadioButton(language)
-            if currentlanguage in language.split(" - "):
-                rb.setChecked(True)
-            self.radioboxes.append(rb)
-            vbox.addWidget(rb)
+        try:
+            LOGGER.info("trying install your environment language %s", lang1)
+            lang1 = gettext.translation('openmolar', languages=[lang, ])
+            lang1.install(unicode=True)
+            return True
+        except IOError:
+            LOGGER.exception("%s not found, sorry" % lang1)
+            gettext.install('openmolar', unicode=True)
 
     def getInput(self):
-        if self.dialog.exec_():
-            for rb in self.radioboxes:
-                if rb.isChecked():
-                    lang = rb.text().toAscii()
-                    try:
-                        print "changing language to '%s' ...." % lang,
-                        setLanguage(str(lang))
-                        print "ok"
-                        return True
-                    except IOError:
-                        LOGGER.exception("unable to find translation file")
-                        message = _("no translation file found for %s") % lang
-                        QtGui.QMessageBox.information(self.dialog,
-                                                      _("Advisory"), message)
-
-
-def run(parent=None):
-    '''
-    fire up a dialog to offer a selection of languages
-    '''
-    Dialog = QtGui.QDialog()
-    dl = language_dialog(Dialog, parent)
-    return dl.getInput()
+        if not self.exec_():
+            return False
+        result = False
+        message = _("No language selected")
+        for rb in self.radioboxes:
+            if rb.isChecked():
+                lang = rb.text().toAscii()
+                result = self.setLanguage(str(lang))
+                if result:
+                    message = "%s %s" % (
+                        _("switched interface to"), lang)
+                else:
+                    message = "%s %s" % (
+                        _("no translation file found for"), lang)
+        QtGui.QMessageBox.information(self, _("Advisory"), message)
+        return result
 
 if __name__ == "__main__":
-    import sys
     logging.basicConfig()
 
-    app = QtGui.QApplication(sys.argv)
+    app = QtGui.QApplication([])
     gettext.install('openmolar')
-    print run()
+    dl = LanguageDialog()
+    dl.getInput()

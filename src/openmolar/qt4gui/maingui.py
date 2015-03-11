@@ -1,26 +1,26 @@
-#! /usr/bin/env python
+#! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 provides the main class which is my gui
@@ -45,7 +45,7 @@ from openmolar.connect import params
 from openmolar.settings import localsettings, utilities
 from openmolar.qt4gui import colours
 
-#-- fee modules which interact with the gui
+# - fee modules which interact with the gui
 from openmolar.qt4gui.fees import fees_module
 from openmolar.qt4gui.fees import course_module
 from openmolar.qt4gui.fees import manipulate_plan
@@ -64,25 +64,65 @@ from openmolar.qt4gui.printing.gp17.gp17_printer import GP17Printer
 
 from openmolar.qt4gui.charts import charts_gui
 
-#--dialogs made with designer
+# -dialogs made with designer
 from openmolar.qt4gui.compiled_uis import Ui_main
 from openmolar.qt4gui.compiled_uis import Ui_surgeryNumber
 from openmolar.qt4gui.compiled_uis import Ui_showMemo
 
 
-#--custom dialog modules
-from openmolar.qt4gui.dialogs import saveMemo
+# -custom dialog modules
 from openmolar.qt4gui.dialogs import permissions
-from openmolar.qt4gui.dialogs import select_language
 
-from openmolar.qt4gui.dialogs.dialog_collection import *
+from openmolar.qt4gui.dialogs.dialog_collection import (
+    AccountSeverityDialog,
+    AddClinicianDialog,
+    AddUserDialog,
+    AdvancedRecordManagementDialog,
+    AdvancedTxPlanningDialog,
+    AlterTodaysNotesDialog,
+    AssistantSelectDialog,
+    AutoAddressDialog,
+    BPE_Dialog,
+    ChildSmileDialog,
+    ChooseToothDialog,
+    ClinicianSelectDialog,
+    CorrespondenceDialog,
+    CourseConsistencyDialog,
+    CourseEditDialog,
+    CourseMergeDialog,
+    CourseHistoryOptionsDialog,
+    DaybookItemDialog,
+    DaybookEditDialog,
+    DocumentDialog,
+    DuplicateReceiptDialog,
+    EditPracticeDialog,
+    EditTreatmentDialog,
+    EditReferralCentresDialog,
+    EditStandardLettersDialog,
+    EstimateEditDialog,
+    ExamWizard,
+    FamilyManageDialog,
+    FindPatientDialog,
+    FirstRunDialog,
+    HygTreatWizard,
+    InitialCheckDialog,
+    LanguageDialog,
+    LoadRelativesDialog,
+    LoginDialog,
+    MedicalHistoryDialog,
+    NHSFormsConfigDialog,
+    ResetSupervisorPasswordDialog,
+    RecallDialog,
+    SaveDiscardCancelDialog,
+    SaveMemoDialog,
+)
 
 from openmolar.qt4gui.phrasebook.phrasebook_dialog import PhraseBookDialog
 from openmolar.qt4gui.phrasebook.phrasebook_dialog import PHRASEBOOKS
 from openmolar.qt4gui.phrasebook.phrasebook_editor import PhrasebookEditor
 
-#--database modules
-#--(do not even think of making db queries from ANYWHERE ELSE)
+# -database modules
+# -(do not even think of making db queries from ANYWHERE ELSE)
 from openmolar.dbtools import appointments
 from openmolar.dbtools import patient_write_changes
 from openmolar.dbtools import recall
@@ -101,9 +141,9 @@ from openmolar.dbtools import daybook
 from openmolar.dbtools.distinct_statuses import DistinctStatuses
 from openmolar.dbtools import schema_version
 from openmolar.dbtools import referral
+from openmolar.dbtools import records_in_use
 
-
-#--modules which act upon the pt class type (and subclasses)
+# -modules which act upon the pt class type (and subclasses)
 from openmolar.ptModules import patientDetails
 from openmolar.ptModules import formatted_notes
 from openmolar.ptModules import plan
@@ -113,11 +153,11 @@ from openmolar.ptModules import tooth_history
 from openmolar.ptModules import hidden_notes
 from openmolar.ptModules import reception_summary
 
-#--modules which use qprinter
+# -modules which use qprinter
 from openmolar.qt4gui.printing import multiDayListPrint
 from openmolar.qt4gui.printing import bulk_mail
 
-#--custom widgets
+# -custom widgets
 from openmolar.qt4gui.diary_widget import DiaryWidget
 from openmolar.qt4gui.pt_diary_widget import PtDiaryWidget
 from openmolar.qt4gui.customwidgets import chartwidget
@@ -133,6 +173,10 @@ LOGGER = logging.getLogger("openmolar")
 
 
 class OpenmolarGui(QtGui.QMainWindow, Advisor):
+
+    '''
+    the main gui class for openmolar
+    '''
     fee_table_editor = None
     fee_table_tester = None
     phrasebook_editor = None
@@ -153,9 +197,9 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.pt_diary_groupBox.layout().addWidget(self.pt_diary_widget)
 
         self.ui.splitter_patient.setSizes([80, 20])
-        #--initiate a blank version of the patient class this
-        #--is used to check for state.
-        #--make a deep copy to check for changes
+        # -initiate a blank version of the patient class this
+        # -is used to check for state.
+        # -make a deep copy to check for changes
         self.pt = patient_class.patient(0)
 
         self.selectedChartWidget = "st"  # other values are "pl" or "cmp"
@@ -199,6 +243,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.debug_browser_refresh_func = None
 
         self.forum_timer = QtCore.QTimer()
+        self.records_in_use_timer = QtCore.QTimer()
         QtCore.QTimer.singleShot(100, self.check_first_run)
 
     def initiate(self):
@@ -216,6 +261,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.set_surgery_mode()
         self.load_pt_statuses()
         self.loadDentistComboboxes()
+        self.ui.notesSummary_webView.setHtml(localsettings.message)
         self.ui.forumViewFilter_comboBox.addItems(
             localsettings.allowed_logins)
 
@@ -223,13 +269,15 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         QtCore.QTimer.singleShot(1000, self.load_fee_tables)
         self.forum_timer.start(60000)  # fire every minute
         self.forum_timer.timeout.connect(self.checkForNewForumPosts)
+        self.records_in_use_timer.start(5000)  # fire every 5 seconds
+        self.records_in_use_timer.timeout.connect(self.check_records_in_use)
         self.set_referral_centres()
         self.diary_widget.initiate()
 
     def check_first_run(self):
         if os.path.exists(localsettings.global_cflocation):
             localsettings.cflocation = localsettings.global_cflocation
-            cf_Found = True
+            cf_found = True
         else:
             cf_found = os.path.exists(localsettings.cflocation)
         if not cf_found or localsettings.FORCE_FIRST_RUN:
@@ -358,6 +406,10 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         if not self.okToLeaveRecord():
             event.ignore()
             return
+        try:
+            self.clear_all_records_in_use()
+        except Exception:
+            LOGGER.exception("unable to clear record in use")
         if self.fee_table_tester is not None:
             self.fee_table_tester.accept()
         if self.fee_table_editor:
@@ -389,7 +441,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         add custom widgets to the gui, and customise a few that are there
         already
         '''
-        #-statusbar
+        # statusbar
         self.statusbar_frame = QtGui.QFrame()
         self.operator_label = QtGui.QLabel()
         self.loadedPatient_label = QtGui.QLabel()
@@ -404,21 +456,21 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         hlayout.setMargin(0)
         self.ui.statusbar.addPermanentWidget(self.statusbar_frame)
 
-        #-summary chart
+        # summary chart
         self.ui.summaryChartWidget = chartwidget.chartWidget()
         self.ui.summaryChartWidget.setShowSelected(False)
         self.ui.summaryChartWidget.setFocusPolicy(QtCore.Qt.StrongFocus)
         hlayout = QtGui.QHBoxLayout(self.ui.staticSummaryPanel)
         hlayout.addWidget(self.ui.summaryChartWidget)
 
-        #-static chart
+        # static chart
         self.ui.staticChartWidget = chartwidget.chartWidget()
         self.ui.staticChartWidget.setFocusPolicy(QtCore.Qt.StrongFocus)
         hlayout = QtGui.QHBoxLayout(self.ui.static_groupBox)
         hlayout.addWidget(self.ui.staticChartWidget)
         self.ui.static_groupBox.setStyleSheet("border: 1px solid gray;")
 
-        #-plan chart
+        # plan chart
         self.ui.planChartWidget = chartwidget.chartWidget()
         self.ui.planChartWidget.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.ui.planChartWidget.isStaticChart = False
@@ -427,7 +479,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         hlayout = QtGui.QHBoxLayout(self.ui.plan_groupBox)
         hlayout.addWidget(self.ui.planChartWidget)
 
-        #-completed chart
+        # completed chart
         self.ui.completedChartWidget = chartwidget.chartWidget()
         self.ui.completedChartWidget.isStaticChart = False
         hlayout = QtGui.QHBoxLayout(self.ui.completed_groupBox)
@@ -440,7 +492,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         hlayout.setMargin(0)
         hlayout.addWidget(self.ui.static_control_panel)
 
-        #-TOOTHPROPS (right hand side on the charts page)
+        # TOOTHPROPS (right hand side on the charts page)
         self.ui.toothPropsWidget = toothProps.ToothPropertyEditingWidget(self)
         hlayout = QtGui.QHBoxLayout(self.ui.toothProps_frame)
         hlayout.setMargin(0)
@@ -448,15 +500,15 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
         self.enableEdit(False)
 
-        #-- add a header to the estimates page
+        # - add a header to the estimates page
         self.ui.estWidget = estimate_widget.EstimateWidget(self)
 
         self.ui.estimate_scrollArea.setWidget(self.ui.estWidget)
 
-        #--history
+        # -history
         self.addHistoryMenu()
 
-        #--notification widget
+        # -notification widget
         self.ui.notificationWidget = \
             notification_widget.notificationWidget(self)
 
@@ -470,7 +522,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         layout.addWidget(self.ui.cashbookTextBrowser)
 
     def set_referral_centres(self):
-        #--updates the current time in appointment books
+        # -updates the current time in appointment books
         self.ui.referralLettersComboBox.clear()
         self.ui.referralLettersComboBox.addItems(referral.getDescriptions())
 
@@ -600,18 +652,18 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         if not course_module.recall_check(self):
             return False
 
-        #--apply changes to patient details
+        # -apply changes to patient details
         self.pt.synopsis = str(self.ui.synopsis_lineEdit.text().toAscii())
         if self.editPageVisited:
             self.apply_editpage_changes()
 
-        #--check pt against the original loaded state
-        #--this returns a LIST of changes ie [] if none.
+        # -check pt against the original loaded state
+        # -this returns a LIST of changes ie [] if none.
         changes = self.unsavedChanges()
         if changes == []:
             LOGGER.debug("   okToLeaveRecord - no changes")
         else:
-            #--raise a custom dialog to get user input
+            # -raise a custom dialog to get user input
             message = "%s<br />%s %s (%s)" % (
                 _("You have unsaved changes to the record of"),
                 self.pt.fname, self.pt.sname, self.pt.serialno)
@@ -642,7 +694,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         if ci == 1:  # --user is viewing appointment book
             self.diary_widget.reset_and_view(self.patient)
         if ci == 6:
-            #--user is viewing the feetable
+            # -user is viewing the feetable
             if not self.feestableLoaded:
                 fees_module.loadFeesTable(self)
             if self.pt.serialno != 0:
@@ -650,11 +702,11 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                     self.pt.fee_table.index)
 
         if ci == 7:
-            #--forum
+            # -forum
             forum_gui_module.loadForum(self)
 
         if ci == 8:
-            #-- wiki
+            # - wiki
             if not self.wikiloaded:
                 self.ui.wiki_webView.setUrl(QtCore.QUrl(localsettings.WIKIURL))
                 self.wikiloaded = True
@@ -726,13 +778,13 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         if self.enteringNewPatient():
             return
         if not self.okToLeaveRecord():
-            # print "not clearing record"
+            print "not clearing record"
             return
         self.clearRecord()
-        #--disable much of the UI
+        # -disable much of the UI
         self.enableEdit(False)
 
-        #--go to either "reception" or "clinical summary"
+        # -go to either "reception" or "clinical summary"
         self.gotoDefaultTab()
         self.load_notes()
 
@@ -743,7 +795,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         Other pages are disabled.
         '''
         if self.pt.serialno != 0:
-            # print "clearing record"
+            print "clearing record"
             self.forget_notes_loaded()
             self.ui.dobEdit.setDate(QtCore.QDate(1900, 1, 1))
             self.ui.detailsBrowser.setText("")
@@ -754,7 +806,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.ui.planSummary_textBrowser.setText("")
             self.ui.synopsis_lineEdit.setText("")
             self.pt_diary_widget.clear()
-            #--restore the charts to full dentition
+            # -restore the charts to full dentition
             for chart in (self.ui.staticChartWidget,
                           self.ui.planChartWidget,
                           self.ui.completedChartWidget,
@@ -769,14 +821,15 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
             self.ui.medNotes_pushButton.setStyleSheet("")
 
-            #--load a blank version of the patient class
+            # -load a blank version of the patient class
             self.pt = patient_class.patient(0)
 
             self.loadedPatient_label.setText("No Patient Loaded")
             if self.editPageVisited:
-                # print "blanking edit page fields"
+                print "blanking edit page fields"
                 self.load_editpage()
                 self.editPageVisited = False
+            self.clear_record_in_use()
         else:
             self.load_notes()
             self.pt.familyno = None
@@ -924,7 +977,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.prevCorres_treeWidget.expandAll()
         for i in range(self.ui.prevCorres_treeWidget.columnCount()):
             self.ui.prevCorres_treeWidget.resizeColumnToContents(i)
-        #-- hide the index column
+        # - hide the index column
         self.ui.prevCorres_treeWidget.setColumnWidth(3, 0)
 
     def showPrevPrintedDoc(self, item, index):
@@ -990,7 +1043,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.importDoc_treeWidget.expandAll()
         for i in range(self.ui.importDoc_treeWidget.columnCount()):
             self.ui.importDoc_treeWidget.resizeColumnToContents(i)
-        #-- hide the index column
+        # - hide the index column
         self.ui.importDoc_treeWidget.setColumnWidth(4, 0)
 
     def importDoc(self):
@@ -1057,8 +1110,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
         for pt in ptList:
             val = "%s -- %s" % (pt[1], pt[0])
-            #--be wary of changing this -- is used as a marker some
-            #--pt's have hyphonated names!
+            # -be wary of changing this -- is used as a marker some
+            # -pt's have hyphonated names!
             self.ui.dayList_comboBox.addItem(val)
 
     def todays_pts(self):
@@ -1066,7 +1119,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         if "--" in arg:
             self.ui.dayList_comboBox.setCurrentIndex(0)
             serialno = int(arg[arg.index("--") + 2:])
-            #--see above comment
+            # -see above comment
             self.getrecord(serialno)
 
     def loadDentistComboboxes(self):
@@ -1123,13 +1176,13 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         apply any changes made on the edit patient page
         '''
         if self.pt.serialno == 0 and not self.entering_new_patient:
-            #- firstly.. don't apply edit page changes if there
-            #- iss no patient loaded,
-            #- and no new patient to apply
+            #  firstly.. don't apply edit page changes if there
+            #  iss no patient loaded,
+            #  and no new patient to apply
             return
 
         self.pt.title = str(self.ui.titleEdit.text().toAscii()).upper()
-        #--NB - these are QSTRINGs... hence toUpper() not PYTHON equiv upper()
+        # -NB - these are QSTRINGs... hence toUpper() not PYTHON equiv upper()
         self.pt.fname = str(self.ui.fnameEdit.text().toAscii()).upper()
         self.pt.sname = str(self.ui.snameEdit.text().toAscii()).upper()
         self.pt.dob = self.ui.dobEdit.date().toPyDate()
@@ -1146,7 +1199,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.pt.mobile = str(self.ui.mobileEdit.text().toAscii()).upper()
         self.pt.fax = str(self.ui.faxEdit.text().toAscii()).upper()
         self.pt.email1 = str(self.ui.email1Edit.text().toAscii())
-        #--leave as user entered case
+        # -leave as user entered case
         self.pt.email2 = str(self.ui.email2Edit.text().toAscii())
         self.pt.occup = str(self.ui.occupationEdit.text().toAscii()).upper()
         self.updateDetails()
@@ -1161,7 +1214,6 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
     def getrecord(self,
                   serialno,
-                  checkedNeedToLeaveAlready=False,
                   addToRecentSnos=True,
                   newPatientReload=False
                   ):
@@ -1173,13 +1225,18 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         if serialno in (0, None):
             self.update_family_label()
             return
+        locked, message = records_in_use.is_locked(serialno)
+        if locked:
+            self.advise(message, 1)
+            return
         LOGGER.info("loading record %s", serialno)
         if self.pt and serialno == self.pt.serialno and not newPatientReload:
             self.ui.main_tabWidget.setCurrentIndex(0)
             self.advise(_("Patient already loaded"))
             return
-        elif not checkedNeedToLeaveAlready and not self.okToLeaveRecord():
-            print "not loading"
+        elif not self.okToLeaveRecord():
+            LOGGER.info("not loading %s as unsaved changes to %s",
+                        serialno, self.pt.serialno)
             self.advise(_("Not loading patient"))
             return
 
@@ -1188,6 +1245,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         else:
             current_address = localsettings.LAST_ADDRESS
 
+        self.clear_record_in_use()
         try:
             # update saved last address
             self.pt = patient_class.patient(serialno)
@@ -1225,6 +1283,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         localsettings.recent_sno_index = localsettings.recent_snos.index(
             serialno)
 
+        self.pt.set_record_in_use()
         can_go_back = localsettings.recent_sno_index > 0
         self.ui.backButton.setEnabled(can_go_back)
         self.ui.nextButton.setEnabled(can_go_forwards)
@@ -1254,8 +1313,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
     def updateNotesPage(self):
         i = self.ui.tabWidget.currentIndex()
-        LOGGER.debug("update notes page called, ignore=%s", i!=5)
-        if i !=5 or self.notes_loaded:
+        LOGGER.debug("update notes page called, ignore=%s", i != 5)
+        if i != 5 or self.notes_loaded:
             return
         self.set_note_preferences()
         note_html = formatted_notes.notes(self.pt.notes_dict)
@@ -1270,8 +1329,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         load the reception views
         '''
         i = self.ui.tabWidget.currentIndex()
-        LOGGER.debug(
-        "update reception Summary page called, ignore=%s", i!=3)
+        LOGGER.debug("update reception Summary page called, ignore=%s", i != 3)
         if self.pt.serialno == 0:
             self.ui.med_questionaire_label.setText("")
             self.hide_reception_right_panel()
@@ -1316,21 +1374,23 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.reception_notes_loaded = True
 
     def reception_view_checkBox_clicked(self):
-        LOGGER.debug("user called reception refresh summary=%s",
-            self.ui.reception_view_checkBox.isChecked())
+        LOGGER.debug(
+            "user called reception refresh summary=%s",
+            self.ui.reception_view_checkBox.isChecked()
+        )
         self.reception_notes_loaded = False
         self.load_reception_notes()
 
     def load_clinicalSummaryPage(self):
         i = self.ui.tabWidget.currentIndex()
-        LOGGER.debug("load clinical summary page called, ignore=%s", i!=4)
+        LOGGER.debug("load clinical summary page called, ignore=%s", i != 4)
         if i == 4:
             self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))
             self.load_notes_summary()
 
     def load_notes_summary(self):
         i = self.ui.tabWidget.currentIndex()
-        LOGGER.debug("load clinical summary notes called, ignore=%s", i!=4)
+        LOGGER.debug("load clinical summary notes called, ignore=%s", i != 4)
         if i != 4:
             LOGGER.debug("ignoring clinical summary notes load - tab hidden")
         elif self.pt.serialno == 0:
@@ -1347,7 +1407,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         '''
         self.pt is now a patient... time to push to the gui.
         '''
-        #-- don't load a patient if you are entering a new one.
+        # - don't load a patient if you are entering a new one.
         if self.enteringNewPatient():
             return
         self.editPageVisited = False
@@ -1358,7 +1418,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.ui.tabWidget.setCurrentIndex(3)
         self.forget_notes_loaded()
         self.ui.actionFix_Locked_New_Course_of_Treatment.setEnabled(False)
-        #--populate dnt1 and dnt2 comboboxes
+        # -populate dnt1 and dnt2 comboboxes
         if not self.pt.dnt1:
             if len(localsettings.activedents) == 1:
                 self.pt.dnt1 = localsettings.activedent_ixs[0]
@@ -1382,7 +1442,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                       self.ui.summaryChartWidget
                       ):
             chart.clear()
-            #--necessary to restore the chart to full dentition
+            # -necessary to restore the chart to full dentition
         self.selectedChartWidget = "st"
         self.ui.staticChartWidget.setSelected(0, 0, True)  # select the UR8
         self.ui.planChartWidget.setSelected(0, 0, False)  # select the UR8
@@ -1402,7 +1462,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             pos = -1
         self.ui.cseType_comboBox.setCurrentIndex(pos)
         self.ui.contract_tabWidget.setCurrentIndex(pos)
-        #--update bpe
+        # -update bpe
 
         labeltext = "currently editing  %s %s %s - (%s)" % (
             self.pt.title, self.pt.fname, self.pt.sname, self.pt.serialno)
@@ -1448,8 +1508,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                 memos.deleteMemo(umemo.ix)
 
     def newCustomMemo(self):
-        Dialog = QtGui.QDialog(self)
-        dl = saveMemo.Ui_Dialog(Dialog, self.pt.serialno)
+        dl = SaveMemoDialog(self.pt.serialno, self)
         if not dl.getInput():
             self.advise("memo not saved", 1)
 
@@ -1538,19 +1597,16 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                     _("completed"),
                     localsettings.formatDate(self.pt.treatment_course.cmpd)))
             self.ui.plan_buttons_stacked_widget.setCurrentIndex(1)
-            if not self.pt.treatment_course.accd in ("", None):
+            if self.pt.treatment_course.accd not in ("", None):
                 self.ui.closeTx_pushButton.setText(_("Resume Existing Course"))
                 self.ui.closeTx_pushButton.setEnabled(True)
 
     def find_patient(self):
         if self.enteringNewPatient():
-            pass
-        elif not self.okToLeaveRecord():
-            self.advise(_("Not loading patient"))
-        else:
-            dl = FindPatientDialog(self)
-            if dl.exec_() and dl.chosen_sno:
-                self.getrecord(dl.chosen_sno, True)
+            return
+        dl = FindPatientDialog(self)
+        if dl.exec_() and dl.chosen_sno:
+            self.getrecord(dl.chosen_sno)
 
     def set_surgery_mode(self, is_surgery=None):
         if is_surgery is None:
@@ -1806,7 +1862,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         result = dl.getInput()
         if result[0]:
             self.pt.bpe.append((localsettings.currentDay(), result[1]), )
-            #--add a bpe
+            # -add a bpe
             newnotes = str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
             newnotes += " bpe of %s recorded \n" % result[1]
             self.ui.notesEnter_textEdit.setText(newnotes)
@@ -1859,7 +1915,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.advise(_("no patient selected"), 1)
             return
         if self.editPageVisited:
-            #-- only make changes if user has visited this tab
+            # - only make changes if user has visited this tab
             self.apply_editpage_changes()
         self.pt.monies_reset = patient_write_changes.reset_money(self.pt)
         uc = self.unsavedChanges()
@@ -1875,7 +1931,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                         self.pt.courseno0, self.pt.est_logger_text)
 
                 if not leavingRecord and "estimates" in uc:
-                    #-- necessary to get index numbers for estimate data types
+                    # - necessary to get index numbers for estimate data types
                     self.pt.getEsts()
                     if self.ui.tabWidget.currentIndex() == 7:
                         self.load_newEstPage()
@@ -1897,17 +1953,18 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             result = patient_write_changes.toNotes(
                 self.pt.serialno, notetuplets)
 
-            #--successful write to db?
+            # -successful write to db?
             if result:
-                #--result will be a "line number" or -1 if unsuccessful write
+                # -result will be a "line number" or -1 if unsuccessful write
                 self.ui.notesEnter_textEdit.setText("")
                 self.ui.hiddenNotes_label.setText("")
-                #--reload the notes
+                # -reload the notes
                 self.pt.getNotesTuple()
                 self.load_notes()
             else:
-                #--exception writing to db
+                # -exception writing to db
                 self.advise("error writing notes to database... sorry!", 2)
+        self.pt.clear_lock()
         self.updateDetails()
 
     def forget_notes_loaded(self):
@@ -1971,7 +2028,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             if self.ui.tabWidget.isTabEnabled(i) != arg:
                 self.ui.tabWidget.setTabEnabled(i, arg)
         if self.pt is not None and "N" in self.pt.cset:
-            #-- show NHS form printing button
+            # - show NHS form printing button
             self.ui.NHSadmin_groupBox.show()
             self.ui.childsmile_button.setVisible(self.pt.under_6)
         else:
@@ -1980,7 +2037,6 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
         if not arg:
             self.ui.medNotes_pushButton.setText("MedNotes")
-        #self.hide_reception_right_panel(not arg)
 
         self.updateDetails()
 
@@ -1996,7 +2052,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         '''
         user has clicked on the Change Language Menu Item
         '''
-        if select_language.run(self):
+        dl = LanguageDialog(self)
+        if dl.getInput():
             self.ui.retranslateUi(self)
 
     def printGP17_clicked(self):
@@ -2489,7 +2546,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         this is for my own debugging purposes
         I can view attributes in memory, and compare to the original db values
         '''
-        #--load a table of self.pt.attributes
+        # -load a table of self.pt.attributes
         if arg is not None:
             txtype = str(arg.text()).split(" ")[0]
         else:
@@ -2600,7 +2657,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
     def printmultiDayList(self, args):
         '''prints the multiday pages'''
-        #-- args= ((dent, date), (dent, date)...)
+        # - args= ((dent, date), (dent, date)...)
         dlist = multiDayListPrint.printDaylist()
         something_to_print = False
         for arg in args:
@@ -3033,7 +3090,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.static_control_panel.clicked.connect(
             self.ui.toothPropsWidget.static_input)
 
-        #--fillings have changed!!
+        # -fillings have changed!!
         self.ui.toothPropsWidget.lineEdit.changed_properties_signal.connect(
             self.updateCharts)
         self.ui.toothPropsWidget.lineEdit.deleted_comments_signal.connect(
@@ -3124,8 +3181,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         prompts the user to confirm tooth treatment fees
         '''
         if not self.pt.underTreatment:
-            self.advise(
-                _("Recalculate Estimate is not normally used on closed courses"), 1)
+            self.advise(_("Recalculate Estimate is not normally "
+                          "used on closed courses"), 1)
             if not permissions.granted(self):
                 return
         if QtGui.QMessageBox.question(
@@ -3303,7 +3360,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
     def show_cmp_chart_context_menu(self, att, values, point):
         # use singleShot to slow this down fractionally
-        #(was occasionaly firing the Qmenu)
+        # (was occasionaly firing the Qmenu)
         QtCore.QTimer.singleShot(
             100,
             partial(manipulate_plan.cmp_viewer_context_menu,
@@ -3326,7 +3383,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
     def show_cmp_listview_context_menu(self, point):
         LOGGER.debug("completed listview pressed %s", point)
         # use singleShot to slow this down fractionally
-        #(was occasionaly firing the Qmenu)
+        # (was occasionaly firing the Qmenu)
         QtCore.QTimer.singleShot(
             100,
             partial(manipulate_plan.cmp_list_right_click, self, point)
@@ -3363,7 +3420,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
     def enable_daybook_filters(self, bool_value):
         self.ui.daybook_filters_frame.setEnabled(bool_value)
-        if bool_value == False:
+        if bool_value is False:
             self.ui.daybook_filters_lineEdit.setText("")
 
     def show_daybook_filter_help(self):
@@ -3500,6 +3557,45 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.show_diary()
         self.diary_widget.insert_regular_blocks()
 
+    def check_records_in_use(self):
+        '''
+        check to see who may be using the current record.
+        called when the records_in_use_timer timeouts.
+        '''
+        if not self.pt or self.pt.serialno == 0:
+            return
+        LOGGER.debug("checking records in use")
+        users = []
+        for riu in records_in_use.get_usage_info(self.pt.serialno):
+            user = "%s - %s" % (riu.op, riu.location)
+            if riu.surgeryno == localsettings.surgeryno:
+                pass
+            elif riu.is_locked:
+                self.advise("%s %s" % (_("record is locked by"), user), 1)
+            else:
+                users.append(user)
+        if users:
+            message = _("Record also used by")
+            message += "<br />".join(users)
+            self.advise(message)
+
+    def clear_record_in_use(self):
+        '''
+        clear the records_in_use table for the current patient / station.
+        note - 5 second delay is default in case quit by accident.
+        '''
+        LOGGER.debug("clearing record in use")
+        QtCore.QTimer.singleShot(
+            5000,
+            partial(records_in_use.clear_in_use, self.pt.serialno))
+
+    def clear_all_records_in_use(self):
+        '''
+        clear the records_in_use table for the current station.
+        '''
+        LOGGER.debug("clearing all records linked to this surgery")
+        records_in_use.clear_surgery_records()
+
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''
         PyQt4 prints unhandled exceptions to stdout and carries on regardless
@@ -3524,6 +3620,7 @@ def main():
     mainWindow.show()
     mainWindow.setWindowState(QtCore.Qt.WindowMaximized)
     sys.exit(app.exec_())
+
 
 if __name__ == "__main__":
     from gettext import gettext as _
