@@ -27,6 +27,7 @@ this module puts the "openmolar" modules onto the python path,
 and starts the gui
 '''
 
+from gettext import gettext as _
 import getopt
 import logging
 import os
@@ -76,7 +77,8 @@ def usage():
         _("verbose logging to console (for debugging)"),
         _("show this text"),
         _("offer the firstrun config and demodatabase generation"),
-        _("proceed even if client and database versions clash (NOT ADVISABLE!)"),
+        _("proceed even if client and database versions clash "
+          "(NOT ADVISABLE!)"),
         _("show the versioning and exit"),
         _("Ignore dev login (advanced)")
     )
