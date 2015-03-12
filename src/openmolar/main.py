@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/python
 # -*- coding: utf-8 -*-
 
 # ########################################################################### #
@@ -108,7 +108,8 @@ def run():
         opts.append(("--firstrun", ""))
 
     chosen_func = main
-    for option, arg in opts:
+    for option, args in opts:
+        LOGGER.debug("parsing %s %s", option, args)
         if option == "--help":
             chosen_func = usage
             break
@@ -129,13 +130,12 @@ if __name__ == "__main__":
     def determine_path():
         """Borrowed from wxglade.py"""
         try:
-            # could use localsettings.__file__ for non-standard install?
-            root = __file__
+            root = localsettings.__file__
             if os.path.islink(root):
                 root = os.path.realpath(root)
             retarg = os.path.dirname(os.path.abspath(root))
             return retarg
-        except:
+        except Exception:
             LOGGER.exception(
                 "There is no __file__ variable.\n"
                 "OpenMolar cannot run in this environment")

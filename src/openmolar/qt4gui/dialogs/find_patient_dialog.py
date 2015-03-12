@@ -1,31 +1,36 @@
-#! /usr/bin/env python
+#! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
+
+'''
+find_patient_dialog.py
+'''
 
 from __future__ import division
 
 import datetime
-import logging
+from gettext import gettext as _
+
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
@@ -38,6 +43,10 @@ from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 
 class FindPatientDialog(QtGui.QDialog, Ui_patient_finder.Ui_Dialog):
 
+    '''
+    A dialog to gather parameters for searching the database
+    for a patient record
+    '''
     chosen_sno = None
 
     def __init__(self, parent=None):
@@ -58,8 +67,10 @@ class FindPatientDialog(QtGui.QDialog, Ui_patient_finder.Ui_Dialog):
 
     def exec_(self):
         if localsettings.PT_COUNT == 0:
-            QtGui.QMessageBox.warning(self.parent(), _("warning"),
-                                      _("You have no patients in your database"))
+            QtGui.QMessageBox.warning(
+                self.parent(),
+                _("warning"),
+                _("You have no patients in your database"))
             return False
         if localsettings.PT_COUNT < 5 or QtGui.QDialog.exec_(self):
             dob = self.dateEdit.date().toPyDate()
