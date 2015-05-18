@@ -247,6 +247,9 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         QtCore.QTimer.singleShot(100, self.check_first_run)
 
     def initiate(self):
+        '''
+        initiate settings etc.
+        '''
         localsettings.initiate()
         self.setWindowTitle("OpenMolar - %s '%s'" % (
             _("connected to"), params.database_name))
@@ -275,6 +278,9 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.diary_widget.initiate()
 
     def check_first_run(self):
+        '''
+        called to see if the is the first running of the application
+        '''
         if os.path.exists(localsettings.global_cflocation):
             localsettings.cflocation = localsettings.global_cflocation
             cf_found = True
@@ -289,6 +295,9 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.login()
 
     def login(self):
+        '''
+        raise a dialog and get the user to login
+        '''
         dl = LoginDialog(self)
         if not dl.exec_():
             app = QtGui.QApplication.instance()
@@ -302,6 +311,9 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.initiate()
 
     def check_schema(self):
+        '''
+        check to see the client schema matches the server version
+        '''
         LOGGER.debug("checking schema version...")
 
         if localsettings.IGNORE_SCHEMA_CHECK:
@@ -424,6 +436,9 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         utilities.deleteTempFiles()
 
     def fullscreen(self):
+        '''
+        toggle full screen mode.
+        '''
         if self.ui.actionFull_Screen_Mode_Ctrl_Alt_F.isChecked():
             self.setWindowState(QtCore.Qt.WindowFullScreen)
         else:
@@ -3575,7 +3590,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             else:
                 users.append(user)
         if users:
-            message = _("Record also used by")
+            message = "%s<br />" % _("Record also used by")
             message += "<br />".join(users)
             self.advise(message)
 
