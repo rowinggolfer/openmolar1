@@ -1,27 +1,28 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
+from gettext import gettext as _
 import logging
 
 from PyQt4 import QtGui, QtCore
@@ -42,12 +43,11 @@ class MHFormDialog(BaseDialog):
         self.radio_button_a = QtGui.QRadioButton(_("Leave fields empty"))
         self.radio_button_b = QtGui.QRadioButton(_("Populate with current MH"))
 
-
         if self.has_no_patient:
             message = _("No Patient Selected, A blank form will be produced")
         else:
-            message = "%s<br /><b>%s</b>" % (_("Medical History form for"),
-                                   pt.name_id)
+            message = "%s<br /><b>%s</b>" % (
+                _("Medical History form for"), pt.name_id)
 
         date_gb = QtGui.QGroupBox(_("Use this date for the form"))
         self.date_edit = QtGui.QDateEdit()
@@ -68,6 +68,7 @@ class MHFormDialog(BaseDialog):
         self.radio_button_b.setVisible(not self.has_no_patient)
 
         self.radio_button_a.setChecked(True)
+        self.radio_button_b.setChecked(bool(self.pt and self.pt.mh_chkdate))
         self.enableApply()
 
     @property
@@ -83,6 +84,7 @@ class MHFormDialog(BaseDialog):
     def apply(self):
         LOGGER.info("mh_form_dialog - applying")
         mh_print = MHPrint(self.pt, self)
+        mh_print.date_ = self.date_edit.date().toPyDate()
         mh_print.print_()
 
     def sizeHint(self):
@@ -95,7 +97,7 @@ if __name__ == "__main__":
     from openmolar.dbtools import patient_class
 
     LOGGER.setLevel(logging.DEBUG)
-    i = 16539
+    i = 29833
     try:
         pt = patient_class.patient(i)
     except localsettings.PatientNotFoundError:
