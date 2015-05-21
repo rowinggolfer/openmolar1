@@ -811,6 +811,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         '''
         if self.pt.serialno != 0:
             LOGGER.debug("clearing record")
+            self.clear_record_in_use()
             self.forget_notes_loaded()
             self.ui.dobEdit.setDate(QtCore.QDate(1900, 1, 1))
             self.ui.detailsBrowser.setText("")
@@ -844,7 +845,6 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                 LOGGER.debug("blanking edit page fields")
                 self.load_editpage()
                 self.editPageVisited = False
-            self.clear_record_in_use()
         else:
             self.load_notes()
             self.pt.familyno = None
@@ -3597,11 +3597,11 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
     def clear_record_in_use(self):
         '''
         clear the records_in_use table for the current patient / station.
-        note - 5 second delay is default in case quit by accident.
+        note - 2 second delay is default in case quit by accident.
         '''
         LOGGER.debug("clearing record in use")
         QtCore.QTimer.singleShot(
-            5000,
+            2000,
             partial(records_in_use.clear_in_use, self.pt.serialno))
 
     def clear_all_records_in_use(self):
