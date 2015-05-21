@@ -89,7 +89,9 @@ def summary_html(pt):
         ))
 
     days = (localsettings.currentDay() - pt.first_note_date).days
-    if days < 365:
+    if days < 7:
+        duration = _("this week")
+    elif days < 365:
         duration = _("recently")
     elif days < 730:
         duration = _("last year")

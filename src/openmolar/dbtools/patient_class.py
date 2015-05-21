@@ -386,7 +386,7 @@ class patient(object):
             if cursor.execute(query, (self.serialno,)):
                 min_date = cursor.fetchone()[0]
             cursor.close()
-            self._first_note_date = min_date
+            self._first_note_date = min_date if  min_date else localsettings.currentDay()
         return self._first_note_date
 
     @property
