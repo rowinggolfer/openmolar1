@@ -185,7 +185,7 @@ class MHPrint(object):
 
         print_line(y, dotted=False)
 
-        y += 2 * line_height
+        y += line_height + padding
 
         painter.setFont(QtGui.QFont("sans", 9))
         line_height = QtGui.QFontMetrics(painter.font()).height()
@@ -226,7 +226,9 @@ class MHPrint(object):
             print_text(_("Name & Address"), y, 0, colspan=2, option=QtCore.Qt.AlignRight)
             bold_off()
             VALUES = ("",) * len(FIELDS)
+            y += 5 * line_height
 
+        address_bottom = y
         y = section_bottom  # move back up to print next rows
         
         for i, value in enumerate(VALUES):
@@ -240,8 +242,8 @@ class MHPrint(object):
             bold_off()
             y += print_text(value, y, 7, colspan=5)
 
-        if section_bottom > y:
-            y = section_bottom
+        if address_bottom > y:
+            y = address_bottom
 
         y += line_height
         print_line(y, dotted=False)
