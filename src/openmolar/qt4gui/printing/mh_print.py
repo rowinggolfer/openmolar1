@@ -87,7 +87,7 @@ class MHPrint(object):
         def italic_off():
             italic_on(False)
 
-        def print_line(y, left=0, colspan=12):
+        def print_line(y, left=0, colspan=12, dotted=True):
             '''
             print a line
             '''
@@ -99,7 +99,13 @@ class MHPrint(object):
                 bottom_y)
             right_point = QtCore.QPointF(
                 MARGIN_LEFT + (left + colspan) * col_width, bottom_y)
+            painter.save()
+            if dotted:
+                pen = painter.pen()
+                pen.setStyle(QtCore.Qt.DotLine)
+                painter.setPen(pen)
             painter.drawLine(left_point, right_point)
+            painter.restore()
 
         def print_text(text, y, left=0, colspan=12, rowspan=1,
                        option=QtCore.Qt.AlignLeft):
@@ -119,10 +125,15 @@ class MHPrint(object):
 
         def circle_no(y):
             rect = QtCore.QRectF(
-                MARGIN_LEFT + 7 * col_width - 3, y - 3,
-                painter.fontMetrics().width(_("NO")) + 3, line_height +3
+                MARGIN_LEFT + 6.5 * col_width - 3, y - 3,
+                painter.fontMetrics().width(_("NO")) + 4, line_height + 5
             )
+            painter.save()
+            pen = painter.pen()
+            pen.setWidth(2)
+            painter.setPen(pen)
             painter.drawEllipse(rect)
+            painter.restore()
 
         dialog = QtGui.QPrintDialog(self.printer, self.parent)
 
@@ -137,8 +148,8 @@ class MHPrint(object):
 
         painter = QtGui.QPainter(self.printer)
         pen = QtGui.QPen(QtCore.Qt.black)
-        pen.setWidth(2)
-        painter.setPen(2)
+        pen.setWidth(1)
+        painter.setPen(pen)
 
         font = QtGui.QFont("sans", 14)
         font.setBold(True)
@@ -156,7 +167,7 @@ class MHPrint(object):
                 continue
             y += print_text(value, y, option=QtCore.Qt.AlignCenter)
 
-        print_line(y)
+        print_line(y, dotted=False)
 
         y += 2 * line_height
 
@@ -173,7 +184,7 @@ class MHPrint(object):
         y += padding
         section_bottom = y
 
-        print_text(_("Address"), y, 0, colspan=2, option=QtCore.Qt.AlignRight)
+        # print_text(_("Address"), y, 0, colspan=2, option=QtCore.Qt.AlignRight)
         bold_off()
 
         FIELDS =(_("Date of Birth"), _("Home tel"), _("Work tel"), _("Mobile"),
@@ -194,7 +205,7 @@ class MHPrint(object):
                 if value in (None, ""):
                     continue
 
-                y += print_text(value, y, 2, colspan=5)
+                y += print_text(value, y, 0, colspan=5)
         else:
             VALUES = ("",) * len(FIELDS)
 
@@ -207,21 +218,21 @@ class MHPrint(object):
                 continue
 
             bold_on()
-            print_text(field, y, 7, colspan=2, option=QtCore.Qt.AlignRight)
+            print_text(field, y, 5, colspan=2, option=QtCore.Qt.AlignRight)
             bold_off()
-            y += print_text(value, y, 9, colspan=3)
+            y += print_text(value, y, 7, colspan=5)
 
         if section_bottom > y:
             y = section_bottom
 
         y += line_height
-        print_line(y)
+        print_line(y, dotted=False)
         y += 2 * line_height
 
         bold_on()
-        print_text(_("Please Circle"), y, 6, colspan=2,
+        print_text(_("Please Circle"), y, 5, colspan=2,
                    option=QtCore.Qt.AlignCenter)
-        y += print_text(_("Give Details"), y, 8, colspan=4)
+        y += print_text(_("If 'YES' - Give Details"), y, 7, colspan=4)
 
         y += print_text(_("ARE YOU CURRENTLY?"), y, 0, colspan=6)
         y += padding
@@ -233,19 +244,19 @@ class MHPrint(object):
         if self.mh and self.mh.medications:
             italic_on()
             for med in self.mh.medications.keys():
-                print_text(med, y, 8, 4, option=QtCore.Qt.AlignCenter)
-                print_line(y, 8, 4)
+                print_text(med, y, 7, 5, option=QtCore.Qt.AlignCenter)
+                print_line(y, 7, 5)
                 y += line_height + padding
                 i += 1
             italic_off()
         else:
-            print_text(_("Yes"), y, 6, colspan=1, option=QtCore.Qt.AlignRight)
-            print_text(_("No"), y, 7, colspan=1)
+            print_text(_("Yes"), y, 5.5, colspan=1, option=QtCore.Qt.AlignRight)
+            print_text(_("No"), y, 6.5, colspan=1)
             if self.mh:
                 circle_no(y)
             
         for i in range(i, 5):
-            print_line(y, 8, 4)
+            print_line(y, 7, 5)
             y += line_height + padding
         if self.mh and self.mh.medication_comments:
             italic_on()
@@ -254,25 +265,25 @@ class MHPrint(object):
 
         y += line_height
         print_text(_("Carrying a Medical Warning Card?"), y, 0.5, 5.5)
-        print_line(y, 8, 4)
+        print_line(y, 7, 5)
         if self.mh and self.mh.warning_card:
             italic_on()
-            y += print_text(self.mh.warning_card.lower(), y, 8, 4, 
+            y += print_text(self.mh.warning_card.lower(), y, 7, 5, 
                             option=QtCore.Qt.AlignCenter)
             italic_off()
         else:
             if self.mh:
                 circle_no(y)
-            print_text(_("Yes"), y, 6, colspan=1, option=QtCore.Qt.AlignRight)
-            y += print_text(_("No"), y, 7, colspan=1)
+            print_text(_("Yes"), y, 5.5, colspan=1, option=QtCore.Qt.AlignRight)
+            y += print_text(_("No"), y, 6.5, colspan=1)
         y += padding
 
         if self.pt is None or (
         self.pt.sex == "F" and 13 < self.pt.ageYears < 55):
             print_text(_("Pregnant or Breast Feeding?"), y, 0.5, 5.5)
-            print_line(y, 8, 4)
-            print_text(_("Yes"), y, 6, colspan=1, option=QtCore.Qt.AlignRight)
-            y += print_text(_("No"), y, 7, colspan=1)
+            print_line(y, 7, 5)
+            print_text(_("Yes"), y, 5.5, colspan=1, option=QtCore.Qt.AlignRight)
+            y += print_text(_("No"), y, 6.5, colspan=1)
 
         y += line_height
         bold_on()
@@ -284,110 +295,110 @@ class MHPrint(object):
             _("Allergies to Any Medicines or Substances?"),
             y, 0.5, 5.5)
         print_text(_("eg. Penicillin, aspirin or latex."), y, 2, 4)
-        print_line(y, 8, 4)
+        print_line(y, 7, 5)
         if self.mh and self.mh.allergies:
             italic_on()
-            y += print_text(self.mh.allergies.lower(), y, 8, 4, 
+            y += print_text(self.mh.allergies.lower(), y, 7, 5, 
                             option=QtCore.Qt.AlignCenter)
             italic_off()
         else:
             if self.mh:
                 circle_no(y)
-            print_text(_("Yes"), y, 6, colspan=1, option=QtCore.Qt.AlignRight)
-            y += print_text(_("No"), y, 7, colspan=1)
+            print_text(_("Yes"), y, 5.5, colspan=1, option=QtCore.Qt.AlignRight)
+            y += print_text(_("No"), y, 6.5, colspan=1)
         y += padding
 
         print_text(
             _("Bronchitis, Asthma, other Chest Conditions?"),
             y, 0.5, 5.5)
-        print_line(y, 8, 4)
+        print_line(y, 7, 5)
         if self.mh and self.mh.respiratory:
             italic_on()
-            y += print_text(self.mh.respiratory.lower(), y, 8, 4, 
+            y += print_text(self.mh.respiratory.lower(), y, 7, 5, 
                             option=QtCore.Qt.AlignCenter)
             italic_off()
         else:
             if self.mh:
                 circle_no(y)
-            print_text(_("Yes"), y, 6, colspan=1, option=QtCore.Qt.AlignRight)
-            y += print_text(_("No"), y, 7, colspan=1)
+            print_text(_("Yes"), y, 5.5, colspan=1, option=QtCore.Qt.AlignRight)
+            y += print_text(_("No"), y, 6.5, colspan=1)
         y += padding
 
         y += print_text(
             _("Heart Problems, Angina, Blood pressure"),
             y, 0.5, 5.5)
         print_text(_("problems, or a stroke?"), y, 2, 4)
-        print_line(y, 8, 4)
+        print_line(y, 7, 5)
         if self.mh and self.mh.heart:
             italic_on()
-            y += print_text(self.mh.heart.lower(), y, 8, 4, 
+            y += print_text(self.mh.heart.lower(), y, 7, 5, 
                             option=QtCore.Qt.AlignCenter)
             italic_off()
         else:
             if self.mh:
                 circle_no(y)
-            print_text(_("Yes"), y, 6, colspan=1, option=QtCore.Qt.AlignRight)
-            y += print_text(_("No"), y, 7, colspan=1)
+            print_text(_("Yes"), y, 5.5, colspan=1, option=QtCore.Qt.AlignRight)
+            y += print_text(_("No"), y, 6.5, colspan=1)
         y += padding
 
         print_text(_("Diabetes?"), y, 0.5, 5.5)
-        print_line(y, 8, 4)
+        print_line(y, 7, 5)
         if self.mh and self.mh.diabetes:
             italic_on()
-            y += print_text(self.mh.diabetes.lower(), y, 8, 4, 
+            y += print_text(self.mh.diabetes.lower(), y, 7, 5, 
                             option=QtCore.Qt.AlignCenter)
             italic_off()
         else:
             if self.mh:
                 circle_no(y)
-            print_text(_("Yes"), y, 6, colspan=1, option=QtCore.Qt.AlignRight)
-            y += print_text(_("No"), y, 7, colspan=1)
+            print_text(_("Yes"), y, 5.5, colspan=1, option=QtCore.Qt.AlignRight)
+            y += print_text(_("No"), y, 6.5, colspan=1)
         y += padding
 
         print_text(_("Arthritis?"), y, 0.5, 5.5)
-        print_line(y, 8, 4)
+        print_line(y, 7, 5)
         if self.mh and self.mh.arthritis:
             italic_on()
-            y += print_text(self.mh.arthritis.lower(), y, 8, 4, 
+            y += print_text(self.mh.arthritis.lower(), y, 7, 5, 
                             option=QtCore.Qt.AlignCenter)
             italic_off()
         else:
             if self.mh:
                 circle_no(y)
-            print_text(_("Yes"), y, 6, colspan=1, option=QtCore.Qt.AlignRight)
-            y += print_text(_("No"), y, 7, colspan=1)
+            print_text(_("Yes"), y, 5.5, colspan=1, option=QtCore.Qt.AlignRight)
+            y += print_text(_("No"), y, 6.5, colspan=1)
         y += padding
 
         y += print_text(
             _("Bruising or persistant bleeding after"),
             y, 0.5, 5.5)
         print_text(_("surgery or tooth extraction?"), y, 2, 4)
-        print_line(y, 8, 4)
+        print_line(y, 7, 5)
         if self.mh and self.mh.bleeding:
             italic_on()
-            y += print_text(self.mh.bleeding.lower(), y, 8, 4, 
+            y += print_text(self.mh.bleeding.lower(), y, 7, 5, 
                             option=QtCore.Qt.AlignCenter)
             italic_off()
         else:
             if self.mh:
                 circle_no(y)
-            print_text(_("Yes"), y, 6, colspan=1, option=QtCore.Qt.AlignRight)
-            y += print_text(_("No"), y, 7, colspan=1)
+            print_text(_("Yes"), y, 5.5, colspan=1, option=QtCore.Qt.AlignRight)
+            y += print_text(_("No"), y, 6.5, colspan=1)
         y += padding
 
         y += print_text(_("Any Infectious Diseases"), y, 0.5, 5.5)
         print_text(_("(including HIV and Hepatitis)?"), y, 2, 4)
-        print_line(y, 8, 4)
+        print_line(y, 7, 5)
         if self.mh and self.mh.infectious_disease:
             italic_on()
-            y += print_text(self.mh.infectious_disease.lower(), y, 8, 4, 
+            y += print_text(self.mh.infectious_disease.lower(), y, 7, 5, 
                             option=QtCore.Qt.AlignCenter)
             italic_off()
         else:
             if self.mh:
                 circle_no(y)
-            print_text(_("Yes"), y, 6, colspan=1, option=QtCore.Qt.AlignRight)
-            y += print_text(_("No"), y, 7, colspan=1)
+            print_text(_("Yes"), y, 5.5, colspan=1, option=QtCore.Qt.AlignRight)
+            y += print_text(_("No"), y, 6.5, colspan=1)
         y += padding
 
         y += line_height
@@ -397,131 +408,131 @@ class MHPrint(object):
         bold_off()
 
         print_text(_("Bacterial Endocarditis?"), y, 0.5, 5.5)
-        print_line(y, 8, 4)
+        print_line(y, 7, 5)
         if self.mh and self.mh.endocarditis:
             italic_on()
-            y += print_text(self.mh.endocarditis.lower(), y, 8, 4, 
+            y += print_text(self.mh.endocarditis.lower(), y, 7, 5, 
                             option=QtCore.Qt.AlignCenter)
             italic_off()
         else:
             if self.mh:
                 circle_no(y)
-            print_text(_("Yes"), y, 6, colspan=1, option=QtCore.Qt.AlignRight)
-            y += print_text(_("No"), y, 7, colspan=1)
+            print_text(_("Yes"), y, 5.5, colspan=1, option=QtCore.Qt.AlignRight)
+            y += print_text(_("No"), y, 6.5, colspan=1)
         y += padding
 
 
         print_text(
             _("Liver Disease (eg. Jaundice or Hepatitis)?"),
             y, 0.5, 5.5)
-        print_line(y, 8, 4)
+        print_line(y, 7, 5)
         if self.mh and self.mh.liver:
             italic_on()
-            y += print_text(self.mh.liver.lower(), y, 8, 4, 
+            y += print_text(self.mh.liver.lower(), y, 7, 5, 
                             option=QtCore.Qt.AlignCenter)
             italic_off()
         else:
             if self.mh:
                 circle_no(y)
-            print_text(_("Yes"), y, 6, colspan=1, option=QtCore.Qt.AlignRight)
-            y += print_text(_("No"), y, 7, colspan=1)
+            print_text(_("Yes"), y, 5.5, colspan=1, option=QtCore.Qt.AlignRight)
+            y += print_text(_("No"), y, 6.5, colspan=1)
         y += padding
 
 
         print_text(
             _("A bad reaction to a Local or General Anaesthetic?"),
             y, 0.5, 5.5)
-        print_line(y, 8, 4)
+        print_line(y, 7, 5)
         if self.mh and self.mh.anaesthetic:
             italic_on()
-            y += print_text(self.mh.anaesthetic.lower(), y, 8, 4, 
+            y += print_text(self.mh.anaesthetic.lower(), y, 7, 5, 
                             option=QtCore.Qt.AlignCenter)
             italic_off()
         else:
             if self.mh:
                 circle_no(y)
-            print_text(_("Yes"), y, 6, colspan=1, option=QtCore.Qt.AlignRight)
-            y += print_text(_("No"), y, 7, colspan=1)
+            print_text(_("Yes"), y, 5.5, colspan=1, option=QtCore.Qt.AlignRight)
+            y += print_text(_("No"), y, 6.5, colspan=1)
         y += padding
 
 
         print_text(_("A joint replacement or other implant?"), y, 0.5, 5.5)
-        print_line(y, 8, 4)
+        print_line(y, 7, 5)
         if self.mh and self.mh.joint_replacement:
             italic_on()
-            y += print_text(self.mh.joint_replacement.lower(), y, 8, 4, 
+            y += print_text(self.mh.joint_replacement.lower(), y, 7, 5, 
                             option=QtCore.Qt.AlignCenter)
             italic_off()
         else:
             if self.mh:
                 circle_no(y)
-            print_text(_("Yes"), y, 6, colspan=1, option=QtCore.Qt.AlignRight)
-            y += print_text(_("No"), y, 7, colspan=1)
+            print_text(_("Yes"), y, 5.5, colspan=1, option=QtCore.Qt.AlignRight)
+            y += print_text(_("No"), y, 6.5, colspan=1)
         y += padding
 
 
         print_text(_("Heart Surgery?"), y, 0.5, 5.5)
-        print_line(y, 8, 4)
+        print_line(y, 7, 5)
         if self.mh and self.mh.heart_surgery:
             italic_on()
-            y += print_text(self.mh.heart_surgery.lower(), y, 8, 4, 
+            y += print_text(self.mh.heart_surgery.lower(), y, 7, 5, 
                             option=QtCore.Qt.AlignCenter)
             italic_off()
         else:
             if self.mh:
                 circle_no(y)
-            print_text(_("Yes"), y, 6, colspan=1, option=QtCore.Qt.AlignRight)
-            y += print_text(_("No"), y, 7, colspan=1)
+            print_text(_("Yes"), y, 5.5, colspan=1, option=QtCore.Qt.AlignRight)
+            y += print_text(_("No"), y, 6.5, colspan=1)
         y += padding
 
 
         print_text(_("Brain Surgery?"), y, 0.5, 5.5)
-        print_line(y, 8, 4)
+        print_line(y, 7, 5)
         if self.mh and self.mh.brain_surgery:
             italic_on()
-            y += print_text(self.mh.brain_surgery.lower(), y, 8, 4, 
+            y += print_text(self.mh.brain_surgery.lower(), y, 7, 5, 
                             option=QtCore.Qt.AlignCenter)
             italic_off()
         else:
             if self.mh:
                 circle_no(y)
-            print_text(_("Yes"), y, 6, colspan=1, option=QtCore.Qt.AlignRight)
-            y += print_text(_("No"), y, 7, colspan=1)
+            print_text(_("Yes"), y, 5.5, colspan=1, option=QtCore.Qt.AlignRight)
+            y += print_text(_("No"), y, 6.5, colspan=1)
         y += padding
 
         y += print_text(_("Treatment that required you to be"), y, 0.5, 5.5)
-        print_line(y, 8, 4)
+        print_line(y, 7, 5)
         print_text(_("in Hospital?"), y, 2, 4)
         if self.mh and self.mh.hospital:
             italic_on()
-            y += print_text(self.mh.hospital.lower(), y, 8, 4, 
+            y += print_text(self.mh.hospital.lower(), y, 7, 5, 
                             option=QtCore.Qt.AlignCenter)
             italic_off()
         else:
             if self.mh:
                 circle_no(y)
-            print_text(_("Yes"), y, 6, colspan=1, option=QtCore.Qt.AlignRight)
-            y += print_text(_("No"), y, 7, colspan=1)
+            print_text(_("Yes"), y, 5.5, colspan=1, option=QtCore.Qt.AlignRight)
+            y += print_text(_("No"), y, 6.5, colspan=1)
         y += padding
 
         print_text(
             _("A close relative with Creutzfeldt Jacob Disease?"),
             y, 0.5, 5.5)
-        print_line(y, 8, 4)
+        print_line(y, 7, 5)
         if self.mh and self.mh.cjd:
             italic_on()
-            y += print_text(self.mh.cjd.lower(), y, 8, 4, 
+            y += print_text(self.mh.cjd.lower(), y, 7, 5, 
                             option=QtCore.Qt.AlignCenter)
             italic_off()
         else:
             if self.mh:
                 circle_no(y)
-            print_text(_("Yes"), y, 6, colspan=1, option=QtCore.Qt.AlignRight)
-            y += print_text(_("No"), y, 7, colspan=1)
+            print_text(_("Yes"), y, 5.5, colspan=1, option=QtCore.Qt.AlignRight)
+            y += print_text(_("No"), y, 6.5, colspan=1)
         y += padding
 
         y += line_height
-        print_line(y)
+        print_line(y, dotted=False)
 
         y += line_height * 2
         bold_on()
