@@ -393,19 +393,29 @@ class patient(object):
             if cursor.execute(query, (self.serialno,)):
                 min_date = cursor.fetchone()[0]
             cursor.close()
-            self._first_note_date = min_date if  min_date else localsettings.currentDay()
+            self._first_note_date = min_date if min_date else localsettings.currentDay()
         return self._first_note_date
 
     @property
     def n_hyg_visits(self):
-        if self._n_hyg_visits is None:
+        if self._n_hyg_visits is not None:
+            pass
+        elif not localsettings.hyg_ixs:
+            self._n_hyg_visits = 0
+        else:
+            if len(localsettings.hyg_ixs) == 1:
+                conditional = "="
+                values = (self.serialno, localsettings.hyg_ixs[0])
+            else:
+                conditional = "in"
+                values = (self.serialno, localsettings.hyg_ixs)
             self._n_hyg_visits = 0
             db = connect.connect()
             cursor = db.cursor()
             query = '''select count(*) from
-            (select date from daybook where serialno=%s and
-            trtid in %s group by date) as t;'''
-            if cursor.execute(query, (self.serialno, localsettings.hyg_ixs)):
+            (select date from daybook where serialno=%%s and
+            trtid %s %%s group by date) as t''' % conditional
+            if cursor.execute(query, values):
                 self._n_hyg_visits = cursor.fetchone()[0]
             cursor.close()
         return self._n_hyg_visits
