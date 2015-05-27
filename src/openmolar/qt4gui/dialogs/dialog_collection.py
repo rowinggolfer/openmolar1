@@ -67,6 +67,7 @@ from openmolar.qt4gui.dialogs.edit_practice_dialog import EditPracticeDialog
 from openmolar.qt4gui.dialogs.advanced_record_management_dialog import AdvancedRecordManagementDialog
 from openmolar.qt4gui.dialogs.correspondence_dialog import CorrespondenceDialog
 from openmolar.qt4gui.dialogs.edit_standard_letters_dialog import EditStandardLettersDialog
+from openmolar.qt4gui.dialogs.medical_form_checked_dialog import MedFormCheckDialog
 
 __all__ = ['AccountSeverityDialog',
            'AddClinicianDialog',
@@ -104,6 +105,7 @@ __all__ = ['AccountSeverityDialog',
            'LoadRelativesDialog',
            'LoginDialog',
            'MedicalHistoryDialog',
+           'MedFormCheckDialog',
            'NHSFormsConfigDialog',
            'ResetSupervisorPasswordDialog',
            'RecallDialog',

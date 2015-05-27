@@ -118,6 +118,8 @@ def details(pt, Saved=True):
             html += '<h4>%s</h4>%s<hr />' % (_("Memo"), pt.memo)
 
         tx_dates = [
+            (_("Med Form"), pt.mh_form_date),
+            (_("Med Notes"), pt.mh_chkdate),
             (_("Treatment"), pt.last_treatment_date),
             (_("IO xrays"), pt.pd9),
             (_("Panoral"), pt.pd8),
@@ -140,9 +142,9 @@ def details(pt, Saved=True):
             html += '''<tr><td align="center">%s</td>
             <td align="center">%s%s%s</td></tr>''' % (
                 att,
-                "<b>" if i in (0, 4) else "",
+                "<b>" if i in (2, 6) else "",
                 localsettings.formatDate(val),
-                "</b>" if i in (0, 4) else "")
+                "</b>" if i in (2, 6) else "")
 
         html += "</table>"
         html += "<h4>%s</h4>" % _("Recall")

@@ -26,6 +26,7 @@
 this module provides read/write tools for medical history
 '''
 from collections import namedtuple
+from gettext import gettext as _
 import logging
 
 from openmolar.connect import connect
@@ -43,7 +44,7 @@ select ix, warning_card, medication_comments, allergies,
 respiratory,heart, diabetes, arthritis, bleeding, infectious_disease,
 endocarditis, liver, anaesthetic, joint_replacement, heart_surgery,
 brain_surgery, hospital, cjd, other, alert, chkdate, time_stamp
-from medhist where pt_sno = %s order by ix desc limit 1
+from medhist where pt_sno = %s order by ix desc
 '''
 
 MEDS_QUERY = 'select med, details from medication_link where med_ix=%s'
@@ -101,7 +102,7 @@ def get_medications():
 def get_mh(sno):
     db = connect()
     cursor = db.cursor()
-    cursor.execute(MH_QUERY, (sno,))
+    cursor.execute(MH_QUERY + "limit 1", (sno,))
     row = cursor.fetchone()
     if row:
         values = row[:2] + ({},) + row[2:]
@@ -115,12 +116,70 @@ def get_mh(sno):
     return med_hist
 
 
+def html_history(sno):
+    html = "<h1>%s</h1>" % _("Medical History Changelog")
+    db = connect()
+    cursor = db.cursor()
+    cursor.execute(MH_QUERY, (sno,))
+    for row in cursor.fetchall():
+        table, meds_html = "", ""
+        values = row[:2] + ({},) + row[2:]
+        mh = MedHist(*values)
+        cursor.execute(MEDS_QUERY, (mh.ix,))
+        for med, details in cursor.fetchall():
+            meds_html += med
+            meds_html += " <em>%s</em>" % (
+                "" if details in (None, "") else "(%s)" % details)
+            meds_html += "<br />"
+        if meds_html:
+            table += "<tr><th>%s</th><td>%s<td></tr>" % (
+                _("MEDICATIONS"), meds_html[:-6])
+
+        for key, value in (
+            (_("Warning Card"), mh.warning_card),
+            (_("Medication Comments"), mh.medication_comments),
+            (_("Allergies"), mh.allergies),
+            (_("Respiratory"), mh.respiratory),
+            (_("Heart"), mh.heart),
+            (_("Diabetes"), mh.diabetes),
+            (_("Arthritis"), mh.arthritis),
+            (_("Bleeding"), mh.bleeding),
+            (_("Infectious disease"), mh.infectious_disease),
+            (_("Endorcarditis"), mh.endocarditis),
+            (_("Liver"), mh.liver),
+            (_("Anaesthetic"), mh.anaesthetic),
+            (_("Join Replacement"), mh.joint_replacement),
+            (_("Heart Surgery"), mh.heart_surgery),
+            (_("Brain Surgery"), mh.brain_surgery),
+            (_("Hospitalised"), mh.hospital),
+            (_("CJD"), mh.cjd),
+            (_("OTHER"), mh.other),
+            (_("ALERT"), _("TRUE") if mh.alert else "")
+        ):
+            if value:
+                table += "<tr><th>%s</th><td>%s<td></tr>" % (
+                    key, value)
+        if table:
+            html += '''<h2>%s - %s</h2>
+            <table width='100%%' border='1'>%s</table>
+            <br />
+            ''' % (
+                localsettings.formatDate(mh.chkdate),
+                localsettings.operator,
+                table,
+            )
+
+    cursor.close()
+    return html + _("End of History")
+
+
 def update_chkdate(ix):
     LOGGER.debug("marking mh %s as checked today", ix)
     db = connect()
     cursor = db.cursor()
     result = cursor.execute(
-        UPDATE_CHKDATE_QUERY, (localsettings.currentDay(), localsettings.operator, ix))
+        UPDATE_CHKDATE_QUERY,
+        (localsettings.currentDay(), localsettings.operator, ix))
     cursor.close()
     return result
 
@@ -164,8 +223,10 @@ def insert_mh(sno, mh):
               )
     cursor.execute(INSERT_QUERY, values)
     ix = db.insert_id()
-    cursor.executemany(INSERT_MEDS_QUERY,
-                       [(ix, key, mh.medications[key]) for key in mh.medications])
+    cursor.executemany(
+        INSERT_MEDS_QUERY,
+        [(ix, key, mh.medications[key]) for key in mh.medications]
+        )
     cursor.close()
 
 
@@ -198,8 +259,10 @@ def update_mh(ix, mh):
               )
     result = cursor.execute(UPDATE_QUERY, values)
     cursor.execute(DELETE_MEDS_QUERY, (ix,))
-    cursor.executemany(INSERT_MEDS_QUERY,
-                       [(ix, key, mh.medications[key]) for key in mh.medications])
+    cursor.executemany(
+        INSERT_MEDS_QUERY,
+        [(ix, key, mh.medications[key]) for key in mh.medications]
+        )
     cursor.close()
     return result
 

@@ -360,6 +360,13 @@ class SchemaUpdater(BaseDialog, Advisor):
             self.dbu = upmod.DatabaseUpdater(self.pb)
             self.apply_update()
 
+        # UPDATE TO SCHEMA 3.3 ########################
+        self.next_version = "3.3"
+        if self.current_version < self.next_version:
+            from openmolar.schema_upgrades import schema3_2to3_3 as upmod
+            self.dbu = upmod.DatabaseUpdater(self.pb)
+            self.apply_update()
+
         self.dbu = None
         if schema_version.getVersion() == localsettings.CLIENT_SCHEMA_VERSION:
             self.success()
@@ -368,7 +375,7 @@ class SchemaUpdater(BaseDialog, Advisor):
 
 if __name__ == "__main__":
     from gettext import gettext as _
-    #-- put "openmolar" on the pyth path and go....
+    # - put "openmolar" on the pyth path and go....
     LOGGER.setLevel(logging.DEBUG)
     LOGGER.debug("starting schema_updater")
 

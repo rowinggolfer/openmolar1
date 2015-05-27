@@ -49,6 +49,7 @@ GUTTA_PERCHA = QtGui.QColor("#bb0000")
 FILL_OUTLINE = QtGui.QColor("#333333")  # used to be blue
 TRANSPARENT = QtCore.Qt.transparent
 med_warning = "red"
+med_foreground = "yellow"
 BACKGROUND = QtGui.QPalette().window()
 APPT_Background = QtCore.Qt.white
 APPT_LINECOLOUR = QtGui.QColor("#dddddd")
@@ -82,6 +83,8 @@ APPTCOLORS = {
     "current_patient": QtGui.QColor("orange"),
 }
 
+MED_STYLESHEET = "background-color: %s; color: %s" % (
+        med_warning, med_foreground)
 
 if __name__ == "__main__":
     print BACKGROUND

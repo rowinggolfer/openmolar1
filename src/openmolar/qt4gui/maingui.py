@@ -110,6 +110,7 @@ from openmolar.qt4gui.dialogs.dialog_collection import (
     LoadRelativesDialog,
     LoginDialog,
     MedicalHistoryDialog,
+    MedFormCheckDialog,
     NHSFormsConfigDialog,
     ResetSupervisorPasswordDialog,
     RecallDialog,
@@ -131,6 +132,7 @@ from openmolar.dbtools import calldurr
 from openmolar.dbtools import docsprinted
 from openmolar.dbtools import docsimported
 from openmolar.dbtools import memos
+from openmolar.dbtools import medhist
 from openmolar.dbtools import nhs_claims
 from openmolar.dbtools import daybookHistory
 from openmolar.dbtools import paymentHistory
@@ -836,6 +838,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.ui.notesEnter_textEdit.setHtml("")
 
             self.ui.medNotes_pushButton.setStyleSheet("")
+            self.ui.medNotes_pushButton2.setStyleSheet("")
 
             # -load a blank version of the patient class
             self.pt = patient_class.patient(0)
@@ -1344,25 +1347,28 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         i = self.ui.tabWidget.currentIndex()
         LOGGER.debug("update reception Summary page called, ignore=%s", i != 3)
         if self.pt.serialno == 0:
-            self.ui.med_questionaire_label.setText("")
+            self.ui.med_questionaire_textBrowser.setText("")
             self.hide_reception_right_panel()
         elif i == 3:
             self.pt_diary_widget.layout_ptDiary()
 
-            mhdate = self.pt.mh_chkdate
+            mhdate = self.pt.mh_form_date
             if mhdate is None:
-                message = _("MH has never been checked!")
+                message = _("MH form has never been completed!")
+                message += "\n\n%s" % _("PLEASE GET MH FORM")
                 style_ = "color: %s" % colours.med_warning
             else:
                 chkdate = localsettings.formatDate(mhdate)
-                message = "%s %s" % (_("Checked"), chkdate)
+                message = "%s %s" % (
+                    _("Form confirmed by patient on"), chkdate)
                 if (localsettings.currentDay() - mhdate).days > 178:
                     style_ = "color: %s" % colours.med_warning
+                    message += "\n\n%s" % _("PLEASE GET MH FORM")
                 else:
                     style_ = ""
 
-            self.ui.med_questionaire_label.setStyleSheet(style_)
-            self.ui.med_questionaire_label.setText(message)
+            self.ui.med_questionaire_textBrowser.setStyleSheet(style_)
+            self.ui.med_questionaire_textBrowser.setText(message)
         self.load_reception_notes()
 
     def load_reception_notes(self):
@@ -1528,9 +1534,12 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
     def medalert(self):
         if self.pt.MEDALERT:
             self.ui.medNotes_pushButton.setStyleSheet(
-                "background-color: %s" % colours.med_warning)
+                colours.MED_STYLESHEET)
+            self.ui.medNotes_pushButton2.setStyleSheet(
+                colours.MED_STYLESHEET)
         else:
             self.ui.medNotes_pushButton.setStyleSheet("")
+            self.ui.medNotes_pushButton2.setStyleSheet("")
 
         mhdate = self.pt.mh_chkdate
         if mhdate is None:
@@ -1538,6 +1547,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         else:
             chkdate = " - %s" % localsettings.formatDate(mhdate)
         self.ui.medNotes_pushButton.setText("MedNotes%s" % chkdate)
+        self.ui.medNotes_pushButton2.setText("MedNotes%s" % chkdate)
 
         self.enableEdit(True)
 
@@ -2010,7 +2020,10 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.ui.phraseBook_pushButton,
             self.ui.clinician_phrasebook_pushButton,
             self.ui.medNotes_pushButton,
+            self.ui.medNotes_pushButton2,
+            self.ui.med_form_checked_button,
             self.ui.printGP17_pushButton,
+            self.ui.reception_view_checkBox,
             self.ui.notesEnter_textEdit,
             self.ui.synopsis_lineEdit,
             self.ui.memos_pushButton,
@@ -2051,7 +2064,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.ui.childsmile_button.hide()
 
         if not arg:
-            self.ui.medNotes_pushButton.setText("MedNotes")
+            self.ui.medNotes_pushButton.setText("Medical History Dialog")
+            self.ui.medNotes_pushButton2.setText("Medical History Dialog")
 
         self.updateDetails()
 
@@ -2542,6 +2556,14 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             est_logger.html_history, self.pt.courseno0)
         self.refresh_debug_browser()
 
+    def show_medhist_history(self):
+        '''
+        show how the current estimate has changed
+        '''
+        self.debug_browser_refresh_func = partial(
+            medhist.html_history, self.pt.serialno)
+        self.refresh_debug_browser()
+
     def nhsClaimsShortcut(self):
         '''
         a convenience function called from the contracts page
@@ -2549,7 +2571,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.tabWidget.setCurrentIndex(9)
         self.NHSClaims_clicked()
 
-    def updateAttributes(self, arg=None):
+    def updateAttributes(self, *args):
         '''
         refresh the table if the checkbox is toggled
         '''
@@ -2711,6 +2733,14 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
     def print_mh_forms(self, serialnos):
         om_printing.print_mh_forms(serialnos, self)
 
+    def med_form_checked(self):
+        dl = MedFormCheckDialog(self)
+        if dl.exec_():
+            dl.apply()
+            self.advise(_("updated med form check date"))
+            self.load_receptionSummaryPage()
+            self.updateHiddenNotesLabel()
+
     def childsmile_button_clicked(self):
         '''
         A function to implement NHS Scotland's Childsmile.
@@ -2792,6 +2822,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.xray_pushButton.clicked.connect(self.addXrays)
         self.ui.newBPE_pushButton.clicked.connect(self.newBPE_Dialog)
         self.ui.medNotes_pushButton.clicked.connect(self.showMedNotes)
+        self.ui.medNotes_pushButton2.clicked.connect(self.showMedNotes)
         self.ui.phraseBook_pushButton.clicked.connect(
             self.show_phrase_book_dialog)
         self.ui.clinician_phrasebook_pushButton.clicked.connect(
@@ -2825,6 +2856,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.takePayment_pushButton_clicked)
         self.ui.printGP17_pushButton.clicked.connect(self.printGP17_clicked)
         self.ui.med_questionaire_print_pushbutton.clicked.connect(self.printMH)
+        self.ui.med_form_checked_button.clicked.connect(self.med_form_checked)
         self.ui.reception_view_checkBox.clicked.connect(
             self.reception_view_checkBox_clicked)
 
@@ -3001,6 +3033,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.memo_history_pushButton.clicked.connect(self.show_memo_history)
         self.ui.current_est_versioning_pushButton.clicked.connect(
             self.show_estimate_versioning)
+        self.ui.medhist_history_button.clicked.connect(
+            self.show_medhist_history)
 
     def signals_daybook(self):
         # daybook - cashbook

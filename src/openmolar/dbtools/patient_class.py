@@ -46,7 +46,8 @@ from openmolar.dbtools import records_in_use
 
 from openmolar.dbtools.queries import (
     PATIENT_QUERY_FIELDS, PATIENT_QUERY, FUTURE_EXAM_QUERY,
-    PSN_QUERY, FAMILY_COUNT_QUERY, QUICK_MED_QUERY, SYNOPSIS_QUERY)
+    PSN_QUERY, FAMILY_COUNT_QUERY, QUICK_MED_QUERY, SYNOPSIS_QUERY,
+    MED_FORM_QUERY)
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -245,6 +246,7 @@ class patient(object):
         self.notes_dict = {}
         self.MEDALERT = False
         self.mh_chkdate = None
+        self.mh_form_date = None
         self.HIDDENNOTES = []
         self.chartgrid = {}
         self._fee_table = None
@@ -315,8 +317,13 @@ class patient(object):
             self.MEDALERT, self.mh_chkdate = cursor.fetchone()
         except TypeError:
             pass
+       
+        cursor.execute(MED_FORM_QUERY, (self.serialno,))
+        try:
+            self.mh_form_date = cursor.fetchone()[0]
+        except TypeError:
+            pass
         cursor.close()
-        # db.close()
 
         # - load from plandata
         self.plandata.getFromDB()
