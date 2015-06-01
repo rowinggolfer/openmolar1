@@ -1361,7 +1361,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                 chkdate = localsettings.formatDate(mhdate)
                 message = "%s %s" % (
                     _("Form confirmed by patient on"), chkdate)
-                if (localsettings.currentDay() - mhdate).days > 178:
+                if (localsettings.currentDay() - mhdate).days > \
+                        localsettings.MH_FORM_PERIOD:
                     style_ = "color: %s" % colours.med_warning
                     message += "\n\n%s" % _("PLEASE GET MH FORM")
                 else:

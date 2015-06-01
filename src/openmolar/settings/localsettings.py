@@ -322,6 +322,7 @@ apptix_reverse = {}
 # todo - this will need to change!!!!
 BOOKEND = datetime.date.today() + datetime.timedelta(days=183)
 
+MH_FORM_PERIOD = 350  # how many days old should an MH form be allowed to get?
 # -treatment codes..
 
 apptTypes = (
