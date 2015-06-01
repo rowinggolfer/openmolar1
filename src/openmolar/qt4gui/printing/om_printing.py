@@ -467,12 +467,13 @@ def print_mh_form(om_gui):
     if dl.exec_():
         dl.apply()
 
+
 def print_mh_forms(serialnos, om_gui):
     for serialno in serialnos:
         pt = patient_class.patient(serialno)
-        LOGGER.info("print MH form for %s" % pt.serialno)
-        mh_printer = MHPrint(pt, om_gui)
-        mh_printer.print_()
+        dl = MHFormDialog(pt, om_gui)
+        if dl.exec_():
+            dl.apply()
 
 
 def printSelectedAccounts(om_gui):
@@ -544,8 +545,7 @@ def historyPrint(om_gui):
 
 if __name__ == "__main__":
     import os
-    from openmolar.dbtools import patient_class
-    os.chdir(os.path.expanduser("~"))
+    os.chdir(os.path.expanduser("~"))  # for printing to pdf
     app = QtGui.QApplication([])
     widg = QtGui.QWidget()
     widg.pt = patient_class.patient(1)
