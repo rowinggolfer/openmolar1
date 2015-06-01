@@ -1,26 +1,26 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 import logging
 
@@ -130,12 +130,12 @@ class MedicalHistoryDialog(BaseDialog):
         self.hospitalised_line_edit.setMaxLength(60)
         self.cjd_line_edit = QtGui.QLineEdit()
         self.cjd_line_edit.setMaxLength(60)
-        self.other_line_edit = QtGui.QLineEdit()
-        self.other_line_edit.setMaxLength(60)
+        self.other_text_edit = QtGui.QTextEdit()
+        self.other_text_edit.setMaximumHeight(120)
         self.med_alert_cb = QtGui.QCheckBox(_("Medical Alert"))
 
         meds_frame = QtGui.QFrame()
-        meds_frame.setMaximumHeight(120)
+        meds_frame.setMaximumHeight(150)
         layout = QtGui.QFormLayout(meds_frame)
         layout.addRow(_("Medications"), self.meds_text_edit)
         layout.addRow(_("Medication Comments"), self.meds_line_edit)
@@ -151,6 +151,7 @@ class MedicalHistoryDialog(BaseDialog):
         layout.addRow(_("Bleeding Disorders"), self.bleeding_line_edit)
         layout.addRow(_("Infectious Diseases"), self.infection_line_edit)
         layout.addRow(_("Endocarditis"), self.endocarditis_line_edit)
+        layout.addRow(_("Mark as Medical Alert"), self.med_alert_cb)
 
         r_frame = QtGui.QFrame()
         layout = QtGui.QFormLayout(r_frame)
@@ -161,8 +162,7 @@ class MedicalHistoryDialog(BaseDialog):
         layout.addRow(_("Brain Surgery"), self.brain_surgery_line_edit)
         layout.addRow(_("Hospitalised"), self.hospitalised_line_edit)
         layout.addRow(_("CJD"), self.cjd_line_edit)
-        layout.addRow(_("Other"), self.other_line_edit)
-        layout.addRow(_("Mark as Medical Alert"), self.med_alert_cb)
+        layout.addRow(_("Other"), self.other_text_edit)
 
         frame = QtGui.QFrame()
         vlayout = QtGui.QHBoxLayout(frame)
@@ -181,6 +181,11 @@ class MedicalHistoryDialog(BaseDialog):
         self.mh = None
         self.new_mh = None
         self.checked_only = False
+
+        self.setMinimumWidth(
+            QtGui.QApplication.desktop().screenGeometry().width() - 20)
+        self.setMinimumHeight(
+            QtGui.QApplication.desktop().screenGeometry().height() * .6)
 
         QtCore.QTimer.singleShot(10, self.load_mh)
         self.enableApply()
@@ -213,7 +218,7 @@ class MedicalHistoryDialog(BaseDialog):
         set_text(self.brain_surgery_line_edit, self.mh.brain_surgery)
         set_text(self.hospitalised_line_edit, self.mh.hospital)
         set_text(self.cjd_line_edit, self.mh.cjd)
-        set_text(self.other_line_edit, self.mh.other)
+        set_text(self.other_text_edit, self.mh.other)
 
         self.med_alert_cb.setChecked(self.mh.alert)
 
@@ -315,7 +320,7 @@ class MedicalHistoryDialog(BaseDialog):
             unicode(self.brain_surgery_line_edit.text().toUtf8()),
             unicode(self.hospitalised_line_edit.text().toUtf8()),
             unicode(self.cjd_line_edit.text().toUtf8()),
-            unicode(self.other_line_edit.text().toUtf8()),
+            unicode(self.other_text_edit.toPlainText().toUtf8()),
             self.med_alert_cb.isChecked(),
             localsettings.currentDay(),
             None
