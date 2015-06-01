@@ -663,8 +663,8 @@ class appointmentCanvas(QtGui.QWidget):
             for patient in selectedPatients:
                 for appt in self.appts + self.doubleAppts:
                     if appt[5] == patient:
-                        feedback += '''%s<br /><b>%s - %s</b>''' % (
-                            appt[4], appt[2], appt[3])
+                        feedback += '''%s %s (%s)<br /><b>%s - %s</b>''' % (
+                            appt[4], "&nbsp;" * 4, appt[5], appt[2], appt[3])
                         for val in (appt[6], appt[7], appt[8]):
                             if val != "":
                                 feedback += '''
@@ -886,7 +886,7 @@ class appointmentCanvas(QtGui.QWidget):
                 painter.drawLine(self.timeWidth + 1, y, self.width() - 1, y)
             if textneeded:
                 trect = QtCore.QRectF(0, y,
-                                      self.timeWidth
+                                      self.timeWidth,
                                       y + self.textDetail * self.slotHeight)
 
                 painter.setPen(QtGui.QPen(QtCore.Qt.black, 1))
