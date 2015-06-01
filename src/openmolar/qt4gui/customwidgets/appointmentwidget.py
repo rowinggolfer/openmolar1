@@ -1,26 +1,26 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 provides one class - the appointment widget
@@ -31,7 +31,7 @@ from __future__ import division
 
 import datetime
 import functools  # for partial
-import logging
+from gettext import gettext as _
 import pickle
 
 from PyQt4 import QtGui, QtCore
@@ -224,7 +224,7 @@ class AppointmentWidget(QtGui.QFrame):
         '''
         if not self.memo_lineEdit.hasFocus():
             self.emit(QtCore.SIGNAL("new_memo"),
-                     (self.dentist, str(self.memo_lineEdit.text().toAscii())))
+                (self.dentist, str(self.memo_lineEdit.text().toAscii())))
 
     def signals(self):
         '''
@@ -1057,7 +1057,6 @@ class appointmentCanvas(QtGui.QWidget):
 
 
 if __name__ == "__main__":
-    import datetime
     from openmolar.dbtools import appointments
     from openmolar.dbtools.brief_patient import BriefPatient
 
@@ -1068,8 +1067,8 @@ if __name__ == "__main__":
     localsettings.initiate()
     app = QtGui.QApplication(sys.argv)
 
-    #--initiate a book starttime 08:00 endtime 10:00
-    #--five minute slots, text every 3 slots
+    # -initiate a book starttime 08:00 endtime 10:00
+    # -five minute slots, text every 3 slots
 
     # from openmolar.qt4gui import maingui
     # parent = maingui.OpenmolarGui()
@@ -1104,7 +1103,8 @@ if __name__ == "__main__":
         (5, 1300, 1400, 'LUNCH', 0, '', '', '', '', -128, 0, 0, 0, dt),
         (5, 1400, 1410, 'STAFF MEETING', 0, '', '', '', '', -128, 0, 0, 0, dt),
         (5, 930, 1005, 'TAYLOR J', 19373, 'FILL', '', '', '', 1, 80, 0, 0, dt),
-        (5, 1210, 1230, 'TAYLOR J', 19373, 'FILL', '', '', '', 1, 80, 0, 0, dt),
+        (5, 1210, 1230, 'TAYLOR J', 19373, 'FILL', '', '', '', 1, 80, 0, 0,
+         dt),
     ):
         form.setAppointment(appoint)
 
