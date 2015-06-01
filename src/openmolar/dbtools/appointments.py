@@ -3,7 +3,7 @@
 
 # ############################################################################ #
 # #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>                # #
 # #                                                                          # #
 # # This file is part of OpenMolar.                                          # #
 # #                                                                          # #
@@ -444,9 +444,8 @@ class DayAppointmentData(DaySummary):
         '''
         return only appointments for the specified dent
         '''
-        retList = []
         for app in self.appointments:
-            if app[0] == dent:
+            if app.apptix == dent:
                 yield app
 
     def slots(self, minlength, ignore_emergency=False, dents=None):
@@ -461,10 +460,10 @@ class DayAppointmentData(DaySummary):
             if self.inOffice.get(dent, False):
                 appt_times_list = []
                 for app in self.dentAppointments(dent):
-                    if (not ignore_emergency or
-                    not(app[4] == 0 and app[3].lower() == "emergency")
+                    if (not ignore_emergency or not(
+                        app.serialno == 0 and app.name.lower() == "emergency")
                         ):
-                        appt_times_list.append((app[1], app[2]))
+                        appt_times_list.append((app.start, app.end))
                 if appt_times_list:
                     slotlist += slots(self.date, dent, self.getStart(dent),
                         appt_times_list, self.getEnd(dent))
@@ -621,6 +620,28 @@ class AgendaData(object):
             else:
                 text += "<li>%s</li>" % item
         return text + "</ul></body></html>"
+
+
+class Appointment(object):
+    def __init__(
+        self,
+        (apptix, start, end, name, serialno, code0, code1, code2, note,
+         flag0, flag1, flag2, flag3, timestamp)
+    ):
+        self.apptix = apptix
+        self.start = start
+        self.end = end
+        self.name = name
+        self.serialno = serialno
+        self.trt1 = code0
+        self.trt2 = code1
+        self.trt3 = code2
+        self.memo = note
+        self.flag0 = flag0
+        self.cset = chr(flag1)
+        self.flag2 = flag2
+        self.flag3 = flag3
+        self.timestamp = timestamp
 
 
 def slots(adate, apptix, start, apdata, fin):
@@ -994,12 +1015,13 @@ def allAppointmentData(adate, dents=()):
     where adate=%s'''
     query += " %s order by apptix, start" % cond
     cursor.execute(query, (adate,) + dents)
-
-    data = cursor.fetchall()
+    appts = []
+    for row in cursor.fetchall():
+        appt = Appointment(row)
+        appts.append(appt)
     cursor.close()
 
-    return data
-
+    return appts
 
 def convertResults(results):
     '''
@@ -1593,7 +1615,7 @@ def delete_appt_from_aslot(appt):
         values = (appt.date, appt.serialno, appt.dent, appt.atime)
         if cursor.execute(query, values):
             result = True
-    except Exception as ex:
+    except Exception:
         LOGGER.exception("appointments.delete_appt_from_aslot")
     cursor.close()
 
@@ -1658,7 +1680,7 @@ if __name__ == "__main__":
 
     localsettings.initiate()
 
-    testdate = datetime.date(2013, 0o1, 25)
+    testdate = datetime.date(2015, 06, 01)
 
     d_a_d = DayAppointmentData()
     d_a_d.setDate(testdate)

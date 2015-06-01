@@ -258,22 +258,21 @@ class AppointmentWidget(QtGui.QFrame):
         (5, 1100, 1130, 'EMERGENCY', 0L, '', '', '', '', -128, 0, 0, 0,
         timestamp)
         '''
-        (start, finish, name, sno, trt1, trt2, trt3, memo, flag, cset,
-         modtime) = (str(app[1]), str(app[2]), app[3], app[4],
-                     app[5], app[6], app[7], app[8], app[9],
-                     chr(app[10]), app[13])
 
-        startcell = self.canvas.getCell_from_time(start)
-        endcell = self.canvas.getCell_from_time(finish)
+        startcell = self.canvas.getCell_from_time(str(app.start))
+        endcell = self.canvas.getCell_from_time(str(app.end))
         if endcell == startcell:  # double and family appointments!!
             endcell += 1
-            self.canvas.doubleAppts.append((startcell, endcell, start, finish,
-                                            name, sno, trt1, trt2, trt3, memo,
-                                            flag, cset, modtime))
+            self.canvas.doubleAppts.append(
+                (startcell, endcell, app.start, app.end,
+                 app.name, app.serialno, app.trt1, app.trt2, app.trt3,
+                 app.memo, app.flag0, app.cset, app.timestamp))
         else:
-            self.canvas.appts.append((startcell, endcell, start, finish,
-                                      name, sno, trt1, trt2, trt3, memo,
-                                      flag, cset, modtime))
+            self.canvas.appts.append(
+                (startcell, endcell, app.start, app.end,
+                 app.name, app.serialno, app.trt1, app.trt2, app.trt3,
+                 app.memo, app.flag0, app.cset, app.timestamp))
+        sno = app.serialno
         if sno == 0:
             sno = self.canvas.duplicateNo
             self.canvas.duplicateNo -= 1
@@ -725,7 +724,7 @@ class appointmentCanvas(QtGui.QWidget):
         the signal has a LIST as argument -
         in case there are overlapping appointments or doubles etc...
         '''
-        def rightClickMenuResult(result):
+        def singleClickMenuResult(result):
             if not result:
                 return
             dent = localsettings.apptix.get(self.pWidget.dentist)
@@ -793,7 +792,7 @@ class appointmentCanvas(QtGui.QWidget):
                 actions.append(_("Block or use this space"))
 
         if self.qmenu and event.type() == QtCore.QEvent.MouseButtonDblClick:
-            rightClickMenuResult(self.qmenu.defaultAction())
+            singleClickMenuResult(self.qmenu.defaultAction())
             self.qmenu.clear()
             return
 
@@ -806,7 +805,7 @@ class appointmentCanvas(QtGui.QWidget):
             if i == 0:
                 self.qmenu.setDefaultAction(q_act)
         if event.button() == QtCore.Qt.RightButton:
-            rightClickMenuResult(self.qmenu.exec_(event.globalPos()))
+            singleClickMenuResult(self.qmenu.exec_(event.globalPos()))
 
     def block_use_space(self, start, finish):
         Dialog = QtGui.QDialog(self)
@@ -1097,7 +1096,7 @@ if __name__ == "__main__":
     form.clearAppts()
 
     dt = datetime.datetime.now()
-    for appoint in (
+    for tup in (
         (5, 915, 930, 'MCDONALD I', 6155, 'EXAM', '', '', '', 1, 73, 0, 0, dt),
         (5, 1100, 1130, 'EMERGENCY', 0, '', '', '', '', -128, 0, 0, 0, dt),
         (5, 1300, 1400, 'LUNCH', 0, '', '', '', '', -128, 0, 0, 0, dt),
@@ -1106,7 +1105,8 @@ if __name__ == "__main__":
         (5, 1210, 1230, 'TAYLOR J', 19373, 'FILL', '', '', '', 1, 80, 0, 0,
          dt),
     ):
-        form.setAppointment(appoint)
+        appt = appointments.Appointment(tup)
+        form.setAppointment(appt)
 
     slot_date = datetime.datetime.combine(dt.date(), datetime.time(11, 30))
     slot = appointments.FreeSlot(slot_date, 5, 40)
