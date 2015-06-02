@@ -117,6 +117,7 @@ from openmolar.qt4gui.dialogs.dialog_collection import (
     SaveDiscardCancelDialog,
     SaveMemoDialog,
 )
+from openmolar.qt4gui.dialogs import medical_form_date_entry_dialog
 
 from openmolar.qt4gui.phrasebook.phrasebook_dialog import PhraseBookDialog
 from openmolar.qt4gui.phrasebook.phrasebook_dialog import PHRASEBOOKS
@@ -2022,7 +2023,6 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.ui.clinician_phrasebook_pushButton,
             self.ui.medNotes_pushButton,
             self.ui.medNotes_pushButton2,
-            self.ui.med_form_checked_button,
             self.ui.printGP17_pushButton,
             self.ui.reception_view_checkBox,
             self.ui.notesEnter_textEdit,
@@ -2735,12 +2735,27 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         om_printing.print_mh_forms(serialnos, self)
 
     def med_form_checked(self):
+        if self.pt.serialno == 0:
+            medical_form_date_entry_dialog.allow_user_input()
+            return
         dl = MedFormCheckDialog(self)
         if dl.exec_():
             dl.apply()
             self.advise(_("updated med form check date"))
-            self.load_receptionSummaryPage()
-            self.updateHiddenNotesLabel()
+        self.pt.reload_mh_form_date()
+        self.load_receptionSummaryPage()
+        self.updateHiddenNotesLabel()
+        self.updateDetails()
+
+    def diary_mh_form_date(self, serialnos):
+        '''
+        called via Qmenu on the appointment book
+        '''
+        for sno in serialnos:
+            dl = medical_form_date_entry_dialog.MedFormDateEntryDialog(
+                sno, self)
+            if dl.exec_():
+                dl.apply()
 
     def childsmile_button_clicked(self):
         '''
@@ -3193,6 +3208,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.diary_widget.pt_diary_changed.connect(
             self.pt_diary_widget.refresh_ptDiary)
         self.diary_widget.print_mh_signal.connect(self.print_mh_forms)
+        self.diary_widget.mh_form_date_signal.connect(self.diary_mh_form_date)
         self.pt_diary_widget.start_scheduling.connect(self.start_scheduling)
         self.pt_diary_widget.find_appt.connect(self.diary_widget.find_appt)
         self.pt_diary_widget.appointment_selected.connect(

@@ -623,10 +623,13 @@ class AgendaData(object):
 
 
 class Appointment(object):
+    startcell = 0
+    endcell = 0
+
     def __init__(
         self,
         (apptix, start, end, name, serialno, code0, code1, code2, note,
-         flag0, flag1, flag2, flag3, timestamp)
+         flag0, flag1, flag2, flag3, timestamp, mh_date)
     ):
         self.apptix = apptix
         self.start = start
@@ -642,7 +645,23 @@ class Appointment(object):
         self.flag2 = flag2
         self.flag3 = flag3
         self.timestamp = timestamp
+        self.mh_form_check_date = mh_date
 
+    @property
+    def mh_form_required(self):
+        if self.serialno < 1:
+            return False
+        if not self.mh_form_check_date:
+            return True
+        return (localsettings.currentDay() - self.mh_form_check_date).days > \
+            localsettings.MH_FORM_PERIOD
+
+    def __repr__(self):
+        return "%s %s %s %s %s %s %s %s %s %s" % (
+            self.serialno, self.apptix, self.start, self.end,
+            self.name, self.trt1, self.trt2,
+            self.trt3, self.memo,
+            self.mh_form_check_date)
 
 def slots(adate, apptix, start, apdata, fin):
     '''
@@ -1010,10 +1029,10 @@ def allAppointmentData(adate, dents=()):
 
     db = connect()
     cursor = db.cursor()
-    query = '''select apptix,start,end,name,serialno,code0,
-    code1,code2,note,flag0,flag1,flag2,flag3, timestamp from aslot
-    where adate=%s'''
-    query += " %s order by apptix, start" % cond
+    query = '''select apptix, start, end, name, serialno, code0, code1, code2,
+note, flag0, flag1, flag2, flag3, timestamp, mh_date from aslot left join
+(select pt_sno, max(chk_date) as mh_date from medforms group by pt_sno) as t on
+aslot.serialno = t.pt_sno where adate=%%s %s order by apptix, start''' % cond
     cursor.execute(query, (adate,) + dents)
     appts = []
     for row in cursor.fetchall():

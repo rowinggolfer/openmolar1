@@ -233,6 +233,5 @@ if __name__ == "__main__":
     app = QtGui.QApplication([])
 
     dl = FindPatientDialog()
-    print ("chosen sno = %s" % dl.chosen_sno)
     if dl.exec_():
         print (dl.chosen_sno)

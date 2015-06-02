@@ -317,8 +317,8 @@ class patient(object):
             self.MEDALERT, self.mh_chkdate = cursor.fetchone()
         except TypeError:
             pass
-       
-        cursor.execute(MED_FORM_QUERY, (self.serialno,))
+
+        cursor.execute(MED_FORM_QUERY + " limit 1", (self.serialno,))
         try:
             self.mh_form_date = cursor.fetchone()[0]
         except TypeError:
@@ -1032,6 +1032,27 @@ class patient(object):
         return (self.sname, self.addr1, self.addr2,
                 self.addr3, self.town, self.county,
                 self.pcde, self.tel1)
+
+    def reload_mh_form_date(self):
+        db = connect.connect()
+        cursor = db.cursor()
+        cursor.execute(MED_FORM_QUERY + " limit 1", (self.serialno,))
+        try:
+            self.mh_form_date = cursor.fetchone()[0]
+        except TypeError:
+            self.mh_form_date = None
+        cursor.close()
+
+    def mh_form_dates(self):
+        '''
+        the dates that the  mh form has been signed off by the patient.
+        '''
+        db = connect.connect()
+        cursor = db.cursor()
+        cursor.execute(MED_FORM_QUERY, (self.serialno,))
+        for row in cursor.fetchall():
+            yield row[0]
+        cursor.close()
 
     def set_record_in_use(self):
         records_in_use.set_in_use(self.serialno)

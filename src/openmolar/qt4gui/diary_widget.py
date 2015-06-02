@@ -84,6 +84,7 @@ class DiaryWidget(QtGui.QWidget):
     pt_diary_changed = QtCore.pyqtSignal(object)
     bring_to_front = QtCore.pyqtSignal()
     print_mh_signal = QtCore.pyqtSignal(object)
+    mh_form_date_signal = QtCore.pyqtSignal(object)
 
     alterAday_clipboard = []  # clipboard used by the alterAday dialog
     alterAday_clipboard_date = None
@@ -1721,6 +1722,7 @@ class DiaryWidget(QtGui.QWidget):
 
         book.slotClicked.connect(self.apptBook_slot_clicked)
         book.print_mh_signal.connect(self.print_mh_signal.emit)
+        book.mh_form_date_signal.connect(self.mh_form_date_signal.emit)
 
     def signals_calendar(self, connect=True):
         if connect:

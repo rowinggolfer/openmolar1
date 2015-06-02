@@ -23,7 +23,7 @@
 # ########################################################################### #
 
 '''
-This module contains one fuction - "insert"
+This module contains a function - "insert", and the reverse function "delete"
 This work on the medforms table in the database.
 medforms uses (pt_sno, chk_date) as a primary key,
 so IntegrityErrors should be checked for.
@@ -32,6 +32,7 @@ so IntegrityErrors should be checked for.
 from openmolar import connect
 
 QUERY = "insert into medforms (pt_sno, chk_date) values (%s, %s)"
+DEL_QUERY = "delete from medforms where pt_sno=%s and chk_date=%s"
 
 
 def insert(serialno, chk_date):
@@ -42,6 +43,20 @@ def insert(serialno, chk_date):
     cursor = db.cursor()
 
     result = cursor.execute(QUERY, (serialno, chk_date))
+    if result:
+        db.commit()
+
+    cursor.close()
+
+
+def delete(serialno, chk_date):
+    '''
+    deletes values from the medform table (fails silently)
+    '''
+    db = connect.connect()
+    cursor = db.cursor()
+
+    result = cursor.execute(DEL_QUERY, (serialno, chk_date))
     if result:
         db.commit()
 

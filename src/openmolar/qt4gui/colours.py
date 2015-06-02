@@ -53,6 +53,8 @@ med_foreground = "yellow"
 BACKGROUND = QtGui.QPalette().window()
 APPT_Background = QtCore.Qt.white
 APPT_LINECOLOUR = QtGui.QColor("#dddddd")
+APPT_MED_FORM = QtGui.QColor("red")
+APPT_MED_BACKGROUND = QtGui.QColor("aqua")
 
 DIARY = {
     "Unscheduled": QtGui.QColor("red"),

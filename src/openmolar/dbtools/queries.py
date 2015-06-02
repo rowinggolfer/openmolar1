@@ -57,7 +57,7 @@ FAMILY_COUNT_QUERY = "select count(*) from new_patients where familyno=%s"
 
 QUICK_MED_QUERY = 'select alert, chkdate from medhist where pt_sno=%s order by ix desc limit 1'
 
-MED_FORM_QUERY = '''select chk_date from medforms where pt_sno=%s 
-order by chk_date desc limit 1'''
+MED_FORM_QUERY = '''select chk_date from medforms where pt_sno=%s
+order by chk_date desc'''
 
 SYNOPSIS_QUERY = 'SELECT synopsis from clinical_memos where serialno=%s'

@@ -27,6 +27,7 @@ import logging
 from openmolar import connect
 from openmolar.settings import localsettings
 
+from openmolar.dbtools.queries import MED_FORM_QUERY
 from openmolar.dbtools.appt_prefs import ApptPrefs
 
 LOGGER = logging.getLogger("openmolar")
@@ -50,6 +51,7 @@ class BriefPatient(object):
     dnt2 = None
     _appt_memo = None
     _appt_prefs = None
+    _mh_form_date = None
 
     def __init__(self, sno):
         '''
@@ -103,8 +105,22 @@ class BriefPatient(object):
             self._appt_prefs = ApptPrefs(self.serialno)
         return self._appt_prefs
 
+    @property
+    def mh_form_date(self):
+        if self._mh_form_date is None:
+            db = connect.connect()
+            cursor = db.cursor()
+            cursor.execute(MED_FORM_QUERY, (self.serialno,))
+            try:
+                self._mh_form_date = cursor.fetchone()[0]
+            except TypeError:
+                pass
+            cursor.close()
+        return self._mh_form_date
+
 
 if __name__ == "__main__":
+    import sys
     try:
         serialno = int(sys.argv[len(sys.argv) - 1])
     except:
