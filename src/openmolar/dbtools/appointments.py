@@ -663,6 +663,7 @@ class Appointment(object):
             self.trt3, self.memo,
             self.mh_form_check_date)
 
+
 def slots(adate, apptix, start, apdata, fin):
     '''
     takes data like  830 ((830, 845), (900, 915), (1115, 1130), (1300, 1400),

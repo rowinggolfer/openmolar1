@@ -23,15 +23,53 @@
 # ########################################################################### #
 
 import logging
+from gettext import gettext as _
 
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
 from openmolar.dbtools import medhist
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
-from openmolar.qt4gui.customwidgets.completer_textedit import CompletionTextEdit
+from openmolar.qt4gui.customwidgets.completer_textedit import \
+    CompletionTextEdit
+from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
 
 LOGGER = logging.getLogger("openmolar")
+
+
+class SelectNoteDialog(BaseDialog):
+
+    '''
+    this dialog offers the user a few options for notes after updating the
+    medical history table.
+    '''
+
+    NO_NOTE = _("Minor administrative correction - (leave no note)")
+
+    def __init__(self, parent=None):
+        BaseDialog.__init__(self, parent)
+        label = WarningLabel(_("Please enter the reason for your alterations"))
+        self.insertWidget(label)
+        self.rbs = []
+        for note in (_("Updated Medical Notes"),
+                     _("Corrected Medical Notes"),
+                     self.NO_NOTE):
+            rb = QtGui.QRadioButton(note)
+            self.rbs.append(rb)
+            self.insertWidget(rb)
+
+        if "REC" in localsettings.operator:
+            self.rbs[-1].setChecked(True)
+        else:
+            self.rbs[0].setChecked(True)
+        self.enableApply()
+        self.cancel_but.hide()
+
+    @property
+    def note(self):
+        for rb in self.rbs:
+            if rb.isChecked():
+                return rb.text() if rb.text() != self.NO_NOTE else ""
 
 
 class DrugTextEdit(CompletionTextEdit):
@@ -373,8 +411,10 @@ class MedicalHistoryDialog(BaseDialog):
     def apply(self):
         LOGGER.debug("applying changes")
         if self.has_edits:
-            self.pt.addHiddenNote(
-                "mednotes", _("Updated Medical History"), one_only=True)
+            dl = SelectNoteDialog(self)
+            if dl.exec_() and dl.note:
+                self.pt.addHiddenNote(
+                    "mednotes", dl.note, one_only=True)
         elif self.is_new_mh or self.checked_only:
             self.update_chkdate()
             self.pt.addHiddenNote(
@@ -387,11 +427,11 @@ class MedicalHistoryDialog(BaseDialog):
         self.get_new_mh(rejecting=True)
         if self.has_edits:
             if QtGui.QMessageBox.question(
-                self,
-                  _("Confirm"),
-                  _("Abandon your changes?"),
-                  QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                  QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
+                    self,
+                    _("Confirm"),
+                    _("Abandon your changes?"),
+                    QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                    QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
                 return
         BaseDialog.reject(self)
 
@@ -412,6 +452,7 @@ class MedicalHistoryDialog(BaseDialog):
         medhist.update_chkdate(self.mh.ix)
 
 if __name__ == "__main__":
+    import sys
     app = QtGui.QApplication([])
     from openmolar.dbtools import patient_class
 

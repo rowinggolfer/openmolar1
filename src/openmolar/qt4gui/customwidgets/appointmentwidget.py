@@ -652,7 +652,7 @@ class appointmentCanvas(QtGui.QWidget):
             self.selected_rows = self.getApptBounds(row, sno_list)
             self.update()
 
-            feedback = "<html>"
+            feedback = "<html><body>"
             for sno in sno_list:
                 for app in self.appts + self.doubleAppts:
                     if app.serialno == sno:
@@ -679,11 +679,18 @@ class appointmentCanvas(QtGui.QWidget):
                                     _("Made on"), moddate)
                         except AttributeError:
                             feedback += "<hr />"
+                        if app.mh_form_check_date:
+                            feedback += "%s %s<br />" % (
+                                _("last mh form"),
+                                localsettings.formatDate(
+                                    app.mh_form_check_date)
+                            )
                         if app.mh_form_required:
                             feedback += "%s<hr />" % _("MH CHECK REQUIRED")
 
-            if feedback != "<html>":
-                feedback = feedback[:feedback.rindex("<hr />")] + "</html>"
+            if feedback != "<html><body>":
+                feedback = "%s</body></html>" % (
+                    feedback[:feedback.rindex("r />") + 2])
                 x_pos = self.mapToGlobal(self.pos()).x()
                 pos = QtCore.QPoint(x_pos, event.globalPos().y())
                 QtGui.QToolTip.showText(pos, feedback)
@@ -937,9 +944,9 @@ class appointmentCanvas(QtGui.QWidget):
                 painter.drawText(rect, mytext, option)
 
             # highlight any appointments booked today
-            if app.serialno != 0:
+            if app.serialno > 0:
                 if app.timestamp and \
-                    app.timestamp.date() == localsettings.currentDay():
+                        app.timestamp.date() == localsettings.currentDay():
                     e_height = app.endcell - app.startcell
                     if e_height == 0:
                         e_height = 2
@@ -1025,13 +1032,8 @@ class appointmentCanvas(QtGui.QWidget):
             corner3 = [self.timeWidth, (cellno + 0.5) * self.slotHeight]
             triangle = corner1 + corner2 + corner3
             painter.drawPolygon(QtGui.QPolygon(triangle))
-            corner1 = [
-                self.width(
-                ) -
-                self.timeWidth *
-                0.4,
-                cellno *
-                self.slotHeight]
+            corner1 = [self.width() - self.timeWidth * 0.4,
+                       cellno * self.slotHeight]
             corner2 = [self.width(), (cellno - 0.5) * self.slotHeight]
             corner3 = [self.width(), (cellno + 0.5) * self.slotHeight]
             triangle = corner1 + corner2 + corner3
@@ -1044,10 +1046,8 @@ class appointmentCanvas(QtGui.QWidget):
             painter.drawLine(0, y, self.width(), y)
             painter.setBrush(QtGui.QColor("yellow"))
 
-            trect = QtCore.QRectF(
-                self.timeWidth, y,
-                self.width() - self.timeWidth,
-                y2 - y)
+            trect = QtCore.QRectF(self.timeWidth, y,
+                                  self.width() - self.timeWidth, y2 - y)
             painter.drawRect(trect)
 
             droptime = self.drop_time.strftime("%H:%M")
