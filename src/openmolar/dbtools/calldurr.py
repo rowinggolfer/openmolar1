@@ -23,7 +23,7 @@
 # ########################################################################### #
 
 '''
-This module contains one fuction - "commit"
+This module contains one function - "commit"
 An Openmolar database contains a table called "calldurr" this table is updated
 whenever a record is loaded by a machine in surgery mode.
 The use case for this at the Academy Dental Practice was a standalone
@@ -33,22 +33,20 @@ know which images to display in each surgery.
 
 from openmolar import connect
 
+QUERY = "update calldurr set serialno=%s where stn=%s"
+
 
 def commit(serialno, surgeryno):
     '''
-    sets a copy of the riu table
+    updates the calldurr database table.
     '''
     db = connect.connect()
-    query = "update calldurr set serialno=%s where stn=%s"
     values = (serialno, surgeryno)
     cursor = db.cursor()
-
-    result = cursor.execute(query, values)
+    result = cursor.execute(QUERY, values)
     if result:
         db.commit()
-
     cursor.close()
-    # db.close()
     return result
 
 if __name__ == "__main__":
