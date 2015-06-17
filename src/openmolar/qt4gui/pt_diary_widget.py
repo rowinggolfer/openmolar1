@@ -1,27 +1,28 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
+from gettext import gettext as _
 import logging
 
 from PyQt4 import QtCore, QtGui
@@ -38,8 +39,9 @@ from openmolar.qt4gui.compiled_uis import Ui_specify_appointment
 from openmolar.qt4gui.compiled_uis import Ui_appointment_length
 
 from openmolar.qt4gui.dialogs import appt_wizard_dialog
-from openmolar.qt4gui.dialogs import appt_prefs_dialog
 from openmolar.qt4gui.dialogs import appointment_card_dialog
+
+LOGGER = logging.getLogger("openmolar")
 
 
 class PtDiaryWidget(QtGui.QWidget):
@@ -48,7 +50,6 @@ class PtDiaryWidget(QtGui.QWidget):
     start_scheduling = QtCore.pyqtSignal()
     find_appt = QtCore.pyqtSignal(object)
     appointment_selected = QtCore.pyqtSignal(object)
-    preferences_changed = QtCore.pyqtSignal()
     # also inherits a signal from the model "appointments_changed_signal"
 
     def __init__(self, parent=None):
@@ -58,7 +59,8 @@ class PtDiaryWidget(QtGui.QWidget):
         self.ui.setupUi(self)
         self.diary_model = pt_diary_treemodel.treeModel(self)
         self.ui.pt_diary_treeView.setModel(self.diary_model)
-        self.hide_appointment_buttons()
+        self.ui.pt_diary_treeView.setContextMenuPolicy(
+            QtCore.Qt.CustomContextMenu)
         self.signals()
         self.setSizePolicy(
             QtGui.QSizePolicy(
@@ -85,14 +87,7 @@ class PtDiaryWidget(QtGui.QWidget):
 
     def clear(self):
         self.diary_model.clear()
-        self.hide_appointment_buttons()
         self.ui.appt_memo_lineEdit.setText("")
-
-    def hide_appointment_buttons(self):
-        self.ui.scheduleAppt_pushButton.hide()
-        self.ui.modifyAppt_pushButton.hide()
-        self.ui.clearAppt_pushButton.hide()
-        self.ui.findAppt_pushButton.hide()
 
     def update_pt_diary_selection(self, appt):
         '''
@@ -156,18 +151,6 @@ class PtDiaryWidget(QtGui.QWidget):
 
         self.diary_model.setSelectedAppt(appt)
 
-        if not appt:
-            self.ui.scheduleAppt_pushButton.hide()
-            self.ui.modifyAppt_pushButton.hide()
-            self.ui.clearAppt_pushButton.hide()
-            self.ui.findAppt_pushButton.hide()
-            return
-
-        self.ui.modifyAppt_pushButton.show()
-        self.ui.clearAppt_pushButton.show()
-        self.ui.scheduleAppt_pushButton.setVisible(appt.unscheduled)
-        self.ui.findAppt_pushButton.setVisible(not appt.unscheduled)
-
     def treeview_expanded(self, arg):
         '''
         user has expanded an item in the patient's diary.
@@ -194,27 +177,13 @@ class PtDiaryWidget(QtGui.QWidget):
                                                           QtCore.Qt.UserRole)
             self.ui.pt_diary_treeView.setCurrentIndex(index)
 
+        LOGGER.debug("treeview_clicked, appt = %s", appt)
         self.diary_model.setSelectedAppt(appt)
-
-        if not appt:
-            self.ui.scheduleAppt_pushButton.hide()
-            self.ui.modifyAppt_pushButton.hide()
-            self.ui.clearAppt_pushButton.hide()
-            self.ui.findAppt_pushButton.hide()
-            return
-
-        self.ui.modifyAppt_pushButton.show()
-        self.ui.clearAppt_pushButton.show()
-
-        if appt.unscheduled:
-            self.ui.scheduleAppt_pushButton.show()
-            self.ui.findAppt_pushButton.hide()
-        else:
-            self.ui.scheduleAppt_pushButton.hide()
-            self.ui.findAppt_pushButton.show()
 
         # pass on a signal to synchronise other widgets if necessary
         self.appointment_selected.emit(appt)
+        if appt:
+            self.show_appt_options(appt)
 
     def oddApptLength(self):
         '''
@@ -233,41 +202,42 @@ class PtDiaryWidget(QtGui.QWidget):
         '''
         user has asked for a new appointment
         '''
-                #--check there is a patient attached to this request!
+        # -check there is a patient attached to this request!
         if not self.pt.serialno:
             self.advise(
-                "You need to select a patient before performing this action.", 1)
+                "You need to select a patient before performing this action.",
+                1)
             return
 
-        #--a sub proc for a subsequent dialog
+        # -a sub proc for a subsequent dialog
         def makeNow():
             dl.makeNow = True
 
         def oddLength(i):
-            #-- last item of the appointment length combobox is "other length"
+            # - last item of the appointment length combobox is "other length"
             if i == dl.apptlength_comboBox.count() - 1:
                 ol = self.oddApptLength()
                 if ol:
-                    QtCore.QObject.disconnect(dl.apptlength_comboBox,
-                                              QtCore.SIGNAL("currentIndexChanged(int)"), oddLength)
+                    dl.apptlength_comboBox.currentIndexChanged.disconnect(
+                        oddLength)
 
                     self.addApptLength(dl, ol[0], ol[1])
-                    QtCore.QObject.connect(dl.apptlength_comboBox,
-                                           QtCore.SIGNAL("currentIndexChanged(int)"), oddLength)
+                    dl.apptlength_comboBox.currentIndexChanged.connect(
+                        oddLength)
 
-        #--initiate a custom dialog
+        # -initiate a custom dialog
         Dialog = QtGui.QDialog(self)
         dl = Ui_specify_appointment.Ui_Dialog()
         dl.setupUi(Dialog)
-        #--add an attribute to the dialog
+        # -add an attribute to the dialog
         dl.makeNow = False
 
-        #--add active appointment dentists to the combobox
+        # -add active appointment dentists to the combobox
         dents = localsettings.apptix.keys()
         for dent in dents:
             s = QtCore.QString(dent)
             dl.practix_comboBox.addItem(s)
-        #--and select the patient's dentist
+        # -and select the patient's dentist
         if self.pt.dnt1 in localsettings.apptix_reverse:
             if localsettings.apptix_reverse[self.pt.dnt1] in dents:
                 pos = dents.index(localsettings.apptix_reverse[self.pt.dnt1])
@@ -275,37 +245,34 @@ class PtDiaryWidget(QtGui.QWidget):
         else:
             dl.practix_comboBox.setCurrentIndex(-1)
 
-        #--add appointment treatment types
+        # -add appointment treatment types
         for apptType in localsettings.apptTypes:
             s = QtCore.QString(apptType)
             dl.trt1_comboBox.addItem(s)
-            #--only offer exam as treatment1
+            # -only offer exam as treatment1
             if apptType != "EXAM":
                 dl.trt2_comboBox.addItem(s)
                 dl.trt3_comboBox.addItem(s)
-        #--default appt length is 15 minutes
+        # -default appt length is 15 minutes
         dl.apptlength_comboBox.setCurrentIndex(2)
 
-        #--connect the dialogs "make now" buttons to the procs just coded
-        QtCore.QObject.connect(dl.apptlength_comboBox,
-                               QtCore.SIGNAL("currentIndexChanged(int)"), oddLength)
-
-        QtCore.QObject.connect(dl.scheduleNow_pushButton,
-                               QtCore.SIGNAL("clicked()"), makeNow)
+        # -connect the dialogs "make now" buttons to the procs just coded
+        dl.apptlength_comboBox.currentIndexChanged.connect(oddLength)
+        dl.scheduleNow_pushButton.clicked.connect(makeNow)
 
         inputting = True
         while inputting:
             result = Dialog.exec_()
             if result:
-                #--practitioner
+                # -practitioner
                 py_inits = str(dl.practix_comboBox.currentText())
                 practix = localsettings.apptix.get(py_inits)
                 if not practix:
                     self.advise(_("Please specify a clinician"), 1)
                 else:
-                    #--length
+                    # -length
                     lengthText = str(dl.apptlength_comboBox.currentText())
-                    if "hour" in lengthText and not "hours " in lengthText:
+                    if "hour" in lengthText and "hours " not in lengthText:
                         lengthText = lengthText.replace("hour", "hours ")
                     if "hour" in lengthText:
                         hour_index = lengthText.index("hour")
@@ -316,16 +283,16 @@ class PtDiaryWidget(QtGui.QWidget):
                         length = 0
                     if "minute" in lengthText:
                         length += int(lengthText[:lengthText.index("minute")])
-                    #--treatments
+                    # -treatments
                     code0 = dl.trt1_comboBox.currentText()
                     code1 = dl.trt2_comboBox.currentText()
                     code2 = dl.trt3_comboBox.currentText()
-                    #--memo
+                    # -memo
                     note = str(dl.lineEdit.text().toAscii())
 
                     # TODO - add datespec and joint appointment options
 
-                    #--attempt WRITE appointement to DATABASE
+                    # -attempt WRITE appointement to DATABASE
                     apr_ix = appointments.add_pt_appt(
                         self.pt.serialno, practix, length,
                         code0, -1, code1, code2, note, "", self.pt.cset)
@@ -335,7 +302,7 @@ class PtDiaryWidget(QtGui.QWidget):
                         if dl.makeNow:
                             self.start_scheduling.emit()
                     else:
-                        #--commit failed
+                        # -commit failed
                         self.advise("Error saving appointment", 2)
                     inputting = False
             else:
@@ -349,12 +316,12 @@ class PtDiaryWidget(QtGui.QWidget):
         def applyApptWizard(arg):
             i = 0
             for appt in arg:
-                apr_ix = appointments.add_pt_appt(self.pt.serialno,
-                                                  appt.get("clinician"), appt.get(
-                                                      "length"), appt.get("trt1"),
-                                                  -1, appt.get("trt2"), appt.get(
-                                                      "trt3"), appt.get("memo"),
-                                                  appt.get("datespec"), self.pt.cset)
+                apr_ix = appointments.add_pt_appt(
+                    self.pt.serialno,
+                    appt.get("clinician"),
+                    appt.get("length"), appt.get("trt1"), -1, appt.get("trt2"),
+                    appt.get("trt3"), appt.get("memo"),
+                    appt.get("datespec"), self.pt.cset)
 
                 if i == 0:
                     i = apr_ix
@@ -362,24 +329,22 @@ class PtDiaryWidget(QtGui.QWidget):
                 self.layout_ptDiary()
                 self.select_apr_ix(i)
 
-        #--check there is a patient attached to this request!
+        # -check there is a patient attached to this request!
         if not (self.pt and self.pt.serialno):
             self.advise(
-                "You need to select a patient before performing this action.", 1)
+                _("You need to select a patient before "
+                  "performing this action."), 1)
             return
         if self.pt.dnt1 in (0, None):
-            self.advise('''Patient doesn't have a dentist set,<br />
-            please correct this before using these shortcuts''', 1)
+            self.advise("%s<hr />%s" % (
+                _("Patient doesn't have a dentist set"),
+                _('please correct this before using these shortcuts')), 1)
             return
 
-        #--initiate a custom dialog
-        Dialog = QtGui.QDialog(self)
-        dl = appt_wizard_dialog.apptWizard(Dialog, self)
-
-        Dialog.connect(Dialog, QtCore.SIGNAL("AddAppointments"),
-                       applyApptWizard)
-
-        Dialog.exec_()
+        # -initiate a custom dialog
+        dl = appt_wizard_dialog.apptWizard(self)
+        dl.add_appointments_signal.connect(applyApptWizard)
+        dl.exec_()
 
     def scheduleAppt_pushButton_clicked(self):
         '''
@@ -404,10 +369,10 @@ class PtDiaryWidget(QtGui.QWidget):
             return
 
         if appt.date is None:
-            if QtGui.QMessageBox.question(self, _("Confirm"),
-                                          _("Delete Unscheduled Appointment?"),
-                                          QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                                          QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+            if QtGui.QMessageBox.question(
+                    self, _("Confirm"), _("Delete Unscheduled Appointment?"),
+                    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                    QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
                 delete_appt()
 
         elif appt.past:
@@ -420,9 +385,10 @@ class PtDiaryWidget(QtGui.QWidget):
 
             message += _("with") + " %s?" % appt.dent_inits
 
-            if QtGui.QMessageBox.question(self, _("Confirm"), message,
-                                          QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                                          QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+            if QtGui.QMessageBox.question(
+                    self, _("Confirm"), message,
+                    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                    QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
 
                 if appointments.delete_appt_from_aslot(appt):
                     # todo - if we deleted from the appt book,
@@ -432,13 +398,14 @@ class PtDiaryWidget(QtGui.QWidget):
                     appointments.made_appt_to_proposed(appt)
                     self.layout_ptDiary()
 
-                #--keep in the patient's diary?
+                # -keep in the patient's diary?
 
-                if QtGui.QMessageBox.question(self, _("Question"),
-                                              _(
-                                              "Removed from appointment book - keep for rescheduling?"),
-                                              QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                                              QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
+                if QtGui.QMessageBox.question(
+                        self, _("Question"),
+                        _("Removed from appointment book - "
+                          "keep for rescheduling?"),
+                        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                        QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
                     # remove from the patients diary
                     if appointments.delete_appt_from_apr(appt):
                         self.advise(_("Successfully removed appointment"))
@@ -480,17 +447,15 @@ class PtDiaryWidget(QtGui.QWidget):
             dl.makeNow = True
 
         def oddLength(i):
-            #-- odd appt length selected (see above)
+            # - odd appt length selected (see above)
             if i == dl.apptlength_comboBox.count() - 1:
                 ol = self.oddApptLength()
                 if ol:
-                    QtCore.QObject.disconnect(dl.apptlength_comboBox,
-                                              QtCore.SIGNAL("currentIndexChanged(int)"), oddLength)
-
+                    dl.apptlength_comboBox.currentIndexChanged.disconnect(
+                        oddLength)
                     self.addApptLength(dl, ol[0], ol[1])
-
-                    QtCore.QObject.connect(dl.apptlength_comboBox,
-                                           QtCore.SIGNAL("currentIndexChanged(int)"), oddLength)
+                    dl.apptlength_comboBox.currentIndexChanged.connect(
+                        oddLength)
 
         if self.diary_model.selectedAppt is None:
             self.advise(_("No appointment selected"), 1)
@@ -533,17 +498,14 @@ class PtDiaryWidget(QtGui.QWidget):
 
             dl.lineEdit.setText(appt.memo)
 
-            QtCore.QObject.connect(dl.apptlength_comboBox,
-                                   QtCore.SIGNAL("currentIndexChanged(int)"), oddLength)
-
-            QtCore.QObject.connect(dl.scheduleNow_pushButton,
-                                   QtCore.SIGNAL("clicked()"), makeNow)
+            dl.apptlength_comboBox.currentIndexChanged.connect(oddLength)
+            dl.scheduleNow_pushButton.clicked.connect(makeNow)
 
             if Dialog.exec_():
                 practixText = str(dl.practix_comboBox.currentText())
                 practix = localsettings.apptix[practixText]
                 lengthText = str(dl.apptlength_comboBox.currentText())
-                if "hour" in lengthText and not "hours " in lengthText:
+                if "hour" in lengthText and "hours " not in lengthText:
                     lengthText = lengthText.replace("hour", "hours ")
                 if "hour" in lengthText:
                     length = 60 * int(lengthText[:lengthText.index("hour")])
@@ -565,7 +527,8 @@ class PtDiaryWidget(QtGui.QWidget):
                     cst = ord(self.pt.cset[0])
 
                 appointments.modify_pt_appt(appt.aprix, appt.serialno,
-                                            practix, length, code0, code1, code2, note, "", cst)
+                                            practix, length, code0, code1,
+                                            code2, note, "", cst)
                 self.layout_ptDiary()
 
                 if appt.date is None:
@@ -574,9 +537,9 @@ class PtDiaryWidget(QtGui.QWidget):
                         self.select_apr_ix(appt.aprix)
                         self.scheduleAppt_pushButton_clicked()
                 else:
-                    if not appointments.modify_aslot_appt(appt.date, practix,
-                                                          appt.atime, appt.serialno, code0, code1, code2, note, cst,
-                                                          0, 0, 0):
+                    if not appointments.modify_aslot_appt(
+                            appt.date, practix, appt.atime, appt.serialno,
+                            code0, code1, code2, note, cst, 0, 0, 0):
                         self.advise(_("Error putting into dentist's book"), 2)
         self.layout_ptDiary()
 
@@ -599,44 +562,55 @@ class PtDiaryWidget(QtGui.QWidget):
     def memo_edited(self):
         self.pt.set_appt_memo(unicode(self.ui.appt_memo_lineEdit.text()))
 
-    def show_prefs_dialog(self):
-        dl = appt_prefs_dialog.ApptPrefsDialog(self.pt, self)
-        if dl.exec_():
-            if isinstance(self.pt, BriefPatient):
-                self.pt.appt_prefs.commit_changes()
-            else:
-                self.preferences_changed.emit()
+    def show_appt_options(self, appt):
+        print "show options for ", appt
+
+    def show_context_menu(self, point):
+        LOGGER.debug("pt_diary - show context menu at point %s", point)
+        index = self.ui.pt_diary_treeView.indexAt(point)
+        self.treeview_clicked(index)
+        appt = self.diary_model.selectedAppt
+        if appt is None:
+            return
+        qmenu = QtGui.QMenu(self)
+        if appt.date is None:
+            action = QtGui.QAction(_("Schedule this appointment"), self)
+            action.triggered.connect(self.scheduleAppt_pushButton_clicked)
+            qmenu.addAction(action)
+            qmenu.addSeparator()
+            action = QtGui.QAction(
+                _("Delete this (unscheduled) appointment"), self)
+            action.triggered.connect(self.clearApptButton_clicked)
+            qmenu.addAction(action)
+        else:
+            if appt.date >= localsettings.currentDay():
+                action = QtGui.QAction(_("Cancel this appointment"), self)
+                action.triggered.connect(self.clearApptButton_clicked)
+                qmenu.addAction(action)
+                qmenu.addSeparator()
+            action = QtGui.QAction(_("Show in Book"), self)
+            action.triggered.connect(self.findApptButton_clicked)
+            qmenu.addAction(action)
+        action = QtGui.QAction(_("Modify Appointment"), self)
+        action.triggered.connect(self.modifyAppt_clicked)
+        qmenu.addAction(action)
+
+        qmenu.setDefaultAction(qmenu.actions()[0])
+        qmenu.exec_(self.ui.pt_diary_treeView.mapToGlobal(point))
+
 
     def signals(self):
         self.ui.pt_diary_treeView.expanded.connect(self.treeview_expanded)
-
         self.ui.pt_diary_treeView.clicked.connect(self.treeview_clicked)
-
-        QtCore.QObject.connect(self.ui.apptWizard_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.apptWizard_pushButton_clicked)
-
-        QtCore.QObject.connect(self.ui.newAppt_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.newAppt_pushButton_clicked)
-
-        QtCore.QObject.connect(self.ui.scheduleAppt_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.scheduleAppt_pushButton_clicked)
-
-        QtCore.QObject.connect(self.ui.clearAppt_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.clearApptButton_clicked)
-
-        QtCore.QObject.connect(self.ui.modifyAppt_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.modifyAppt_clicked)
-
-        QtCore.QObject.connect(self.ui.findAppt_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.findApptButton_clicked)
-
+        self.ui.apptWizard_pushButton.clicked.connect(
+            self.apptWizard_pushButton_clicked)
+        self.ui.newAppt_pushButton.clicked.connect(
+            self.newAppt_pushButton_clicked)
         self.ui.printAppt_pushButton.clicked.connect(
             self.printApptCard_clicked)
-
         self.ui.appt_memo_lineEdit.editingFinished.connect(self.memo_edited)
-
-        self.ui.recall_settings_pushButton.clicked.connect(
-            self.show_prefs_dialog)
+        self.ui.pt_diary_treeView.customContextMenuRequested.connect(
+            self.show_context_menu)
 
 if __name__ == "__main__":
     import gettext

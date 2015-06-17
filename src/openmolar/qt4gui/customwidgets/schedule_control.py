@@ -1,30 +1,31 @@
-#! /usr/bin/env python
+#! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
+from gettext import gettext as _
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui, QtCore, QtWebKit
 
 from openmolar.settings import localsettings
 from openmolar.dbtools.brief_patient import BriefPatient
@@ -42,6 +43,12 @@ LOGGER = logging.getLogger("openmolar")
 
 
 class DiaryScheduleController(QtGui.QStackedWidget):
+
+    '''
+    This widget lives down the left side of the diary widget.
+    It provides a way of switching modes for the diary.
+    '''
+
     BROWSE_MODE = 0
     SCHEDULE_MODE = 1
     BLOCK_MODE = 2
@@ -100,9 +107,9 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         diary_button = QtGui.QPushButton(icon, "")
         diary_button.setToolTip(_("Open the patient's diary"))
 
-        icon = QtGui.QIcon(":first.png")
+        icon = QtGui.QIcon(":settings.png")
         self.first_appt_button = QtGui.QPushButton(icon, "")
-        self.first_appt_button.setToolTip(_("Launch the Appointment Wizard"))
+        self.first_appt_button.setToolTip(_("Appointment Settings"))
 
         icon = QtGui.QIcon(":back.png")
         self.prev_appt_button = QtGui.QPushButton(icon, "")
@@ -123,6 +130,11 @@ class DiaryScheduleController(QtGui.QStackedWidget):
             QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
                               QtGui.QSizePolicy.Minimum))
 
+        self.search_criteria_webview = QtWebKit.QWebView(self)
+        self.search_criteria_webview.setMinimumHeight(100)
+        self.search_criteria_webview.setHtml(
+            _("No appointment selected for scheduling"))
+
         # now arrange the stacked widget
 
         # page 0 - Browsing mode
@@ -136,7 +148,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         layout.addWidget(self.get_patient_button, 0, 1)
         layout.addWidget(self.appt_listView, 2, 0, 1, 2)
         layout.addWidget(self.appt_controls_frame, 3, 0, 1, 2)
-
+        layout.addWidget(self.search_criteria_webview, 4, 0, 1, 2)
         self.addWidget(widg)
 
         # page 2 -- blocking mode
@@ -188,6 +200,10 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         self.appointment_model.set_current_appt(appointment)
 
     def get_data(self):
+        '''
+        loads the appointment model from database, or clears if patient is None
+        '''
+        LOGGER.debug("schedule control get-data")
         if self.pt is None:
             self.clear()
             return
@@ -202,6 +218,9 @@ class DiaryScheduleController(QtGui.QStackedWidget):
             return _("No patient Selected")
 
     def find_patient(self):
+        '''
+        search and load a patient.
+        '''
         dl = FindPatientDialog(self)
         if dl.exec_():
             self.clear()
@@ -253,7 +272,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         self.ignore_emergency_spaces = bool_
 
     def sizeHint(self):
-        return QtCore.QSize(150, 200)
+        return QtCore.QSize(180, 400)
 
     def update_appt_selection(self, appt):
         '''
@@ -276,6 +295,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
 
     def appointment_pressed(self, index):
         LOGGER.debug("ScheduleControl.appointment_pressed")
+        self.update_search_criteria_webview()
         self.appointment_selected.emit(self.appointment_model.currentAppt)
 
     def appointment_2x_clicked(self, index):
@@ -469,6 +489,55 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         for but in (self.next_appt_button, self.prev_appt_button,
                     self.first_appt_button):
             but.setEnabled(enabled)
+        self.update_search_criteria_webview()
+
+    @property
+    def _clinician_message(self):
+        if self.selection_mode == self.CLINICIAN_SELECTED:
+            return _("Specified Clinician only")
+        elif self.selection_mode == self.CLINICIAN_ANY_DENT:
+            return _("Any Dentist")
+        elif self.selection_mode == self.CLINICIAN_ANY_HYG:
+            return _("Any Hygienist")
+        else:  # CLINICIAN_ANY
+            return _("Any Clinician")
+
+    @property
+    def _joint_message(self):
+        if self.finding_joint_appointments:
+            return "<li>%s</li>" % _("Joint Appointments")
+        return ""
+
+    @property
+    def _emergency_message(self):
+        if self.ignore_emergency_spaces:
+            return "<li>%s</li>" % _("Overwrite Emergency")
+        return ""
+
+    @property
+    def _day_message(self):
+        if self.excluded_days == []:
+            return _("Any Day")
+        days = []
+        for i, day in enumerate(
+            (_("Mon"), _("Tue"), _("Wed"), _("Thu"),
+             _("Fri"), _("Sat"), _("Sun"))):
+            if i not in self.excluded_days:
+                days.append(day)
+        return ", ".join(days)
+
+    def update_search_criteria_webview(self):
+        if self.appointment_model.currentAppt is None:
+            html = _("No Appointment Selected")
+        else:
+            html = '''%s<ul><li>%s</li>%s%s<li>%s</li></ul>''' % (
+                _("Search Settings"),
+                self._clinician_message,
+                self._joint_message,
+                self._emergency_message,
+                self._day_message
+            )
+        self.search_criteria_webview.setHtml(html)
 
 
 class TestWindow(QtGui.QMainWindow):
@@ -504,6 +573,9 @@ class TestWindow(QtGui.QMainWindow):
         self.schedule_controller.find_appt.connect(self.sig_catcher)
         self.schedule_controller.start_scheduling.connect(self.sig_catcher)
 
+    def sizeHint(self):
+        return QtCore.QSize(200, 500)
+
     def set_but_text(self):
         self.but.setText("set mode (current='%s')" % self.MODES[self.mode])
 
@@ -522,11 +594,11 @@ class TestWindow(QtGui.QMainWindow):
         QtGui.QMessageBox.information(self, "signal",
                                       "signal emitted %s" % str(args))
 
+
 if __name__ == "__main__":
     import gettext
     gettext.install("openmolar")
 
-    from openmolar.settings import localsettings
     localsettings.initiate()
 
     app = QtGui.QApplication([])

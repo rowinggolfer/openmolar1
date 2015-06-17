@@ -80,6 +80,7 @@ from openmolar.qt4gui.dialogs.dialog_collection import (
     AdvancedRecordManagementDialog,
     AdvancedTxPlanningDialog,
     AlterTodaysNotesDialog,
+    ApptPrefsDialog,
     AssistantSelectDialog,
     AutoAddressDialog,
     BPE_Dialog,
@@ -2009,13 +2010,12 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         '''
         disable/enable widgets "en mass" when no patient loaded
         '''
-        self.pt_diary_widget.hide_appointment_buttons()
-
         self.ui.clinician_phrasebook_pushButton.setVisible(
             arg and PHRASEBOOKS.has_phrasebook(localsettings.clinicianNo))
 
         for widg in (
             self.ui.summaryChartWidget,
+            self.ui.misc_reception_groupBox,
             self.ui.printEst_pushButton,
             self.ui.printAccount_pushButton,
             self.ui.saveButton,
@@ -2875,6 +2875,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.med_form_checked_button.clicked.connect(self.med_form_checked)
         self.ui.reception_view_checkBox.clicked.connect(
             self.reception_view_checkBox_clicked)
+        self.ui.recall_settings_pushButton.clicked.connect(
+            self.show_appt_prefs_dialog)
 
     def signals_notes(self):
         '''
@@ -3203,8 +3205,6 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.actionSet_Font_Size.triggered.connect(self.apptBook_fontSize)
         self.diary_widget.bring_to_front.connect(self.show_diary)
         self.diary_widget.patient_card_request.connect(self.getrecord)
-        self.diary_widget.schedule_controller.appointment_selected.connect(
-            self.diary_widget_schedule_controller_appointment_selected)
         self.diary_widget.pt_diary_changed.connect(
             self.pt_diary_widget.refresh_ptDiary)
         self.diary_widget.print_mh_signal.connect(self.print_mh_forms)
@@ -3213,30 +3213,22 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.pt_diary_widget.find_appt.connect(self.diary_widget.find_appt)
         self.pt_diary_widget.appointment_selected.connect(
             self.diary_widget.schedule_controller.update_appt_selection)
-        self.pt_diary_widget.preferences_changed.connect(
-            self.appt_prefs_changed)
         self.pt_diary_widget.appointments_changed_signal.connect(
             self.handle_pt_diary_update)
 
     def start_scheduling(self):
         self.diary_widget.schedule_controller.set_patient(self.pt)
         self.pt_diary_widget.layout_ptDiary()
+        self.diary_widget.start_scheduling(self.pt)
         self.signals_tabs(False)
         self.ui.main_tabWidget.setCurrentIndex(1)  # appointmenttab
         self.signals_tabs()
-        self.diary_widget.start_scheduling(self.pt)
         self.updateDetails()
 
     def handle_pt_diary_update(self):
         LOGGER.debug("handle_pt_diary_update")
         self.pt.forget_exam_booked()
         self.updateDetails()
-
-    def diary_widget_schedule_controller_appointment_selected(self, appt):
-        if (self.diary_widget.schedule_controller.pt.serialno ==
-           self.pt.serialno):
-            self.pt_diary_widget.layout_ptDiary()
-            self.pt_diary_widget.update_pt_diary_selection(appt)
 
     def appt_prefs_changed(self):
         self.updateDetails()
@@ -3622,6 +3614,12 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
     def insert_regular_blocks(self):
         self.show_diary()
         self.diary_widget.insert_regular_blocks()
+
+    def show_appt_prefs_dialog(self):
+        dl = ApptPrefsDialog(self.pt, self)
+        if dl.exec_():
+            self.pt.appt_prefs.commit_changes()
+            self.appt_prefs_changed()
 
     def check_records_in_use(self):
         '''

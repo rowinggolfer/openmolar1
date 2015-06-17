@@ -1,36 +1,33 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
-import datetime
 import cPickle
-import pickle
-import sys
+import logging
 
 from PyQt4 import QtGui, QtCore
-from openmolar.dbtools import appointments
-from openmolar.settings import localsettings
 
+LOGGER = logging.getLogger("openmolar")
 
 class DraggableList(QtGui.QListView):
 
@@ -53,6 +50,7 @@ class DraggableList(QtGui.QListView):
             self.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
 
     def startDrag(self, event):
+        LOGGER.debug("Starting drag from position %s", event.pos())
         index = self.indexAt(event.pos())
         if not index.isValid():
             return
@@ -60,6 +58,7 @@ class DraggableList(QtGui.QListView):
         # selected is the relevant person object
         selectedApp = self.model().data(index, QtCore.Qt.UserRole)
 
+        LOGGER.debug("Dragging appointment %s", selectedApp)
         if not selectedApp.unscheduled:
             event.ignore()
             return
@@ -75,6 +74,10 @@ class DraggableList(QtGui.QListView):
         drag.setMimeData(mimeData)
         drag.setDragCursor(QtGui.QPixmap(), QtCore.Qt.MoveAction)
 
+        # allow for scroll area
+        real_point = QtCore.QPoint(
+            event.pos().x(), event.pos().y() - self.verticalOffset())
+        index = self.indexAt(real_point)
         pixmap = QtGui.QPixmap()
         pixmap = pixmap.grabWidget(self, self.rectForIndex(index))
         drag.setPixmap(pixmap)

@@ -1,28 +1,29 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 import datetime
+from gettext import gettext as _
 import logging
 import time
 
@@ -66,10 +67,12 @@ from openmolar.qt4gui.customwidgets import calendars
 
 from openmolar.qt4gui.dialogs import appointment_card_dialog
 
+from openmolar.backports.advisor import Advisor
+
 LOGGER = logging.getLogger("openmolar")
 
 
-class DiaryWidget(QtGui.QWidget):
+class DiaryWidget(Advisor):
     VIEW_MODE = 0
     SCHEDULING_MODE = 1
     BLOCKING_MODE = 2
@@ -93,7 +96,7 @@ class DiaryWidget(QtGui.QWidget):
     laid_out = False
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        Advisor.__init__(self, parent)
         self.ui = Ui_diary_widget.Ui_Form()
         self.ui.setupUi(self)
         self.appointmentData = appointments.DayAppointmentData()
@@ -114,7 +117,7 @@ class DiaryWidget(QtGui.QWidget):
         self.day_scroll_bar = None
         self.apptBookWidgets = []
 
-        #-appointment OVerview widget
+        # appointment OVerview widget
         self.ui.apptoverviews = []
 
         for frame in (self.ui.appt_OV_Frame1,
@@ -153,7 +156,7 @@ class DiaryWidget(QtGui.QWidget):
         self.appt_clinician_selector = dent_hyg_selector.dentHygSelector()
         self.monthClinicianSelector = dent_hyg_selector.dentHygSelector()
 
-        #--customise the appointment widget calendar
+        # -customise the appointment widget calendar
         self.ui.dayCalendar = calendars.controlCalendar()
         self.calendar_layout = QtGui.QHBoxLayout(self.ui.dayCalendar_frame)
         self.calendar_layout.setMargin(0)
@@ -164,13 +167,13 @@ class DiaryWidget(QtGui.QWidget):
         hlayout.setMargin(0)
         hlayout.addWidget(self.ui.weekCalendar)
 
-        #--add a month view
+        # -add a month view
         self.ui.monthView = calendars.monthCalendar()
         # hlayout=QtGui.QHBoxLayout(self.ui.monthView_frame)
         # hlayout.setMargin(0)
         # hlayout.addWidget(self.ui.monthView)
         self.ui.monthView_scrollArea.setWidget(self.ui.monthView)
-        #--add a year view
+        # -add a year view
         self.ui.yearView = calendars.yearCalendar()
         hlayout = QtGui.QHBoxLayout(self.ui.yearView_frame)
         hlayout.setMargin(0)
@@ -200,39 +203,25 @@ class DiaryWidget(QtGui.QWidget):
             self.initiate()
             QtCore.QTimer.singleShot(10, self.layout_diary)
 
-    def advise(self, arg, warning_level=0):
+    def resizeEvent(self, event):
         '''
-        inform the user of events -
-        warning level0 = status bar only.
-        warning level 1 advisory
-        warning level 2 critical (and logged)
+        this function is overwritten so that the advisor popup can be
+        put in the correct place
         '''
-        def accept():
-            self.message_alert.accept()
+        QtGui.QMainWindow.resizeEvent(self, event)
+        self.setBriefMessageLocation()
 
-        if warning_level == 0:
-            if self.message_alert is not None:
-                accept()
-            else:
-                self.message_alert = QtGui.QMessageBox(self)
-                self.message_alert.setStandardButtons(
-                    QtGui.QMessageBox.NoButton)
-                self.message_alert.setWindowTitle(_("advisory"))
-                self.message_alert.setModal(False)
+    def setBriefMessageLocation(self):
+        '''
+        make the Advisor sub class aware of the windows geometry.
+        set it top right, and right_to_left
+        '''
+        widg = self.parent()
+        brief_pos_x = (widg.pos().x() + widg.width())
+        brief_pos_y = (widg.pos().y())
 
-            self.message_alert.setText(arg)
-            QtCore.QTimer.singleShot(3 * 1000, accept)
-            self.message_alert.show()
-
-        elif warning_level == 1:
-            QtGui.QMessageBox.information(self, _("Advisory"), arg)
-
-        elif warning_level == 2:
-            now = QtCore.QTime.currentTime()
-            QtGui.QMessageBox.warning(self, _("Error"), arg)
-            #--for logging purposes
-            LOGGER.warning("%d:%02d ERROR MESSAGE %s" % (
-                now.hour(), now.minute(), arg))
+        brief_pos = QtCore.QPoint(brief_pos_x, brief_pos_y)
+        self.setBriefMessagePosition(brief_pos, True)
 
     def reset(self):
         '''
@@ -393,6 +382,7 @@ class DiaryWidget(QtGui.QWidget):
         '''
         LOGGER.debug("DiaryWidget.begin_makeAppt")
         self.ui.appt_notes_webView.setVisible(False)
+        self.ui.diary_tabWidget.setCurrentIndex(1)
 
         self.schedule_controller.set_mode(
             self.schedule_controller.SCHEDULE_MODE)
@@ -407,13 +397,12 @@ class DiaryWidget(QtGui.QWidget):
                         localsettings.readableDate(appt.date)), 1)
             return
 
-        begin_make_appt_dialog.WEEK_VIEW = self.viewing_week
-
         hyg_appt_selected = appt.dent in localsettings.activehyg_ixs
 
         begin_make_appt_dialog.ANY_HYGIENIST = hyg_appt_selected
 
         dl = begin_make_appt_dialog.BeginMakeApptDialog(self.pt, appt, self)
+        dl.day_radio_but.setChecked(not self.viewing_week)
 
         if (hyg_appt_selected or
            self.schedule_controller.min_hyg_slot_length is None):
@@ -438,7 +427,7 @@ class DiaryWidget(QtGui.QWidget):
 
         self.schedule_controller.finding_joint_appointments = \
             dl.joint_appointment_search
-
+        self.schedule_controller.update_search_criteria_webview()
         self.finding_next_slot = 1
 
         self.signals_calendar(False)
@@ -492,7 +481,7 @@ class DiaryWidget(QtGui.QWidget):
         message = ""
 
         dents = self.schedule_controller.selectedClinicians
-        #--check for suitable apts in the selected WEEK!
+        # -check for suitable apts in the selected WEEK!
 
         slots = appointments.future_slots(
             startday.toPyDate(),
@@ -536,8 +525,8 @@ class DiaryWidget(QtGui.QWidget):
         slotlength = slot.length
         selectedDent = slot.dent
         if appt.dent and selectedDent != appt.dent:
-            #--the user has selected a slot with a different dentist
-            #--raise a dialog to check this was intentional!!
+            # -the user has selected a slot with a different dentist
+            # -raise a dialog to check this was intentional!!
             message = _('You have chosen an appointment with') + " %s<br />" % (
                 localsettings.apptix_reverse[selectedDent])
             message += _("Is this correct?")
@@ -550,21 +539,21 @@ class DiaryWidget(QtGui.QWidget):
                 return
 
         if slotlength > appt.length:
-            #--the slot selected is bigger than the appointment length so
-            #--fire up a dialog to allow for fine tuning
+            # -the slot selected is bigger than the appointment length so
+            # -fire up a dialog to allow for fine tuning
             dl = finalise_appt_time.ftDialog(slot.time(), slotlength,
                                              appt.length, self)
 
             if dl.exec_():
-                #--dialog accepted
+                # -dialog accepted
                 selectedtime = localsettings.pyTimetoWystime(dl.selectedTime)
                 slotlength = appt.length  # satisfies the next conditional code
             else:
-                #--dialog cancelled
+                # -dialog cancelled
                 return
 
         if slotlength == appt.length:
-            #--ok... suitable appointment found
+            # -ok... suitable appointment found
             message = '''<center>%s<br />%s<br /><b>%s<br />%s
             <br />%s</b></center>''' % (
                 _("Confirm Make appointment for"),
@@ -573,7 +562,7 @@ class DiaryWidget(QtGui.QWidget):
                 localsettings.readableDate(slot.date()),
                 localsettings.apptix_reverse.get(selectedDent, "??"))
 
-            #--get final confirmation
+            # -get final confirmation
             result = QtGui.QMessageBox.question(self, "Confirm", message,
                                                 QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
                                                 QtGui.QMessageBox.Yes)
@@ -583,10 +572,10 @@ class DiaryWidget(QtGui.QWidget):
                     widg.update()
                 return
 
-            #--make name conform to the 30 character sql limitation
-            #--on this field.
+            # -make name conform to the 30 character sql limitation
+            # -on this field.
             name = appt.name[:30]
-            #--don't throw an exception with ord("")
+            # -don't throw an exception with ord("")
             cst = 0
             try:
                 cst = ord(appt.cset[0])
@@ -602,7 +591,7 @@ class DiaryWidget(QtGui.QWidget):
                 appointments.cancel_emergency_slot(
                     slot.date(), selectedDent, selectedtime, endtime)
 
-            #-- make appointment
+            # - make appointment
             if appointments.make_appt(
                 slot.date(), selectedDent, selectedtime, endtime,
                 appt.name[:30], appt.serialno, appt.trt1,
@@ -736,7 +725,7 @@ class DiaryWidget(QtGui.QWidget):
         '''
         clears emergency slots for today
         '''
-        #-- raise a dialog to check
+        # - raise a dialog to check
         result = QtGui.QMessageBox.question(self, "Confirm",
                                             "Clear today's emergency slots?",
                                             QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
@@ -813,17 +802,16 @@ class DiaryWidget(QtGui.QWidget):
 
         if self.appt_mode == self.SCHEDULING_MODE:
             if date_ > localsettings.BOOKEND:
-                self.advise(u'''<b>%s<br />%s %s</b><hr /><em>(%s)</em>
-                <ul><li>%s</li><li>%s</li><li>%s</li></ul>''' % (
-                            _("This date is beyond the diary limit."),
-                            _(
-                            "If the appointment wizard has brought you here"),
-                            _(
-                            "you should search again with different criteria."),
-                            _("for instance..."),
-                            _("no excluded days"),
-                            _("ignore emergencies"),
-                            _("add or view more clinicians.")), 1)
+                self.advise(
+                    u'''<b>%s<br />%s %s</b><hr /><em>(%s)</em>
+                    <ul><li>%s</li><li>%s</li><li>%s</li></ul>''' % (
+                        _("This date is beyond the diary limit."),
+                        _("If the appointment wizard has brought you here"),
+                        _("you should search again with different criteria."),
+                        _("for instance..."),
+                        _("no excluded days"),
+                        _("ignore emergencies"),
+                        _("add or view more clinicians.")), 1)
 
             elif date_ < localsettings.currentDay():
                 self.advise(
@@ -1155,7 +1143,7 @@ class DiaryWidget(QtGui.QWidget):
         while number_of_books > len(self.apptBookWidgets):
             self.add_appointmentwidget()
 
-        #-- clean past links to dentists
+        # - clean past links to dentists
         i = 0
         for book in self.apptBookWidgets:
             i += 1
@@ -1219,7 +1207,7 @@ class DiaryWidget(QtGui.QWidget):
         book_list = []
         for book in self.apptBookWidgets:
             if book.dentist is None:
-                #--book has no data
+                # -book has no data
                 book.hide()
                 book_list.append(0)
             else:
@@ -1403,7 +1391,7 @@ class DiaryWidget(QtGui.QWidget):
                 self.layout_dayView()
                 self.schedule_controller.get_data()
 
-                #--keep in the patient's diary?
+                # -keep in the patient's diary?
 
                 if QtGui.QMessageBox.question(
                     self,
@@ -1420,7 +1408,7 @@ class DiaryWidget(QtGui.QWidget):
                         self.advise(_("Error removing from patient diary"), 2)
 
             else:
-                #--aslot proc has returned False!
+                # -aslot proc has returned False!
                 # let the user know, and go no further
                 self.advise(_("Error Removing from Appointment Book"), 2)
                 self.layout_dayView()
@@ -1801,9 +1789,9 @@ class _testDiary(QtGui.QMainWindow):
     def sig_catcher(self, *args):
         print "signal caught", args
 
+
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
-    import gettext
     import gettext
     gettext.install("openmolar")
 
