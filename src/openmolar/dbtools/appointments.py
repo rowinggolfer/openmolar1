@@ -1,26 +1,26 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 import datetime
 import logging
@@ -587,15 +587,11 @@ class AgendaData(object):
         self._active_slot = None
 
     def add_appointment(self, adate, appt):
-
-        dent = appt[0]
         date_time = datetime.datetime.combine(adate,
-            localsettings.wystimeToPyTime(appt[1]))
+            localsettings.wystimeToPyTime(appt.start))
 
-        length = (localsettings.minutesPastMidnight(appt[2]) -
-            localsettings.minutesPastMidnight(appt[1]))
-        ag_appt = AgendaAppointment(date_time, dent, length)
-        ag_appt.text = "%s %s %s %s %s %s" % appt[3:9]
+        ag_appt = AgendaAppointment(date_time, appt.apptix, appt.length)
+        ag_appt.text = str(appt)
         self._items.append(ag_appt)
 
     def add_slot(self, slot):
@@ -663,6 +659,10 @@ class Appointment(object):
             self.trt3, self.memo,
             self.mh_form_check_date)
 
+    @property
+    def length(self):
+        return localsettings.minutesPastMidnight(self.end) - \
+            localsettings.minutesPastMidnight(self.start)
 
 def slots(adate, apptix, start, apdata, fin):
     '''
@@ -1042,6 +1042,7 @@ aslot.serialno = t.pt_sno where adate=%%s %s order by apptix, start''' % cond
     cursor.close()
 
     return appts
+
 
 def convertResults(results):
     '''
