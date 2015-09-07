@@ -109,9 +109,11 @@ class PtDiaryWidget(QtGui.QWidget):
         '''
         populates the patient's diary model
         '''
+        LOGGER.debug("layout patient diary")
         self.ui.appt_memo_lineEdit.setText(self.pt.appt_memo)
 
         appts = appointments.get_pts_appts(self.pt)
+        LOGGER.debug(appts)
         self.diary_model.addAppointments(appts)
         self.ui.pt_diary_treeView.clearSelection()
         self.ui.pt_diary_treeView.expandAll()
@@ -442,6 +444,7 @@ class PtDiaryWidget(QtGui.QWidget):
         modify an appointment in the patient's diary
         much of this code is a duplicate of make new appt
         '''
+        LOGGER.debug("pt diary modify appt")
 
         def makeNow():
             dl.makeNow = True
@@ -529,8 +532,6 @@ class PtDiaryWidget(QtGui.QWidget):
                 appointments.modify_pt_appt(appt.aprix, appt.serialno,
                                             practix, length, code0, code1,
                                             code2, note, "", cst)
-                self.layout_ptDiary()
-
                 if appt.date is None:
                     if dl.makeNow:
                         self.layout_ptDiary()
@@ -598,7 +599,6 @@ class PtDiaryWidget(QtGui.QWidget):
         qmenu.setDefaultAction(qmenu.actions()[0])
         qmenu.exec_(self.ui.pt_diary_treeView.mapToGlobal(point))
 
-
     def signals(self):
         self.ui.pt_diary_treeView.expanded.connect(self.treeview_expanded)
         self.ui.pt_diary_treeView.clicked.connect(self.treeview_clicked)
@@ -611,6 +611,7 @@ class PtDiaryWidget(QtGui.QWidget):
         self.ui.appt_memo_lineEdit.editingFinished.connect(self.memo_edited)
         self.ui.pt_diary_treeView.customContextMenuRequested.connect(
             self.show_context_menu)
+
 
 if __name__ == "__main__":
     import gettext
@@ -625,9 +626,10 @@ if __name__ == "__main__":
 
     localsettings.initiate()
 
+    LOGGER.setLevel(logging.DEBUG)
     app = QtGui.QApplication([])
     dw = PtDiaryWidget()
-    pt = BriefPatient(20862)
+    pt = BriefPatient(1)
     dw.set_patient(pt)
     dw.layout_ptDiary()
     dw.show()

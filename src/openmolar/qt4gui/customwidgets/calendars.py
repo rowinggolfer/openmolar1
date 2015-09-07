@@ -36,7 +36,7 @@ RIGHT = QtGui.QTextOption(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
 LEFT = QtGui.QTextOption(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
 
 
-class dayData(object):
+class DayData(object):
 
     '''
     a custom data object to hold information about the selected day
@@ -645,10 +645,10 @@ class yearCalendar(QtGui.QWidget):
 
     def getDayData(self):
         '''
-        return a dayData object
+        return a DayData object
         '''
         d = self.selectedDate
-        retarg = dayData(d)
+        retarg = DayData(d)
 
         datekey = "%d%02d" % (d.month, d.day)
         if datekey in self.headingdata:

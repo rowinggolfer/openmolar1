@@ -26,28 +26,86 @@ from gettext import gettext as _
 import logging
 
 from PyQt4 import QtGui, QtCore
-from openmolar.dbtools import appointments
+
 from openmolar.settings import localsettings
+from openmolar.dbtools import appointments
+from openmolar.qt4gui import colours
 
 LOGGER = logging.getLogger("openmolar")
 
 
-class SimpleListModel(QtCore.QAbstractListModel):
+class ColouredItemDelegate(QtGui.QItemDelegate):
 
-    appointment_selected = QtCore.pyqtSignal(object)
-    clinicians_changed = QtCore.pyqtSignal()
+    '''
+    A custom delete allows for a change in the behaviour of QListView
+    so that highlighted items aren't the default white text on darkBlue
+    background
+    '''
+    dark_brush = QtGui.QBrush(QtCore.Qt.darkBlue)
+    brush = (QtGui.QBrush(colours.APPTCOLORS["SLOT"]))
+    brush2 = (QtGui.QBrush(colours.APPTCOLORS["SLOT2"]))
+
+    def paint(self, painter, option, index):
+        app = index.data(QtCore.Qt.UserRole).toPyObject()
+        model = index.model()
+        if app == model.currentAppt:
+            pal = option.palette
+            pal.setBrush(pal.Highlight, self.brush)
+            pal.setBrush(pal.HighlightedText, self.dark_brush)
+        elif app == model.secondaryAppt:
+            pal = option.palette
+            pal.setBrush(pal.Highlight, self.brush2)
+            pal.setBrush(pal.HighlightedText, self.dark_brush)
+        QtGui.QItemDelegate.paint(self, painter, option, index)
+
+
+class DoubleSelectionModel(QtGui.QItemSelectionModel):
+
+    '''
+    A selection model which allows the selection of a maximum of 2 items.
+    '''
+    def select(self, selection, command):
+        '''
+        overwrite the select function
+        selection is either a QModelIndex, (handled normally),
+        or a QItemSelection
+        '''
+        if type(selection) == QtCore.QModelIndex:
+            QtGui.QItemSelectionModel.select(self, selection, command)
+            return
+        if len(selection.indexes()) > 2:
+            LOGGER.debug("restricting appointment selection to 2 items")
+            new_selection = QtGui.QItemSelection()
+            new_selection.append(
+                QtGui.QItemSelectionRange(selection.indexes()[0]))
+            new_selection.append(
+                QtGui.QItemSelectionRange(selection.last().indexes()[0]))
+            selection = new_selection
+
+        # now some openmolar specific code... I want scheduled appointment
+        # to take priority
+        if len(selection.indexes()) == 2:
+            index1, index2 = selection.indexes()
+            app1 = index1.model().data(index1, QtCore.Qt.UserRole)
+            app2 = index2.model().data(index2, QtCore.Qt.UserRole)
+            swap_required = app1.unscheduled and not app2.unscheduled
+            LOGGER.debug("swap required = %s", swap_required)
+            if swap_required:
+                selection.swap(0, 1)
+
+        # send via base class
+        QtGui.QItemSelectionModel.select(self, selection, command)
+
+
+class SimpleListModel(QtCore.QAbstractListModel):
 
     def __init__(self, parent=None):
         super(SimpleListModel, self).__init__(parent)
         self.unscheduledList = []
         self.scheduledList = []
-        self.list = []
-        self.min_slot_length = 0
         self.setSupportedDragActions(QtCore.Qt.MoveAction)
-        self.selection_model = QtGui.QItemSelectionModel(self)
+        self.selection_model = DoubleSelectionModel(self)
 
-        self.currentAppt = None
-        self.selectedAppts = []
         self.normal_icon = QtGui.QIcon()
         self.normal_icon.addPixmap(QtGui.QPixmap(":/schedule.png"),
                                    QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -56,22 +114,43 @@ class SimpleListModel(QtCore.QAbstractListModel):
             QtGui.QPixmap(":/icons/schedule_active.png"))
 
     def clear(self):
-        self.currentAppt = None
-        self.selectedAppts = []
         self.unscheduledList = []
         self.scheduledList = []
-        self.list = []
-        self.min_slot_length = 0
         self.reset()
+
+    @property
+    def items(self):
+        return self.scheduledList + self.unscheduledList
+
+    @property
+    def selectedAppts(self):
+        appts = []
+        for index in self.selection_model.selectedRows():
+            appts.append(self.items[index.row()])
+        return appts
+
+    @property
+    def currentAppt(self):
+        try:
+            return self.selectedAppts[0]
+        except IndexError:
+            return None
+
+    @property
+    def secondaryAppt(self):
+        for appt in self.selectedAppts:
+            if appt != self.currentAppt:
+                return appt
+        return None
 
     @property
     def involvedClinicians(self):
         '''
-        returns a set containing all clinicians referred to by the lists
+        returns a set containing all clinicians referred to by the itemss
         within
         '''
         retarg = set()
-        for app in self.list:
+        for app in self.items:
             retarg.add(app.dent)
         return tuple(retarg)
 
@@ -82,18 +161,45 @@ class SimpleListModel(QtCore.QAbstractListModel):
         highlighted
         '''
         retarg = set()
-        for index in self.selection_model.selectedRows():
-            app = self.list[index.row()]
+        for app in self.selectedAppts:
             retarg.add(app.dent)
         return tuple(retarg)
 
-    def set_appointments(self, appts, selectedAppt):
+    @property
+    def selectedClinician(self):
+        '''
+        returns the clinician of the selected appointment
+        '''
+        try:
+            return (self.currentAppt.dent,)
+        except AttributeError:
+            return ()
+
+    @property
+    def dentists_involved(self):
+        '''
+        is there a dentist in the selected appointments?
+        '''
+        for clinician in self.selectedClinicians:
+            if clinician in localsettings.activedent_ixs:
+                return True
+        return False
+
+    @property
+    def hygienists_involved(self):
+        '''
+        is there a hygienist in the selected appointments?
+        '''
+        for clinician in self.selectedClinicians:
+            if clinician in localsettings.activehyg_ixs:
+                return True
+        return False
+
+    def set_appointments(self, appts, selected_apps):
         '''
         add an appointments, and highlight the selectedAppt (which is the
         highlighted one in the pt diary
         '''
-        currentClinicians = self.involvedClinicians
-        changedClinicians = False
 
         self.clear()
 
@@ -104,32 +210,28 @@ class SimpleListModel(QtCore.QAbstractListModel):
                 self.unscheduledList.append(appt)
             else:
                 self.scheduledList.append(appt)
-
-            if not appt.past and not (appt.dent in currentClinicians):
-                changedClinicians = True
-
-        self.list = self.scheduledList + self.unscheduledList
-
-        if changedClinicians:
-            self.clinicians_changed.emit()
-
         self.reset()
-
-        for appt in self.selectedAppts:
-            self.set_current_appt(appt)
-
-        if selectedAppt in appts:
-            self.set_current_appt(selectedAppt)
-        else:
-            self.set_current_appt(None)
+        selection = QtGui.QItemSelection()
+        # for app in sorted(selected_apps,
+        #                   key=lambda x: x.unscheduled, reverse=True):
+        for app in selected_apps:
+            LOGGER.debug("Need to reselect appointment %s", app)
+            try:
+                row = self.items.index(app)
+                index = self.index(row)
+                selection.append(QtGui.QItemSelectionRange(index))
+            except ValueError:  # app not in list
+                pass
+        self.selection_model.select(selection,
+                                    QtGui.QItemSelectionModel.Select)
 
     def rowCount(self, parent=QtCore.QModelIndex()):
-        return len(self.list)
+        return len(self.items)
 
     def data(self, index, role):
         if not index.isValid():
             return QtCore.QVariant()
-        app = self.list[index.row()]
+        app = self.items[index.row()]
         if role == QtCore.Qt.DisplayRole:
             if app.flag == -128:
                 info = "%s (%s)" % (app.name, app.length)
@@ -148,66 +250,19 @@ class SimpleListModel(QtCore.QAbstractListModel):
             if app.unscheduled:
                 return QtCore.QVariant(QtGui.QBrush(QtGui.QColor("red")))
         elif role == QtCore.Qt.DecorationRole:
-            # if app in self.selectedAppts: #
             if app.unscheduled:
-                if app == self.currentAppt:
+                if app in self.selectedAppts:
                     return QtCore.QVariant(self.selected_icon)
-                return QtCore.QVariant(self.normal_icon)
+            return QtCore.QVariant(self.normal_icon)
         elif role == QtCore.Qt.UserRole:  # return the whole python object
             return app
         return QtCore.QVariant()
 
-    def setSelectedIndexes(self, indexes, selected):
-        self.min_slot_length = 0
-        self.currentAppt = None
-        self.selectedAppts = []
-        for index in indexes:
-            appt = self.data(index, QtCore.Qt.UserRole)
-            self.selectedAppts.append(appt)
-
-        if selected in indexes:
-            self.currentAppt = self.data(selected, QtCore.Qt.UserRole)
-            self.min_slot_length = self.currentAppt.length
-        elif self.selectedAppts != []:
-            self.currentAppt = self.selectedAppts[0]
-            self.min_slot_length = self.currentAppt.length
-
-        self.appointment_selected.emit(self.currentAppt)
-
-    def set_current_appt(self, appt):
-        '''
-        set the current appointment as appt, return the model index of appt
-        '''
-        LOGGER.debug("SimpleListModel.set_current_appt")
-        self.currentAppt = appt
-        if appt is None:
-            self.selection_model.clear()
-            self.min_slot_length = 0
-        else:
-            try:
-                index = self.index(self.list.index(appt))
-                self.min_slot_length = appt.length
-                self.selection_model.select(index,
-                                            QtGui.QItemSelectionModel.Select)
-                return index
-            except ValueError:
-                pass
-        return QtCore.QModelIndex()
-
-    @property
-    def min_unscheduled_hyg_slot_length(self):
-        msl = None
-        for appt in self.unscheduledList:
-            if appt.dent in localsettings.activehyg_ixs:
-                if msl is None or appt.length < msl:
-                    msl = appt.length
-        return msl
-
     def load_from_database(self, pt):
-        app = self.currentAppt
+        LOGGER.debug(
+            "loading apps from database, selected = %s", self.selectedAppts)
         appts = appointments.get_pts_appts(pt)
-        self.set_appointments(appts, None)
-        self.set_current_appt(app)
+        self.set_appointments(appts, self.selectedAppts)
 
 
 class BlockListModel(SimpleListModel):
@@ -218,11 +273,11 @@ class BlockListModel(SimpleListModel):
 
     def __init__(self, parent=None):
         super(BlockListModel, self).__init__(parent)
-        self.list = []
         for val, length in (
             (_("Lunch"), 60),
             (_("Lunch"), 30),
-            (_("staff meeting"), 10),
+            (_("staff meeting"), 15),
+            (_("emergency"), 10),
             (_("emergency"), 15),
             (_("emergency"), 20),
             (_("emergency"), 30),
@@ -231,7 +286,7 @@ class BlockListModel(SimpleListModel):
             block.name = val
             block.length = length
             block.flag = -128
-            self.list.append(block)
+            self.unscheduledList.append(block)
 
     def reset(self):
         pass

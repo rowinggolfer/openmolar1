@@ -122,11 +122,10 @@ class treeModel(QtCore.QAbstractItemModel):
             QtGui.QPixmap(":/icons/schedule_active.png"))
 
     def addAppointments(self, appointments):
-        if appointments != self.appointments:
-            self.clear()
-            self.appointments = appointments
-            self.setupModelData()
-            self.appointments_changed_signal.emit()
+        self.clear()
+        self.appointments = appointments
+        self.setupModelData()
+        self.appointments_changed_signal.emit()
 
     def setSelectedAppt(self, appt):
         if appt and self.om_gui:

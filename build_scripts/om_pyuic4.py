@@ -137,7 +137,8 @@ def get_all_ui_files(dirname):
             yield ui_file
 
 if __name__ == "__main__":
-    repo = git.Repo(os.getcwd())
+    filepath = os.path.abspath(__file__)
+    repo = git.Repo(os.path.dirname(os.path.dirname(filepath)))
 
     uipath = os.path.join(repo.working_dir, "src", "openmolar", "qt-designer")
 

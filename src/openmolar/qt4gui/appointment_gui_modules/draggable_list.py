@@ -29,30 +29,26 @@ from PyQt4 import QtGui, QtCore
 
 LOGGER = logging.getLogger("openmolar")
 
+
 class DraggableList(QtGui.QListView):
 
     '''
     a listView whose items can be moved
     '''
 
-    def __init__(self, multiSelect, parent=None):
-        super(DraggableList, self).__init__(parent)
+    def __init__(self, parent=None):
+        QtGui.QListView.__init__(self, parent)
         self.setDragEnabled(True)
-        self.multiSelect = multiSelect
         self.setMinimumHeight(100)
 
     def sizeHint(self):
         return QtCore.QSize(150, 200)
 
-    def setSelectionModel(self, model):
-        QtGui.QListView.setSelectionModel(self, model)
-        if self.multiSelect:
-            self.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
-
     def startDrag(self, event):
         LOGGER.debug("Starting drag from position %s", event.pos())
         index = self.indexAt(event.pos())
         if not index.isValid():
+            event.ignore()
             return
 
         # selected is the relevant person object
@@ -87,17 +83,3 @@ class DraggableList(QtGui.QListView):
 
     def mouseMoveEvent(self, event):
         self.startDrag(event)
-
-    def selectionChanged(self, selectedRange, deselected):
-        '''
-        the user has selected an appointment (or range of appointments!)
-        from the list
-        '''
-        if selectedRange.count():
-            selected = selectedRange.indexes()[0]
-        else:
-            selected = None
-        rows = self.selectionModel().selectedRows()
-        self.model().setSelectedIndexes(rows, selected)
-
-        self.doItemsLayout()

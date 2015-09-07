@@ -43,7 +43,10 @@ LOGGER.warning("You are running a development version of OpenMolar!")
 
 try:
     import git
-    repo = git.Repo(os.path.dirname(__file__))
+    LOGGER.debug("checking to see if environment is a git repo")
+    filepath = os.path.dirname(os.path.dirname(os.path.dirname(
+        os.path.dirname(__file__))))
+    repo = git.Repo(filepath)
     if repo.description == "openmolar1":
         try:
             git_version = repo.git.describe()

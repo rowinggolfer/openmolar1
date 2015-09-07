@@ -1,27 +1,28 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
+from gettext import gettext as _
 from PyQt4 import QtGui, QtCore
 from openmolar.qt4gui.compiled_uis import Ui_activeDentStartFinish
 from openmolar.qt4gui.compiled_uis import Ui_aslotEdit
@@ -74,7 +75,8 @@ class adayData(object):
 
     def __repr__(self):
         return"%s %s %s %s %s %s" % (
-            self.apptix, self.dent, self.active, self.start, self.finish, self.memo)
+            self.apptix, self.dent, self.active, self.start,
+            self.finish, self.memo)
 
     def __cmp__(self, other):
         eq = 0
@@ -153,7 +155,8 @@ class alterDayDialog(Ui_aslotEdit.Ui_Dialog):
         self.showItems()
 
         QtCore.QObject.connect(self.copy_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.copy_to_clipboard)
+                               QtCore.SIGNAL("clicked()"),
+                               self.copy_to_clipboard)
 
         self.pastebutton_orig_text = self.paste_pushButton.text()
         if diary_widget.alterAday_clipboard_date:
@@ -167,8 +170,10 @@ class alterDayDialog(Ui_aslotEdit.Ui_Dialog):
     def setPasteButtonText(self):
         text = self.pastebutton_orig_text
 
-        self.paste_pushButton.setText(text + " " + _("values from") +
-                                      " " + self.diary_widget.alterAday_clipboard_date.toString())
+        self.paste_pushButton.setText(
+            "%s %s %s" % (text, _("values from"),
+                          self.diary_widget.alterAday_clipboard_date.toString()
+                          ))
 
     def copy_to_clipboard(self):
         self.diary_widget.alterAday_clipboard_date = self.date
@@ -229,9 +234,9 @@ class alterDayDialog(Ui_aslotEdit.Ui_Dialog):
     def checkForChanges(self):
         retarg = []
         i = 0
-        #-- iterate through the initial values, and compare with the
-        #-- inputted values
-        #-- make a list of changes
+        # iterate through the initial values, and compare with the
+        # inputted values
+        # make a list of changes
 
         updated_vals = self.current_list
         for clinician in self.data_list:
@@ -260,7 +265,6 @@ if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
     from openmolar.qt4gui.diary_widget import DiaryWidget
     d_widg = DiaryWidget()
-    date = QtCore.QDate.currentDate()
-    dl = alterDayDialog(d_widg, date)
+    dl = alterDayDialog(d_widg, QtCore.QDate.currentDate())
 
     print dl.getInput()

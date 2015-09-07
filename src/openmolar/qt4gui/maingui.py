@@ -3211,8 +3211,6 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.diary_widget.mh_form_date_signal.connect(self.diary_mh_form_date)
         self.pt_diary_widget.start_scheduling.connect(self.start_scheduling)
         self.pt_diary_widget.find_appt.connect(self.diary_widget.find_appt)
-        self.pt_diary_widget.appointment_selected.connect(
-            self.diary_widget.schedule_controller.update_appt_selection)
         self.pt_diary_widget.appointments_changed_signal.connect(
             self.handle_pt_diary_update)
 
