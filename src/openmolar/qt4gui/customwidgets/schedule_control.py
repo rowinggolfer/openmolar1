@@ -485,6 +485,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
             yield slot
 
     def clear_slots(self):
+        self._chosen_slot = None
         self.primary_slots = []
         self.secondary_slots = []
 
@@ -506,7 +507,8 @@ class DiaryScheduleController(QtGui.QStackedWidget):
     def set_slots_from_day_app_data(self, app_data):
         app1_slots = []
         if self.app1_is_scheduled:
-            app1_slots = [self.appointment_model.currentAppt.to_freeslot()]
+            app1_slots = []
+            #  app1_slots = [self.appointment_model.currentAppt.to_freeslot()]
         else:
             app1_slots = app_data.slots(self.app1_length,
                                         self.ignore_emergency_spaces)
@@ -551,8 +553,11 @@ class DiaryScheduleController(QtGui.QStackedWidget):
             self.appt1_clinicians,
             self.ignore_emergency_spaces)
 
-        self.set_primary_slots(
-            appointments.getLengthySlots(all_slots, self.app1_length))
+        if self.app1_is_scheduled:
+            self.set_primary_slots([])
+        else:
+            self.set_primary_slots(
+                appointments.getLengthySlots(all_slots, self.app1_length))
 
         app2_slots = []
         if self.is_searching_for_double_appointments and \
@@ -739,7 +744,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
                     _("appointment is already scheduled"), 0)
             elif self.app2_is_scheduled:
                 self.advice_signal.emit(_("Joint appointment Scheduled"), 0)
-            elif self.chosen_2nd_slot is None:
+            elif not list(self.chosen_2nd_slots):
                 self.advice_signal.emit(
                     _("Joint appointment is not possible with the "
                       "chosen primary appointment"), 1)

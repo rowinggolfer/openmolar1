@@ -45,8 +45,14 @@ LINECOLOR = colours.APPT_LINECOLOUR
 APPTCOLORS = colours.APPTCOLORS
 TRANSPARENT = colours.TRANSPARENT
 
+BLACK_PEN = QtGui.QPen(QtCore.Qt.black, 1)
 GREY_PEN = QtGui.QPen(QtCore.Qt.gray, 1)
+RED_PEN = QtGui.QPen(QtCore.Qt.red, 2)
+BIG_RED_PEN = QtGui.QPen(QtCore.Qt.red, 4)
+BLUE_PEN = QtGui.QPen(QtCore.Qt.blue, 2)
 
+CENTRE_OPTION = QtGui.QTextOption(QtCore.Qt.AlignCenter)
+CENTRE_OPTION.setWrapMode(QtGui.QTextOption.WordWrap)
 
 class AppointmentWidget(QtGui.QFrame):
 
@@ -111,7 +117,7 @@ class AppointmentWidget(QtGui.QFrame):
         self.scrollArea = QtGui.QScrollArea()
         self.scrollArea.setWidgetResizable(True)
 
-        self.canvas = appointmentCanvas(om_gui, self)
+        self.canvas = AppointmentCanvas(om_gui, self)
         self.scrollArea.setWidget(self.canvas)
 
         self.setDayStartTime(sTime)
@@ -345,7 +351,7 @@ class BlinkTimer(QtCore.QTimer):
         self.state = not self.state
 
 
-class appointmentCanvas(QtGui.QWidget):
+class AppointmentCanvas(QtGui.QWidget):
 
     '''
     the canvas for me to draw on
@@ -876,11 +882,8 @@ class appointmentCanvas(QtGui.QWidget):
         '''
         draws the book - recalled at any point by instance.update()
         '''
-        red_pen = QtGui.QPen(QtCore.Qt.red, 2)
-        blue_pen = QtGui.QPen(QtCore.Qt.blue, 2)
 
         painter = QtGui.QPainter(self)
-        currentSlot = 0
 
         painter.setFont(self.font)
 
@@ -901,14 +904,9 @@ class appointmentCanvas(QtGui.QWidget):
 
         # DRAW HORIZONTAL LINES AND TIMES
 
-        while currentSlot < self.slotNo:
-
-            textneeded = False
-            if currentSlot % self.textDetail == 0:
-                textneeded = True
-
+        for currentSlot in xrange(self.slotNo):
+            textneeded = True if currentSlot % self.textDetail == 0 else False
             y = currentSlot * self.slotHeight
-
             # code to check if within the appointment hours
             if self.firstSlot <= currentSlot <= self.lastSlot:
                 painter.setPen(QtGui.QPen(LINECOLOR, 1))
@@ -917,31 +915,23 @@ class appointmentCanvas(QtGui.QWidget):
                 trect = QtCore.QRectF(0, y,
                                       self.timeWidth,
                                       y + self.textDetail * self.slotHeight)
-
                 painter.setPen(QtGui.QPen(QtCore.Qt.black, 1))
                 painter.drawLine(0, y, self.timeWidth, y)
-
                 painter.drawText(
                     trect, QtCore.Qt.AlignLeft,
                     self.humanTime(
                         self.dayStartTime + (currentSlot * self.slotDuration)))
 
-            currentSlot += 1
-
         # layout appts
         painter.save()
-        painter.setPen(QtCore.Qt.black)
-        option = QtGui.QTextOption(QtCore.Qt.AlignCenter)
-        option.setWrapMode(QtGui.QTextOption.WordWrap)
+        painter.setPen(BLACK_PEN)
 
         for app in self.appts:
             painter.save()
-
             rect = QtCore.QRectF(
                 self.timeWidth, app.startcell * self.slotHeight,
-                self.width() - self.timeWidth,
+                colwidth - painter.pen().width(),
                 (app.endcell - app.startcell) * self.slotHeight)
-
             if (app.serialno != 0 and
                     app.serialno == self.pWidget.selected_serialno):
                 painter.setBrush(QtGui.QColor("orange"))
@@ -962,14 +952,11 @@ class appointmentCanvas(QtGui.QWidget):
             if not (app.serialno == 0 and
                     (app.endcell < self.firstSlot or
                      app.startcell > self.lastSlot)):
-                painter.drawRect(rect)
-                mytext = "%s %s %s %s %s" % (app.name.title(),
-                                             app.trt1,
-                                             app.trt2,
-                                             app.trt3,
-                                             app.memo)
+                painter.drawRoundedRect(rect, 5, 5)
+                mytext = " ".join((app.name.title(), app.trt1, app.trt2,
+                                   app.trt3, app.memo))
 
-                painter.drawText(rect, mytext, option)
+                painter.drawText(rect, mytext, CENTRE_OPTION)
 
             # highlight any appointments booked today
             if app.serialno > 0:
@@ -1005,31 +992,30 @@ class appointmentCanvas(QtGui.QWidget):
                     painter.setPen(colours.APPT_Background)
                     painter.drawRect(med_rect)
                     painter.setPen(colours.APPT_MED_FORM)
-                    painter.drawText(med_rect, "+", option)
+                    painter.drawText(med_rect, "+", CENTRE_OPTION)
 
             painter.restore()
+        painter.restore()
 
+        painter.save()
         for appt in self.doubleAppts:
             rect = QtCore.QRectF(
-                self.width() - self.timeWidth,
+                colwidth,
                 app.startcell * self.slotHeight,
-                self.width() - self.timeWidth,
+                colwidth,
                 self.slotHeight)
 
             painter.setBrush(APPTCOLORS["DOUBLE"])
             painter.drawRect(rect)
+        painter.restore()
 
-        painter.setPen(QtGui.QColor("red"))
+        painter.save()
         for slot in self.freeslots:
             startcell, endcell, is_1o = slot  # is_1o means a primary slot
-            rect = QtCore.QRectF(
-                self.timeWidth,
-                startcell * self.slotHeight,
-                self.width() - self.timeWidth,
-                (endcell - startcell) * self.slotHeight)
 
             brush = APPTCOLORS["SLOT"] if is_1o else APPTCOLORS["SLOT2"]
             if (startcell, endcell) in self.active_slots:
+                painter.setPen(BIG_RED_PEN)
                 if self.blink_on:
                     painter.setOpacity(1)
                     # brush = APPTCOLORS["ACTIVE_SLOT_BOLD"]
@@ -1038,19 +1024,24 @@ class appointmentCanvas(QtGui.QWidget):
                 if self.ensure_slot_visible:
                     self.ensure_visible(0, startcell * self.slotHeight)
             else:
+                painter.setPen(RED_PEN)
                 painter.setOpacity(0.6)
             painter.setBrush(brush)
-
-            painter.drawRect(rect)
+            rect = QtCore.QRectF(
+                self.timeWidth + 1,
+                startcell * self.slotHeight,
+                colwidth - 3,
+                (endcell - startcell) * self.slotHeight)
+            painter.drawRoundedRect(rect, 5, 5)
             slot_duration = (endcell - startcell) * self.slotDuration
             painter.setOpacity(1)
-            painter.drawText(rect, "%s mins" % slot_duration, option)
+            painter.drawText(rect, "%s mins" % slot_duration, CENTRE_OPTION)
         painter.restore()
 
         # highlight current time
         if self.setTime:
             cellno = self.getCell_from_time(self.setTime)
-            painter.setPen(blue_pen)
+            painter.setPen(BLUE_PEN)
             painter.setBrush(QtCore.Qt.blue)
             corner1 = [self.timeWidth * 1.4, cellno * self.slotHeight]
             corner2 = [self.timeWidth, (cellno - 0.5) * self.slotHeight]
@@ -1065,7 +1056,7 @@ class appointmentCanvas(QtGui.QWidget):
             painter.drawPolygon(QtGui.QPolygon(triangle))
 
         if self.dragging:
-            painter.setPen(red_pen)
+            painter.setPen(RED_PEN)
             y = self.drag_startrow * self.slotHeight
             y2 = self.drag_endrow * self.slotHeight
             painter.drawLine(0, y, self.width(), y)

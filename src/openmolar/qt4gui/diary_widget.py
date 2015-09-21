@@ -403,6 +403,7 @@ class DiaryWidget(Advisor):
         if force_weekview:
             self.ui.diary_tabWidget.setCurrentIndex(1)
 
+        self.schedule_controller.clear_slots()
         appt = self.schedule_controller.appointment_model.currentAppt
         if appt is None:
             self.advise(_("Please select an appointment to schedule"), 1)
@@ -940,7 +941,7 @@ class DiaryWidget(Advisor):
         self.appointmentData.getAppointments(dents)
 
         if self.schedule_controller.mode == self.SCHEDULING_MODE:
-            self.schedule_controller.clear_slots()
+            # self.schedule_controller.clear_slots()
             if localsettings.currentDay() <= date_ < localsettings.BOOKEND:
                 self.schedule_controller.set_slots_from_day_app_data(
                     self.appointmentData)

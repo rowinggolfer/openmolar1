@@ -43,12 +43,14 @@ APPTCOLORS = colours.APPTCOLORS
 BGCOLOR = APPTCOLORS["BACKGROUND"]
 
 RED_PEN = QtGui.QPen(QtCore.Qt.red, 2)
-BIG_RED_PEN = QtGui.QPen(QtCore.Qt.red, 3)
+BIG_RED_PEN = QtGui.QPen(QtCore.Qt.red, 4)
 GREY_PEN = QtGui.QPen(QtCore.Qt.gray, 1)
 GREYLINE_PEN = QtGui.QPen(colours.APPT_LINECOLOUR, 1)
 # GREYLINE_PEN.setStyle(QtCore.Qt.DashLine)
 BLACK_PEN = QtGui.QPen(QtCore.Qt.black, 1)
 
+CENTRE_OPTION = QtGui.QTextOption(QtCore.Qt.AlignCenter)
+CENTRE_OPTION.setWrapMode(QtGui.QTextOption.WordWrap)
 
 class BlinkTimer(QtCore.QTimer):
     '''
@@ -587,7 +589,7 @@ class AppointmentOverviewWidget(QtGui.QWidget):
             painter.setPen(BLACK_PEN)
             painter.setBrush(APPTCOLORS["HEADER"])
             rect = QtCore.QRect(leftx, 0, columnWidth, self.headingHeight)
-            painter.drawRect(rect)
+            painter.drawRoundedRect(rect, 5, 5)
             initials = localsettings.apptix_reverse.get(dent.ix)
             if dent.memo != "":
                 initials = "*%s*" % initials
@@ -675,8 +677,7 @@ class AppointmentOverviewWidget(QtGui.QWidget):
                             painter.setPen(BLACK_PEN)
 
                         painter.drawRect(rect)
-                        painter.drawText(rect, QtCore.Qt.AlignCenter,
-                                         _("Lunch"))
+                        painter.drawText(rect, _("Lunch"), CENTRE_OPTION)
                 painter.restore()
 
                 # appts
@@ -703,12 +704,12 @@ class AppointmentOverviewWidget(QtGui.QWidget):
                         (appt.length / self.slotLength) * self.slotHeight
                     )
 
-                    painter.drawRect(rect)
+                    painter.drawRoundedRect(rect, 5, 5)
 
                     text = appt.trt[:5]
                     if len(text) < len(appt.trt):
                         text += ".."
-                    painter.drawText(rect, QtCore.Qt.AlignLeft, text)
+                    painter.drawText(rect, text, CENTRE_OPTION)
 
                 # slots
 
@@ -741,9 +742,8 @@ class AppointmentOverviewWidget(QtGui.QWidget):
                         painter.setOpacity(0.6)
                     painter.setBrush(brush)
                     painter.drawRoundedRect(
-                        rect.adjusted(1, 0,
-                                      1 - painter.pen().width(), 0)
-                    ,5, 5)
+                        rect.adjusted(1, 0, -1, 0),
+                        5, 5)
                     painter.setOpacity(1)
                     painter.drawText(rect,
                                      QtCore.Qt.AlignCenter,
