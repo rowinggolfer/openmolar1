@@ -30,9 +30,41 @@ from gettext import gettext as _
 
 from PyQt4 import QtGui, QtCore
 
+from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
 WEEK_VIEW = True
+
+
+class ApptSettingsResetDialog(BaseDialog):
+    '''
+    A message box which asks if the user is aware that default settings
+    are not being used, and gives options.
+    '''
+    show_settings_dialog = False
+
+    def __init__(self, parent=None):
+        BaseDialog.__init__(self, parent)
+        self.setWindowTitle(_("Restore Default Settings"))
+        label = WarningLabel("%s<hr />%s" % (
+            _("Appointment search does not have default settings"),
+            _("Would You like to reset these now?")))
+        self.insertWidget(label)
+        self.show_dialog_but = self.button_box.addButton(
+            QtGui.QDialogButtonBox.Apply)
+        self.show_dialog_but.setText(_("Show Settings Dialog"))
+        self.cancel_but.setText(_("Keep Custom Settings"))
+        self.apply_but.setText(_("Yes"))
+        self.enableApply()
+        self.apply_but.setFocus(True)
+
+    def sizeHint(self):
+        return QtCore.QSize(400, 100)
+
+    def _clicked(self, but):
+        if but == self.show_dialog_but:
+            self.show_settings_dialog = True
+        BaseDialog._clicked(self, but)
 
 
 class ApptSettingsDialog(BaseDialog):
@@ -172,13 +204,25 @@ class ApptSettingsDialog(BaseDialog):
         if self.hyg_any_clinician_radiobut.isChecked():
             ApptSettingsDialog.hygienist_policy = self.CLINICIAN_ANY
 
-    def reset(self):
+    @staticmethod
+    def is_default_settings():
+        return (ApptSettingsDialog.excluded_days == [] and
+                ApptSettingsDialog.dentist_policy ==
+                ApptSettingsDialog.CLINICIAN_SELECTED and
+                ApptSettingsDialog.hygienist_policy ==
+                ApptSettingsDialog.CLINICIAN_ANY_HYG and
+                not ApptSettingsDialog.ignore_emergency_spaces)
+
+    @staticmethod
+    def reset():
         '''
         this resets the dialog (base class) to default values.
         '''
         ApptSettingsDialog.excluded_days = []
-        ApptSettingsDialog.dentist_policy = self.CLINICIAN_SELECTED
-        ApptSettingsDialog.hygienist_policy = self.CLINICIAN_ANY_HYG
+        ApptSettingsDialog.dentist_policy = \
+            ApptSettingsDialog.CLINICIAN_SELECTED
+        ApptSettingsDialog.hygienist_policy = \
+            ApptSettingsDialog.CLINICIAN_ANY_HYG
         ApptSettingsDialog.ignore_emergency_spaces = False
 
     def exec_(self):

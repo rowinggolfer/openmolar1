@@ -288,7 +288,7 @@ class patient(object):
 
         query = '''select exemption, exempttext from exemptions
         where serialno=%s'''
-        cursor.execute(query, self.serialno)
+        cursor.execute(query, (self.serialno,))
 
         values = cursor.fetchall()
 
@@ -297,7 +297,7 @@ class patient(object):
 
         query = '''select bpedate, bpe from bpe where serialno=%s
         order by bpedate'''
-        cursor.execute(query, self.serialno)
+        cursor.execute(query, (self.serialno,))
 
         values = cursor.fetchall()
 
@@ -359,7 +359,7 @@ class patient(object):
             db = connect.connect()
             cursor = db.cursor()
             query = 'select date, trtid, chart from daybook where serialno=%s'
-            cursor.execute(query, self.serialno)
+            cursor.execute(query, (self.serialno,))
             self._dayBookHistory = cursor.fetchall()
             cursor.close()
         return self._dayBookHistory
@@ -374,7 +374,7 @@ class patient(object):
             db = connect.connect()
             cursor = db.cursor()
             query = 'select max(date) from daybook where serialno=%s'
-            if cursor.execute(query, self.serialno):
+            if cursor.execute(query, (self.serialno,)):
                 max_date = cursor.fetchone()[0]
             cursor.close()
             self._most_recent_daybook_entry = max_date
@@ -393,7 +393,8 @@ class patient(object):
             if cursor.execute(query, (self.serialno,)):
                 min_date = cursor.fetchone()[0]
             cursor.close()
-            self._first_note_date = min_date if min_date else localsettings.currentDay()
+            self._first_note_date = min_date \
+                if min_date else localsettings.currentDay()
         return self._first_note_date
 
     @property
@@ -428,7 +429,7 @@ class patient(object):
         if self._has_exam_booked is None:
             db = connect.connect()
             cursor = db.cursor()
-            cursor.execute(FUTURE_EXAM_QUERY, self.serialno)
+            cursor.execute(FUTURE_EXAM_QUERY, (self.serialno,))
             self._has_exam_booked = bool(cursor.fetchone()[0])
             cursor.close()
 

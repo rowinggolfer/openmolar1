@@ -1,26 +1,26 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 from __future__ import division
 import calendar
@@ -98,6 +98,8 @@ class controlCalendar(QtGui.QCalendarWidget):
 
 class weekCalendar(controlCalendar):
 
+    week_changed_signal = QtCore.pyqtSignal(object)
+
     def __init__(self, *args):
         controlCalendar.__init__(self, *args)
         self.color = QtGui.QColor(
@@ -114,7 +116,7 @@ class weekCalendar(controlCalendar):
         '''
         weekNo = self.selectedDate().weekNumber()
         if weekNo != self.weekNo:
-            self.emit(QtCore.SIGNAL("weekChanged"), self.selectedDate())
+            self.week_changed_signal.emit(self.selectedDate())
             self.weekNo = weekNo
 
         self.updateCells()
@@ -442,8 +444,7 @@ class monthCalendar(QtGui.QWidget):
                 self.font.setItalic(False)
                 painter.setFont(self.font)
 
-            #- text column
-            x = self.bankHolColwidth + self.vheaderwidth
+            # text column
             rect = rect.adjusted(self.bankHolColwidth, 0, 0, 0)
 
             for col in range(self.colNo):
@@ -490,7 +491,8 @@ class monthCalendar(QtGui.QWidget):
         painter.setPen(QtGui.QColor("black"))
 
         painter.drawLine(self.bankHolColwidth + self.vheaderwidth, rowHeight,
-                         self.bankHolColwidth + self.vheaderwidth, self.height())
+                         self.bankHolColwidth + self.vheaderwidth,
+                         self.height())
 
 
 class yearCalendar(QtGui.QWidget):
@@ -507,8 +509,9 @@ class yearCalendar(QtGui.QWidget):
         initiate the widget
         '''
         super(yearCalendar, self).__init__(parent)
-        self.setSizePolicy(QtGui.QSizePolicy(
-                           QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
+        self.setSizePolicy(
+            QtGui.QSizePolicy(
+                QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
 
         self.setMinimumSize(self.minimumSizeHint())
         self.monthStarts = {}
@@ -704,7 +707,7 @@ class yearCalendar(QtGui.QWidget):
             painter.setPen(QtGui.QPen(QtCore.Qt.gray, 1))
 
             if month == 0:
-                #-- draw the year
+                # draw the year
                 painter.setBrush(self.palette().highlight())
                 painter.drawRect(rect)
 
@@ -775,13 +778,13 @@ class yearCalendar(QtGui.QWidget):
                                                self.palette().HighlightedText))
 
                                 painter.drawRect(rect)
-                                painter.drawText(rect,
-                                                 QtCore.Qt.AlignCenter, my_text)
+                                painter.drawText(
+                                    rect, QtCore.Qt.AlignCenter, my_text)
 
                                 painter.restore()
 
                             elif c_date == self.highlightedDate:
-                                #--mouseOver
+                                # mouseOver
                                 painter.save()
                                 painter.setBrush(self.mouseBrush)
 
@@ -789,27 +792,27 @@ class yearCalendar(QtGui.QWidget):
                                                self.palette().HighlightedText))
 
                                 painter.drawRect(rect)
-                                painter.drawText(rect,
-                                                 QtCore.Qt.AlignCenter, my_text)
+                                painter.drawText(
+                                    rect, QtCore.Qt.AlignCenter, my_text)
 
                                 painter.restore()
 
                             elif c_date.isoweekday() > 5:
                                 # weekend
                                 painter.setPen(QtCore.Qt.red)
-                                painter.drawText(rect,
-                                                 QtCore.Qt.AlignCenter, my_text)
+                                painter.drawText(
+                                    rect, QtCore.Qt.AlignCenter, my_text)
 
                             else:
                                 painter.setPen(self.palette().color(
                                                self.palette().WindowText))
-                                painter.drawText(rect,
-                                                 QtCore.Qt.AlignCenter, my_text)
+                                painter.drawText(
+                                    rect, QtCore.Qt.AlignCenter, my_text)
 
                             datekey = "%d%02d" % (month, c_date.day)
 
                             if datekey in self.headingdata:
-                                #-- draw a gray underscore!
+                                # draw a gray underscore!
                                 painter.save()
                                 painter.setBrush(QtCore.Qt.lightGray)
                                 painter.setPen(QtCore.Qt.lightGray)
@@ -821,7 +824,7 @@ class yearCalendar(QtGui.QWidget):
                                 painter.restore()
 
                             if self.flags.get(datekey, False):
-                                #-- draw a blue triangle!
+                                # draw a blue triangle!
                                 painter.save()
                                 painter.setBrush(QtCore.Qt.blue)
                                 painter.setPen(QtCore.Qt.blue)
@@ -834,7 +837,8 @@ class yearCalendar(QtGui.QWidget):
                                     rect.width() / 2
 
                                 shape = QtGui.QPolygon([topleftX, topY,
-                                                        rightX, topY, rightX, bottomrightY])
+                                                        rightX, topY, rightX,
+                                                        bottomrightY])
 
                                 painter.drawPolygon(shape)
                                 painter.restore()
@@ -845,23 +849,23 @@ class yearCalendar(QtGui.QWidget):
 
 
 if __name__ == "__main__":
-    def signal_trap(arg=None):
-        print cal.selectedDate(),
-        print wcal.selectedDate()
+
+    def signal_trap(*args):
+        print cal.selectedDate()
+
+    def week_signal_trap(*args):
+        print "week - %s" % wcal.selectedDate()
 
     app = QtGui.QApplication(sys.argv)
     cal = controlCalendar()
     wcal = weekCalendar()
     mcal = monthCalendar()
     ycal = yearCalendar()
-    cal.show()
-    wcal.move(cal.width(), 0)
+    # cal.show()
     wcal.show()
-    QtCore.QObject.connect(cal, QtCore.SIGNAL("selectionChanged()"),
-                           signal_trap)
 
-    QtCore.QObject.connect(wcal, QtCore.SIGNAL("weekChanged"),
-                           signal_trap)
+    # cal.selectionChanged.connect(signal_trap)
+    wcal.week_changed_signal.connect(week_signal_trap)
 
     if False:
         localsettings.initiate()
@@ -874,6 +878,6 @@ if __name__ == "__main__":
             c.setDents((4, 6, 7))
             c.setData(rows)
             c.setHeadingData(data)
-
             c.show()
+
     sys.exit(app.exec_())

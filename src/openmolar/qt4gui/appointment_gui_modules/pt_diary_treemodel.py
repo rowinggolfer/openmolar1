@@ -29,15 +29,17 @@ found under the reception tab
 '''
 
 from gettext import gettext as _
+import logging
 
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 from openmolar.qt4gui import colours
 
-
 CATEGORIES = ("", _("View Past Appointments"), _("Unscheduled"))
 HORIZONTAL_HEADERS = (_("Date & Time"), _("Practitioner"), _("Length"),
                       _("Treatment"), "ix", _("Memo"))
+
+LOGGER = logging.getLogger("openmolar")
 
 
 class TreeItem(object):
@@ -47,8 +49,8 @@ class TreeItem(object):
         self.isAppointment = True
         try:
             if appointment.date:
-                self.headerCol = (
-                    localsettings.wystimeToHumanTime(appointment.atime) + "\t" +
+                self.headerCol = "%s\t%s" % (
+                    localsettings.wystimeToHumanTime(appointment.atime),
                     localsettings.readableDate(appointment.date))
             else:
                 self.headerCol = "TBA"  # used to be "TBA"
@@ -100,7 +102,43 @@ class TreeItem(object):
         return 0
 
 
-class treeModel(QtCore.QAbstractItemModel):
+class DoubleRowSelectionModel(QtGui.QItemSelectionModel):
+
+    '''
+    A selection model which allows the selection of a maximum of 2 rows.
+    '''
+    is_reversed = False
+
+    def select(self, selection, command):
+        '''
+        overwrite the select function
+        selection is either a QModelIndex, (handled normally),
+        or a QItemSelection
+        '''
+        self.is_reversed = False
+        LOGGER.debug(
+            "DoubleRowSelectionModel.select %s,%s", selection, command)
+        if isinstance(selection, QtCore.QModelIndex):
+            LOGGER.debug("Model Index selected")
+        elif len(selection.indexes()) >= 2:
+            LOGGER.debug("restricting appointment selection to 2 items")
+            new_selection = QtGui.QItemSelection()
+            index1 = selection.indexes()[0]
+            index2 = self.currentIndex()
+            if index2.row() == index1.row():
+                index2 = selection.last().indexes()[-1]
+                self.is_reversed = True
+            new_selection.append(QtGui.QItemSelectionRange(index1))
+            new_selection.append(QtGui.QItemSelectionRange(index2))
+            selection = new_selection
+        else:
+            for index in selection.indexes():
+                LOGGER.debug("index = %s", index)
+
+        QtGui.QItemSelectionModel.select(self, selection, command)
+
+
+class PatientDiaryTreeModel(QtCore.QAbstractItemModel):
 
     '''
     a model to display a feetables data
@@ -108,12 +146,12 @@ class treeModel(QtCore.QAbstractItemModel):
     appointments_changed_signal = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
-        super(treeModel, self).__init__(parent)
+        QtCore.QAbstractItemModel.__init__(self, parent)
         self.appointments = []
         self.rootItem = TreeItem("Appointments", None, None, None)
         self.parents = {0: self.rootItem}
         self.om_gui = parent
-        self.selectedAppt = None
+        self.selection_model = DoubleRowSelectionModel(self)
         self.normal_icon = QtGui.QIcon()
         self.normal_icon.addPixmap(QtGui.QPixmap(":/schedule.png"),
                                    QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -122,22 +160,14 @@ class treeModel(QtCore.QAbstractItemModel):
             QtGui.QPixmap(":/icons/schedule_active.png"))
 
     def addAppointments(self, appointments):
+        self.beginResetModel()
         self.clear()
         self.appointments = appointments
         self.setupModelData()
         self.appointments_changed_signal.emit()
-
-    def setSelectedAppt(self, appt):
-        if appt and self.om_gui:
-            pt = self.om_gui.pt
-            appt.name = pt.fname + " " + pt.sname
-            appt.cset = pt.cset
-        self.selectedAppt = appt
-        self.emit(QtCore.SIGNAL("selectedAppt"), appt)
+        self.endResetModel()
 
     def clear(self):
-
-        self.selectedAppt = None
         self.appointments = []
         self.rootItem = TreeItem("Appointments", None, None, None)
         self.parents = {0: self.rootItem}
@@ -170,9 +200,9 @@ class treeModel(QtCore.QAbstractItemModel):
         elif role == QtCore.Qt.DecorationRole:
             if (index.column() == 0 and
                item.appointment and item.appointment.unscheduled):
-                if (self.selectedAppt and
-                   item.appointment.aprix == self.selectedAppt.aprix):
-                    return QtCore.QVariant(self.selected_icon)
+                # if (self.selectedAppt and
+                #   item.appointment.aprix == self.selectedAppt.aprix):
+                #    return QtCore.QVariant(self.selected_icon)
                 return QtCore.QVariant(self.normal_icon)
         if role == QtCore.Qt.UserRole:
             # a user role which simply returns the python object
@@ -249,25 +279,19 @@ class treeModel(QtCore.QAbstractItemModel):
             else:
                 scheduled.append(appt)
         for appt in scheduled + unscheduled:
-            if appt.past:
-                cat = 1
-            # elif appt.date is None: #a seperate parent for unscheduled?
-            #    cat = 2
-            else:
-                cat = 0
-
-            if cat not in self.parents:
+            cat_no = 1 if appt.past else 0
+            if cat_no not in self.parents:
                 try:
-                    category = CATEGORIES[cat]
+                    category = CATEGORIES[cat_no]
                 except IndexError:
-                    category = "CATEGORY %d" % cat
+                    category = "CATEGORY %d" % cat_no
                 parent = TreeItem(category, None, None, self.rootItem)
                 self.rootItem.appendChild(parent)
 
-                self.parents[cat] = parent
+                self.parents[cat_no] = parent
 
-            self.parents[cat].appendChild(TreeItem("", appt,
-                                                   self.parents[cat]))
+            self.parents[cat_no].appendChild(
+                TreeItem("", appt, self.parents[cat_no]))
 
     def searchModel(self, appt):
         '''
@@ -305,14 +329,78 @@ class treeModel(QtCore.QAbstractItemModel):
             return (True, index)
         return (False, None)
 
-if __name__ == "__main__":
+    @property
+    def selected_appointments(self):
+        for appt in (self.appt_1, self.appt_2):
+            if appt is not None:
+                yield appt
+
+    def appt_1_index(self):
+        i = 1 if self.selection_model.is_reversed else 0
+        try:
+            return self.selection_model.selectedRows()[i]
+        except IndexError:
+            pass
+
+    def appt_2_index(self):
+        i = 0 if self.selection_model.is_reversed else 1
+        try:
+            return self.selection_model.selectedRows()[i]
+        except IndexError:
+            pass
+
+    @property
+    def appt_1(self):
+        try:
+            return self.data(self.appt_1_index(), QtCore.Qt.UserRole)
+        except AttributeError:
+            return None
+
+    @property
+    def appt_2(self):
+        try:
+            return self.data(self.appt_2_index(), QtCore.Qt.UserRole)
+        except AttributeError:
+            return None
+
+
+class ColouredItemDelegate(QtGui.QItemDelegate):
+
+    '''
+    A custom delete allows for a change in the behaviour of QListView
+    so that highlighted items aren't the default white text on darkBlue
+    background
+    '''
+    dark_brush = QtGui.QBrush(QtCore.Qt.darkBlue)
+    brush = (QtGui.QBrush(colours.APPTCOLORS["SLOT"]))
+    brush2 = (QtGui.QBrush(colours.APPTCOLORS["SLOT2"]))
+
+    def __init__(self, parent=None):
+        QtGui.QItemDelegate.__init__(self, parent)
+
+    def paint(self, painter, option, index):
+        app = index.data(QtCore.Qt.UserRole).toPyObject()
+        model = index.model()
+
+        pal = option.palette
+        if app == model.appt_1:  # app == model.currentAppt:
+            pal.setBrush(pal.Highlight, self.brush)
+            pal.setBrush(pal.HighlightedText, self.dark_brush)
+        elif app == model.appt_2:  # app == model.secondaryAppt:
+            pal.setBrush(pal.Highlight, self.brush2)
+            pal.setBrush(pal.HighlightedText, self.dark_brush)
+        QtGui.QItemDelegate.paint(self, painter, option, index)
+
+
+def _test():
     from openmolar.dbtools import appointments
-    from openmolar.qt4gui import resources_rc
 
-    class duckPt(object):
-
+    class DuckPt(object):
+        '''
+        a mock of the patient class
+        '''
         def __init__(self):
-            self.serialno = 20791
+            self.serialno = 1
             self.sname = "Neil"
             self.fname = "Wallace"
             self.cset = "P"
@@ -322,24 +410,26 @@ if __name__ == "__main__":
             tv.resizeColumnToContents(col)
 
     def appt_clicked(index):
-        print index,
-        print tv.model().data(index, QtCore.Qt.UserRole)
+        LOGGER.debug("appointment clicked %s",
+                     tv.model().data(index, QtCore.Qt.UserRole))
 
     def but_clicked():
+        LOGGER.debug("Button clicked, will search for appointment %s",
+                     mw.sender().text())
         appoint_number = int(mw.sender().text())
         result, index = model.findItem(appoint_number)
         if result:
             if index:
                 tv.setCurrentIndex(index)
                 return
+        LOGGER.debug("NOT FOUND!")
         tv.clearSelection()
 
-    app = QtGui.QApplication([])
     localsettings.initiate()
 
-    appts = appointments.get_pts_appts(duckPt())
+    appts = appointments.get_pts_appts(DuckPt())
 
-    model = treeModel()
+    model = PatientDiaryTreeModel()
     model.addAppointments(appts)
     mw = QtGui.QMainWindow()
 
@@ -350,17 +440,19 @@ if __name__ == "__main__":
     tv = QtGui.QTreeView()
     tv.setModel(model)
     tv.setAlternatingRowColors(True)
+    tv.setSelectionMode(tv.ContiguousSelection)
+    tv.setSelectionModel(model.selection_model)
     layout.addWidget(tv)
     tv.expandAll()
 
     buts = []
     but_frame = QtGui.QFrame()
     layout2 = QtGui.QHBoxLayout(but_frame)
-    for appt in appts:
+    for appt in sorted(appts, key=lambda a: a.aprix)[-20:]:
         but = QtGui.QPushButton(str(appt.aprix), mw)
         buts.append(but)
         layout2.addWidget(but)
-        QtCore.QObject.connect(but, QtCore.SIGNAL("clicked()"), but_clicked)
+        but.clicked.connect(but_clicked)
 
     layout.addWidget(but_frame)
 
@@ -369,10 +461,8 @@ if __name__ == "__main__":
         tv.collapse(model.createIndex(0, 0, index))
     resize()
 
-    QtCore.QObject.connect(tv, QtCore.SIGNAL("expanded(QModelIndex)"),
-                           resize)
-    QtCore.QObject.connect(tv, QtCore.SIGNAL("clicked (QModelIndex)"),
-                           appt_clicked)
+    tv.expanded.connect(resize)
+    tv.clicked.connect(appt_clicked)
 
     but = QtGui.QPushButton("Clear Selection")
     layout.addWidget(but)
@@ -380,4 +470,10 @@ if __name__ == "__main__":
 
     mw.setCentralWidget(frame)
     mw.show()
+
+
+if __name__ == "__main__":
+    LOGGER.setLevel(logging.DEBUG)
+    app = QtGui.QApplication([])
+    _test()
     app.exec_()

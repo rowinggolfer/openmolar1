@@ -41,7 +41,8 @@ from openmolar.qt4gui.appointment_gui_modules.list_models \
     import SimpleListModel, BlockListModel, ColouredItemDelegate
 
 from openmolar.qt4gui.dialogs.find_patient_dialog import FindPatientDialog
-from openmolar.qt4gui.dialogs.appt_settings_dialog import ApptSettingsDialog
+from openmolar.qt4gui.dialogs.appt_settings_dialog import \
+    ApptSettingsDialog, ApptSettingsResetDialog
 
 from openmolar.qt4gui.pt_diary_widget import PtDiaryWidget
 
@@ -84,8 +85,6 @@ class DiaryScheduleController(QtGui.QStackedWidget):
     _chosen_slot = None
 
     finding_joint_appointments = False
-
-    pt_diary_widget = None
 
     def __init__(self, parent=None):
         QtGui.QStackedWidget.__init__(self, parent)
@@ -207,6 +206,8 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         if mode == self.SCHEDULE_MODE:
             self.update_patient_label()
             self.enable_scheduling_buttons()
+        else:
+            self.clear_slots()
 
         self.mode = mode
         self.setCurrentIndex(mode)
@@ -381,16 +382,18 @@ class DiaryScheduleController(QtGui.QStackedWidget):
     def sizeHint(self):
         return QtCore.QSize(180, 400)
 
-    def update_appt_selection(self, appt):
+    def update_appt_selection(self, appts):
         '''
         sync with the "patient diary" via signal/slot
         '''
-        if appt is None or self.pt is None:
+        LOGGER.debug(
+            "updating schedule controller appointments, appts='%s'", appts)
+        if self.pt is None:
             return
-        if appt.serialno != self.pt.serialno:
-            return
-        index = self.appointment_model.set_current_appt(appt)
-        self.appt_listView.setCurrentIndex(index)
+        for appt in appts:
+            if appt.serialno != self.pt.serialno:
+                return
+        self.appointment_model.set_selected_appointments(appts)
 
     def update_selected_appointment(self, appt):
         self.primary_slots = []
@@ -497,6 +500,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
                 self.primary_slots.append(slot)
 
     def set_secondary_slots(self, slots):
+        LOGGER.debug("filtering secondary slots %s", slots)
         self.secondary_slots = []
         for slot in sorted(slots):
             slot.is_primary = False
@@ -505,27 +509,23 @@ class DiaryScheduleController(QtGui.QStackedWidget):
                 self.secondary_slots.append(slot)
 
     def set_slots_from_day_app_data(self, app_data):
-        app1_slots = []
-        if self.app1_is_scheduled:
-            app1_slots = []
-            #  app1_slots = [self.appointment_model.currentAppt.to_freeslot()]
-        else:
-            app1_slots = app_data.slots(self.app1_length,
-                                        self.ignore_emergency_spaces)
-        self.set_primary_slots(app1_slots)
-
+        self.set_primary_slots([] if self.app1_is_scheduled else
+                               app_data.slots(self.app1_length,
+                                              self.ignore_emergency_spaces))
         app2_slots = []
         if self.is_searching_for_double_appointments and \
                 not self.app2_is_scheduled:
-            if self.app1_is_scheduled:  # add to app_data to split any slots
-                app_data.insert_double_block(
-                    self.appointment_model.currentAppt)
             self.set_secondary_slots(
                 app_data.slots(self.app2_length,
-                               self.ignore_emergency_spaces)
+                               self.ignore_emergency_spaces,
+                               busy_serialno=self.pt.serialno)
             )
             app1_slots = set([])
-            for app1_slot in self.primary_slots:
+            if self.app1_is_scheduled:
+                iterset = [self.appointment_model.currentAppt.to_freeslot()]
+            else:
+                iterset = self.primary_slots
+            for app1_slot in iterset:
                 for app2_slot in self.secondary_slots:
                     wait = app1_slot.wait_time(self.app1_length,
                                                self.app2_length,
@@ -551,7 +551,8 @@ class DiaryScheduleController(QtGui.QStackedWidget):
             startday.toPyDate(),
             sunday.toPyDate(),
             self.appt1_clinicians,
-            self.ignore_emergency_spaces)
+            busy_serialno=self.pt.serialno,
+            override_emergencies=self.ignore_emergency_spaces)
 
         if self.app1_is_scheduled:
             self.set_primary_slots([])
@@ -566,14 +567,18 @@ class DiaryScheduleController(QtGui.QStackedWidget):
                 startday.toPyDate(),
                 sunday.toPyDate(),
                 self.appt2_clinicians,
-                self.ignore_emergency_spaces
-            )
+                busy_serialno=self.pt.serialno,
+                override_emergencies=self.ignore_emergency_spaces)
             self.set_secondary_slots(
                 appointments.getLengthySlots(all_slots,
                                              self.app2_length)
             )
             app1_slots = set([])
-            for app1_slot in self.primary_slots:
+            if self.app1_is_scheduled:
+                iterset = [self.appointment_model.currentAppt.to_freeslot()]
+            else:
+                iterset = self.primary_slots
+            for app1_slot in iterset:
                 for app2_slot in self.secondary_slots:
                     wait = app1_slot.wait_time(self.app1_length,
                                                self.app2_length,
@@ -588,7 +593,6 @@ class DiaryScheduleController(QtGui.QStackedWidget):
 
     @property
     def chosen_2nd_slots(self):
-        #  LOGGER.debug("LOOKING FOR 2nd SLOT")
         if not (self.appointment_model.currentAppt is None or
                 self.appointment_model.secondaryAppt is None):
             for app2_slot in self.secondary_slots:
@@ -597,6 +601,8 @@ class DiaryScheduleController(QtGui.QStackedWidget):
                                                   app2_slot)
                 if wait is not None and wait <= MAX_WAIT:
                     yield app2_slot
+        else:
+            LOGGER.debug("no appointments selected")
 
     @property
     def last_appt_date(self):
@@ -653,6 +659,27 @@ class DiaryScheduleController(QtGui.QStackedWidget):
                 self._chosen_slot = self.primary_slots[0]
         return self._chosen_slot
 
+    def set_chosen_slot(self, slot):
+        self._chosen_slot = slot
+
+    def set_chosen_2nd_slot(self, slot):
+        '''
+        user has clicked on a secondary slot - we need to switch the
+        appointments over!
+        '''
+        LOGGER.debug("set_chosen_2nd_slot %s", slot)
+        model = self.appointment_model.selection_model
+        selection = model.selection()
+        selection.swap(0, 1)
+        model.select(selection, model.ClearAndSelect)
+        self.selection_changed(
+            self.appointment_model.selection_model.selection())
+        self.appointment_model.selection_model.emitSelectionChanged(
+            selection, QtGui.QItemSelection())
+        slot.is_primary = True
+        self.set_chosen_slot(slot)
+        self.chosen_slot_changed.emit()
+
     @property
     def excluded_days(self):
         return ApptSettingsDialog.excluded_days
@@ -669,6 +696,10 @@ class DiaryScheduleController(QtGui.QStackedWidget):
 
         def _start_scheduling():
             dl.accept()
+            self.get_data()
+            self.appointment_model.selection_model.reset()
+            appts = pt_diary_widget.selected_appointments
+            self.update_appt_selection(appts)
             QtCore.QTimer.singleShot(100, self.start_scheduling.emit)
 
         pt_diary_widget = PtDiaryWidget()
@@ -676,7 +707,6 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         pt_diary_widget.start_scheduling.connect(_start_scheduling)
 
         pt_diary_widget.set_patient(self.pt)
-        pt_diary_widget.layout_ptDiary()
 
         dl = QtGui.QDialog(self)
         but_box = QtGui.QDialogButtonBox(dl)
@@ -692,9 +722,6 @@ class DiaryScheduleController(QtGui.QStackedWidget):
 
         self.appointment_model.load_from_database(self.pt)
         self.enable_scheduling_buttons()
-
-        # now force diary relayout
-        self.appointment_selected.emit(self.appointment_model.currentAppt)
 
     def enable_scheduling_buttons(self):
         enabled = self.is_searching
@@ -713,6 +740,15 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         '''
         self.set_mode(self.SCHEDULE_MODE)
         self.enable_scheduling_buttons()
+        LOGGER.debug("checking appointment settings %s",
+                     ApptSettingsDialog.is_default_settings())
+        if not ApptSettingsDialog.is_default_settings():
+            dl = ApptSettingsResetDialog(self)
+            if dl.exec_():
+                if dl.show_settings_dialog:
+                    self.show_settings_dialog()
+                else:
+                    ApptSettingsDialog.reset()
 
     def check_schedule_status(self, automatic):
         '''
@@ -947,8 +983,6 @@ class TestWindow(QtGui.QMainWindow):
 
 
 if __name__ == "__main__":
-    import gettext
-    gettext.install("openmolar")
 
     LOGGER.setLevel(logging.DEBUG)
     localsettings.initiate()

@@ -32,7 +32,8 @@ from openmolar.settings import localsettings
 from openmolar.dbtools import appointments
 from openmolar.dbtools.brief_patient import BriefPatient
 
-from openmolar.qt4gui.appointment_gui_modules import pt_diary_treemodel
+from openmolar.qt4gui.appointment_gui_modules.pt_diary_treemodel \
+    import PatientDiaryTreeModel, ColouredItemDelegate
 
 from openmolar.qt4gui.compiled_uis import Ui_patient_diary
 from openmolar.qt4gui.compiled_uis import Ui_specify_appointment
@@ -40,6 +41,7 @@ from openmolar.qt4gui.compiled_uis import Ui_appointment_length
 
 from openmolar.qt4gui.dialogs import appt_wizard_dialog
 from openmolar.qt4gui.dialogs import appointment_card_dialog
+from openmolar.qt4gui.dialogs.dialog_collection import CancelAppointmentDialog
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -49,7 +51,6 @@ class PtDiaryWidget(QtGui.QWidget):
 
     start_scheduling = QtCore.pyqtSignal()
     find_appt = QtCore.pyqtSignal(object)
-    appointment_selected = QtCore.pyqtSignal(object)
     # also inherits a signal from the model "appointments_changed_signal"
 
     def __init__(self, parent=None):
@@ -57,10 +58,17 @@ class PtDiaryWidget(QtGui.QWidget):
         self.om_gui = parent
         self.ui = Ui_patient_diary.Ui_Form()
         self.ui.setupUi(self)
-        self.diary_model = pt_diary_treemodel.treeModel(self)
+        self.diary_model = PatientDiaryTreeModel(self)
+        self.ui.pt_diary_treeView.setAlternatingRowColors(True)
         self.ui.pt_diary_treeView.setModel(self.diary_model)
         self.ui.pt_diary_treeView.setContextMenuPolicy(
             QtCore.Qt.CustomContextMenu)
+        self.ui.pt_diary_treeView.setSelectionMode(
+            QtGui.QTreeView.ContiguousSelection)
+        self.ui.pt_diary_treeView.setSelectionModel(
+            self.diary_model.selection_model)
+        item_delegate = ColouredItemDelegate(self)
+        self.ui.pt_diary_treeView.setItemDelegate(item_delegate)
         self.signals()
         self.setSizePolicy(
             QtGui.QSizePolicy(
@@ -71,6 +79,10 @@ class PtDiaryWidget(QtGui.QWidget):
 
     def sizeHint(self):
         return QtCore.QSize(800, 200)
+
+    def showEvent(self, event):
+        LOGGER.debug("pt diary show event")
+        self.layout_ptDiary()
 
     def set_patient(self, patient):
         self._pt = patient
@@ -83,54 +95,37 @@ class PtDiaryWidget(QtGui.QWidget):
         try:
             self.om_gui.advise(*args)
         except AttributeError:
-            print args
+            LOGGER.info("unable to send message %s", args)
 
     def clear(self):
+        self.diary_model.selection_model.clear()
         self.diary_model.clear()
         self.ui.appt_memo_lineEdit.setText("")
-
-    def update_pt_diary_selection(self, appt):
-        '''
-        the drag model selected appointment has changed... pass this on
-        '''
-        if self.pt is None or appt is None:
-            return
-        if appt.serialno != self.pt.serialno:
-            return
-        self.diary_model.setSelectedAppt(appt)
-        aprix = 0 if appt is None else appt.aprix
-        self.select_apr_ix(aprix)
 
     def refresh_ptDiary(self, serialno):
         if self.pt and serialno == self.pt.serialno:
             self.layout_ptDiary()
 
+    @property
+    def selected_appointments(self):
+        return tuple(self.diary_model.selected_appointments)
+
     def layout_ptDiary(self):
         '''
         populates the patient's diary model
         '''
-        LOGGER.debug("layout patient diary")
-        self.ui.appt_memo_lineEdit.setText(self.pt.appt_memo)
+        if self.pt is None or self.pt.serialno == 0:
+            self.clear()
+        else:
+            LOGGER.debug("layout patient diary")
+            self.ui.appt_memo_lineEdit.setText(self.pt.appt_memo)
 
-        appts = appointments.get_pts_appts(self.pt)
-        LOGGER.debug(appts)
-        self.diary_model.addAppointments(appts)
-        self.ui.pt_diary_treeView.clearSelection()
-        self.ui.pt_diary_treeView.expandAll()
-        index = self.diary_model.parents.get(1, None)
-
-        # collapse past appointments
-        past_index = self.diary_model.createIndex(0, 0, index)
-        self.ui.pt_diary_treeView.collapse(past_index)
-
-        appt = self.diary_model.selectedAppt
-        if appt is not None:
-            self.select_apr_ix(appt.aprix)
-
-        self.adjustDiaryColWidths()
-
-        # now emit a signal to update the drag/drop controller
-        self.appointment_selected.emit(appt)
+            appts = appointments.get_pts_appts(self.pt)
+            LOGGER.debug("%s appointments found from apr table", len(appts))
+            self.diary_model.addAppointments(appts)
+            LOGGER.debug("appointments added to model")
+            self.adjustDiaryColWidths()
+            LOGGER.debug("layout_ptDiary concluded")
 
     def select_apr_ix(self, apr_ix):
         '''
@@ -139,26 +134,32 @@ class PtDiaryWidget(QtGui.QWidget):
         result, index = self.diary_model.findItem(apr_ix)
 
         if result:
+            LOGGER.debug(
+                "selecting new appointment with database index %s", apr_ix)
             self.ptDiary_selection(index)
         else:
             self.ptDiary_selection(None)
 
     def ptDiary_selection(self, index):
+        '''
+        forces selection of the given model index
+        '''
         if index is None:
-            appt = None
+            LOGGER.debug("clearing pt_diary_selection")
             self.ui.pt_diary_treeView.clearSelection()
         else:
+            LOGGER.debug(
+                "selecting new appointment with model index %s", index)
             self.ui.pt_diary_treeView.setCurrentIndex(index)
-            appt = self.diary_model.data(index, QtCore.Qt.UserRole)
 
-        self.diary_model.setSelectedAppt(appt)
-
-    def treeview_expanded(self, arg):
+    def treeview_expanded(self, index):
         '''
         user has expanded an item in the patient's diary.
         this will resize columns (if necessary)
         '''
-        self.adjustDiaryColWidths()
+        LOGGER.debug("treeview expanded %s %s", index, index.parent())
+        if index.parent() == QtCore.QModelIndex():
+            self.adjustDiaryColWidths()
 
     def adjustDiaryColWidths(self):
         '''
@@ -166,26 +167,6 @@ class PtDiaryWidget(QtGui.QWidget):
         '''
         for col in range(self.diary_model.columnCount()):
             self.ui.pt_diary_treeView.resizeColumnToContents(col)
-
-    def treeview_clicked(self, index):
-        '''
-        user has selected an appointment in the patient's diary
-        '''
-        if index is None:
-            appt = None
-            self.ui.pt_diary_treeView.clearSelection()
-        else:
-            appt = self.ui.pt_diary_treeView.model().data(index,
-                                                          QtCore.Qt.UserRole)
-            self.ui.pt_diary_treeView.setCurrentIndex(index)
-
-        LOGGER.debug("treeview_clicked, appt = %s", appt)
-        self.diary_model.setSelectedAppt(appt)
-
-        # pass on a signal to synchronise other widgets if necessary
-        self.appointment_selected.emit(appt)
-        if appt:
-            self.show_appt_options(appt)
 
     def oddApptLength(self):
         '''
@@ -358,61 +339,11 @@ class PtDiaryWidget(QtGui.QWidget):
         '''
         user is deleting an appointment
         '''
-        def delete_appt():
-            if appointments.delete_appt_from_apr(appt):
-                self.advise(_("Successfully removed appointment"))
-            else:
-                self.advise(_("Error removing proposed appointment"), 2)
-
-        appt = self.diary_model.selectedAppt
-
-        if appt is None:
-            self.advise(_("No appointment selected"))
-            return
-
-        if appt.date is None:
-            if QtGui.QMessageBox.question(
-                    self, _("Confirm"), _("Delete Unscheduled Appointment?"),
-                    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                    QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
-                delete_appt()
-
-        elif appt.past:
-            delete_appt()
-
-        else:
-            message = _("Confirm Delete appointment at")
-            message += " %s %s " % (appt.atime,
-                                    localsettings.readableDate(appt.date))
-
-            message += _("with") + " %s?" % appt.dent_inits
-
-            if QtGui.QMessageBox.question(
-                    self, _("Confirm"), message,
-                    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                    QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
-
-                if appointments.delete_appt_from_aslot(appt):
-                    # todo - if we deleted from the appt book,
-                    # we should add to notes
-                    print "future appointment deleted - add to notes!!"
-
-                    appointments.made_appt_to_proposed(appt)
-                    self.layout_ptDiary()
-
-                # -keep in the patient's diary?
-
-                if QtGui.QMessageBox.question(
-                        self, _("Question"),
-                        _("Removed from appointment book - "
-                          "keep for rescheduling?"),
-                        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                        QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
-                    # remove from the patients diary
-                    if appointments.delete_appt_from_apr(appt):
-                        self.advise(_("Successfully removed appointment"))
-                    else:
-                        self.advise(_("Error removing from patient diary"), 2)
+        for appt in self.selected_appointments:
+            if appt is not None:
+                dl = CancelAppointmentDialog(appt, self)
+                if dl.exec_():
+                    self.advise(dl.message, dl.message_severity)
 
         self.layout_ptDiary()
 
@@ -460,10 +391,10 @@ class PtDiaryWidget(QtGui.QWidget):
                     dl.apptlength_comboBox.currentIndexChanged.connect(
                         oddLength)
 
-        if self.diary_model.selectedAppt is None:
+        if self.diary_model.appt_1 is None:
             self.advise(_("No appointment selected"), 1)
         else:
-            appt = self.diary_model.selectedAppt
+            appt = self.diary_model.appt_1
             Dialog = QtGui.QDialog(self)
             dl = Ui_specify_appointment.Ui_Dialog()
             dl.setupUi(Dialog)
@@ -549,8 +480,11 @@ class PtDiaryWidget(QtGui.QWidget):
         an appointment in the patient's diary is being searched for by the user
         goes to the main appointment page for that day
         '''
-        appt = self.diary_model.selectedAppt
-        self.find_appt.emit(appt)
+        if self.diary_model.appt_1 is None:
+            self.advise(_("No appointment selected"), 1)
+        else:
+            appt = self.diary_model.appt_1
+            self.find_appt.emit(appt)
 
     def printApptCard_clicked(self):
         '''
@@ -563,45 +497,55 @@ class PtDiaryWidget(QtGui.QWidget):
     def memo_edited(self):
         self.pt.set_appt_memo(unicode(self.ui.appt_memo_lineEdit.text()))
 
-    def show_appt_options(self, appt):
-        print "show options for ", appt
+    def pt_diary_treeview_doubleclicked(self, index):
+        LOGGER.debug("pt diary double clicked %s", index)
+        point = self.ui.pt_diary_treeView.mapFromGlobal(self.cursor().pos())
+        self.execute_menu(index, point)
 
     def show_context_menu(self, point):
         LOGGER.debug("pt_diary - show context menu at point %s", point)
         index = self.ui.pt_diary_treeView.indexAt(point)
-        self.treeview_clicked(index)
-        appt = self.diary_model.selectedAppt
-        if appt is None:
+        self.execute_menu(index, point)
+
+    def execute_menu(self, index, point):
+        appt = self.diary_model.data(index, QtCore.Qt.UserRole)
+        if appt == QtCore.QVariant():
             return
         qmenu = QtGui.QMenu(self)
-        if appt.date is None:
-            action = QtGui.QAction(_("Schedule this appointment"), self)
+        modify_action = QtGui.QAction(_("Modify Appointment"), self)
+        modify_action.triggered.connect(self.modifyAppt_clicked)
+        if self.diary_model.appt_2 is not None:
+            action = QtGui.QAction(_("Schedule these appointments"), self)
             action.triggered.connect(self.scheduleAppt_pushButton_clicked)
             qmenu.addAction(action)
-            qmenu.addSeparator()
-            action = QtGui.QAction(
-                _("Delete this (unscheduled) appointment"), self)
-            action.triggered.connect(self.clearApptButton_clicked)
-            qmenu.addAction(action)
         else:
-            if appt.date >= localsettings.currentDay():
-                action = QtGui.QAction(_("Cancel this appointment"), self)
+            if appt.date is None:
+                action = QtGui.QAction(_("Schedule this appointment"), self)
+                action.triggered.connect(self.scheduleAppt_pushButton_clicked)
+                qmenu.addAction(action)
+                qmenu.addAction(modify_action)
+                qmenu.addSeparator()
+                action = QtGui.QAction(
+                    _("Delete this (unscheduled) appointment"), self)
                 action.triggered.connect(self.clearApptButton_clicked)
                 qmenu.addAction(action)
+            else:
+                action = QtGui.QAction(_("Show in Book"), self)
+                action.triggered.connect(self.findApptButton_clicked)
+                qmenu.addAction(action)
                 qmenu.addSeparator()
-            action = QtGui.QAction(_("Show in Book"), self)
-            action.triggered.connect(self.findApptButton_clicked)
-            qmenu.addAction(action)
-        action = QtGui.QAction(_("Modify Appointment"), self)
-        action.triggered.connect(self.modifyAppt_clicked)
-        qmenu.addAction(action)
+                if appt.date >= localsettings.currentDay():
+                    qmenu.addAction(modify_action)
+                    action = QtGui.QAction(_("Cancel this appointment"), self)
+                    action.triggered.connect(self.clearApptButton_clicked)
+                    qmenu.addAction(action)
 
         qmenu.setDefaultAction(qmenu.actions()[0])
         qmenu.exec_(self.ui.pt_diary_treeView.mapToGlobal(point))
 
     def signals(self):
         self.ui.pt_diary_treeView.expanded.connect(self.treeview_expanded)
-        self.ui.pt_diary_treeView.clicked.connect(self.treeview_clicked)
+        self.ui.pt_diary_treeView.collapsed.connect(self.treeview_expanded)
         self.ui.apptWizard_pushButton.clicked.connect(
             self.apptWizard_pushButton_clicked)
         self.ui.newAppt_pushButton.clicked.connect(
@@ -611,30 +555,56 @@ class PtDiaryWidget(QtGui.QWidget):
         self.ui.appt_memo_lineEdit.editingFinished.connect(self.memo_edited)
         self.ui.pt_diary_treeView.customContextMenuRequested.connect(
             self.show_context_menu)
+        self.ui.pt_diary_treeView.doubleClicked.connect(
+            self.pt_diary_treeview_doubleclicked)
+
+class _TestMainWindow(QtGui.QMainWindow):
+    def __init__(self, parent=None):
+        QtGui.QMainWindow.__init__(self, parent)
+
+        self.dw = PtDiaryWidget(self)
+        self.browser = QtGui.QTextBrowser()
+
+        pt = BriefPatient(1)
+        self.dw.set_patient(pt)
+        self.dw.layout_ptDiary()
+
+        self.dw.start_scheduling.connect(self.start_scheduling)
+        self.dw.ui.pt_diary_treeView.clicked.connect(self.selection_changed)
+        self.dw.find_appt.connect(self.find_appt)
+
+        frame = QtGui.QFrame()
+        layout = QtGui.QVBoxLayout(frame)
+        layout.addWidget(self.dw)
+        layout.addWidget(self.browser)
+        self.setCentralWidget(frame)
+
+    def sizeHint(self):
+        return QtCore.QSize(800, 400)
+
+    def start_scheduling(self):
+        html = '''<h1>Start Scheduling</h1>
+            <ul><li>%s</li></ul>
+            ''' % '</li><li>'.join(
+                [str(s) for s in self.dw.selected_appointments])
+        self.browser.setHtml(html)
+
+    def selection_changed(self):
+        html = '''<ul><li>%s</li></ul>Reversed = %s''' % (
+            '</li><li>'.join([str(s) for s in self.dw.selected_appointments]),
+            self.dw.diary_model.selection_model.is_reversed)
+        self.browser.setHtml(html)
+
+    def find_appt(self, appt):
+        html = '<h1>Find Appointment</h1>' % appt
+        self.browser.setHtml(html)
 
 
 if __name__ == "__main__":
-    import gettext
-
-    def sig_catcher(*args):
-        print "start scheduling", args
-
-    def sig_catcher2(appt):
-        print "find appointment", appt
-
-    gettext.install("openmolar")
 
     localsettings.initiate()
-
     LOGGER.setLevel(logging.DEBUG)
     app = QtGui.QApplication([])
-    dw = PtDiaryWidget()
-    pt = BriefPatient(1)
-    dw.set_patient(pt)
-    dw.layout_ptDiary()
-    dw.show()
-
-    dw.start_scheduling.connect(sig_catcher)
-    dw.find_appt.connect(sig_catcher2)
-
+    mw = _TestMainWindow()
+    mw.show()
     app.exec_()

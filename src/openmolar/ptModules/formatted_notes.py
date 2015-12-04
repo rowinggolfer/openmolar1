@@ -1,30 +1,32 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 This module replaces notes.py with schema version 1.9
 '''
+
+from gettext import gettext as _
 
 import logging
 import re
@@ -58,7 +60,7 @@ HEADER = '''<html>
 <link rel="stylesheet" href="%s" type="text/css">
 </head>
 <body>
-<!HEADER>''' % localsettings.stylesheet
+<!-- HEADER -->''' % localsettings.stylesheet
 
 
 def get_notes_dict(serialno, today_only=False):
@@ -106,7 +108,7 @@ def get_notes_for_date(lines, full_notes=False):
                 rev_txs.append((ntype, noteline))
             elif ntype == "UPDATED:Medical Notes":
                 mh_message = (_("MED"), noteline.strip("\n"))
-                if not mh_message in txs:
+                if mh_message not in txs:
                     txs.insert(0, mh_message)
             elif full_notes:
                 if "RECEIVED" in ntype:
@@ -144,24 +146,25 @@ def get_rec_summary(op, lines):
     '''
     this is the reception summary (what has been charged and/or printed)
     '''
-    note = ""
+    note_list = []
     for ntype, noteline in lines:
         LOGGER.debug("%s %s", ntype, noteline)
         if "PRINTED" in ntype:
-            note += '<img src=%s height="12" align="right"> %s<br />' % (
-                localsettings.printer_png, noteline)
+            note_list.append('  <img src=%s height="12" align="right"> %s' % (
+                localsettings.printer_png, noteline))
         elif "UPDATED" in ntype:
-            note += '<img src=%s height="12" align="right"> %s<br />' % (
-                localsettings.medical_png, noteline)
+            note_list.append('  <img src=%s height="12" align="right"> %s' % (
+                localsettings.medical_png, noteline))
         elif "RECEIVED:" in ntype:
             noteline = noteline.replace("sundries 0.00", "")
             noteline = noteline.replace("treatment 0.00", "")
-            note += '<img src=%s height="12" align="right"> %s<br />' % (
-                localsettings.money_png, noteline)
-        elif "REC" in op and ntype=="newNOTE":
-            note += '<em>%s</em>' % (
-            noteline.replace("<", "&lt;").replace(">", "&gt>"))
-    return s_t_l(note)
+            note_list.append('  <img src=%s height="12" align="right"> %s' % (
+                localsettings.money_png, noteline))
+        elif "REC" in op and ntype == "newNOTE":
+            note_text = noteline.replace("<", "&lt;").replace(">", "&gt>")
+            if note_text.strip(" \n\r"):
+                note_list.append('<em>%s</em>' % note_text)
+    return "  <br />\n".join(note_list)
 
 
 def rec_notes(notes_dict, startdate=None):
@@ -170,9 +173,9 @@ def rec_notes(notes_dict, startdate=None):
     reception notes panel (ie. vertical)
     '''
 
-    retarg = HEADER + '<table border="1">'
+    retarg = HEADER
     if startdate:
-        retarg += "<h4>%s</h4>" % _("Course Activity")
+        retarg += "<h4>%s</h4>\n" % _("Course Activity")
 
     keys = notes_dict.keys()
     # keys.sort()
@@ -183,10 +186,10 @@ def rec_notes(notes_dict, startdate=None):
             lines = notes_dict[key]
             note = get_rec_summary(op, lines)
             if note:
-                retarg += '<tr><td>%s</td><td>%s</td></tr>' % (
+                retarg += '<p>\n  &nbsp;&nbsp;%s\n  <br />\n%s</p>\n' % (
                     localsettings.formatDate(date), note)
 
-    retarg += '</table></body></html>'
+    retarg += '</body>\n</html>'
 
     return retarg
 
@@ -271,10 +274,11 @@ def todays_notes(serialno):
 
     name = db_patients.name(serialno)
     header = "<h3>%s %s</h3>" % (_("Todays notes for"), name)
-    html = html.replace("<!HEADER>", header)
+    html = html.replace("<!-- HEADER -->", header)
     html = html.replace("||SNO||", str(serialno))
 
     return html
+
 
 if __name__ == "__main__":
     import datetime
@@ -283,10 +287,10 @@ if __name__ == "__main__":
     try:
         serialno = int(sys.argv[len(sys.argv) - 1])
     except:
-        serialno = 1
+        serialno = 303  # 1
 
     notes_ = notes(patient_class.patient(serialno).notes_dict)
     print notes_.encode("ascii", "replace")
-    notes = rec_notes(
-        patient_class.patient(serialno).notes_dict, datetime.date(2010,1,1))
+    notes_ = rec_notes(
+        patient_class.patient(serialno).notes_dict, datetime.date(2015, 10, 1))
     print notes_.encode("ascii", "replace")

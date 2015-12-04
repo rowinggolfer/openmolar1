@@ -69,6 +69,7 @@ from openmolar.qt4gui.dialogs.correspondence_dialog import CorrespondenceDialog
 from openmolar.qt4gui.dialogs.edit_standard_letters_dialog import EditStandardLettersDialog
 from openmolar.qt4gui.dialogs.medical_form_checked_dialog import MedFormCheckDialog
 from openmolar.qt4gui.dialogs.appt_prefs_dialog import ApptPrefsDialog
+from openmolar.qt4gui.dialogs.cancel_appointment_dialog import CancelAppointmentDialog
 
 __all__ = ['AccountSeverityDialog',
            'AddClinicianDialog',
@@ -80,6 +81,7 @@ __all__ = ['AccountSeverityDialog',
            'AssistantSelectDialog',
            'AutoAddressDialog',
            'BPE_Dialog',
+           'CancelAppointmentDialog',
            'ChildSmileDialog',
            'ChooseToothDialog',
            'ClinicianSelectDialog',

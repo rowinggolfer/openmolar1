@@ -30,7 +30,7 @@ the canvas is a subclass of this
 from __future__ import division
 
 import datetime
-import functools  # for partial
+from functools import partial
 from gettext import gettext as _
 import pickle
 
@@ -54,6 +54,7 @@ BLUE_PEN = QtGui.QPen(QtCore.Qt.blue, 2)
 CENTRE_OPTION = QtGui.QTextOption(QtCore.Qt.AlignCenter)
 CENTRE_OPTION.setWrapMode(QtGui.QTextOption.WordWrap)
 
+
 class AppointmentWidget(QtGui.QFrame):
 
     '''
@@ -70,9 +71,13 @@ class AppointmentWidget(QtGui.QFrame):
     mode = None
 
     # signal has dent, time, length
-    slotClicked = QtCore.pyqtSignal(object, object, object, object)
+    slot_clicked_signal = QtCore.pyqtSignal(object)
     print_mh_signal = QtCore.pyqtSignal(object)
     mh_form_date_signal = QtCore.pyqtSignal(object)
+    new_memo_signal = QtCore.pyqtSignal(object, object)
+    block_empty_slot_signal = QtCore.pyqtSignal(object)
+    cancel_appointment_signal = QtCore.pyqtSignal(object, object, object)
+    clear_slot_signal = QtCore.pyqtSignal(object, object, object)
 
     def __init__(self, sTime, fTime, om_gui):
         QtGui.QFrame.__init__(self, om_gui)
@@ -233,8 +238,10 @@ class AppointmentWidget(QtGui.QFrame):
         gui can handle it
         '''
         if not self.memo_lineEdit.hasFocus():
-            self.emit(QtCore.SIGNAL("new_memo"),
-                (self.dentist, str(self.memo_lineEdit.text().toAscii())))
+            self.new_memo_signal.emit(
+                self.dentist,
+                unicode(self.memo_lineEdit.text().toUtf8(), "utf8", "ignore")
+            )
 
     def signals(self):
         '''
@@ -285,19 +292,13 @@ class AppointmentWidget(QtGui.QFrame):
             else:
                 self.canvas.rows[row] = [app.serialno]
 
-    def addSlot(self, slot, primary=True):
+    def addSlot(self, slot):
         '''
         adds a slot to the widget's data
         '''
         if slot.dent != self.apptix:
             return
-
-        startcell = self.canvas.getCell_from_mpm(slot.mpm)
-        endcell = self.canvas.getCell_from_mpm(slot.mpm_end)
-        if primary:
-            self.canvas.freeslots.append((startcell, endcell, True))
-        else:
-            self.canvas.freeslots.append((startcell, endcell, False))
+        self.canvas.freeslots.append(slot)
 
     def set_active_slot(self, slot):
         '''
@@ -323,6 +324,9 @@ class AppointmentWidget(QtGui.QFrame):
     def scroll_bar_off(self):
         policy = QtCore.Qt.ScrollBarAlwaysOff
         self.scrollArea.setVerticalScrollBarPolicy(policy)
+
+    def cancel_appt(self, snos, time, apptix):
+        self.cancel_appointment_signal.emit(snos, time, apptix)
 
 
 class BlinkTimer(QtCore.QTimer):
@@ -552,25 +556,26 @@ class AppointmentCanvas(QtGui.QWidget):
         this is complicated because the same patient may have 2 appointments
         on one day
         '''
-        bounds = {1: row, -1: row}
-        row_list = sorted(self.rows)[:]
+        row_list = sorted(self.rows.keys())[:]
+        start_row, end_row = row, row
 
-        for direction in (1, -1):
-            pos = row_list.index(row)
-            pts = patients
+        chk_row = row
+        while chk_row >= row_list[0]:
+            chk_row -= 1
+            if self.rows.get(chk_row) == patients:
+                start_row = chk_row
+            else:
+                break
 
-            while pts == patients:
-                if row_list[pos] < bounds[direction]:
-                    bounds[direction] = row_list[pos]
-                pos += direction
-                try:
-                    pts = self.rows[row_list[pos]]
-                except KeyError:
-                    break
-                except IndexError:
-                    break
+        chk_row = row
+        while chk_row <= row_list[-1]:
+            chk_row += 1
+            if self.rows.get(chk_row) == patients:
+                end_row = chk_row
+            else:
+                break
 
-        return (bounds[-1], bounds[1] + 1)
+        return (start_row, end_row+1)
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasFormat("application/x-appointment"):
@@ -642,7 +647,8 @@ class AppointmentCanvas(QtGui.QWidget):
     def mouse_over_freeslot(self, pos):
         self.mouse_freeslot = None
         for slot in self.freeslots:
-            startcell, endcell, is_1o = slot
+            startcell = self.getCell_from_mpm(slot.mpm)
+            endcell = self.getCell_from_mpm(slot.mpm_end)
             rect = QtCore.QRectF(
                 self.timeWidth,
                 startcell * self.slotHeight,
@@ -661,97 +667,88 @@ class AppointmentCanvas(QtGui.QWidget):
         if not (self.firstSlot - 1) < row < self.lastSlot:
             self.selected_rows = (0, 0)
             self.update()
-            QtGui.QToolTip.showText(event.globalPos(), "")
+            self.setToolTip("")
             return
 
         if self.mouse_over_freeslot(event.pos()):
-            startcell, endcell, is_1o = self.mouse_freeslot
-            feedback = '''
-            <html><div align="center">
+            startcell = self.getCell_from_mpm(self.mouse_freeslot.mpm)
+            endcell = self.getCell_from_mpm(self.mouse_freeslot.mpm_end)
+            feedback = '''<html><div align="center">
             <b>SLOT with %s</b><br />
             <b>%s</b><br />
             (%d mins)
-            </div></html>
-            ''' % (
+            </div>
+            </html>''' % (
                 self.pWidget.dentist,
                 self.getTime_from_Cell(startcell).strftime("%H:%M"),
                 (endcell - startcell) * self.slotDuration,
             )
-            x_pos = self.mapToGlobal(self.pos()).x()
-            pos = QtCore.QPoint(x_pos, event.globalPos().y())
-            QtGui.QToolTip.showText(pos, feedback)
+            self.setToolTip(feedback)
+            self.selected_rows = (startcell, endcell)
 
-        elif row in self.rows:
-            sno_list = self.rows[row]
-            self.selected_rows = self.getApptBounds(row, sno_list)
-            self.update()
-
-            feedback = "<html><body>"
-            for sno in sno_list:
-                for app in self.appts + self.doubleAppts:
-                    if app.serialno == sno:
-                        feedback += '''%s %s (%s)<br /><b>%s - %s</b>''' % (
-                            app.name, "&nbsp;" * 4, app.serialno,
-                            app.start, app.end)
-                        for val in (app.trt1, app.trt2, app.trt3):
-                            if val != "":
-                                feedback += '''
-                                <br /><font color="red">%s</font>''' % val
-                        if app.memo != "":
-                            feedback += "<br /><i>%s</i>" % app.memo
-                        try:
-                            datestamp = app.timestamp.date()
-                            moddate = localsettings.readableDate(datestamp)
-                            if datestamp == localsettings.currentDay():
-                                feedback += \
-                                    "<br /><i>%s %s %s %s</i><hr />" % (
-                                        _("Made"), moddate, _("at"),
-                                        localsettings.pyTimeToHumantime(
-                                            app.timestamp))
-                            else:
-                                feedback += "<br /><i>%s<br />%s</i><hr />" % (
-                                    _("Made on"), moddate)
-                        except AttributeError:
-                            feedback += "<hr />"
-                        if app.mh_form_check_date:
-                            feedback += "%s %s<br />" % (
-                                _("last mh form"),
-                                localsettings.formatDate(
-                                    app.mh_form_check_date)
-                            )
-                        if app.mh_form_required:
-                            feedback += "%s<hr />" % _("MH CHECK REQUIRED")
-
-            if feedback != "<html><body>":
-                feedback = "%s</body></html>" % (
-                    feedback[:feedback.rindex("r />") + 2])
-                x_pos = self.mapToGlobal(self.pos()).x()
-                pos = QtCore.QPoint(x_pos, event.globalPos().y())
-                QtGui.QToolTip.showText(pos, feedback)
-            else:
-                QtGui.QToolTip.showText(event.globalPos(), "")
-
-        else:
-            newSelection = (self.getPrev(row), self.getNext(row))
-            if self.selected_rows != newSelection:
-                self.selected_rows = newSelection
+        elif self.pWidget.mode == self.pWidget.BROWSING_MODE:
+            if row in self.rows:
+                sno_list = self.rows[row]
+                self.selected_rows = self.getApptBounds(row, sno_list)
                 self.update()
 
-                start = int(
-                    self.dayStartTime +
-                    self.selected_rows[
-                        0] *
-                    self.slotDuration)
-                finish = int(
-                    self.dayStartTime +
-                    self.selected_rows[
-                        1] *
-                    self.slotDuration)
+                feedback = "<html><body>"
+                for sno in sno_list:
+                    for app in self.appts + self.doubleAppts:
+                        if app.serialno == sno:
+                            feedback += '%s %s (%s)<br /><b>%s - %s</b>' % (
+                                app.name, "&nbsp;" * 4, app.serialno,
+                                app.start, app.end)
+                            for val in (app.trt1, app.trt2, app.trt3):
+                                if val != "":
+                                    feedback += '''<br />
+                                    <font color="red">%s</font>''' % val
+                            if app.memo != "":
+                                feedback += "<br /><i>%s</i>" % app.memo
+                            try:
+                                datestamp = app.timestamp.date()
+                                moddate = localsettings.readableDate(datestamp)
+                                if datestamp == localsettings.currentDay():
+                                    feedback += \
+                                        "<br /><i>%s %s %s %s</i><hr />" % (
+                                            _("Made"), moddate, _("at"),
+                                            localsettings.pyTimeToHumantime(
+                                                app.timestamp))
+                                else:
+                                    feedback += \
+                                        "<br /><i>%s<br />%s</i><hr />" % (
+                                            _("Made on"), moddate)
+                            except AttributeError:
+                                feedback += "<hr />"
+                            if app.mh_form_check_date:
+                                feedback += "%s %s<br />" % (
+                                    _("last mh form"),
+                                    localsettings.formatDate(
+                                        app.mh_form_check_date)
+                                )
+                            if app.mh_form_required:
+                                feedback += "%s<hr />" % _("MH CHECK REQUIRED")
 
-                x_pos = self.mapToGlobal(self.pos()).x()
-                pos = QtCore.QPoint(x_pos, event.globalPos().y())
-                QtGui.QToolTip.showText(pos,
-                                        "SLOT %s minutes" % (finish - start))
+                if feedback != "<html><body>":
+                    feedback = "%s</body></html>" % (
+                        feedback[:feedback.rindex("r />") + 2])
+                    self.setToolTip(feedback)
+                else:
+                    self.setToolTip("")
+            else:
+                newSelection = (self.getPrev(row), self.getNext(row))
+                if self.selected_rows != newSelection:
+                    self.selected_rows = newSelection
+                    self.update()
+
+                    start = int(
+                        self.dayStartTime +
+                        self.selected_rows[0] * self.slotDuration)
+                    finish = int(
+                        self.dayStartTime +
+                        self.selected_rows[1] * self.slotDuration)
+                    self.setToolTip("%s %s %s" % (_("SLOT"), finish - start,
+                                                  _("Minutes")))
 
     def mouseDoubleClickEvent(self, event):
         self.mousePressEvent(event)
@@ -774,11 +771,9 @@ class AppointmentCanvas(QtGui.QWidget):
                 self.pWidget.emit(QtCore.SIGNAL("EditAppointmentMemo"),
                                   tuple(sno_list), start, dent)
             elif result.text() == _("Cancel Appointment"):
-                self.pWidget.emit(QtCore.SIGNAL("AppointmentCancel"),
-                                  tuple(sno_list), start, dent)
+                self.pWidget.cancel_appt(tuple(sno_list), start, dent)
             elif result.text() == _("Clear Block"):
-                self.pWidget.emit(QtCore.SIGNAL("ClearEmergencySlot"),
-                                  (start, finish, dent))
+                self.pWidget.clear_slot_signal.emit(start, finish, dent)
             elif result.text() == _("Block or use this space"):
                 self.block_use_space(qstart, qfinish)
             elif result.text() == _("Print A Medical Form"):
@@ -792,7 +787,10 @@ class AppointmentCanvas(QtGui.QWidget):
         actions = []
 
         if self.mouse_over_freeslot(event.pos()):
-            self.send_slotclicked_signal()
+            self.pWidget.slot_clicked_signal.emit(self.mouse_freeslot)
+            return
+        elif self.selected_rows == (0, 0):
+            return
         elif row in self.rows:
             start = self.humanTime(int(
                 self.dayStartTime + self.selected_rows[0] * self.slotDuration))
@@ -818,7 +816,7 @@ class AppointmentCanvas(QtGui.QWidget):
             else:
                 actions.append(_("Clear Block"))
         else:
-            #-- no-one in the book...
+            # no-one in the book...
             qstart = self.qTime(int(
                 self.dayStartTime + self.selected_rows[0] * self.slotDuration))
             qfinish = self.qTime(int(
@@ -859,12 +857,9 @@ class AppointmentCanvas(QtGui.QWidget):
             if dl.block:
                 reason = str(
                     dl.comboBox.currentText().toAscii())[:30]
-
-                self.pWidget.emit(QtCore.SIGNAL("BlockEmptySlot"),
-                                 (start, finish, adjstart, adjfinish,
-                                  localsettings.apptix.get(
-                                  self.pWidget.dentist),
-                                  reason))
+                args = (start, finish, adjstart, adjfinish,
+                        localsettings.apptix.get(self.pWidget.dentist), reason)
+                self.pWidget.block_empty_slot_signal.emit(args)
             else:
                 reason = dl.reason_comboBox.currentText().toAscii()
                 self.pWidget.emit(
@@ -875,7 +870,7 @@ class AppointmentCanvas(QtGui.QWidget):
 
     def leaveEvent(self, event):
         self.mouse_down = False
-        self.selected_rows = [-1, -1]
+        self.selected_rows = (0, 0)
         self.update()
 
     def paintEvent(self, event=None):
@@ -926,6 +921,7 @@ class AppointmentCanvas(QtGui.QWidget):
         painter.save()
         painter.setPen(BLACK_PEN)
 
+        selected_rect = None
         for app in self.appts:
             painter.save()
             rect = QtCore.QRectF(
@@ -938,8 +934,6 @@ class AppointmentCanvas(QtGui.QWidget):
             elif self.pWidget.mode == self.pWidget.SCHEDULING_MODE:
                 painter.setBrush(APPTCOLORS["BUSY"])
                 painter.setPen(GREY_PEN)
-            elif self.selected_rows == (app.startcell, app.endcell):
-                painter.setBrush(QtGui.QColor("#AAAAAA"))
             elif app.cset in APPTCOLORS:
                 painter.setBrush(APPTCOLORS[app.cset])
             elif app.name.upper() in APPTCOLORS:
@@ -994,6 +988,9 @@ class AppointmentCanvas(QtGui.QWidget):
                     painter.setPen(colours.APPT_MED_FORM)
                     painter.drawText(med_rect, "+", CENTRE_OPTION)
 
+            if self.selected_rows == (app.startcell, app.endcell):
+                selected_rect = rect
+
             painter.restore()
         painter.restore()
 
@@ -1011,9 +1008,12 @@ class AppointmentCanvas(QtGui.QWidget):
 
         painter.save()
         for slot in self.freeslots:
-            startcell, endcell, is_1o = slot  # is_1o means a primary slot
-
-            brush = APPTCOLORS["SLOT"] if is_1o else APPTCOLORS["SLOT2"]
+            startcell = self.getCell_from_mpm(slot.mpm)
+            endcell = self.getCell_from_mpm(slot.mpm_end)
+            if slot.is_primary:
+                brush = APPTCOLORS["SLOT"]
+            else:
+                brush = APPTCOLORS["SLOT2"]
             if (startcell, endcell) in self.active_slots:
                 painter.setPen(BIG_RED_PEN)
                 if self.blink_on:
@@ -1070,6 +1070,19 @@ class AppointmentCanvas(QtGui.QWidget):
             trect = QtCore.QRectF(0, y, self.timeWidth, y2 - y)
             painter.drawRect(trect)
             painter.drawText(trect, QtCore.Qt.AlignHCenter, droptime)
+        elif (selected_rect is None and
+              self.selected_rows != (0, 0) and
+              self.pWidget.mode == self.pWidget.BROWSING_MODE):
+            startcell, endcell = self.selected_rows
+            selected_rect = QtCore.QRectF(
+                self.timeWidth + 1,
+                startcell * self.slotHeight,
+                colwidth - 3,
+                (endcell - startcell) * self.slotHeight)
+        if selected_rect:
+            painter.setPen(QtGui.QPen(QtGui.QColor("red"), 3))
+            painter.setBrush(QtGui.QBrush(BGCOLOR))
+            painter.drawRect(selected_rect)
 
     def toggle_blink(self):
         if not self.pWidget.mode == self.pWidget.SCHEDULING_MODE:
@@ -1080,14 +1093,7 @@ class AppointmentCanvas(QtGui.QWidget):
     def ensure_visible(self, x, y):
         QtCore.QTimer.singleShot(
             5,
-            functools.partial(self.pWidget.scrollArea.ensureVisible, x, y))
-
-    def send_slotclicked_signal(self):
-        startcell, endcell, is_1o = self.mouse_freeslot
-        time = self.getTime_from_Cell(startcell)
-        length = (endcell - startcell) * self.slotDuration
-        dent = self.pWidget.apptix
-        self.pWidget.slotClicked.emit(dent, time, length, is_1o)
+            partial(self.pWidget.scrollArea.ensureVisible, x, y))
 
 
 if __name__ == "__main__":
@@ -1159,8 +1165,8 @@ if __name__ == "__main__":
     form.set_active_slot(slot)
 
     form.connect(form, QtCore.SIGNAL("AppointmentClicked"), clicktest)
-    form.connect(form, QtCore.SIGNAL("ClearEmergencySlot"), clicktest)
-    form.connect(form, QtCore.SIGNAL("BlockEmptySlot"), clicktest)
+    form.clear_slot_signal.connect(clicktest)
+    form.block_empty_slot_signal.connect(clicktest)
     form.connect(form, QtCore.SIGNAL("print_me"), clicktest)
     form.connect(form, QtCore.SIGNAL("Appointment_into_EmptySlot"), clicktest)
 

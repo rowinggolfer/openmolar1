@@ -70,7 +70,7 @@ class DoubleSelectionModel(QtGui.QItemSelectionModel):
         selection is either a QModelIndex, (handled normally),
         or a QItemSelection
         '''
-        if type(selection) == QtCore.QModelIndex:
+        if isinstance(selection, QtCore.QModelIndex):
             QtGui.QItemSelectionModel.select(self, selection, command)
             return
         if len(selection.indexes()) > 2:
@@ -92,6 +92,9 @@ class DoubleSelectionModel(QtGui.QItemSelectionModel):
             LOGGER.debug("swap required = %s", swap_required)
             if swap_required:
                 selection.swap(0, 1)
+            if app1.dent == app2.dent:
+                # joint appointments are dumb if dentist is the same!
+                selection.removeAt(1)
 
         # send via base class
         QtGui.QItemSelectionModel.select(self, selection, command)
@@ -197,8 +200,7 @@ class SimpleListModel(QtCore.QAbstractListModel):
 
     def set_appointments(self, appts, selected_apps):
         '''
-        add an appointments, and highlight the selectedAppt (which is the
-        highlighted one in the pt diary
+        add appointments, and highlight any selected ones.
         '''
 
         self.clear()
@@ -211,6 +213,13 @@ class SimpleListModel(QtCore.QAbstractListModel):
             else:
                 self.scheduledList.append(appt)
         self.reset()
+        self.set_selected_appointments(selected_apps)
+
+    def set_selected_appointments(self, selected_apps):
+        '''
+        programatically make a selection (to sync with other ways of selecting
+        an appointment, eg pt_diary)
+        '''
         selection = QtGui.QItemSelection()
         # for app in sorted(selected_apps,
         #                   key=lambda x: x.unscheduled, reverse=True):

@@ -92,6 +92,13 @@ class AppointmentOverviewWidget(QtGui.QWidget):
 
     active_slot = None
 
+    slot_clicked_signal = QtCore.pyqtSignal(object)
+    appt_dropped_signal = QtCore.pyqtSignal(object, object)
+    header_clicked_signal = QtCore.pyqtSignal(object, object)
+    cancel_appointment_signal = QtCore.pyqtSignal(
+        object, object, object, object)
+    clear_slot_signal = QtCore.pyqtSignal(object, object, object, object)
+
     def __init__(self, sTime, fTime, slotLength, textDetail, om_gui):
         '''
         useage is (day, startTime,finishTime,slotLength, textDetail, parent)
@@ -206,19 +213,24 @@ class AppointmentOverviewWidget(QtGui.QWidget):
         return QtCore.QSize(30, 200)
 
     def mouseMoveEvent(self, event):
-        col = 0
         columnCount = len(self.dents)
         if columnCount == 0:
             return  # nothing to do... and division by zero errors!
         columnWidth = (self.width() - self.timeOffset) / columnCount
-        for dent in self.dents:
-            leftx = self.timeOffset + (col) * columnWidth
+        rect = QtCore.QRectF(0, self.headingHeight, self.timeOffset,
+                             self.height() - self.headingHeight)
+        if rect.contains(event.pos()):    # mouse is over the time column
+            self.leaveEvent(event)
+            return
+        for col, dent in enumerate(self.dents):
+            leftx = self.timeOffset + col * columnWidth
 
             # headings
-            rect = QtCore.QRect(leftx, 0, columnWidth, self.headingHeight)
+            rect = QtCore.QRectF(leftx, 0, columnWidth, self.headingHeight)
             if rect.contains(event.pos()):
                 self.highlightedRect = rect
                 QtGui.QToolTip.showText(event.globalPos(), dent.memo)
+                return
 
             for slot in self.freeslots.get(dent.ix, []):
                 slotstart = localsettings.pyTimeToMinutesPastMidnight(
@@ -226,7 +238,7 @@ class AppointmentOverviewWidget(QtGui.QWidget):
                 startcell = (
                     slotstart - self.startTime) / self.slotLength
 
-                rect = QtCore.QRect(
+                rect = QtCore.QRectF(
                     leftx,
                     startcell * self.slotHeight + self.headingHeight,
                     columnWidth,
@@ -240,7 +252,8 @@ class AppointmentOverviewWidget(QtGui.QWidget):
 
                     QtGui.QToolTip.showText(event.globalPos(),
                                             QtCore.QString(feedback))
-                    break
+                    self.update()
+                    return
 
             for appt in (self.appts[dent.ix] + self.eTimes[dent.ix] +
                          self.lunches[dent.ix]):
@@ -248,7 +261,7 @@ class AppointmentOverviewWidget(QtGui.QWidget):
                    self.dayend[dent.ix]):
                     startcell = (appt.mpm - self.startTime) / self.slotLength
 
-                    rect = QtCore.QRect(
+                    rect = QtCore.QRectF(
                         leftx,
                         startcell * self.slotHeight +
                         self.headingHeight,
@@ -257,9 +270,10 @@ class AppointmentOverviewWidget(QtGui.QWidget):
 
                     if rect.contains(event.pos()):
                         self.highlightedRect = rect
-                        break
+                        self.update()
+                        return
 
-            col += 1
+        self.highlightedRect = None
         self.update()
 
     def mousePressEvent(self, event):
@@ -276,62 +290,33 @@ class AppointmentOverviewWidget(QtGui.QWidget):
 
         columnWidth = (self.width() - self.timeOffset) / columnCount
 
-        col = 0
-        for dent in self.dents:  # did user click a heading?
+        for col, dent in enumerate(self.dents):  # did user click a heading?
             leftx = self.timeOffset + col * columnWidth
             rect = QtCore.QRect(leftx, 0, columnWidth, self.headingHeight)
             if rect.contains(event.pos()):
                 self.highlightedRect = rect
-                self.emit(
-                    QtCore.SIGNAL("DentistHeading"), (dent.ix, self.date))
+                self.header_clicked_signal.emit(dent.ix, self.date)
                 return
-            if event.button() == 1:  # left click
-                for slot in self.freeslots.get(dent.ix, []):
-                    slotstart = localsettings.pyTimeToMinutesPastMidnight(
-                        slot.date_time.time())
-                    startcell = (
-                        slotstart - self.startTime) / self.slotLength
+            for slot in self.freeslots.get(dent.ix, []):
+                slotstart = localsettings.pyTimeToMinutesPastMidnight(
+                    slot.date_time.time())
+                startcell = (
+                    slotstart - self.startTime) / self.slotLength
 
-                    rect = QtCore.QRect(
-                        leftx,
-                        startcell * self.slotHeight +
-                        self.headingHeight,
-                        columnWidth,
-                        (slot.length / self.slotLength) * self.slotHeight)
+                rect = QtCore.QRect(
+                    leftx,
+                    startcell * self.slotHeight +
+                    self.headingHeight,
+                    columnWidth,
+                    (slot.length / self.slotLength) * self.slotHeight)
 
-                    if rect.contains(event.pos()):
-                        self.emit(QtCore.SIGNAL("SlotClicked"), slot)
+                if rect.contains(event.pos()):
+                    self.slot_clicked_signal.emit(slot)
+                    return
 
-                        break
-
-            else:  # right click
+            if event.type() == QtCore.QEvent.MouseButtonDblClick or \
+                    event.button() == QtCore.Qt.RightButton:  # right click
                 leftx = self.timeOffset + col * columnWidth
-
-                for slot in self.freeslots.get(dent.ix, []):
-                    slotstart = localsettings.pyTimeToMinutesPastMidnight(
-                        slot.date_time.time())
-                    startcell = (
-                        slotstart - self.startTime) / self.slotLength
-
-                    rect = QtCore.QRect(
-                        leftx,
-                        startcell * self.slotHeight +
-                        self.headingHeight,
-                        columnWidth,
-                        (slot.length / self.slotLength) * self.slotHeight)
-
-                    if rect.contains(event.pos()):
-                        self.highlightedRect = rect
-                        feedback = '%d mins starting at %s with %s' % (
-                            slot.length,
-                            localsettings.humanTime(slotstart),
-                            dent.initials)
-
-                        QtGui.QMessageBox.information(
-                            self, "Info",
-                            "You've right clicked on a slot<br />%s" %
-                            feedback)
-                        return
 
                 for appt in self.appts[dent.ix]:
                     startcell = (appt.mpm - self.startTime) / self.slotLength
@@ -345,18 +330,16 @@ class AppointmentOverviewWidget(QtGui.QWidget):
 
                     if rect.contains(event.pos()):
                         self.highlightedRect = rect
-                        feedback = '%d mins starting at %s with %s' % (
-                            appt.length,
-                            localsettings.humanTime(appt.mpm),
-                            dent.initials)
-
-                        QtGui.QMessageBox.information(
-                            self, "Info",
-                            "You've right clicked on an appt<br />%s" %
-                            feedback)
+                        start_time = "%d:%02d" % (appt.mpm // 60,
+                                                  appt.mpm % 60)
+                        self.cancel_appointment_signal.emit(
+                            (appt.serialno,),
+                            start_time,
+                            dent.ix,
+                            self.date.toPyDate())
                         return
 
-                for appt in self.lunches[dent.ix]:
+                for appt in self.lunches[dent.ix] + self.eTimes[dent.ix]:
                     startcell = (appt.mpm - self.startTime) / self.slotLength
 
                     rect = QtCore.QRect(
@@ -368,40 +351,12 @@ class AppointmentOverviewWidget(QtGui.QWidget):
 
                     if rect.contains(event.pos()):
                         self.highlightedRect = rect
-                        feedback = '%d mins starting at %s with %s' % (
-                            appt.length,
-                            localsettings.humanTime(appt.mpm),
-                            dent.initials)
-
-                        QtGui.QMessageBox.information(
-                            self, "Info",
-                            "You've right clicked Lunch<br />%s" % feedback)
+                        start= "%d:%02d" % (appt.mpm // 60, appt.mpm % 60)
+                        finish = "%d:%02d" % ((appt.mpm + appt.length) // 60,
+                                              (appt.mpm + appt.length) % 60)
+                        self.clear_slot_signal.emit(start, finish, dent.ix,
+                                                    self.date.toPyDate())
                         return
-
-                for appt in self.eTimes[dent.ix]:
-                    startcell = (appt.mpm - self.startTime) / self.slotLength
-
-                    rect = QtCore.QRect(
-                        leftx,
-                        startcell * self.slotHeight +
-                        self.headingHeight,
-                        columnWidth,
-                        (appt.length / self.slotLength) * self.slotHeight)
-
-                    if rect.contains(event.pos()):
-                        self.highlightedRect = rect
-                        feedback = '%d mins starting at %s with %s' % (
-                            appt.length,
-                            localsettings.humanTime(appt.mpm),
-                            dent.initials)
-
-                        QtGui.QMessageBox.information(
-                            self, "Info",
-                            "You've right clicked on an emergency"
-                            " slot<br />%s" %
-                            feedback)
-                        return
-            col += 1
 
     def leaveEvent(self, event):
         self.highlightedRect = None
@@ -516,7 +471,7 @@ class AppointmentOverviewWidget(QtGui.QWidget):
             localsettings.minutesPastMidnightToPyTime(self.drop_time()))
         dent = self.mouse_drag_rect[0]
         slot = appointments.FreeSlot(date_time, dent, self.drag_appt.length)
-        self.emit(QtCore.SIGNAL("ApptDropped"), self.drag_appt, slot)
+        self.appt_dropped_signal.emit(self.drag_appt, slot)
 
         self.mouse_drag_rect = None
         self.drag_appt = None
@@ -796,7 +751,7 @@ class AppointmentOverviewWidget(QtGui.QWidget):
         if self.highlightedRect is not None:
             painter.setPen(RED_PEN)
             painter.setBrush(TRANSPARENT)
-            painter.drawRect(self.highlightedRect)
+            painter.drawRoundedRect(self.highlightedRect, 5, 5)
         if self.dragLine:
             painter.setPen(RED_PEN)
             painter.drawLine(self.dragLine)

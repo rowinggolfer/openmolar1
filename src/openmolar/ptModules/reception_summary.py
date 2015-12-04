@@ -1,30 +1,32 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 this module provides an html summary of the patient's reception activity
 '''
+
+from gettext import gettext as _
 
 from openmolar.settings import localsettings
 from openmolar.dbtools import paymentHistory
@@ -52,6 +54,7 @@ ACTIVE_HTML_TEMPLATE = HTML_TEMPLATE.replace("{{CONTENT}}", '''
 
 UNKNOWN_DENT = ("??", _("Unknown"), _("Unknown"), "", "")
 
+
 def header_html(pt):
 
     if pt.underTreatment:
@@ -74,12 +77,14 @@ def payments_html(pt):
         %s ''' % paymentHistory.summary_details(
         pt.serialno, pt.treatment_course.accd)
 
+
 def active_course_html(pt):
     html_ = ACTIVE_HTML_TEMPLATE.replace("{{TREATMENTS}}", treatment_html(pt))
     html_ = html_.replace("{{PAYMENTS}}", payments_html(pt))
     html_ = html_.replace("{{HEADER}}", header_html(pt))
 
     return html_
+
 
 def summary_html(pt):
     key_values = []
@@ -118,6 +123,17 @@ def summary_html(pt):
         "%s %s" % (pt.n_hyg_visits, _("Occasions"))
         ))
 
+    phone = False
+    for i, val in enumerate((pt.tel1, pt.tel2, pt.mobile)):
+        if val:
+            key = (_("Telephone (Home)"),
+                   _("Telephone (Work)"),
+                   _("Mobile"))[i]
+            key_values.append((key, val))
+            phone = True
+    if not phone:
+        key_values.append((_("Telephone"), _("Please get a phone number")))
+
     content = "<ul>"
     for key, value in key_values:
         content += "<li><b>%s</b> - %s</li>" % (key, value)
@@ -126,11 +142,13 @@ def summary_html(pt):
 
     return html_
 
+
 def finished_today_html(pt):
     return active_course_html(pt).replace(
         "<!-- HEADER -->",
         _("COMPLETED COURSE TODAY")
         )
+
 
 def html(pt, summary=True):
     if summary:
@@ -139,6 +157,7 @@ def html(pt, summary=True):
     if pt.last_treatment_date == localsettings.currentDay():
         return finished_today_html(pt)
     return active_course_html(pt)
+
 
 if __name__ == '__main__':
     from openmolar.dbtools.patient_class import patient

@@ -45,6 +45,11 @@ WHERE adate = %s and apptix = %s  order by start'''
 DELETE_APPOINTMENT_QUERY = '''
 DELETE FROM aslot WHERE adate=%s AND serialno=%s AND apptix=%s AND start=%s'''
 
+MODIFY_APPOINTMENT_QUERY = '''
+update apr set practix=%s, code0=%s, code1=%s, code2=%s, note=%s,
+length=%s, flag0=%s, flag1=%s, flag2=%s, flag3=%s, flag4=%s, datespec=%s
+WHERE serialno=%s and aprix=%s
+'''
 
 def duration(dt1, dt2):
 
@@ -165,6 +170,8 @@ class FreeSlot(object):
 
         if (waits[1] < 0 < waits[0]) or (waits[3] < 0 < waits[2]):
             waits.append(0)
+
+        # this next debug line creates a LOT of output!
         LOGGER.debug("%s and %s has waits of %s", self, slot, waits)
         for i in sorted(waits):
             if i >= 0:
@@ -436,10 +443,14 @@ class DayAppointmentData(DaySummary):
         self.workingDents = tuple(working_dents)
         self.appointments = allAppointmentData(self.date, self.workingDents)
 
-    def dentAppointments(self, dent, ignore_emergency=False):
+    def dentAppointments(self, dent, ignore_emergency=False,
+                         busy_serialno=None):
         '''
         return only appointments for the specified dent
+        if a busy_serialno is given, then this will check to see if the pt
+        has an appointment already, and insert it (invisibly) into every book
         '''
+
         for app in self.appointments:
             if app.apptix == dent:
                 if not ignore_emergency:
@@ -447,15 +458,19 @@ class DayAppointmentData(DaySummary):
                 elif app.serialno == 0 and app.name.lower() == "emergency":
                     continue
                 yield app
+            elif app.serialno == busy_serialno:
+                yield app
 
-    def slots(self, minlength, ignore_emergency=False, dents=None):
+    def slots(self, minlength, ignore_emergency=False, dents=None,
+              busy_serialno=None):
         '''
         return slots for this day
+        if a busy_serialno is given, then slots will allow for the fact that
+        the patient is elsewhere.
         '''
         slotlist = []
         if dents is None:
             dents = self.workingDents
-
         for dent in dents:
             if self.inOffice.get(dent, False):
                 start_time = self.getStart(dent)
@@ -465,7 +480,8 @@ class DayAppointmentData(DaySummary):
                     if curr_time > start_time:
                         start_time = curr_time
                 appt_times_list = []
-                for app in self.dentAppointments(dent, ignore_emergency):
+                for app in self.dentAppointments(dent, ignore_emergency,
+                                                 busy_serialno):
                     appt_times_list.append((app.start, app.end))
                 slotlist += slots(self.date, dent, start_time,
                                   appt_times_list, self.getEnd(dent))
@@ -1054,7 +1070,8 @@ def allAppointmentData(adate, dents=()):
 note, flag0, flag1, flag2, flag3, timestamp, mh_date from aslot left join
 (select pt_sno, max(chk_date) as mh_date from medforms group by pt_sno) as t on
 aslot.serialno = t.pt_sno where adate=%%s %s order by apptix, start''' % cond
-    cursor.execute(query, (adate,) + dents)
+    values = (adate,) + dents
+    cursor.execute(query, values)
     appts = []
     for row in cursor.fetchall():
         appt = Appointment(row)
@@ -1256,19 +1273,16 @@ def get_pts_appts(pt, printing=False):
     db = connect()
     cursor = db.cursor()
 
-    query = '''SELECT serialno, aprix, practix, code0, code1, code2, note,
-        adate, atime, length, datespec FROM apr WHERE serialno=%s '''
-
-    if printing:
-        query += "and adate>=date(NOW())"
-
     # why is aprix added to the sort here? concat of NULL and NULL led to
     # occasional irregularities
-    query += 'order by concat(adate, lpad(atime,4,0)), aprix'
+    query = '''
+        SELECT serialno, aprix, practix, code0, code1, code2, note,
+        adate, atime, length, datespec FROM apr
+        WHERE serialno=%%s %s
+        ORDER BY concat(adate, lpad(atime,4,0)), aprix''' % (
+            "and adate>=date(NOW())" if printing else "")
 
-    # - table also contains flag0,flag1,flag2,flag3,flag4,
-
-    cursor.execute(query, sno)
+    cursor.execute(query, (sno,))
 
     rows = cursor.fetchall()
     # return rows
@@ -1375,20 +1389,18 @@ def modify_pt_appt(aprix, serialno, practix, length, code0, code1="",
     '''
     db = connect()
     cursor = db.cursor()
-    changes = '''practix=%d,code0="%s",code1="%s",code2="%s",note="%s",
-    length=%d,flag0=%d,flag1=%d,flag2=%d,flag3=%d,flag4=%d,datespec="%s"''' % (
-        practix, code0, code1, code2, note, length, flag0, flag1, flag2, flag3,
-        flag4, datespec)
 
-    fullquery = 'update apr set %s where serialno=%d and aprix=%d' % (
-        changes, serialno, aprix)
+    values = (practix, code0, code1, code2, note, length, flag0, flag1,
+              flag2, flag3, flag4, datespec, serialno, aprix)
 
     result = True
     try:
-        cursor.execute(fullquery)
+        cursor.execute(MODIFY_APPOINTMENT_QUERY, values)
         db.commit()
     except Exception:
         LOGGER.exception("exception in appointments.modify_pt_appt ")
+        LOGGER.debug(MODIFY_APPOINTMENT_QUERY)
+        LOGGER.debug(values)
         result = False
     cursor.close()
     # db.close()
@@ -1404,10 +1416,10 @@ def pt_appt_made(serialno, aprix, date, time, dent):
     cursor = db.cursor()
     result = True
     try:
-        fullquery = '''UPDATE apr SET adate="%s" ,atime=%d, practix=%d
-        WHERE serialno=%d AND aprix=%d''' % (date, time, dent, serialno, aprix)
-        cursor.execute(fullquery)
-
+        fullquery = '''UPDATE apr SET adate=%s, atime=%s, practix=%s
+        WHERE serialno=%s AND aprix=%s'''
+        values = (date, time, dent, serialno, aprix)
+        cursor.execute(fullquery, values)
         db.commit()
     except Exception:
         LOGGER.exception("exception in appointments.pt_appt_made ")
@@ -1665,7 +1677,8 @@ def delete_appt_from_aslot(appt):
     return result
 
 
-def future_slots(startdate, enddate, dents, override_emergencies=False):
+def future_slots(startdate, enddate, dents,
+                 busy_serialno=None, override_emergencies=False):
     '''
     get a list of possible appointment positions
     (between startdate and enddate) that can be offered to the patient
@@ -1692,14 +1705,16 @@ def future_slots(startdate, enddate, dents, override_emergencies=False):
     # -flag0!=72 necessary to avoid zero length apps like pain/double/fam
 
     query = '''select start, end from aslot
-    where adate = %%s and apptix = %%s and flag0!=72 %s order by start
-    ''' % (' and name!="emergency" ' if override_emergencies else "")
+    where adate = %%s and (apptix = %%s %s) and flag0!=72 %s order by start
+    ''' % ('' if busy_serialno is None else 'or serialno=%s',
+           ' and name!="emergency" ' if override_emergencies else '')
 
     slotlist = []
     # -now get data for those days so that we can find slots within
     for day in possible_days:
         adate, apptix, daystart, dayfin = day
-        values = (adate, apptix)
+        values = (adate, apptix) if busy_serialno is None else (
+            adate, apptix, busy_serialno)
 
         cursor.execute(query, values)
         results = cursor.fetchall()
