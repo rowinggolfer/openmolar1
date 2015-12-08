@@ -32,12 +32,15 @@ from __future__ import division
 import datetime
 from functools import partial
 from gettext import gettext as _
+import logging
 import pickle
 
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 from openmolar.qt4gui import colours
 from openmolar.qt4gui.dialogs import blockslot
+
+LOGGER = logging.getLogger("openmolar")
 
 BGCOLOR = QtCore.Qt.transparent
 FREECOLOR = colours.APPT_Background
@@ -687,13 +690,15 @@ class AppointmentCanvas(QtGui.QWidget):
             self.selected_rows = (startcell, endcell)
 
         elif self.pWidget.mode == self.pWidget.BROWSING_MODE:
+            feedback = ""
             if row in self.rows:
                 sno_list = self.rows[row]
                 self.selected_rows = self.getApptBounds(row, sno_list)
                 self.update()
 
-                feedback = "<html><body>"
                 for sno in sno_list:
+                    if sno < 1:
+                        continue
                     for app in self.appts + self.doubleAppts:
                         if app.serialno == sno:
                             feedback += '%s %s (%s)<br /><b>%s - %s</b>' % (
@@ -729,26 +734,25 @@ class AppointmentCanvas(QtGui.QWidget):
                             if app.mh_form_required:
                                 feedback += "%s<hr />" % _("MH CHECK REQUIRED")
 
-                if feedback != "<html><body>":
-                    feedback = "%s</body></html>" % (
+                if feedback:
+                    feedback = "<html><body>%s</body></html>" % (
                         feedback[:feedback.rindex("r />") + 2])
-                    self.setToolTip(feedback)
-                else:
-                    self.setToolTip("")
             else:
                 newSelection = (self.getPrev(row), self.getNext(row))
                 if self.selected_rows != newSelection:
                     self.selected_rows = newSelection
                     self.update()
+                start = int(
+                    self.dayStartTime +
+                    self.selected_rows[0] * self.slotDuration)
+                finish = int(
+                    self.dayStartTime +
+                    self.selected_rows[1] * self.slotDuration)
+                feedback = "%s %s" % (finish - start, _("Minutes Free"))
 
-                    start = int(
-                        self.dayStartTime +
-                        self.selected_rows[0] * self.slotDuration)
-                    finish = int(
-                        self.dayStartTime +
-                        self.selected_rows[1] * self.slotDuration)
-                    self.setToolTip("%s %s %s" % (_("SLOT"), finish - start,
-                                                  _("Minutes")))
+            self.setToolTip(feedback)
+            if not feedback:
+                QtGui.QToolTip.hideText()
 
     def mouseDoubleClickEvent(self, event):
         self.mousePressEvent(event)
