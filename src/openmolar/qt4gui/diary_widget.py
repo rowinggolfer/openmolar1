@@ -891,7 +891,7 @@ class DiaryWidget(Advisor):
                         ov.addSlot(slot)
 
         elif self.schedule_controller.mode == self.BLOCKING_MODE:
-            self.schedule_controller.get_weekview_slots(self.selected_date())
+            self.schedule_controller.get_weekview_slots(weekdates)
             for ov in self.ui.apptoverviews:
                 ov.enable_clinician_slots(
                     localsettings.activedents + localsettings.activehygs)
@@ -1450,8 +1450,7 @@ class DiaryWidget(Advisor):
 
         book.new_memo_signal.connect(self.bookmemo_Edited)
 
-        book.connect(book, QtCore.SIGNAL("PatientClicked"),
-                     self.highlight_serialno)
+        book.patients_clicked_signal.connect(self.highlight_serialno)
 
         book.connect(book, QtCore.SIGNAL("AppointmentClicked"),
                      self.appointment_clicked)
@@ -1472,6 +1471,8 @@ class DiaryWidget(Advisor):
         book.slot_clicked_signal.connect(self.userHasChosen_slot)
         book.print_mh_signal.connect(self.print_mh_signal.emit)
         book.mh_form_date_signal.connect(self.mh_form_date_signal.emit)
+        book.appt_clicked_signal.connect(
+            self.schedule_controller.appointment_in_diary_clicked)
 
     def signals_calendar(self, connect=True):
         if connect:

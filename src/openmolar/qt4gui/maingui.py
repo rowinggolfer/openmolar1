@@ -2067,6 +2067,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         if not arg:
             self.ui.medNotes_pushButton.setText("Medical History Dialog")
             self.ui.medNotes_pushButton2.setText("Medical History Dialog")
+            self.pt_diary_widget.clear()
 
         self.updateDetails()
 
@@ -2756,6 +2757,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                 sno, self)
             if dl.exec_():
                 dl.apply()
+                self.diary_widget.layout_diary()
 
     def childsmile_button_clicked(self):
         '''

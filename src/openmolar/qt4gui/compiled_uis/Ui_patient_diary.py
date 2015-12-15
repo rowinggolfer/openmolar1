@@ -69,7 +69,7 @@ class Ui_Form(object):
     def retranslateUi(self, Form):
         Form.setWindowTitle(_("Form"))
         self.apptWizard_pushButton.setToolTip(_("A Wizard to select some common appointment combinations"))
-        self.apptWizard_pushButton.setText(_("Appointment &Shortcuts"))
+        self.apptWizard_pushButton.setText(_("&Shortcuts"))
         self.newAppt_pushButton.setToolTip(_("A New Appointment for this patient"))
         self.newAppt_pushButton.setText(_("&New"))
         self.printAppt_pushButton.setToolTip(_("Print out the next 5 appointments for this patient"))

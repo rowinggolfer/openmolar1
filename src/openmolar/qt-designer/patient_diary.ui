@@ -32,7 +32,7 @@
       <string>A Wizard to select some common appointment combinations</string>
      </property>
      <property name="text">
-      <string>Appointment &amp;Shortcuts</string>
+      <string>&amp;Shortcuts</string>
      </property>
     </widget>
    </item>

@@ -688,7 +688,7 @@ class Appointment(object):
             localsettings.MH_FORM_PERIOD
 
     def __repr__(self):
-        return "%s %s %s %s %s %s %s %s %s %s" % (
+        return "Appointment %s %s %s %s %s %s %s %s %s %s" % (
             self.serialno, self.apptix, self.start, self.end,
             self.name, self.trt1, self.trt2,
             self.trt3, self.memo,
