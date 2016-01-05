@@ -159,7 +159,10 @@ else:
     global_cflocation = '/etc/openmolar/openmolar.conf'
     localFileDirectory = os.path.join(os.environ.get("HOME"), ".openmolar")
 
-cflocation = os.path.join(localFileDirectory, "openmolar.conf")
+if os.path.isfile(global_cflocation):
+    cflocation = global_cflocation
+else:
+    cflocation = os.path.join(localFileDirectory, "openmolar.conf")
 LOGIN_CONF = os.path.join(localFileDirectory, "autologin.conf")
 TEMP_PDF = os.path.join(localFileDirectory, "temp.pdf")
 DOCS_DIRECTORY = os.path.join(localFileDirectory, "documents")
