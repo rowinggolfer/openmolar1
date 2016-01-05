@@ -1,32 +1,29 @@
-#! /usr/bin/env python
+#! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
+
 
 import logging
-import sys
-import types
-
-import MySQLdb
 
 from openmolar.connect import connect
 from openmolar.settings import localsettings
@@ -68,14 +65,13 @@ def all_changes(pt, changes):
     exemptionsHandled = False
 
     if pt.HIDDENNOTES != []:
-        #-- hidden notes is
-        #-- treatment codes... money, printing etc..
+        #  hidden notes is
+        #  treatment codes... money, printing etc..
         LOGGER.debug("saving hiddennotes")
         toNotes(pt.serialno, pt.HIDDENNOTES)
         pt.clearHiddenNotes()
 
     sqlcommands = {}
-    estimate_commands = {}
     patchanges, patvalues = [], []
     static_changes, static_values = [], []
     date_changes, date_values = [], []
@@ -274,20 +270,20 @@ def toNotes(serialno, newnotes):
     '''
     notetuplets = []
 
-    tstamp = localsettings.currentTime().strftime("%d/%m/%Y %T")
+    tstamp = localsettings.currentTime().strftime("%d/%m/%Y %H:%M:%S")
     notetuplets.append(
         ("opened", "System date - %s" % tstamp))
     for ntype, note in newnotes:
         while len(note) > 79:
             if " " in note[:79]:
                 pos = note[:79].rindex(" ")
-                #--try to split nicely
+                # try to split nicely
             elif "," in note[:79]:
                 pos = note[:79].rindex(",")
-                #--try to split nicely
+                # try to split nicely
             else:
                 pos = 79
-                #--ok, no option (unlikely to happen though)
+                # ok, no option (unlikely to happen though)
             notetuplets.append((ntype, note[:pos]))
             note = note[pos + 1:]
 
