@@ -1,347 +1,314 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>Dialog</class>
- <widget class="QDialog" name="Dialog" >
-  <property name="geometry" >
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>593</width>
+    <width>445</width>
     <height>404</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Enter an appointment</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2" >
-   <item row="0" column="0" >
-    <spacer name="horizontalSpacer_3" >
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QFrame" name="">
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Appointment with</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Length</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="apptlength_comboBox">
+        <property name="maxVisibleItems">
+         <number>20</number>
+        </property>
+        <item>
+         <property name="text">
+          <string>5 minutes</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>10 minutes</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>15 minutes</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>20 minutes</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>30 minutes</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>40 minutes</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>45 minutes</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>1 hour</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>1 hour 15 minutes</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>1 hour 20 minutes</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>1 hour 30 minutes</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>1 hour 45 minutes</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>2 hours</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>2 hours 30 minutes</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>3 hours</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>other</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="practix_comboBox"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
-       <width>81</width>
-       <height>56</height>
+       <width>20</width>
+       <height>40</height>
       </size>
      </property>
     </spacer>
    </item>
-   <item row="0" column="1" >
-    <layout class="QGridLayout" name="gridLayout_3" >
-     <item row="0" column="0" >
-      <widget class="QLabel" name="label" >
-       <property name="text" >
-        <string>Appointment with</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1" >
-      <widget class="QComboBox" name="practix_comboBox" />
-     </item>
-     <item row="1" column="0" >
-      <widget class="QLabel" name="label_2" >
-       <property name="text" >
-        <string>Length</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1" >
-      <widget class="QComboBox" name="apptlength_comboBox" >
-       <property name="maxVisibleItems" >
-        <number>20</number>
-       </property>
-       <item>
-        <property name="text" >
-         <string>5 minutes</string>
+   <item>
+    <widget class="QWidget" name="" native="true">
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="lineEdit">
+        <property name="minimumSize">
+         <size>
+          <width>180</width>
+          <height>0</height>
+         </size>
         </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>10 minutes</string>
+        <property name="maximumSize">
+         <size>
+          <width>300</width>
+          <height>16777215</height>
+         </size>
         </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>15 minutes</string>
+        <property name="maxLength">
+         <number>20</number>
         </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>20 minutes</string>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>30</height>
+         </size>
         </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>30 minutes</string>
+        <property name="text">
+         <string>Memo (optional)</string>
         </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>40 minutes</string>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>45 minutes</string>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QComboBox" name="trt3_comboBox">
+        <property name="minimumSize">
+         <size>
+          <width>176</width>
+          <height>0</height>
+         </size>
         </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>1 hour</string>
+        <property name="maxVisibleItems">
+         <number>20</number>
         </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>1 hour 15 minutes</string>
+        <item>
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>24</height>
+         </size>
         </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>1 hour 20 minutes</string>
+        <property name="text">
+         <string>Reason 2</string>
         </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>1 hour 30 minutes</string>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>1 hour 45 minutes</string>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="trt2_comboBox">
+        <property name="minimumSize">
+         <size>
+          <width>176</width>
+          <height>0</height>
+         </size>
         </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>2 hours</string>
+        <property name="maxVisibleItems">
+         <number>20</number>
         </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>2 hours 30 minutes</string>
+        <item>
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>24</height>
+         </size>
         </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>3 hours</string>
+        <property name="text">
+         <string>Reason 3</string>
         </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>other</string>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
-       </item>
-      </widget>
-     </item>
-     <item row="2" column="0" colspan="2" >
-      <widget class="QCheckBox" name="combinedApptcheckBox" >
-       <property name="enabled" >
-        <bool>false</bool>
-       </property>
-       <property name="layoutDirection" >
-        <enum>Qt::LeftToRight</enum>
-       </property>
-       <property name="text" >
-        <string>Combined Appointment With Hygenist?</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="trt1_comboBox">
+        <property name="minimumSize">
+         <size>
+          <width>176</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maxVisibleItems">
+         <number>20</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Reason 1</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
-   <item row="0" column="2" >
-    <spacer name="horizontalSpacer_2" >
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
-       <width>152</width>
-       <height>20</height>
+       <width>20</width>
+       <height>40</height>
       </size>
      </property>
     </spacer>
    </item>
-   <item row="1" column="0" colspan="3" >
-    <widget class="Line" name="line" >
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="3" >
-    <layout class="QGridLayout" name="gridLayout" >
-     <item row="0" column="0" >
-      <widget class="QLabel" name="label_3" >
-       <property name="maximumSize" >
-        <size>
-         <width>16777215</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="text" >
-        <string>Reason 1</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2" >
-      <widget class="QLabel" name="label_5" >
-       <property name="maximumSize" >
-        <size>
-         <width>16777215</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="text" >
-        <string>Reason 3</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0" >
-      <widget class="QComboBox" name="trt1_comboBox" >
-       <property name="minimumSize" >
-        <size>
-         <width>176</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maxVisibleItems" >
-        <number>20</number>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1" >
-      <widget class="QComboBox" name="trt2_comboBox" >
-       <property name="minimumSize" >
-        <size>
-         <width>176</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maxVisibleItems" >
-        <number>20</number>
-       </property>
-       <item>
-        <property name="text" >
-         <string/>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item row="1" column="2" >
-      <widget class="QComboBox" name="trt3_comboBox" >
-       <property name="minimumSize" >
-        <size>
-         <width>176</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maxVisibleItems" >
-        <number>20</number>
-       </property>
-       <item>
-        <property name="text" >
-         <string/>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item row="0" column="1" >
-      <widget class="QLabel" name="label_4" >
-       <property name="maximumSize" >
-        <size>
-         <width>16777215</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="text" >
-        <string>Reason 2</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="3" column="0" colspan="3" >
-    <widget class="Line" name="line_2" >
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0" colspan="3" >
-    <layout class="QHBoxLayout" name="horizontalLayout" >
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QLabel" name="label_6" >
-       <property name="maximumSize" >
-        <size>
-         <width>16777215</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="text" >
-        <string>Brief Note for Clinician (optional)</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      <widget class="QPushButton" name="scheduleNow_pushButton">
+       <property name="text">
+        <string>Schedule Now</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit" >
-       <property name="minimumSize" >
-        <size>
-         <width>180</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize" >
-        <size>
-         <width>300</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="maxLength" >
-        <number>20</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="5" column="0" colspan="3" >
-    <widget class="Line" name="line_3" >
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0" colspan="3" >
-    <layout class="QHBoxLayout" name="horizontalLayout_2" >
-     <item>
-      <widget class="QPushButton" name="scheduleNow_pushButton" >
-       <property name="text" >
-        <string>Schedule Appointment Now</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer" >
-       <property name="orientation" >
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>128</width>
          <height>20</height>
@@ -350,14 +317,14 @@
       </spacer>
      </item>
      <item>
-      <widget class="QDialogButtonBox" name="buttonBox" >
-       <property name="orientation" >
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="standardButtons" >
+       <property name="standardButtons">
         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
        </property>
-       <property name="centerButtons" >
+       <property name="centerButtons">
         <bool>false</bool>
        </property>
       </widget>
@@ -374,11 +341,11 @@
    <receiver>Dialog</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>553</x>
      <y>258</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>157</x>
      <y>274</y>
     </hint>
@@ -390,11 +357,11 @@
    <receiver>Dialog</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>553</x>
      <y>258</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
     </hint>
@@ -406,11 +373,11 @@
    <receiver>Dialog</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>90</x>
      <y>305</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>296</x>
      <y>175</y>
     </hint>

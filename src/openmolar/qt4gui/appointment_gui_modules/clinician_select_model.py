@@ -3,7 +3,7 @@
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -42,13 +42,11 @@ class ClinicianSelectModel(QtCore.QAbstractListModel):
         self.options_list = [
             _("Available Clinicians"),
             _("Available Dentists"),
-            _("Available Hygenists"),
+            _("Available Hygienists"),
             _("All")
         ]
 
         self.om_gui = parent
-        # if localsettings.activehygs == []:
-        #    self.options_list.remove(_("Available Hygenists"))
 
         self.manual_index = 5  # used if manual is called by another widget
 
