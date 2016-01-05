@@ -3,7 +3,7 @@
 
 # ############################################################################ #
 # #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>                # #
 # #                                                                          # #
 # # This file is part of OpenMolar.                                          # #
 # #                                                                          # #
@@ -204,7 +204,8 @@ class DatabaseUpdater(DatabaseUpdaterThread):
         '''
         meds = set()
         self.progressSig(15, _("inserting medications"))
-        self.cursor.executemany(INSERT_MEDS_QUERY, DRUGLIST)
+        self.cursor.executemany(INSERT_MEDS_QUERY,
+                                [(d, ) for d in DRUGLIST])
 
         self.progressSig(25, _("pulling information from mednotes"))
         self.cursor.execute(SOURCE1_QUERY)
