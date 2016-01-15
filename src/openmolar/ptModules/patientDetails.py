@@ -1,26 +1,26 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 this module provides an html summary of the patient's details
@@ -29,6 +29,7 @@ this module provides an html summary of the patient's details
 from __future__ import division
 
 import datetime
+from gettext import gettext as _
 import logging
 import sys
 from openmolar.settings import localsettings
@@ -75,14 +76,16 @@ def header(pt):
     if pt.pcde == "":
         html += "<b>%s</b>" % _("!UNKNOWN POSTCODE!")
 
-    if not pt.status in ("Active", "", None):
+    if pt.status not in ("Active", "", None):
         html += "<hr /><h1>%s</h1>" % pt.status
 
     return html
 
 
 def details(pt, Saved=True):
-    '''returns an html set showing pt name etc...'''
+    '''
+    returns an html set showing pt name etc...
+    '''
 
     try:
         html = header(pt) + '<hr />'
@@ -111,7 +114,7 @@ def details(pt, Saved=True):
             html += 'dentist      = %s' % localsettings.ops[pt.dnt1]
             if pt.dnt2 != 0 and pt.dnt1 != pt.dnt2:
                 html += '/%s' % localsettings.ops[pt.dnt2]
-        except KeyError as e:
+        except KeyError:
             html += '<h4>%s</h4><hr />' % _(
                 "Please Set a Dentist for this patient!")
         if pt.memo != '':
@@ -139,22 +142,36 @@ def details(pt, Saved=True):
         html += '<h4>%s</h4><table width="100%%" border="1">' % _("History")
         for i, (att, val) in enumerate(tx_dates):
 
-            html += '''<tr><td align="center">%s</td>
-            <td align="center">%s%s%s</td></tr>''' % (
-                att,
-                "<b>" if i in (2, 6) else "",
-                localsettings.formatDate(val),
-                "</b>" if i in (2, 6) else "")
+            markup = ("", "")
+            if i in (2, 6):
+                markup = ("<b>", "</b")
+            elif i == 1:
+                try:
+                    if pt.mh_chkdate < pt.mh_form_date:
+                        markup = ('<b style="color:red;">', "</b>")
+                except TypeError:
+                    pass
+
+            html += '''
+            <tr>
+                <td align="center">%s</td>
+                <td align="center">%s%s%s</td>
+            </tr>''' % (att,
+                        markup[0],
+                        localsettings.formatDate(val),
+                        markup[1])
 
         html += "</table>"
         html += "<h4>%s</h4>" % _("Recall")
         if pt.recall_active:
-            if pt.recd > localsettings.currentDay() or pt.has_exam_booked:
+            month_start = datetime.date(localsettings.currentDay().year,
+                                        localsettings.currentDay().month, 1)
+            if pt.recd > month_start or pt.has_exam_booked:
                 html += "%s " % localsettings.formatDate(pt.recd)
-                html += _("(exam booked)") if pt.has_exam_booked else ""
+                html += _("(Exam Booked)") if pt.has_exam_booked else ""
             else:
-                html += '<div style="color:red;">%s</div>' % (
-                    localsettings.formatDate(pt.recd))
+                html += '<div style="color:red;">%s<br />%s</div>' % (
+                    localsettings.formatDate(pt.recd), _("Exam Due"))
         else:
             html += '<div style="color:red;">%s</div>' % _("DO NOT RECALL")
 
