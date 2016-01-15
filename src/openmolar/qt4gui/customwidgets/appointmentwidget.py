@@ -71,6 +71,8 @@ class AppointmentWidget(QtGui.QFrame):
     selected_serialno = None
     BROWSING_MODE = 0
     SCHEDULING_MODE = 1
+    BLOCKING_MODE = 2
+    NOTES_MODE = 3
     mode = None
 
     # signal has dent, time, length
@@ -702,7 +704,8 @@ class AppointmentCanvas(QtGui.QWidget):
             self.setToolTip(feedback)
             self.selected_rows = (startcell, endcell)
 
-        elif self.pWidget.mode == self.pWidget.BROWSING_MODE:
+        elif self.pWidget.mode in (self.pWidget.BROWSING_MODE,
+                                   self.pWidget.NOTES_MODE):
             feedback = ""
             if row in self.rows:
                 sno_list = self.rows[row]

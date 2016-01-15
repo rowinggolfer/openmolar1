@@ -2783,6 +2783,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                 if patient_loaded:
                     self.pt.getNotesTuple()
                     self.load_notes()
+            if self.sender() == self.diary_widget.ui.appt_notes_webView:
+                self.diary_widget.show_todays_notes(serialno)
 
     def show_diary(self):
         '''

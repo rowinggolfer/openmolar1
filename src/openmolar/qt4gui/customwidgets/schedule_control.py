@@ -196,7 +196,8 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         self.addWidget(widg)
 
         # page 4 -- notes mode
-        self.addWidget(QtGui.QLabel("Notes"))
+        self.notes_label = QtGui.QLabel(_("Select a patient to edit notes"))
+        self.addWidget(self.notes_label)
 
         # connect signals
         self.get_patient_button.clicked.connect(self.find_patient)
@@ -930,6 +931,17 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         if app is None:
             self.reset_browsing_webview()
             return
+        if self.mode == self.NOTES_MODE:
+            self.notes_label.setText(
+                "<h3>%s</h3>%s<br />%s" % (
+                    _("View/edit today's notes for "),
+                    app.name,
+                    app.serialno
+                )
+            )
+            return
+
+        self.notes_label.setText("")
         if self.mode != self.BROWSE_MODE:
             return
 

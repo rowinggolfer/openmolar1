@@ -329,19 +329,11 @@ class DiaryWidget(Advisor):
         appointment has been selected.
         the arg is a list of serial numbers
         '''
-        serialno = serialnos[0]
 
-        if self.schedule_controller.mode == self.NOTES_MODE:
-            html = formatted_notes.todays_notes(serialno)
-            self.ui.appt_notes_webView.setHtml(html)
-            page = self.ui.appt_notes_webView.page()
-            page.setLinkDelegationPolicy(page.DelegateAllLinks)
-
-        # this next bit is useful in showing "double appointments"
         if self.schedule_controller.mode not in (self.SCHEDULING_MODE,
                                                  self.BLOCKING_MODE):
             for book in self.apptBookWidgets:
-                book.selected_serialno = serialno
+                book.selected_serialno = serialnos[0]
                 book.update()
 
     def manage_month_and_year_View_clinicians(self):
@@ -1410,6 +1402,12 @@ class DiaryWidget(Advisor):
             self.layout_diary()
 
     def update_highlighted_appointment(self, appointment):
+        '''
+        called if an appointment is clicked on.
+        '''
+        LOGGER.debug("update highlighted appointment %s", appointment)
+        if appointment and self.schedule_controller.mode == self.NOTES_MODE:
+            self.show_todays_notes(appointment.serialno)
         self.highlighted_appointment = appointment
         self.schedule_controller.update_highlighted_appointment()
         if self.viewing_day:
@@ -1418,6 +1416,12 @@ class DiaryWidget(Advisor):
         else:
             for widg in self.ui.apptoverviews:
                 widg.update()
+
+    def show_todays_notes(self, serialno):
+        html = formatted_notes.todays_notes(serialno)
+        self.ui.appt_notes_webView.setHtml(html)
+        page = self.ui.appt_notes_webView.page()
+        page.setLinkDelegationPolicy(page.DelegateAllLinks)
 
     def init_signals(self):
         self.ui.diary_tabWidget.currentChanged.connect(

@@ -734,8 +734,7 @@ class Appointment(object):
                     self.apptix == other.apptix and
                     self.start == other.start and
                     self.end == other.end)
-        except AttributeError as exc:
-            print exc
+        except AttributeError:
             return False
 
 

@@ -34,7 +34,6 @@ import sys
 
 from openmolar.settings import localsettings
 from openmolar.dbtools import db_notes
-from openmolar.dbtools import db_patients
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -272,12 +271,7 @@ def todays_notes(serialno):
         html += "%s <a href='edit_notes?%s'>%s</a></body></html>" % (
             _("No notes found"), serialno, _("Add a note"))
 
-    name = db_patients.name(serialno)
-    header = "<h3>%s %s</h3>" % (_("Todays notes for"), name)
-    html = html.replace("<!-- HEADER -->", header)
-    html = html.replace("||SNO||", str(serialno))
-
-    return html
+    return  html.replace("||SNO||", str(serialno))
 
 
 if __name__ == "__main__":
