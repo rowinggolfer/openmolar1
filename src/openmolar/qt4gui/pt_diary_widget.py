@@ -98,6 +98,8 @@ class PtDiaryWidget(QtGui.QWidget):
             LOGGER.info("unable to send message %s", args)
 
     def clear(self):
+        LOGGER.debug("PtDiaryWidget.clear")
+        self._pt = None
         self.diary_model.selection_model.clear()
         self.diary_model.clear()
         self.ui.appt_memo_lineEdit.setText("")
