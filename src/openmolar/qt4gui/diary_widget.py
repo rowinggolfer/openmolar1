@@ -83,6 +83,7 @@ class DiaryWidget(Advisor):
     NOTES_MODE = 3
 
     pt = None
+    highlighted_appointment = None
 
     patient_card_request = QtCore.pyqtSignal(object)
     pt_diary_changed = QtCore.pyqtSignal(object)
@@ -303,6 +304,7 @@ class DiaryWidget(Advisor):
 
     def set_appt_mode(self, mode, update_required=True):
         LOGGER.debug("DiaryWidget.set_appt_mode")
+        self.highlighted_appointment = None
         self.schedule_controller.cancel_search_mode()
         if self.schedule_controller.mode == mode:
             return
@@ -1125,7 +1127,7 @@ class DiaryWidget(Advisor):
             retlist.append(localsettings.apptix.get(dent))
         return tuple(retlist)
 
-    def appointment_clicked(self, list_of_snos):
+    def load_patients(self, list_of_snos):
         if len(list_of_snos) == 1:
             sno = list_of_snos[0]
         else:
@@ -1407,6 +1409,16 @@ class DiaryWidget(Advisor):
             appointments.setPubHol(date_, new_value)
             self.layout_diary()
 
+    def update_highlighted_appointment(self, appointment):
+        self.highlighted_appointment = appointment
+        self.schedule_controller.update_highlighted_appointment()
+        if self.viewing_day:
+            for widg in self.apptBookWidgets:
+                widg.update()
+        else:
+            for widg in self.ui.apptoverviews:
+                widg.update()
+
     def init_signals(self):
         self.ui.diary_tabWidget.currentChanged.connect(
             self.diary_tabWidget_nav)
@@ -1445,34 +1457,19 @@ class DiaryWidget(Advisor):
 
     def signals_apptWidgets(self, book):
 
-        book.connect(book, QtCore.SIGNAL("print_me"),
-                     self.appointment_book_print)
-
+        book.print_me_signal.connect(self.appointment_book_print)
         book.new_memo_signal.connect(self.bookmemo_Edited)
-
-        book.patients_clicked_signal.connect(self.highlight_serialno)
-
-        book.connect(book, QtCore.SIGNAL("AppointmentClicked"),
-                     self.appointment_clicked)
-
-        book.connect(book, QtCore.SIGNAL("EditAppointmentMemo"),
-                     self.edit_appointment_memo_clicked)
-
+        book.load_patients_signal.connect(self.load_patients)
+        book.edit_memo_signal.connect(self.edit_appointment_memo_clicked)
         book.cancel_appointment_signal.connect(self.appointment_cancel)
         book.clear_slot_signal.connect(self.clearEmergencySlot)
         book.block_empty_slot_signal.connect(self.blockEmptySlot)
-
-        book.connect(book, QtCore.SIGNAL("Appointment_into_EmptySlot"),
-                     self.fillEmptySlot)
-
-        book.connect(book.canvas, QtCore.SIGNAL("ApptDropped"),
-                     self.appt_dropped_onto_daywidget)
-
+        book.appt_empty_slot_signal.connect(self.fillEmptySlot)
+        book.appt_dropped_signal.connect(self.appt_dropped_onto_daywidget)
         book.slot_clicked_signal.connect(self.userHasChosen_slot)
         book.print_mh_signal.connect(self.print_mh_signal.emit)
         book.mh_form_date_signal.connect(self.mh_form_date_signal.emit)
-        book.appt_clicked_signal.connect(
-            self.schedule_controller.appointment_in_diary_clicked)
+        book.appt_clicked_signal.connect(self.update_highlighted_appointment)
 
     def signals_calendar(self, connect=True):
         if connect:
@@ -1513,6 +1510,7 @@ class DiaryWidget(Advisor):
             widg.header_clicked_signal.connect(self.apptOVheaderclick)
             widg.cancel_appointment_signal.connect(self.appointment_cancel)
             widg.clear_slot_signal.connect(self.clearEmergencySlot)
+            widg.appt_clicked_signal.connect(self.update_highlighted_appointment)
 
         for control in self.ui.apptoverviewControls:
             control.dayview_signal.connect(self.aptOVlabelClicked)

@@ -50,6 +50,18 @@ LOGGER = logging.getLogger("openmolar")
 
 MAX_WAIT = 10  # maximum time pt waiting in between "joint" appointments
 
+FEEDBACK = '''<html>
+<head>
+<link rel="stylesheet" href="%s" type="text/css">
+</head>
+<body class="highlighted-app">
+<div class="center">
+<h3>%%s</h3>
+(%%s)<br />
+<b>%%s<br />%%s - %%s</b>
+</div>
+<ol><li class="trt">%%s</li></ol>''' % localsettings.stylesheet
+
 
 class DiaryScheduleController(QtGui.QStackedWidget):
 
@@ -162,7 +174,9 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         # now arrange the stacked widget
 
         # page 0 - Browsing mode
-        self.addWidget(QtGui.QLabel("Browsing"))
+        self.browsing_webview = QtWebKit.QWebView()
+        self.reset_browsing_webview()
+        self.addWidget(self.browsing_webview)
 
         # page 1 -- scheduling mode
         widg = QtGui.QWidget()
@@ -208,6 +222,8 @@ class DiaryScheduleController(QtGui.QStackedWidget):
             self.enable_scheduling_buttons()
         else:
             self.clear_slots()
+        if mode == self.BROWSE_MODE:
+            self.reset_browsing_webview()
 
         self.mode = mode
         self.setCurrentIndex(mode)
@@ -420,6 +436,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         self.reset()
 
     def reset(self):
+        self.reset_browsing_webview()
         self.primary_slots = []
         self.secondary_slots = []
         self._chosen_slot = None
@@ -488,9 +505,13 @@ class DiaryScheduleController(QtGui.QStackedWidget):
             yield slot
 
     def clear_slots(self):
+        # self.reset_browsing_webview()
         self._chosen_slot = None
         self.primary_slots = []
         self.secondary_slots = []
+
+    def reset_browsing_webview(self):
+        self.browsing_webview.setHtml("")
 
     def set_primary_slots(self, slots):
         self.primary_slots = []
@@ -898,6 +919,55 @@ class DiaryScheduleController(QtGui.QStackedWidget):
                         self._day_message) if s != ""])
             )
         self.search_criteria_webview.setHtml(html)
+
+    def update_highlighted_appointment(self):
+
+        '''
+        the diary widget selected appointment has changed.
+        '''
+        app = self.diary_widget.highlighted_appointment
+        LOGGER.debug("appointment highlighted %s", app)
+        if app is None:
+            self.reset_browsing_webview()
+            return
+        if self.mode != self.BROWSE_MODE:
+            return
+
+        feedback = FEEDBACK % (
+            app.name, app.serialno,
+            localsettings.readableDate(
+                self.diary_widget.selected_date().toPyDate()),
+            "%02d:%02d" % (app.start // 100, app.start % 100),
+            "%02d:%02d" % (app.end // 100, app.end % 100),
+            '</li><li class="trt">'.join(
+                [val for val in (app.trt1, app.trt2, app.trt3) if val != ""])
+        )
+        if app.memo != "":
+            feedback += "<hr />%s<br /><i>%s</i>" % (_("Memo"), app.memo)
+        try:
+            datestamp = app.timestamp.date()
+            feedback += \
+                "<hr />%s<br />%s (%s %s)" % (
+                    _("Made"),
+                    localsettings.formatDate(datestamp),
+                    _("at"),
+                    localsettings.pyTimeToHumantime(
+                        app.timestamp))
+        except AttributeError:
+            pass
+        if app.mh_form_check_date or app.mh_form_required:
+            feedback += "<hr />"
+        if app.mh_form_check_date:
+            feedback += "%s %s<br />" % (
+                _("last mh form"),
+                localsettings.formatDate(
+                    app.mh_form_check_date)
+            )
+        if app.mh_form_required:
+            feedback += "%s" % _("MH CHECK REQUIRED")
+
+        feedback = "%s<body></html>" % feedback
+        self.browsing_webview.setHtml(feedback)
 
 
 class TestWindow(QtGui.QMainWindow):

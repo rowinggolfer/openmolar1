@@ -1,9 +1,11 @@
-/*-- stylesheet for openmolar - written by Neil Wallace modified 30/6/2009 --*/
+/*-- stylesheet for openmolar - written by Neil Wallace --*/
 
 body{background-color:#ffffff;}
 
 .ops{font-size:12pt;}
 .notes{font-size:13pt;}
+.highlighted-app{border:4px solid #ff0000; padding:3px;}
+
 
 /*-- DIVS --*/
 div.center{text-align:center;}
@@ -12,6 +14,9 @@ h1,h2,h3,h4,h5,h6{margin:3px;color:#4322a8;}
 h1{text-align:center;}
 .debt{color:red;}
 .ut_label{font-style:italic;color:#99ccff;}
+
+h3.red{color:red;}
+li.trt{color:blue;}
 
 /*-- UNORDERED LISTS --*/
 ul{list-style:none;padding-left:0px;}
@@ -45,7 +50,3 @@ table.yeartable{width:600pt;}
 th{border-style:solid;
 background-color:#4322a8;
 color:#ffffff;}
-
-
-
-

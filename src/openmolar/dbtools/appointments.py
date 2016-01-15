@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/python
 # -*- coding: utf-8 -*-
 
 # ########################################################################### #
@@ -35,6 +35,12 @@ INSERT_APPT_QUERY = '''INSERT INTO aslot (adate,apptix,start,end,name,serialno,
 code0,code1,code2,note,flag0,flag1,flag2,flag3)
 VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
 
+APPOINTMENT_QUERY = '''select apptix, start, end, name, serialno,
+code0, code1, code2, note, flag0, flag1, flag2, flag3, timestamp, mh_date
+from aslot left join
+(select pt_sno, max(chk_date) as mh_date from medforms group by pt_sno) as t on
+aslot.serialno = t.pt_sno where adate=%%s %s order by apptix, start'''
+
 APPOINTMENTS_QUERY = '''
 SELECT start, end, name, concat(title," ",fname," ",sname),
 new_patients.serialno, concat(code0," ",code1," ",code2),
@@ -50,6 +56,7 @@ update apr set practix=%s, code0=%s, code1=%s, code2=%s, note=%s,
 length=%s, flag0=%s, flag1=%s, flag2=%s, flag3=%s, flag4=%s, datespec=%s
 WHERE serialno=%s and aprix=%s
 '''
+
 
 def duration(dt1, dt2):
 
@@ -203,11 +210,33 @@ class WeekViewAppointment(object):
     trt = ""
 
     @property
+    def start(self):
+        return localsettings.minutesPastMidnighttoWystime(self.mpm)
+
+    @property
+    def end(self):
+        return localsettings.minutesPastMidnighttoWystime(self.end_mpm)
+
+    @property
     def end_mpm(self):
         return self.mpm + self.length
 
     def __lt__(self, other):
         return self.mpm < other.mpm
+
+    def to_appt(self, adate, dent):
+        query = APPOINTMENT_QUERY % (
+            "and apptix=%s and start=%s and end=%s and serialno=%s")
+
+        db = connect()
+        cursor = db.cursor()
+        values = (adate, dent, self.start, self.end, self.serialno)
+        cursor.execute(query, values)
+        row = cursor.fetchone()
+        cursor.close()
+        if row:
+            return Appointment(row)
+        return None
 
     def __le__(self, other):
         return self.mpm <= other.mpm
@@ -699,6 +728,16 @@ class Appointment(object):
         return localsettings.minutesPastMidnight(self.end) - \
             localsettings.minutesPastMidnight(self.start)
 
+    def __eq__(self, other):
+        try:
+            return (self.serialno == other.serialno and
+                    self.apptix == other.apptix and
+                    self.start == other.start and
+                    self.end == other.end)
+        except AttributeError as exc:
+            print exc
+            return False
+
 
 def slots(adate, apptix, start, apdata, fin):
     '''
@@ -1060,16 +1099,13 @@ def allAppointmentData(adate, dents=()):
     2nd arg will frequently be provided by getWorkingDents(adate)
     '''
     if dents == ():
-        cond = ""
+        query = APPOINTMENT_QUERY % ""
     else:
-        cond = "and (" + "apptix=%s or " * (len(dents) - 1) + "apptix=%s ) "
-
+        query = APPOINTMENT_QUERY % (
+            "and (%s)" % " or ".join(["apptix=%s" for d in dents])
+        )
     db = connect()
     cursor = db.cursor()
-    query = '''select apptix, start, end, name, serialno, code0, code1, code2,
-note, flag0, flag1, flag2, flag3, timestamp, mh_date from aslot left join
-(select pt_sno, max(chk_date) as mh_date from medforms group by pt_sno) as t on
-aslot.serialno = t.pt_sno where adate=%%s %s order by apptix, start''' % cond
     values = (adate,) + dents
     cursor.execute(query, values)
     appts = []
