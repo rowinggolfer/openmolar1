@@ -433,6 +433,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         self.show_first_appointment.emit()
 
     def clear(self):
+        self.reset_browsing_webview()
         self.appointment_model.clear()
         self.reset()
 

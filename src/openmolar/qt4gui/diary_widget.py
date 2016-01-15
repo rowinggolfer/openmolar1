@@ -199,6 +199,7 @@ class DiaryWidget(Advisor):
 
     def showEvent(self, event):
         LOGGER.debug("ShowEvent called laid_out = %s", self.laid_out)
+        self.highlighted_appointment = None
         if not self.laid_out:
             self.initiate()
             QtCore.QTimer.singleShot(10, self.layout_diary)
@@ -605,8 +606,11 @@ class DiaryWidget(Advisor):
         '''
         go to the appointment book for the date on the label
         '''
+        LOGGER.debug("appt OV label clicked %s", sd)
         self.schedule_controller.clear_slots()
         self.schedule_controller.set_search_future()
+        if sd != self.selected_date():
+            self.highlighted_appointment = None
         self.set_date(sd)
         self.ui.diary_tabWidget.setCurrentIndex(0)
 
@@ -835,6 +839,7 @@ class DiaryWidget(Advisor):
         '''
         if not self.viewing_week:
             return
+        self.update_highlighted_appointment(self.highlighted_appointment)
 
         LOGGER.debug("DiaryWidget.layout_weekView")
 
@@ -916,6 +921,7 @@ class DiaryWidget(Advisor):
         '''
         if not self.viewing_day:
             return
+        self.update_highlighted_appointment(self.highlighted_appointment)
 
         LOGGER.debug("DiaryWidget.layout_dayView")
         self.ui.emergency_dayview_scroll_bar.hide()
