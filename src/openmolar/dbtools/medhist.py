@@ -1,26 +1,26 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 this module provides read/write tools for medical history
@@ -43,7 +43,7 @@ MH_QUERY = '''
 select ix, warning_card, medication_comments, allergies,
 respiratory,heart, diabetes, arthritis, bleeding, infectious_disease,
 endocarditis, liver, anaesthetic, joint_replacement, heart_surgery,
-brain_surgery, hospital, cjd, other, alert, chkdate, time_stamp
+brain_surgery, hospital, cjd, other, alert, chkdate, time_stamp, modified_by
 from medhist where pt_sno = %s order by ix desc
 '''
 
@@ -54,14 +54,16 @@ DELETE_MEDS_QUERY = 'delete from medication_link where med_ix=%s'
 INSERT_MEDS_QUERY = \
     'insert into medication_link (med_ix, med, details) values (%s, %s, %s)'
 
-UPDATE_CHKDATE_QUERY = "update medhist set chkdate=%s, modified_by=%s where ix=%s"
+UPDATE_CHKDATE_QUERY = \
+    "update medhist set chkdate=%s, modified_by=%s where ix=%s"
 
 PROPERTIES = ('ix', 'warning_card', 'medications',
               'medication_comments', 'allergies',
               'respiratory', 'heart', 'diabetes', 'arthritis', 'bleeding',
               'infectious_disease', 'endocarditis', 'liver', 'anaesthetic',
-              'joint_replacement', 'heart_surgery', 'brain_surgery', 'hospital', 'cjd',
-              'other', 'alert', 'chkdate', 'time_stamp')
+              'joint_replacement', 'heart_surgery', 'brain_surgery',
+              'hospital', 'cjd', 'other', 'alert', 'chkdate', 'time_stamp',
+              'modified_by')
 
 MedHist = namedtuple('MedHist', PROPERTIES)
 
@@ -71,7 +73,7 @@ medication_comments, allergies, respiratory, heart, diabetes, arthritis,
 bleeding, infectious_disease, endocarditis, liver, anaesthetic,
 joint_replacement, heart_surgery, brain_surgery, hospital, cjd, other, alert,
 chkdate, modified_by)
-values (%s)''' % ", ".join(["%s" for val in PROPERTIES[:-1]])
+values (%s)''' % ", ".join(["%s" for val in PROPERTIES[:-2]])
 
 UPDATE_QUERY = '''
 update medhist set warning_card=%s,
@@ -83,7 +85,8 @@ where ix=%s'''
 
 
 NULLS = (None, "", {}) + \
-    ("", ) * (len(PROPERTIES) - 6) + (False, localsettings.currentDay(), None)
+    ("", ) * (len(PROPERTIES) - 7) + \
+    (False, localsettings.currentDay(), None, "")
 
 
 def get_medications():
@@ -160,14 +163,14 @@ def html_history(sno):
                 table += "<tr><th>%s</th><td>%s<td></tr>" % (
                     key, value)
         if table:
+            if mh.chkdate:
+                date_ = localsettings.formatDate(mh.chkdate)
+            else:
+                date_ = _("Original values, no date")
             html += '''<h2>%s - %s</h2>
             <table width='100%%' border='1'>%s</table>
             <br />
-            ''' % (
-                localsettings.formatDate(mh.chkdate),
-                localsettings.operator,
-                table,
-            )
+            ''' % (date_, mh.modified_by, table)
 
     cursor.close()
     return html + _("End of History")
@@ -219,8 +222,7 @@ def insert_mh(sno, mh):
               mh.other,
               mh.alert,
               mh.chkdate,
-              localsettings.operator,
-              )
+              localsettings.operator)
     cursor.execute(INSERT_QUERY, values)
     ix = db.insert_id()
     cursor.executemany(
@@ -255,8 +257,7 @@ def update_mh(ix, mh):
               mh.alert,
               mh.chkdate,
               localsettings.operator,
-              ix
-              )
+              ix)
     result = cursor.execute(UPDATE_QUERY, values)
     cursor.execute(DELETE_MEDS_QUERY, (ix,))
     cursor.executemany(

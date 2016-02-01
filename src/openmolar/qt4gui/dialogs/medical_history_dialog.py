@@ -361,6 +361,7 @@ class MedicalHistoryDialog(BaseDialog):
             unicode(self.other_text_edit.toPlainText().toUtf8()),
             self.med_alert_cb.isChecked(),
             localsettings.currentDay(),
+            None,
             None
         )
         return result
@@ -371,7 +372,7 @@ class MedicalHistoryDialog(BaseDialog):
             return False
         has_edits = False
         for prop in (medhist.PROPERTIES):
-            if prop in ("ix", "time_stamp", "chkdate"):
+            if prop in ("ix", "time_stamp", "chkdate", 'modified_by'):
                 continue
             old_val = self.mh.__dict__[prop]
             new_val = self.new_mh.__dict__[prop]
