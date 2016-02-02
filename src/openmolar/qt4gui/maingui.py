@@ -2697,7 +2697,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
     def printmultiDayList(self, args):
         '''prints the multiday pages'''
         # - args= ((dent, date), (dent, date)...)
-        dlist = multiDayListPrint.printDaylist()
+        dlist = multiDayListPrint.PrintDaylist()
         something_to_print = False
         for arg in args:
             data = appointments.printableDaylistData(arg[1].toPyDate(), arg[0])

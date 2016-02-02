@@ -43,10 +43,13 @@ aslot.serialno = t.pt_sno where adate=%%s %s order by apptix, start'''
 
 APPOINTMENTS_QUERY = '''
 SELECT start, end, name, concat(title," ",fname," ",sname),
-new_patients.serialno, concat(code0," ",code1," ",code2),
-note, cset
+new_patients.serialno, concat(code0," ",code1," ",code2), note, cset, mh_date
 FROM new_patients right join aslot on new_patients.serialno=aslot.serialno
-WHERE adate = %s and apptix = %s  order by start'''
+left join
+(select pt_sno, max(chk_date) as mh_date from medforms group by pt_sno) as t
+on aslot.serialno = t.pt_sno
+WHERE adate = %s and apptix = %s  order by start
+'''
 
 DELETE_APPOINTMENT_QUERY = '''
 DELETE FROM aslot WHERE adate=%s AND serialno=%s AND apptix=%s AND start=%s'''
@@ -534,7 +537,7 @@ class DayAppointmentData(DaySummary):
         self.appointments.sort(key=lambda x: x.apptix)
 
 
-class DentistDay():
+class DentistDay(object):
 
     '''
     a small class to store data about a dentist's day
@@ -573,7 +576,7 @@ class DentistDay():
         return localsettings.minutesPastMidnight(self.end)
 
 
-class PrintableAppointment():
+class PrintableAppointment(object):
 
     '''
     a class to store data used when printing a daylist
@@ -587,6 +590,16 @@ class PrintableAppointment():
         self.treat = ""
         self.note = ""
         self.cset = ""
+        self.mh_form_date = None
+
+    @property
+    def mh_form_required(self):
+        if self.serialno < 1:
+            return False
+        if not self.mh_form_check_date:
+            return True
+        return (localsettings.currentDay() - self.mh_form_check_date).days > \
+            localsettings.MH_FORM_PERIOD
 
     def getStart(self):
         '''
@@ -1177,6 +1190,7 @@ def printableDaylistData(adate, dent):
                 pa.setTreat(row[5])
                 pa.note = row[6]
                 pa.setCset(row[7])
+                pa.mh_form_check_date = row[8]
                 if current_apttime < pa.start:
                     # -either a gap or a double appointment
                     extra = PrintableAppointment()

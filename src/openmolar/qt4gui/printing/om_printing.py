@@ -370,7 +370,7 @@ def printdaylists(om_gui, args, expanded=False):
     prints the single book pages
     args is a tuple (dent, date)
     '''
-    dlist = daylistprint.printDaylist()
+    dlist = daylistprint.PrintDaylist()
     something_to_print = False
     for apptix, adate in args:
         data = appointments.printableDaylistData(adate.toPyDate(), apptix)
@@ -386,7 +386,7 @@ def printmultiDayList(om_gui, args):
     prints the multiday pages
     args = ((dent, date), (dent, date)...)
     '''
-    dlist = multiDayListPrint.printDaylist()
+    dlist = multiDayListPrint.PrintDaylist()
     something_to_print = False
     for arg in args:
         data = appointments.printableDaylistData(arg[1].toPyDate(), arg[0])
