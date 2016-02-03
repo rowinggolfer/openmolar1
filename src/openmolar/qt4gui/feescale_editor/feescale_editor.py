@@ -1,26 +1,37 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
+
+from feescale_parser import FeescaleParser
+from feescale_list_model import ItemsListModel, ComplexShortcutsListModel
+from feescale_xml_editor import XMLEditor
+from feescale_compare_items_dockwidget import CompareItemsDockWidget
+from feescale_input_dialogs import (PercentageInputDialog,
+                                    RoundupFeesDialog,
+                                    ChargePercentageInputDialog)
+from feescale_diff_dialog import DiffDialog
+from feescale_choice_dialog import ChoiceDialog
+from openmolar.dbtools.feescales import feescale_handler, FEESCALE_DIR
 
 from functools import partial
 import logging
@@ -31,7 +42,6 @@ from gettext import gettext as _
 from xml.dom import minidom
 
 from PyQt4 import QtCore, QtGui
-from openmolar.qt4gui import resources_rc
 
 LOGGER = logging.getLogger("openmolar")
 try:
@@ -40,16 +50,6 @@ except ImportError:
     # OrderedDict only came in python 2.7
     LOGGER.warning("using openmolar.backports for OrderedDict")
     from openmolar.backports import OrderedDict
-
-from feescale_parser import FeescaleParser
-from feescale_list_model import ItemsListModel, ComplexShortcutsListModel
-from feescale_xml_editor import XMLEditor
-from feescale_compare_items_dockwidget import CompareItemsDockWidget
-from feescale_input_dialogs import *
-from feescale_diff_dialog import DiffDialog
-from feescale_choice_dialog import ChoiceDialog
-
-from openmolar.dbtools.feescales import feescale_handler, FEESCALE_DIR
 
 
 class ControlPanel(QtGui.QTabWidget):
@@ -88,8 +88,12 @@ class ControlPanel(QtGui.QTabWidget):
         id = self.items_list_view.model().id_from_index(index)
         qmenu = QtGui.QMenu(self)
 
-        compare_action = QtGui.QAction("%s %s %s" % (_("Compare"),
-        id, _("with similar ids in other feescales")), self)
+        compare_action = QtGui.QAction(
+            "%s %s %s" % (_("Compare"),
+                          id,
+                          _("with similar ids in other feescales")
+                          ),
+            self)
         cancel_action = QtGui.QAction(_("Cancel"), self)
         # not connected to anything.. f clicked menu will simply die!
 
@@ -221,7 +225,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         action_diff = QtGui.QAction(_("Show Database Diff"), self)
         action_diff.setToolTip(
             _("Show the diff between the current file and the "
-        "corresponding file stored in the database"))
+              "corresponding file stored in the database"))
 
         action_compare = QtGui.QAction(_("Compare 2 Feescales"), self)
         action_compare.setToolTip(
@@ -349,10 +353,12 @@ class FeescaleEditor(QtGui.QMainWindow):
                 _("WARNING - you have unsaved changes!"),
                 _("Are you sure you want to quit?"))
 
-            if QtGui.QMessageBox.question(self, _("Confirm"),
-            message,
-            QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
-            QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+            if QtGui.QMessageBox.question(
+                    self,
+                    _("Confirm"),
+                    message,
+                    QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
+                    QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
                 event.ignore()
                 return
         self.closed_signal.emit()
@@ -369,30 +375,36 @@ class FeescaleEditor(QtGui.QMainWindow):
             if parser in self._known_deleted_parsers:
                 pass
             elif parser.is_deleted:
-                message = u"%s<br />%s<hr />%s" % (parser.filepath,
-                _("has been deleted!"),
+                message = u"%s<br />%s<hr />%s" % (
+                    parser.filepath,
+                    _("has been deleted!"),
                     _("Save now?"))
-                if QtGui.QMessageBox.question(self, _("Question"),
-                message,
-                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+                if QtGui.QMessageBox.question(
+                        self,
+                        _("Question"),
+                        message,
+                        QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                        QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
                     self.feescale_handler.save_xml(parser.ix, parser.text)
                     self.advise(_("File Saved"), 1)
                 else:
                     self._known_deleted_parsers.append(parser)
 
             elif parser.is_externally_modified:
-                message = u"%s<br />%s<hr />%s" % (parser.filepath,
-                _("has been modified!"),
+                message = u"%s<br />%s<hr />%s" % (
+                    parser.filepath,
+                    _("has been modified!"),
                     _("Do you want to reload now and lose current changes?")
                     if parser.is_dirty else _("Do you want to reload now?"))
 
-                if QtGui.QMessageBox.question(self, _("Question"),
-                message,
-                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
-                    LOGGER.debug(
-                        "reloading externally modified %s" % parser.filepath)
+                if QtGui.QMessageBox.question(
+                        self,
+                        _("Question"),
+                        message,
+                        QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                        QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+                    LOGGER.debug("reloading externally modified %s",
+                                 parser.filepath)
                     parser.refresh()
                     self.view_feescale(self.tab_widget.currentIndex())
 
@@ -448,11 +460,15 @@ class FeescaleEditor(QtGui.QMainWindow):
             text = self.current_parser.text
             self.text_editors[i].setText(text)
             self.setWindowTitle(
-                "%s - %s" % (self.window_title, self.current_parser.description))
+                "%s - %s" % (self.window_title,
+                             self.current_parser.description))
             self.update_index()
         else:
-            QtGui.QMessageBox.information(self, _("Information"),
-            _("You appear to have no feescales installed in your database"))
+            QtGui.QMessageBox.information(
+                self,
+                _("Information"),
+                _("You appear to have no feescales installed in your database")
+            )
 
     def get_files_from_database(self):
         '''
@@ -575,7 +591,7 @@ class FeescaleEditor(QtGui.QMainWindow):
             self._compare_items_dockwidget = CompareItemsDockWidget(
                 self.feescale_parsers.values(), self)
             self.addDockWidget(QtCore.Qt.BottomDockWidgetArea,
-                self._compare_items_dockwidget)
+                               self._compare_items_dockwidget)
         return self._compare_items_dockwidget
 
     def find_shortcut(self, index):
@@ -634,18 +650,22 @@ class FeescaleEditor(QtGui.QMainWindow):
             self.advise(dl.message, 1)
 
     def zero_charges(self):
-        if QtGui.QMessageBox.question(self, _("Confirm"),
-        _("Zero all patient charges in the current feescale?"),
-            QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
+        if QtGui.QMessageBox.question(
+                self,
+                _("Confirm"),
+                _("Zero all patient charges in the current feescale?"),
+                QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
                 QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok:
             self.current_parser.zero_charges()
             self.text_edit.setText(self.current_parser.text)
 
     def save_files(self):
-        if QtGui.QMessageBox.question(self, _("confirm"),
-        _("Save all files?"),
-            QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel
-        ) == QtGui.QMessageBox.Cancel:
+        if QtGui.QMessageBox.question(
+                self,
+                _("confirm"),
+                _("Save all files?"),
+                QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel) == \
+                QtGui.QMessageBox.Cancel:
             return
 
         i = 0
@@ -674,8 +694,10 @@ class FeescaleEditor(QtGui.QMainWindow):
         try:
             if filepath is None:
                 filepath = unicode(
-                    QtGui.QFileDialog.getSaveFileName(self,
-                    _("save as"), parser.filepath,
+                    QtGui.QFileDialog.getSaveFileName(
+                        self,
+                        _("save as"),
+                        parser.filepath,
                         "%s (*.xml)" % _("xml_files")).toUtf8()
                 )
             if filepath == '':
@@ -701,13 +723,15 @@ class FeescaleEditor(QtGui.QMainWindow):
 
     def refresh_files(self):
         if self.is_dirty and (
-            QtGui.QMessageBox.question(self, _("confirm"),
-        u"<b>%s</b><hr />%s" % (
-                                       _("Warning - you have unsaved changes,"" "
-        "if you refresh now, these will be lost"),
-        _("Refresh anyway?")),
-                QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel
-            ) == QtGui.QMessageBox.Cancel):
+                QtGui.QMessageBox.question(
+                    self,
+                    _("confirm"),
+                    u"<b>%s</b><hr />%s" % (
+                        _("Warning - you have unsaved changes, "
+                          "if you refresh now, these will be lost"),
+                        _("Refresh anyway?")),
+                    QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel) ==
+                QtGui.QMessageBox.Cancel):
             return
 
         self.tab_widget.clear()
@@ -718,10 +742,13 @@ class FeescaleEditor(QtGui.QMainWindow):
             self.advise(
                 _("Please save local files before pushing to database"), 1)
             return
-        if QtGui.QMessageBox.question(self, _("confirm"),
-        _("update all existing feescales with data from the local files?"),
-            QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel
-        ) == QtGui.QMessageBox.Cancel:
+        if QtGui.QMessageBox.question(
+                self,
+                _("confirm"),
+                _("update all existing feescales with data from "
+                  "the local files?"),
+                QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel) == \
+                QtGui.QMessageBox.Cancel:
             return
 
         message, insert_ids = self.feescale_handler.update_db_all()
@@ -730,19 +757,24 @@ class FeescaleEditor(QtGui.QMainWindow):
 
         mappings = {}
         for ins_id in insert_ids:
-            if QtGui.QMessageBox.question(self, _("confirm"),
-            "%s %s?" % (_("Insert new Feescale"),
-            self.feescale_handler.index_to_local_filepath(ins_id)),
-                QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel
-            ) == QtGui.QMessageBox.Ok:
+            if QtGui.QMessageBox.question(
+                    self,
+                    _("confirm"),
+                    "%s %s?" % (
+                        _("Insert new Feescale"),
+                        self.feescale_handler.index_to_local_filepath(ins_id)),
+                    QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel) == \
+                    QtGui.QMessageBox.Ok:
                 mappings[ins_id] = self.feescale_handler.insert_db(ins_id)
 
         move_required = False
         for file_ix, db_ix in mappings.iteritems():
             if file_ix != db_ix:
                 move_required = True
-                self.advise(_("your local files will now be moved to "
-                "comply with the database indexes they have been given"), 1)
+                self.advise(
+                    _("your local files will now be moved to "
+                      "comply with the database indexes they have been given"),
+                    1)
                 break
         if not move_required:
             return
@@ -783,13 +815,15 @@ class FeescaleEditor(QtGui.QMainWindow):
                 options.append(self.tab_widget.tabText(i))
 
         if len(options) == 1:
-            QtGui.QMessageBox.information(self, _("whoops"),
-            _("you have no other files available for comparison"))
+            QtGui.QMessageBox.information(
+                self,
+                _("whoops"),
+                _("you have no other files available for comparison"))
             return
 
         message = "%s<br /><b>%s (%s)</b><hr />%s" % (
             _("Which feescale would you like to compare "
-        "with the current feescale"),
+              "with the current feescale"),
             self.current_parser.ix,
             self.current_parser.description,
             _("Please make a choice"))
@@ -816,6 +850,7 @@ class FeescaleEditor(QtGui.QMainWindow):
 
 
 if __name__ == "__main__":
+    from openmolar.qt4gui import resources_rc
     LOGGER.setLevel(logging.DEBUG)
     app = QtGui.QApplication(sys.argv)
     mw = FeescaleEditor()

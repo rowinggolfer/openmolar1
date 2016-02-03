@@ -1,41 +1,42 @@
-#! /usr/bin/env python
+#! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
+
+'''
+module provides one class DiffDialog
+'''
 
 import difflib
+from gettext import gettext as _
 import logging
 import re
-import os
 import sys
-from xml.dom import minidom
 
 from PyQt4 import QtCore, QtGui
-from openmolar.qt4gui import resources_rc
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
+from feescale_xml_editor import XMLEditor
 
 LOGGER = logging.getLogger("openmolar")
-
-from feescale_xml_editor import XMLEditor
 
 
 class DiffDialog(BaseDialog):
@@ -122,9 +123,9 @@ class DiffDialog(BaseDialog):
                 continue
             if "@@" in line_:
                 LOGGER.debug(line_.strip())
-            m = re.match("@@ \-(\d+),?(\d+)? \+(\d+),?(\d+)? @@", line_)
+            m = re.match(r"@@ \-(\d+),?(\d+)? \+(\d+),?(\d+)? @@", line_)
             if m:
-                LOGGER.debug("match! %s" % str(m.groups()))
+                LOGGER.debug("match! %s", str(m.groups()))
                 if (line_no1 + line_no2) != 0:
                     text1 += "\n\n"
                     text2 += "\n\n"
@@ -198,7 +199,7 @@ class DiffDialog(BaseDialog):
         for line_ in diffs:
             if line_.strip() in ("---", "+++"):
                 continue
-            m = re.match("@@ \-(\d+),?(\d+)? \+(\d+),?(\d+)? @@", line_)
+            m = re.match(r"@@ \-(\d+),?(\d+)? \+(\d+),?(\d+)? @@", line_)
             if m:
                 # create tuple start, end
                 text1_start = int(m.groups()[0])
@@ -247,9 +248,10 @@ class DiffDialog(BaseDialog):
             self.xml_editor2.highlight_line(lineno)
 
     def files_are_identical(self):
-        if (self.xml_editor1.text_object.text ==
-           self.xml_editor2.text_object.text):
-            QtGui.QMessageBox.information(self, _("Information"),
+        if self.xml_editor1.text_object.text == \
+                self.xml_editor2.text_object.text:
+            QtGui.QMessageBox.information(self,
+                                          _("Information"),
                                           _("Files are identical"))
             return True
 
