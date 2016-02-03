@@ -932,8 +932,9 @@ def remove_treatments_from_plan_and_est(om_gui, treatments, completed=False):
 
         if re.match("[ul][lr[1-8]", att):
             plan = pt.treatment_course.__dict__["%spl" % att]
-            cmp = pt.treatment_course.__dict__["%scmp" % att]
-            charts_gui.updateChartsAfterTreatment(om_gui, att, plan, cmp)
+            cmp_ = pt.treatment_course.__dict__["%scmp" % att]
+            charts_gui.updateChartsAfterTreatment(om_gui, att, plan, cmp_)
+            om_gui.ui.toothPropsWidget.lineEdit.deleteProp(shortcut)
     om_gui.updateDetails()
 
 
