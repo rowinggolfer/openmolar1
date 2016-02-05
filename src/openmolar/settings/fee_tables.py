@@ -1,27 +1,28 @@
-#! /usr/bin/env python
+#! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
+from gettext import gettext as _
 import datetime
 import logging
 import re
@@ -29,7 +30,6 @@ from xml.dom import minidom
 
 from collections import namedtuple
 
-from openmolar import connect
 from openmolar.settings import localsettings
 from openmolar.dbtools.feescales import feescale_handler
 
@@ -131,7 +131,7 @@ class FeeTables(object):
         csetypes = []
         for table in self.tables.values():
             for cset in table.categories:
-                if not cset in csetypes:
+                if cset not in csetypes:
                     csetypes.append(cset)
         return csetypes
 
@@ -254,6 +254,13 @@ class FeeTables(object):
                 LOGGER.exception(message)
                 self.warnings.append(message + "<hr /><pre>%s</pre>" % exc)
 
+    @property
+    def all_other_shortcuts(self):
+        for table in self.tables.values():
+            if table.is_current:
+                for shortcut in table.other_shortcuts:
+                    yield table, shortcut
+
 
 class FeeTable(object):
 
@@ -296,6 +303,9 @@ class FeeTable(object):
         '''
         return "FeeTable %s database index %s - has %s feeItems" % (
             self.briefName, self.database_ix, len(self.feesDict))
+
+    def __eq__(self, other):
+        return self.database_ix == other.database_ix
 
     @property
     def briefName(self):
@@ -379,10 +389,20 @@ class FeeTable(object):
         self.endDate = datetime.date(int(year), int(month), int(day))
         LOGGER.debug("endDate = %s" % self.endDate)
 
+    @property
+    def is_current(self):
+        '''
+        a boolean value based the table start and end dates
+        '''
+        return self.endDate is None or \
+            self.startDate <= datetime.date.today() <= self.endDate
+
     def get_ui_buttons(self, tagname):
         for ix, node in enumerate(self.dom.getElementsByTagName(tagname)):
-            chart_button = namedtuple('Button',
-                                     ("ix", "shortcut", "description", "tooltip"))
+            chart_button = namedtuple('Button', ("ix",
+                                                 "shortcut",
+                                                 "description",
+                                                 "tooltip"))
             chart_button.ix = ix
             chart_button.description = node.getAttribute("description")
             chart_button.tooltip = node.getAttribute("tooltip")
@@ -962,14 +982,15 @@ class Modifier(object):
     def __repr__(self):
         return "Modifier conditions = %s" % self.conditions
 
+
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
 
     fts = FeeTables()
 
     table = fts.default_table
-    for id, fee_item in table.feesDict.iteritems():
-        print id, fee_item
+    for id_, fee_item in table.feesDict.iteritems():
+        print id_, fee_item
 
     print table.hasPtCols
     for i, complex_shortcut in enumerate(table.complex_shortcuts):

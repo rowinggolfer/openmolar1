@@ -90,6 +90,7 @@ class ImplantChoiceDialog(ExtendableDialog):
         self.chosen_shortcut = shortcut
         self.accept()
 
+
 if __name__ == "__main__":
     from gettext import gettext as _
     from openmolar.dbtools.patient_class import patient

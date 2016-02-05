@@ -1,26 +1,26 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 this module provides a model class so that feescales can be displayed
@@ -34,12 +34,12 @@ import logging
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 
-HIDE_RARE_CODES = 0  # fee items have an "obscurity" level of 0-2
+HIDE_RARE_CODES = 1  # fee items can be flagged as "obscure" in the XML
 
 # new for version 0.5 - categories come from the feescale XML
 
 # CATEGORIES = ("", "Examinations", "Diagnosis", "Perio", "Chart",
-#"Prosthetics", "Ortho", "Misc", "Emergency", "Other", "Custom", "Occasional")
+# "Prosthetics", "Ortho", "Misc", "Emergency", "Other", "Custom", "Occasional")
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -228,10 +228,12 @@ class treeModel(QtCore.QAbstractItemModel):
     def setupModelData(self):
         parents = {0: self.rootItem}
 
-        current_cat = 0
         for key in sorted(self.table.feesDict.keys()):
             feeItem = self.table.feesDict[key]
-            if feeItem.obscurity > HIDE_RARE_CODES:
+            if HIDE_RARE_CODES and feeItem.obscurity > 0:
+                LOGGER.debug("%s %s HIDE_RARE_CODES = %s, obscurity = %s",
+                             feeItem.table, feeItem.description,
+                             HIDE_RARE_CODES, feeItem.obscurity)
                 continue
             section = feeItem.section
             if section not in parents:
@@ -262,7 +264,8 @@ class treeModel(QtCore.QAbstractItemModel):
             start_index = self.createIndex(0, column, child)
 
             indexes = self.match(start_index, QtCore.Qt.DisplayRole,
-                                 QtCore.QVariant(self.search_phrase), -1, matchflags)
+                                 QtCore.QVariant(self.search_phrase), -1,
+                                 matchflags)
 
             for index in indexes:
                 self.foundItems.append(index)

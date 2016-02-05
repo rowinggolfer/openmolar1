@@ -45,6 +45,8 @@ from openmolar.qt4gui.dialogs.complete_treatment_dialog \
     import CompleteTreatmentDialog
 
 from openmolar.qt4gui.dialogs.denture_dialog import DentureDialog
+from openmolar.qt4gui.dialogs.other_treatment_dialog \
+    import OtherTreatmentDialog
 
 from openmolar.qt4gui.fees import course_module
 
@@ -133,7 +135,7 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
             return itemcode, table
         LOGGER.debug("%s %s not matched by %s" % (att, shortcut, table))
         for alt_table in localsettings.FEETABLES.tables.itervalues():
-            if alt_table == table:
+            if alt_table == table or not alt_table.is_current:
                 continue
             alt_code = alt_table.getToothCode(att, shortcut)
             if alt_code != "-----":
@@ -160,7 +162,7 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
             return itemcode, table
         LOGGER.debug("%s not matched by %s" % (usercode, table))
         for alt_table in localsettings.FEETABLES.tables.itervalues():
-            if alt_table == table:
+            if alt_table == table or not alt_table.is_current:
                 continue
             alt_code = alt_table.getItemCodeFromUserCode(usercode)
             if alt_code != "-----":
@@ -330,11 +332,13 @@ def otherAdd(om_gui):
     '''
     add 'other' items
     '''
-    item_list = om_gui.pt.fee_table.other_shortcuts
 
-    chosen_treatments = offerTreatmentItems(om_gui, item_list)
-    if chosen_treatments:
-        add_treatments_to_plan(om_gui, chosen_treatments)
+    # chosen_treatments = offerTreatmentItems(om_gui, item_list)
+    # if chosen_treatments:
+    #     add_treatments_to_plan(om_gui, chosen_treatments)
+    dl = OtherTreatmentDialog(om_gui)
+    if dl.exec_():
+        add_treatments_to_plan(om_gui, dl.chosen_treatments)
 
 
 def customAdd(om_gui, description=None):

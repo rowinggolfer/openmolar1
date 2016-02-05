@@ -1,26 +1,26 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 import logging
 import os
@@ -70,6 +70,8 @@ in addition - why not use some version control for this folder?
 
 QUERY = 'select ix, xml_data from feescales'
 
+NEXT_ID_QUERY = 'select max(ix) + 1 from feescales'
+
 SPECIFIC_QUERY = 'select xml_data from feescales where ix=%s'
 
 UPDATE_QUERY = "update feescales set xml_data = %s where ix = %s"
@@ -90,6 +92,20 @@ def get_digits(string_value):
 
 class FeescaleHandler(object):
     ixs_in_db = set([])
+
+    @property
+    def next_insert_id(self):
+        db = connect.connect()
+        cursor = db.cursor()
+        cursor.execute(NEXT_ID_QUERY)
+        row = cursor.fetchone()
+        cursor.close()
+        if row:
+            return row[0]
+
+    @property
+    def count(self):
+        return len(list(self.local_files))
 
     def get_feescale_from_database(self, ix):
         '''
@@ -231,11 +247,11 @@ class FeescaleHandler(object):
         return message
 
     def insert_db(self, ix):
-        message = ""
         filepath = self.index_to_local_filepath(ix)
         LOGGER.debug("inserting new feescale into database %s" % ix)
         if not os.path.isfile(filepath):
             message = "FATAL %s does not exist!" % filepath
+            LOGGER.warning(message)
         else:
             db = connect.connect()
             cursor = db.cursor()
@@ -277,8 +293,7 @@ if __name__ == "__main__":
     logging.basicConfig()
     LOGGER.setLevel(logging.DEBUG)
 
-    fh = FeescaleHandler()
-    fh.get_feescales_from_database()
-    for ix, local_file in fh.local_files:
+    feescale_handler.get_feescales_from_database()
+    for ix, local_file in feescale_handler.local_files:
         print ix, local_file
-    print fh.non_existant_and_modified_local_files()
+    print feescale_handler.non_existant_and_modified_local_files()

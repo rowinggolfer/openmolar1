@@ -31,6 +31,7 @@ from feescale_input_dialogs import (PercentageInputDialog,
                                     ChargePercentageInputDialog)
 from feescale_diff_dialog import DiffDialog
 from feescale_choice_dialog import ChoiceDialog
+from new_feescale_dialog import NewFeescaleDialog
 from openmolar.dbtools.feescales import feescale_handler, FEESCALE_DIR
 
 from functools import partial
@@ -177,6 +178,10 @@ class FeescaleEditor(QtGui.QMainWindow):
         action_commit = QtGui.QAction(icon, _("Commit"), self)
         action_commit.setToolTip(_("Commit changes to database"))
 
+        icon = QtGui.QIcon.fromTheme("document-new")
+        action_new = QtGui.QAction(icon, _("New Feescale"), self)
+        action_new.setToolTip(_("Create a Feescale"))
+
         icon = QtGui.QIcon.fromTheme("document-save")
         action_save = QtGui.QAction(icon, _("Save File"), self)
         action_save.setShortcut("Ctrl+S")
@@ -231,18 +236,24 @@ class FeescaleEditor(QtGui.QMainWindow):
         action_compare.setToolTip(
             _("Show the diff between the current file and a selected other"))
 
-        self.main_toolbar.addAction(action_pull)
-        self.main_toolbar.addAction(action_commit)
+        self.main_toolbar.addAction(action_new)
         self.main_toolbar.addAction(action_save)
         self.main_toolbar.addAction(action_save_as)
         self.main_toolbar.addAction(action_save_all)
         self.main_toolbar.addAction(action_refresh)
         self.main_toolbar.addAction(action_quit)
+        self.main_toolbar.addSeparator()
+        self.main_toolbar.addAction(action_pull)
+        self.main_toolbar.addAction(action_commit)
 
+        menu_file.addAction(action_new)
+        menu_file.addSeparator()
         menu_file.addAction(action_save)
         menu_file.addAction(action_save_as)
         menu_file.addAction(action_save_all)
+        menu_file.addSeparator()
         menu_file.addAction(action_refresh)
+        menu_file.addSeparator()
         menu_file.addAction(action_quit)
 
         menu_edit.addAction(action_find)
@@ -292,6 +303,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         splitter.setSizes([150, 650])
         self.setCentralWidget(splitter)
 
+        action_new.triggered.connect(self.new_feescale)
         action_save.triggered.connect(self.save)
         action_save_as.triggered.connect(self.save_as)
         action_save_all.triggered.connect(self.save_files)
@@ -430,27 +442,34 @@ class FeescaleEditor(QtGui.QMainWindow):
         self.text_editors = []
         self.feescale_parsers = OrderedDict()
         for ix, filepath in self.feescale_handler.local_files:
-            fp = FeescaleParser(filepath, ix)
-            try:
-                fp.parse_file()
-            except:
-                message = u"%s '%s'" % (_("unable to parse file"), filepath)
-                self.advise(message, 2)
-                LOGGER.exception(message)
-
-            editor = XMLEditor()
-            editor.editor_settings()
-            editor.textChanged.connect(self.text_changed)
-            editor.editing_finished.connect(self.te_editing_finished)
-            editor.cursorPositionChanged.connect(self.cursor_position_changed)
-
-            title = fp.label_text
-            self.feescale_parsers[title] = fp
-            self.text_editors.append(editor)
-
-            self.tab_widget.addTab(editor, title)
-
+            self.load_feescale_from_filepath(ix, filepath)
         self.is_loading = False
+        self.advise("%d local files created/loaded for editing" %
+                    self.feescale_handler.count, 1)
+
+    def load_feescale_from_filepath(self, ix, filepath):
+        fp = FeescaleParser(filepath, ix)
+        try:
+            fp.parse_file()
+        except:
+            message = u"%s '%s'" % (_("unable to parse file"), filepath)
+            self.advise(message, 2)
+            LOGGER.exception(message)
+
+        editor = XMLEditor()
+        editor.editor_settings()
+        editor.textChanged.connect(self.text_changed)
+        editor.editing_finished.connect(self.te_editing_finished)
+        editor.cursorPositionChanged.connect(self.cursor_position_changed)
+
+        title = fp.label_text
+        self.feescale_parsers[title] = fp
+        self.text_editors.append(editor)
+
+        self.tab_widget.addTab(editor, title)
+        tooltip = "%s\n%s" % (fp.tablename, fp.description)
+        LOGGER.debug("setting tab tool tip %s", tooltip.replace("\n", " "))
+        self.tab_widget.setTabToolTip(ix, tooltip)
 
     def view_feescale(self, i=0):
         while self.is_loading:
@@ -684,6 +703,13 @@ class FeescaleEditor(QtGui.QMainWindow):
     def save(self):
         LOGGER.debug("save")
         self.save_as(filepath=self.current_parser.filepath)
+
+    def new_feescale(self):
+        LOGGER.debug("new_feescale")
+        dl = NewFeescaleDialog(self)
+        if dl.exec_():
+            self.load_feescale_from_filepath(dl.ix, dl.filepath)
+            self.tab_widget.setCurrentIndex(self.tab_widget.count()-1)
 
     def save_as(self, bool_=None, filepath=None):
         '''

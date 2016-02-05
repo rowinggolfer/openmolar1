@@ -93,7 +93,6 @@ class AddTreatmentDialog(QtGui.QDialog, Ui_addTreatment.Ui_Dialog):
         yields selected usercodes (allowing multiple selections)
         '''
         if self.exec_():
-            retarg = ()
             for item_widg in self.itemWidgets:
                 number = item_widg.spinBox.value()
                 if number != 0:
