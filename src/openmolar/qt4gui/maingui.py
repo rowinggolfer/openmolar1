@@ -1592,8 +1592,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
         self.pt.apply_fees()
 
-        Saved = (self.pt.dbstate.fees == self.pt.fees)
-        details = patientDetails.details(self.pt, Saved)
+        details = patientDetails.details(self.pt)
         self.ui.detailsBrowser.setHtml(details)
         self.ui.detailsBrowser.update()
         self.ui.planSummary_textBrowser.setHtml(plan.summary(self.pt))

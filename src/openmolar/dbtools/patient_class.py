@@ -943,6 +943,10 @@ class patient(object):
                 changes.append(att_)
         return changes
 
+    @property
+    def has_changes(self):
+        return self.changes != []
+
     def take_snapshot(self):
         '''
         create a snapshot of this class, copying all attributes that the

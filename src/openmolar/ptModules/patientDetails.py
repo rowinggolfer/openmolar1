@@ -82,7 +82,7 @@ def header(pt):
     return html
 
 
-def details(pt, Saved=True):
+def details(pt):
     '''
     returns an html set showing pt name etc...
     '''
@@ -117,6 +117,9 @@ def details(pt, Saved=True):
         except KeyError:
             html += '<h4>%s</h4><hr />' % _(
                 "Please Set a Dentist for this patient!")
+        if pt.underTreatment:
+            html += '<hr /><h2 class="ut_label">%s</h2><hr />' % _(
+                "UNDER TREATMENT")
         if pt.memo != '':
             html += '<h4>%s</h4>%s<hr />' % (_("Memo"), pt.memo)
 
@@ -178,17 +181,16 @@ def details(pt, Saved=True):
         else:
             html += '<div style="color:red;">%s</div>' % _("DO NOT RECALL")
 
-        alert = _("NOT SAVED") if not Saved else ""
         if pt.fees > 0:
             amount = localsettings.formatMoney(pt.fees)
-            html += '<hr /><h3 class="debt">%s = %s %s</h3>' % (
-                _("Account"), amount, alert)
+            html += '<hr /><h3 class="debt">%s = %s</h3>' % (_("Account"),
+                                                             amount)
         if pt.fees < 0:
             amount = localsettings.formatMoney(-pt.fees)
-            html += '<hr /><h3>%s %s %s</h3>' % (amount, _("in credit"), alert)
-        if pt.underTreatment:
-            html += '<hr /><h2 class="ut_label">%s</h2><hr />' % _(
-                "UNDER TREATMENT")
+            html += '<hr /><h3>%s %s</h3>' % (amount, _("in credit"))
+        if pt.has_changes:
+            html += '<hr /><h3 class="debt">%s</h3>' % (
+                _("RECORD HAS UNSAVED CHANGES"))
         return '''%s\n</div></body></html>''' % html
     except Exception as exc:
         LOGGER.exception("error in patientDetails.details")
