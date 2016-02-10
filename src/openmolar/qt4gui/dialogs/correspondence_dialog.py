@@ -1,27 +1,28 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
+from gettext import gettext as _
 import logging
 import re
 
@@ -103,7 +104,7 @@ class CorrespondenceDialog(BaseDialog):
                     selected),
                 QtGui.QMessageBox.Yes | QtGui.QMessageBox.No
         ) == QtGui.QMessageBox.No:
-                return
+            return
 
         letter = self.LETTERS[selected]
         new_body = "<!-- letter body -->\n%s\n<!-- end of letter body -->" % \
@@ -135,6 +136,7 @@ class CorrespondenceDialog(BaseDialog):
     @property
     def letter_description(self):
         return unicode(self.combo_box.currentText())
+
 
 if __name__ == "__main__":
     app = QtGui.QApplication([])

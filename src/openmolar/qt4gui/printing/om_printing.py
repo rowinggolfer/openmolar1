@@ -136,7 +136,8 @@ def printLetter(om_gui):
                     om_gui.docsPrintedInit()
                     om_gui.updateHiddenNotesLabel()
             else:
-                dl.pt.toNotes(dl.pt.serialno, dl.pt.HIDDENNOTES)
+                patient_write_changes.toNotes(dl.pt.serialno,
+                                              dl.pt.HIDDENNOTES)
 
 
 def printAccountsTable(om_gui):
@@ -306,7 +307,8 @@ def printReferral(om_gui):
                     om_gui.docsPrintedInit()
                     om_gui.updateHiddenNotesLabel()
             else:
-                dl.pt.toNotes(dl.pt.serialno, dl.pt.HIDDENNOTES)
+                patient_write_changes.toNotes(dl.pt.serialno,
+                                              dl.pt.HIDDENNOTES)
 
         return True
 
