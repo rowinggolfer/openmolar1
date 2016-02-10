@@ -145,6 +145,9 @@ def details(pt, Saved=True):
             markup = ("", "")
             if i in (2, 6):
                 markup = ("<b>", "</b")
+            elif i == 0:
+                if pt.mh_form_date is None:
+                    markup = ('<b style="color:red;">!!', "</b>")
             elif i == 1:
                 try:
                     if pt.mh_chkdate < pt.mh_form_date:
@@ -190,6 +193,7 @@ def details(pt, Saved=True):
     except Exception as exc:
         LOGGER.exception("error in patientDetails.details")
         return "error displaying details, sorry <br />%s" % exc
+
 
 if __name__ == '__main__':
     localsettings.initiate()
