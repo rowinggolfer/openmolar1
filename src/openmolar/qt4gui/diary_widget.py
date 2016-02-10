@@ -1170,7 +1170,7 @@ class DiaryWidget(Advisor):
 
         sno = list_of_snos[0]
         serialno = int(sno)
-        if adate == None:
+        if adate is None:
             adate = self.selected_date().toPyDate()
 
         appt = appointments.APR_Appointment()
@@ -1194,7 +1194,7 @@ class DiaryWidget(Advisor):
         it expects an arg like ('8:50', '11:00', 4)
         '''
         LOGGER.debug("Block Slot %s %s %s %s", start, end, dent, adate)
-        if adate == None:
+        if adate is None:
             adate = self.selected_date().toPyDate()
         message = _("Do you want to unblock the selected slot?")
         message += "<br />%s - %s <br />" % (start, end)
@@ -1412,8 +1412,20 @@ class DiaryWidget(Advisor):
         called if an appointment is clicked on.
         '''
         LOGGER.debug("update highlighted appointment %s", appointment)
-        if appointment and self.schedule_controller.mode == self.NOTES_MODE:
-            self.show_todays_notes(appointment.serialno)
+        if appointment:
+            # synchronise the week date.
+            for i, widg in enumerate(self.ui.apptoverviews):
+                if widg == self.sender():
+                    LOGGER.debug("updating calendar day number=%s", i)
+                    date_ = self.selected_date()
+                    while date_.dayOfWeek() > 1:
+                        date_ = date_.addDays(-1)
+                    self.signals_calendar(False)
+                    self.ui.weekCalendar.setSelectedDate(date_.addDays(i))
+                    self.set_date(date_.addDays(i))
+                    self.signals_calendar()
+            if self.schedule_controller.mode == self.NOTES_MODE:
+                self.show_todays_notes(appointment.serialno)
         self.highlighted_appointment = appointment
         self.schedule_controller.update_highlighted_appointment()
         if self.viewing_day:
@@ -1520,7 +1532,8 @@ class DiaryWidget(Advisor):
             widg.header_clicked_signal.connect(self.apptOVheaderclick)
             widg.cancel_appointment_signal.connect(self.appointment_cancel)
             widg.clear_slot_signal.connect(self.clearEmergencySlot)
-            widg.appt_clicked_signal.connect(self.update_highlighted_appointment)
+            widg.appt_clicked_signal.connect(
+                self.update_highlighted_appointment)
 
         for control in self.ui.apptoverviewControls:
             control.dayview_signal.connect(self.aptOVlabelClicked)
