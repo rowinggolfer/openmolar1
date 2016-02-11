@@ -945,7 +945,9 @@ class patient(object):
 
     @property
     def has_changes(self):
-        return self.changes != []
+        is_changed = self.changes != []
+        self.lock_record_in_use() if is_changed else self.clear_lock()
+        return is_changed
 
     def take_snapshot(self):
         '''

@@ -158,7 +158,8 @@ def is_locked(serialno):
         raise IOError("multiple locks present - this shouldn't happen")
     else:
         op, surgeryno, timestamp = rows[0]
-        message = "%s %s %s %s %s %s<hr />%s %s" % (
+        message = "<h3>%s</h3>%s %s %s %s %s %s<hr />%s %s<hr />%s" % (
+            _("WARNING"),
             _("Record number"),
             serialno,
             _("is locked by"),
@@ -166,7 +167,8 @@ def is_locked(serialno):
             _("in surgery number"),
             surgeryno,
             _("Lock aquired at"),
-            timestamp
+            timestamp,
+            _("Please reload this record before making any changes")
         )
         return True, message
     return False, None

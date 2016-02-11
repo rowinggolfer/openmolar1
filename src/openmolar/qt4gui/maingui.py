@@ -1246,7 +1246,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         locked, message = records_in_use.is_locked(serialno)
         if locked:
             self.advise(message, 1)
-            return
+            # return
         LOGGER.info("loading record %s", serialno)
         if self.pt and serialno == self.pt.serialno and not newPatientReload:
             self.ui.main_tabWidget.setCurrentIndex(0)
@@ -3634,17 +3634,21 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             return
         LOGGER.debug("checking records in use")
         users = []
+        message = ""
         for riu in records_in_use.get_usage_info(self.pt.serialno):
             user = "%s - %s" % (riu.op, riu.location)
             if riu.surgeryno == localsettings.surgeryno:
-                pass
-            elif riu.is_locked:
-                self.advise("%s %s" % (_("record is locked by"), user), 1)
+                continue
+            if riu.is_locked:
+                message = "<b>%s %s</b>" % (_("Record is locked by"), user)
+                # TODO something like the next line should happen here!!
+                # self.enableEdit(False)
             else:
                 users.append(user)
         if users:
-            message = "%s<br />" % _("Record also used by")
+            message += "%s<br />" % _("Record also used by")
             message += "<br />".join(users)
+        if message:
             self.advise(message)
 
     def clear_record_in_use(self):
