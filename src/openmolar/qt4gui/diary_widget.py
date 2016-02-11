@@ -111,7 +111,7 @@ class DiaryWidget(Advisor):
         self.control_layout = QtGui.QVBoxLayout(self.ui.day_view_control_frame)
         self.control_layout.setMargin(0)
         self.control_layout.addWidget(self.schedule_controller)
-        self.control_layout.addStretch(0)
+        # self.control_layout.addStretch(0)
         self.control_layout.addWidget(self.view_controller)
 
         self.day_scroll_bar = None
