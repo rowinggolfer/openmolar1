@@ -1,34 +1,37 @@
-#! /usr/bin/env python
+#! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 from __future__ import division
 
 from functools import partial
+from gettext import gettext as _
+
 from PyQt4 import QtGui, QtCore
 
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
-from openmolar.qt4gui.customwidgets.fiveminutetimeedit import FiveMinuteTimeEdit
+from openmolar.qt4gui.customwidgets.fiveminutetimeedit \
+    import FiveMinuteTimeEdit
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
 
 from openmolar.settings import localsettings
@@ -51,7 +54,7 @@ class InsertBlocksDialog(BaseDialog):
         clinicians_groupbox = QtGui.QGroupBox(self)
         clinicians_groupbox.setTitle(_("Clinicians"))
         layout = QtGui.QHBoxLayout(clinicians_groupbox)
-        for initials in (localsettings.activedents + localsettings.activehygs):
+        for initials in localsettings.activedents + localsettings.activehygs:
             cb = QtGui.QCheckBox(initials)
             layout.addWidget(cb)
             try:
@@ -102,12 +105,12 @@ class InsertBlocksDialog(BaseDialog):
         self.combo_box = QtGui.QComboBox()
 
         frame = QtGui.QFrame()
-        layout = QtGui.QFormLayout(frame)
-        layout.addRow(_("Start Date"), self.start_dateedit)
-        layout.addRow(_("End Date"), self.end_dateedit)
-        layout.addRow(_("What time does this recurr?"), self.time_edit)
-        layout.addRow(_("Duration"), self.duration_spinbox)
-        layout.addRow(_("What is this block for?"), self.combo_box)
+        flayout = QtGui.QFormLayout(frame)
+        flayout.addRow(_("Start Date"), self.start_dateedit)
+        flayout.addRow(_("End Date"), self.end_dateedit)
+        flayout.addRow(_("What time does this recurr?"), self.time_edit)
+        flayout.addRow(_("Duration"), self.duration_spinbox)
+        flayout.addRow(_("What is this block for?"), self.combo_box)
 
         self.insertWidget(label)
         self.insertWidget(clinicians_groupbox)
@@ -204,13 +207,12 @@ class InsertBlocksDialog(BaseDialog):
             localsettings.minutesPastMidnight(start) +
             self.duration_spinbox.value())
 
-        #print sdate, fdate, n_days, start, end
-
         p_dl = QtGui.QProgressDialog(self)
         p_dl.show()
         days = list(self.chosen_days)
         n_attempts, n_inserted = 0, 0
         for clinician in self.chosen_clinicians:
+            p_dl.raise_()
             p_dl.setLabelText("%s %s" % (_("applying changes for"), clinician))
             dt = sdate
             while dt <= fdate:
@@ -218,19 +220,23 @@ class InsertBlocksDialog(BaseDialog):
                 p_dl.setValue(progress)
                 if dt.dayOfWeek() in days:
                     n_attempts += 1
-                    n_inserted += appointments.make_appt(dt.toPyDate(),
-                                           localsettings.apptix[clinician],
-                                           start, end, self.block_text,
-                                           0, "", "", "", "", -128, 0, 0, 0)
+                    n_inserted += appointments.make_appt(
+                        dt.toPyDate(),
+                        localsettings.apptix[clinician],
+                        start, end, self.block_text,
+                        0, "", "", "", "", -128, 0, 0, 0)
                 dt = dt.addDays(1)
+                QtGui.QApplication.instance().processEvents()
 
-        message = "%d/%d %s" % (
-                n_inserted, n_attempts, _("Appointment(s) inserted"))
+        message = "%d/%d %s" % (n_inserted,
+                                n_attempts,
+                                _("Appointment(s) inserted"))
 
         if n_inserted != n_attempts:
-            message += "<hr />%s" % _(
-            "Some were rejected by the database as they clashed"
-            " with existing appointments or blocks")
+            message += \
+                "<hr /><b>%s</b>" % _(
+                    "Some were rejected by the database as they clashed"
+                    " with existing appointments or blocks")
         QtGui.QMessageBox.information(self, _("Information"), message)
 
     def exec_(self):
@@ -240,9 +246,12 @@ class InsertBlocksDialog(BaseDialog):
                 self.accept()
                 return True
             else:
-                QtGui.QMessageBox.warning(self, _("Bad Input"),
-                "<ul><li>%s</li></ul>" % "</li><li>".join(warnings))
+                QtGui.QMessageBox.warning(
+                    self,
+                    _("Bad Input"),
+                    "<ul><li>%s</li></ul>" % "</li><li>".join(warnings))
         self.reject()
+
 
 if __name__ == "__main__":
     localsettings.initiate()
