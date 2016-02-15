@@ -2270,6 +2270,12 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         '''
         fees_module.showTableXML(self)
 
+    def configure_feescales(self):
+        '''
+        user has asked to configure feescales
+        '''
+        fees_module.configure_feescales(self)
+
     def handle_chart_treatment_input(self, tooth, prop, completed):
         LOGGER.debug("%s %s completed=%s", tooth, prop, completed)
         if course_module.newCourseNeeded(self):
@@ -2972,6 +2978,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.actionEdit_Standard_Letters.triggered.connect(
             self.edit_standard_letters)
         self.ui.actionEdit_Feescales.triggered.connect(self.feetable_xml)
+        self.ui.actionConfigure_Feescales.triggered.connect(
+            self.configure_feescales)
 
     def signals_estimates(self):
         # Estimates and Course Management

@@ -22,12 +22,12 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from collections import namedtuple
 import logging
 import os
 import re
 import shutil
-
-from collections import namedtuple
+from xml.dom import minidom
 
 from openmolar import connect
 from openmolar.settings import localsettings
@@ -78,6 +78,12 @@ UPDATE_QUERY = "update feescales set xml_data = %s where ix = %s"
 
 NEW_FEESCALE_QUERY = "insert into feescales (xml_data) values(%s)"
 
+FULL_QUERY = '''SELECT ix, in_use, priority, comment, xml_data FROM feescales
+ORDER BY priority DESC, in_use'''
+
+UPDATE_META_QUERY = '''UPDATE feescales set in_use=%s, priority=%s, comment=%s
+WHERE ix=%s'''
+
 
 def get_digits(string_value):
     '''
@@ -88,6 +94,44 @@ def get_digits(string_value):
     if not m:
         return None
     return int(m.groups()[0])
+
+
+class FeescaleDatabaseObject(object):
+    def __init__(self, ix, in_use, priority, comment, xml_data):
+        self.ix = ix
+        self.in_use = in_use
+        self.priority = priority
+        self.comment = comment
+        try:
+            dom = minidom.parseString(xml_data)
+            nodes = dom.getElementsByTagName("feescale_description")
+            self.name = nodes[0].childNodes[0].data
+        except:
+            LOGGER.exception("unable to get description from Feescale Parser")
+            self.name = "no description"
+
+    def __repr__(self):
+        return "Feescale %s - %s" % (self.ix, self.name)
+
+
+class FeescaleConfigurer(object):
+    def __init__(self):
+        db = connect.connect()
+        cursor = db.cursor()
+        cursor.execute(FULL_QUERY)
+        rows = cursor.fetchall()
+        cursor.close()
+        LOGGER.debug("%d feescales retrieved", len(rows))
+        self.feescales = []
+        for row in rows:
+            self.feescales.append(FeescaleDatabaseObject(*row))
+
+    def apply_changes(self, ix, in_use, comment, priority):
+        values = (in_use, priority, comment, ix)
+        db = connect.connect()
+        cursor = db.cursor()
+        cursor.execute(UPDATE_META_QUERY, values)
+        cursor.close()
 
 
 class FeescaleHandler(object):

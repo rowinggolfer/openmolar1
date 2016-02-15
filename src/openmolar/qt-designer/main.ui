@@ -463,7 +463,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>759</width>
+                      <width>494</width>
                       <height>646</height>
                      </rect>
                     </property>
@@ -1797,7 +1797,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>741</width>
+                      <width>444</width>
                       <height>421</height>
                      </rect>
                     </property>
@@ -2090,7 +2090,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>755</width>
+                      <width>491</width>
                       <height>465</height>
                      </rect>
                     </property>
@@ -3130,8 +3130,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>548</width>
-                      <height>367</height>
+                      <width>98</width>
+                      <height>200</height>
                      </rect>
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_19"/>
@@ -3160,8 +3160,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>198</width>
-                      <height>367</height>
+                      <width>154</width>
+                      <height>216</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -3280,8 +3280,8 @@ Note - this will not remove items which are currently there. </string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>772</width>
-                      <height>385</height>
+                      <width>98</width>
+                      <height>28</height>
                      </rect>
                     </property>
                    </widget>
@@ -5189,6 +5189,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <addaction name="actionReset_Supervisor_Password"/>
     <addaction name="separator"/>
     <addaction name="actionEdit_Feescales"/>
+    <addaction name="actionConfigure_Feescales"/>
     <addaction name="actionEdit_Phrasebooks"/>
     <addaction name="actionEdit_Referral_Centres"/>
     <addaction name="actionEdit_Standard_Letters"/>
@@ -5438,6 +5439,11 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <action name="actionEdit_Standard_Letters">
    <property name="text">
     <string>Edit Standard Letters</string>
+   </property>
+  </action>
+  <action name="actionConfigure_Feescales">
+   <property name="text">
+    <string>Configure Feescales</string>
    </property>
   </action>
  </widget>

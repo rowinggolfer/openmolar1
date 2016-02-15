@@ -32,6 +32,7 @@
     <file alias="back.png">icons/back.png</file>
     <file alias="button_ok.png">icons/button_ok.png</file>
     <file alias="down.png">icons/down.png</file>
+    <file alias="up.png">icons/up.png</file>
     <file alias="eraser.png">icons/eraser.png</file>
     <file alias="exit.png">icons/exit.png</file>
     <file alias="gohome.png">icons/gohome.png</file>
