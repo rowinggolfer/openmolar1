@@ -83,6 +83,7 @@ from openmolar.qt4gui.dialogs.dialog_collection import (
     ApptPrefsDialog,
     AssistantSelectDialog,
     AutoAddressDialog,
+    BookendDialog,
     BPE_Dialog,
     ChildSmileDialog,
     ChooseToothDialog,
@@ -2945,6 +2946,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.clear_todays_emergencies)
         self.ui.actionInsert_Regular_Blocks.triggered.connect(
             self.insert_regular_blocks)
+        self.ui.actionSet_Bookend.triggered.connect(self.set_bookend)
         self.ui.actionTest_Print_a_GP17.triggered.connect(self.testGP17)
         self.ui.actionNHS_Form_Settings.triggered.connect(
             self.nhsformOptionsDialog)
@@ -3675,6 +3677,18 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         '''
         LOGGER.debug("clearing all records linked to this surgery")
         records_in_use.clear_surgery_records()
+
+    def set_bookend(self):
+        '''
+        raise a dialog and allow user to change the last day appointments are
+        searched for.
+        '''
+        dl = BookendDialog(self)
+        if dl.exec_():
+            dl.apply_()
+            self.advise("%s %s" % (_("Bookend altered to"),
+                                   localsettings.formatDate(dl.chosen_date)),
+                        1)
 
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''

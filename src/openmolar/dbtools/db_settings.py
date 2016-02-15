@@ -1,26 +1,26 @@
-#! /usr/bin/env python
+#! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 this module reads and write to the settings table of the database
@@ -35,13 +35,9 @@ from openmolar.settings import localsettings
 LOGGER = logging.getLogger("openmolar")
 
 PT_COUNT_QUERY = "select count(*) from new_patients"
-# PRACTITIONERS_QUERY = "select id, inits, apptix from practitioners"
-DENTIST_DATA_QUERY = "select id,inits,name,formalname,fpcno,quals from practitioners where flag0=1"
-# APPTIX_QUERY = "select apptix,inits from practitioners where flag3=1"
-# ACTIVE_DENTS_QUERY = "select apptix, inits from practitioners where flag3=1 and flag0=1"
-# ACTIVE_HYGS_QUERY = "select apptix, inits from practitioners where
-# flag3=1 and flag0=0"
 
+DENTIST_DATA_QUERY = '''select id, inits, name, formalname, fpcno, quals
+FROM practitioners WHERE flag0=1'''
 
 CLINICIANS_QUERY = '''
 SELECT ix, apptix, initials, name, formal_name, qualifications, type,
@@ -54,6 +50,7 @@ ACTIVE_CLINICIANS_QUERY = CLINICIANS_QUERY + \
     '''WHERE start_date<now() AND (end_date IS NULL OR end_date>now());'''
 
 LOGINS_QUERY = "select id from opid"
+
 INSERT_OPID_QUERY = "INSERT INTO opid (id) values (%s)"
 
 INSERT_CLINICIAN_QUERIES = (
@@ -70,13 +67,11 @@ INSERT INTO diary_link(clinician_ix, apptix)
 VALUES (%s, %s)
 ''')
 
-INSERT_SETTING_QUERY = \
-    '''INSERT INTO settings (value, data, modified_by, time_stamp)
-values (%s, %s, %s, NOW())'''
+INSERT_SETTING_QUERY = '''INSERT INTO settings
+(value, data, modified_by, time_stamp) values (%s, %s, %s, NOW())'''
 
-UPDATE_SETTING_QUERY = \
-    '''UPDATE settings SET data = %s, modified_by = %s, time_stamp = NOW()
-where value=%s'''
+UPDATE_SETTING_QUERY = '''UPDATE settings SET
+data = %s, modified_by = %s, time_stamp = NOW() where value=%s'''
 
 
 def insert_login(opid):
@@ -100,7 +95,7 @@ def insertData(value, data, user=None):
     cursor = db.cursor()
     result = cursor.execute(INSERT_SETTING_QUERY, values)
     cursor.close()
-    return True
+    return result
 
 
 def updateData(value, data, user=None):
@@ -135,15 +130,14 @@ def insert_clinician(clinician):
     try:
         db.autocommit = False
         cursor = db.cursor()
-        cursor.execute(INSERT_CLINICIAN_QUERIES[0],
-                      (clinician.initials,
-                       clinician.name,
-                       clinician.formal_name,
-                       clinician.qualifications,
-                       clinician.type,
-                       clinician.speciality,
-                       clinician.data,
-                       comments)
+        cursor.execute(INSERT_CLINICIAN_QUERIES[0], (clinician.initials,
+                                                     clinician.name,
+                                                     clinician.formal_name,
+                                                     clinician.qualifications,
+                                                     clinician.type,
+                                                     clinician.speciality,
+                                                     clinician.data,
+                                                     comments)
                        )
 
         ix = db.insert_id()
@@ -163,6 +157,15 @@ def insert_clinician(clinician):
     finally:
         db.autocommit = True
     return result
+
+
+def insert_bookend(date_):
+    '''
+    the bookend is the final date used when searching for appointments.
+    '''
+    assert type(date_) == datetime.date, "insert bookend requires a date"
+    return insertData(
+        "bookend", "%d,%d,%d" % (date_.year, date_.month, date_.day))
 
 
 class SettingsFetcher(object):

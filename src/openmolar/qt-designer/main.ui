@@ -5205,6 +5205,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <addaction name="actionClear_Today_s_Emergency_Slots"/>
     <addaction name="separator"/>
     <addaction name="actionInsert_Regular_Blocks"/>
+    <addaction name="actionSet_Bookend"/>
    </widget>
    <addaction name="menuMenu"/>
    <addaction name="menu_Prefences"/>
@@ -5444,6 +5445,11 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <action name="actionConfigure_Feescales">
    <property name="text">
     <string>Configure Feescales</string>
+   </property>
+  </action>
+  <action name="actionSet_Bookend">
+   <property name="text">
+    <string>Set Bookend (last day for appointment search)</string>
    </property>
   </action>
  </widget>

@@ -2250,6 +2250,8 @@ class Ui_MainWindow(object):
         self.actionEdit_Standard_Letters.setObjectName(_fromUtf8("actionEdit_Standard_Letters"))
         self.actionConfigure_Feescales = QtGui.QAction(MainWindow)
         self.actionConfigure_Feescales.setObjectName(_fromUtf8("actionConfigure_Feescales"))
+        self.actionSet_Bookend = QtGui.QAction(MainWindow)
+        self.actionSet_Bookend.setObjectName(_fromUtf8("actionSet_Bookend"))
         self.menuMenu.addAction(self.action_Open_Patient)
         self.menuMenu.addAction(self.action_save_patient)
         self.menuMenu.addSeparator()
@@ -2308,6 +2310,7 @@ class Ui_MainWindow(object):
         self.menu_Appointments.addAction(self.actionClear_Today_s_Emergency_Slots)
         self.menu_Appointments.addSeparator()
         self.menu_Appointments.addAction(self.actionInsert_Regular_Blocks)
+        self.menu_Appointments.addAction(self.actionSet_Bookend)
         self.menubar.addAction(self.menuMenu.menuAction())
         self.menubar.addAction(self.menu_Prefences.menuAction())
         self.menubar.addAction(self.menu_Appointments.menuAction())
@@ -2713,6 +2716,7 @@ class Ui_MainWindow(object):
         self.actionInsert_Regular_Blocks.setText(_("Insert Regular Blocks"))
         self.actionEdit_Standard_Letters.setText(_("Edit Standard Letters"))
         self.actionConfigure_Feescales.setText(_("Configure Feescales"))
+        self.actionSet_Bookend.setText(_("Set Bookend (last day for appointment search)"))
 
 from PyQt4 import QtWebKit
 from openmolar.qt4gui import resources_rc
