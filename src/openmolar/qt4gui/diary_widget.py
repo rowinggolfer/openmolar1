@@ -1320,6 +1320,10 @@ class DiaryWidget(Advisor):
         catches a signal that the diary tab widget has been moved
         '''
         LOGGER.debug("diary_tabwidget_nav called")
+        if i == 1 and self.schedule_controller.mode == self.NOTES_MODE:
+            self.advise(_("Cancelling Notes Mode"))
+            self.view_controller.set_mode(self.VIEW_MODE)
+            self.schedule_controller.set_mode(self.VIEW_MODE)
         self.layout_diary()
 
     def schedule_controller_appointment_selected(self, appt):
