@@ -277,6 +277,12 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         else:
             return _("No patient Selected")
 
+    @property
+    def serialno(self):
+        if self.pt:
+            return self.pt.serialno
+        return None
+
     def find_patient(self):
         '''
         search and load a patient.
@@ -405,10 +411,8 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         '''
         LOGGER.debug(
             "updating schedule controller appointments, appts='%s'", appts)
-        if self.pt is None:
-            return
         for appt in appts:
-            if appt.serialno != self.pt.serialno:
+            if appt.serialno != self.serialno:
                 return
         self.appointment_model.set_selected_appointments(appts)
 
@@ -541,7 +545,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
             self.set_secondary_slots(
                 app_data.slots(self.app2_length,
                                self.ignore_emergency_spaces,
-                               busy_serialno=self.pt.serialno)
+                               busy_serialno=self.serialno)
             )
             app1_slots = set([])
             if self.app1_is_scheduled:
@@ -574,7 +578,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
             startday.toPyDate(),
             sunday.toPyDate(),
             self.appt1_clinicians,
-            busy_serialno=self.pt.serialno,
+            busy_serialno=self.serialno,
             override_emergencies=self.ignore_emergency_spaces)
 
         if self.app1_is_scheduled:
@@ -590,7 +594,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
                 startday.toPyDate(),
                 sunday.toPyDate(),
                 self.appt2_clinicians,
-                busy_serialno=self.pt.serialno,
+                busy_serialno=self.serialno,
                 override_emergencies=self.ignore_emergency_spaces)
             self.set_secondary_slots(
                 appointments.getLengthySlots(all_slots,
