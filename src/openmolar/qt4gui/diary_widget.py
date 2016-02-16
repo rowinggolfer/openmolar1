@@ -288,7 +288,8 @@ class DiaryWidget(Advisor):
             self.advise("%s- %s %s" % (_("Adding day memo"), dentist, memo))
 
     def load_patient(self, patient, update=True):
-        LOGGER.debug("DiaryWidget.load_patient, update=%s" % update)
+        LOGGER.debug("DiaryWidget.load_patient '%s', update=%s",
+                     patient, update)
 
         self.pt = patient
         if self.schedule_controller.pt != patient:
@@ -302,6 +303,7 @@ class DiaryWidget(Advisor):
             book.update()
         if update:
             self.layout_diary()
+        LOGGER.debug("DiaryWidget.load_patient finished")
 
     def set_appt_mode(self, mode, update_required=True):
         LOGGER.debug("DiaryWidget.set_appt_mode")
@@ -699,7 +701,10 @@ class DiaryWidget(Advisor):
                 LOGGER.debug("diary in scheduling mode, ignoring layout")
                 return
         else:
+            LOGGER.debug("=" * 80)
             LOGGER.debug("DiaryWidget.layout_diary")
+        LOGGER.debug(
+            "schedule_controller.mode = %s", self.schedule_controller.mode)
         self.laid_out = True
 
         date_ = self.selected_date()
@@ -709,14 +714,12 @@ class DiaryWidget(Advisor):
 
         self.ui.appt_notes_webView.setVisible(
             self.schedule_controller.mode == self.NOTES_MODE)
-        self.schedule_controller.set_mode(self.schedule_controller.mode)
+        self.set_appt_mode(self.schedule_controller.mode)
 
         i = self.ui.diary_tabWidget.currentIndex()
 
         if i == 0:
-            if not self.layout_dayView():
-                LOGGER.debug("layout_dayview %s no slots!", date_)
-                return
+            self.layout_dayView()
         elif i == 1:
             self.layout_weekView()
         elif i == 2:
@@ -727,11 +730,19 @@ class DiaryWidget(Advisor):
         elif i == 4:
             self.layout_agenda()
 
+        LOGGER.debug("diary view layed out")
         if self.schedule_controller.mode == self.SCHEDULING_MODE:
             if i in (0, 1):
                 LOGGER.debug("call check schedule")
                 self.schedule_controller.check_schedule_status(automatic)
+
+        LOGGER.debug("calling update_go_no_buttons")
         self.update_go_now_buttons()
+
+        LOGGER.debug(
+            "schedule_controller.mode = %s", self.schedule_controller.mode)
+        LOGGER.debug("layout_diary completed")
+        LOGGER.debug("=" * 80)
 
     def update_go_now_buttons(self):
         '''
@@ -1268,7 +1279,8 @@ class DiaryWidget(Advisor):
         slot = appointments.FreeSlot(date_time, dent, appt.length)
         self.makeAppt(appt, slot)
 
-        self.start_scheduling()
+        if self.schedule_controller.mode == self.SCHEDULING_MODE:
+            self.start_scheduling()
 
     def start_scheduling(self):
         LOGGER.debug("DiaryWidget.start_scheduling")
@@ -1550,9 +1562,9 @@ class _testDiary(QtGui.QMainWindow):
         dw.initiate()
         dw.patient_card_request.connect(self.sig_catcher)
 
-        from openmolar.dbtools import patient_class
-        pt = patient_class.patient(1)
-        dw.schedule_controller.set_patient(pt)
+        # from openmolar.dbtools import patient_class
+        # pt = patient_class.patient(1)
+        # dw.schedule_controller.set_patient(pt)
 
         self.setCentralWidget(dw)
 

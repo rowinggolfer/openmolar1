@@ -72,7 +72,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
 
     BROWSE_MODE = 0
     SCHEDULE_MODE = 1
-    BLOCK_MODE = 2
+    BLOCKING_MODE = 2
     NOTES_MODE = 3
 
     NOT_SEARCHING = 0
@@ -671,6 +671,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
                 len(self.primary_slots) == 0)
 
     def find_first_appointment(self):
+        LOGGER.debug("find_first_appointment")
         self.show_first_appointment.emit()
 
     @property
