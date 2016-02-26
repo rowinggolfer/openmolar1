@@ -695,6 +695,7 @@ class DiaryWidget(Advisor):
         OR the checkboxes have been tweaked
         OR a memo has been added
         '''
+        highlighted_appt = self.highlighted_appointment
         if automatic:
             LOGGER.debug("DiaryWidget.layout_diary - Called Automatically")
             if self.schedule_controller.mode == self.SCHEDULING_MODE:
@@ -735,6 +736,10 @@ class DiaryWidget(Advisor):
             if i in (0, 1):
                 LOGGER.debug("call check schedule")
                 self.schedule_controller.check_schedule_status(automatic)
+        if highlighted_appt is None or (automatic and i in (0, 1)):
+            LOGGER.debug('automatically updating highlighted appt %s',
+                         highlighted_appt)
+            self.update_highlighted_appointment(highlighted_appt)
 
         LOGGER.debug("calling update_go_no_buttons")
         self.update_go_now_buttons()
@@ -850,7 +855,6 @@ class DiaryWidget(Advisor):
         '''
         if not self.viewing_week:
             return
-        self.update_highlighted_appointment(self.highlighted_appointment)
 
         LOGGER.debug("DiaryWidget.layout_weekView")
 
@@ -932,7 +936,6 @@ class DiaryWidget(Advisor):
         '''
         if not self.viewing_day:
             return
-        self.update_highlighted_appointment(self.highlighted_appointment)
 
         LOGGER.debug("DiaryWidget.layout_dayView")
         self.ui.emergency_dayview_scroll_bar.hide()
