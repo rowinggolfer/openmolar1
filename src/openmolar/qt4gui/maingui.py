@@ -1972,14 +1972,11 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                 )
 
         if "New Notes" in uc:
-            newnote = str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
+            newnotes = str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
+            newnotes = newnotes.rstrip(" \n")
 
-            notetuplets = []
-            for noteline in newnote.split("\n"):
-                notetuplets.append(("newNOTE", noteline))
-
-            result = patient_write_changes.toNotes(
-                self.pt.serialno, notetuplets)
+            result = patient_write_changes.toNotes(self.pt.serialno,
+                                                   [("newNOTE", newnotes)])
 
             # -successful write to db?
             if result:

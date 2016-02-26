@@ -99,7 +99,7 @@ def get_notes_for_date(lines, full_notes=False):
     for ntype, noteline in lines:
         if "NOTE" in ntype and noteline != "":
             note += "%s " % noteline.replace(
-                "<", "&lt;").replace(">", "&gt;")
+                "<", "&lt;").replace(">", "&gt;").replace(" ", "&nbsp;")
         else:
             if "TC" in ntype:
                 txs.append((ntype, noteline.strip("\n")))

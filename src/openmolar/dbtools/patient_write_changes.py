@@ -24,6 +24,7 @@
 
 
 import logging
+import textwrap
 
 from openmolar.connect import connect
 from openmolar.settings import localsettings
@@ -49,6 +50,24 @@ values (%s, %s, %s, NOW())'''
 RESET_MONEY_QUERY = '''
 insert into patient_money (pt_sno, money0, money1) values (%s, %s, %s)
 on duplicate key update money0=%s, money1=%s'''
+
+INSERT_NOTE_QUERY = '''insert into formatted_notes
+(serialno, ndate, op1, op2, ntype, note)
+VALUES (%s, DATE(NOW()), %s, %s, %s, %s)'''
+
+
+def note_splitter(notes, line_end=""):
+    '''
+    takes a list of lines, and further splits any lines which exceed 79 chars
+    in length.
+    '''
+    lines = notes.split("\n")
+    for line in lines:
+        if line == "":
+            yield line_end
+        else:
+            for short_line in textwrap.wrap(line, 78):
+                yield short_line + line_end
 
 
 def all_changes(pt, changes):
@@ -262,42 +281,25 @@ def toNotes(serialno, newnotes):
     '''
     LOGGER.debug("write changes - toNotes for patient %d" % serialno)
 
-    # database version stores max line length of 80chars
-
-    query = '''insert into formatted_notes
-    (serialno, ndate, op1, op2, ntype, note)
-    VALUES (%s, DATE(NOW()), %s, %s, %s, %s)
-    '''
-    notetuplets = []
-
     tstamp = localsettings.currentTime().strftime("%d/%m/%Y %H:%M:%S")
-    notetuplets.append(
-        ("opened", "System date - %s" % tstamp))
-    for ntype, note in newnotes:
-        while len(note) > 79:
-            if " " in note[:79]:
-                pos = note[:79].rindex(" ")
-                # try to split nicely
-            elif "," in note[:79]:
-                pos = note[:79].rindex(",")
-                # try to split nicely
-            else:
-                pos = 79
-                # ok, no option (unlikely to happen though)
-            notetuplets.append((ntype, note[:pos]))
-            note = note[pos + 1:]
 
-        notetuplets.append((ntype, note + "\n"))
-    notetuplets.append(
-        ("closed", "%s %s" % (localsettings.operator, tstamp)))
+    notetuplets = []
+    notetuplets.append(("opened", "System date - %s" % tstamp))
+
+    # database version stores max line length of 80chars
+    for ntype, notes in newnotes:
+        line_end = "\n" if ntype == "newNOTE" else ""
+        for line in note_splitter(notes, line_end):
+            notetuplets.append((ntype, line))
+    notetuplets.append(("closed", "%s %s" % (localsettings.operator, tstamp)))
+
+    try:
+        op1, op2 = localsettings.operator.split("/")
+    except ValueError:
+        op1 = localsettings.operator
+        op2 = None
 
     values = []
-    ops = localsettings.operator.split("/")
-    op1 = ops[0]
-    try:
-        op2 = ops[1]
-    except IndexError:
-        op2 = None
     for ntype, noteline in notetuplets:
         values.append((serialno, op1, op2, ntype, noteline))
 
@@ -305,12 +307,10 @@ def toNotes(serialno, newnotes):
     if values:
         db = connect()
         cursor = db.cursor()
-
         # this (superior code?) didn't work on older MySQLdb versions.
         # rows = cursor.executemany(query, tuple(values))
         for value in values:
-            rows += cursor.execute(query, value)
-
+            rows += cursor.execute(INSERT_NOTE_QUERY, value)
         cursor.close()
         db.commit()
 
