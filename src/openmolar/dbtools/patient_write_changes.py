@@ -63,7 +63,7 @@ def note_splitter(notes, line_end=""):
     '''
     # this next line catches any Qtstrings passed, and changes them to python
     # types.
-    notes = unicode(notes, "utf8", errors="replace")
+    notes = unicode(notes)
     lines = notes.split("\n")
     for line in lines:
         if line == "":
