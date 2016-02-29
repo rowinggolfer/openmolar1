@@ -61,6 +61,9 @@ def note_splitter(notes, line_end=""):
     takes a list of lines, and further splits any lines which exceed 79 chars
     in length.
     '''
+    # this next line catches any Qtstrings passed, and changes them to python
+    # types.
+    notes = unicode(notes, "utf8", errors="replace")
     lines = notes.split("\n")
     for line in lines:
         if line == "":
