@@ -59,6 +59,19 @@ length=%s, flag0=%s, flag1=%s, flag2=%s, flag3=%s, flag4=%s, datespec=%s
 WHERE serialno=%s and aprix=%s
 '''
 
+DAY_TIMES_QUERY = '''SELECT start, end FROM aday WHERE adate=%s AND
+(flag=1 or flag=2) and apptix=%s'''
+
+DAY_SUMMARY_QUERY = '''
+SELECT start, end, serialno, name, flag1, concat(code0, " ", code1," ", code2)
+FROM aslot WHERE adate = %s and apptix = %s AND flag0!=-128 ORDER BY start'''
+
+BLOCKS_QUERY = '''SELECT start, end, 0, name, 63, "" FROM aslot
+WHERE adate=%s and apptix=%s AND flag0=-128 and name!="LUNCH" ORDER BY start'''
+
+LUNCHES_QUERY = '''SELECT start, end, 0, "%s", 63 , "" FROM aslot
+WHERE adate = %%s and apptix = %%s AND name="LUNCH" ''' % _("Lunch")
+
 
 def duration(dt1, dt2):
 
@@ -1139,27 +1152,20 @@ def allAppointmentData(adate, dents=()):
 
 def convertResults(results):
     '''
-    changes
-    (830, 845) OR
-    (830, 845, serialno, "exam") or
-    (1300,1400, "LUNCH")
-    to and WeekViewAppointment object
+    changes our queries to an iterable of WeekViewAppointment
     '''
-    aptlist = []
     for start, end, serialno, name, cset, trt in results:
         aow = WeekViewAppointment()
         aow.mpm = localsettings.minutesPastMidnight(start)
         aow.length = localsettings.minutesPastMidnight(end) - aow.mpm
         aow.serialno = serialno
-        aow.cset = cset
+        aow.cset = chr(cset)
         aow.name = name
         aow.isBlock = (cset == "block")
         aow.isEmergency = \
             aow.isBlock and aow.name.lower() == _("emergency").lower()
         aow.trt = trt.strip(" ")
-        aptlist.append(aow)
-
-    return tuple(aptlist)
+        yield aow
 
 
 def printableDaylistData(adate, dent):
@@ -1228,24 +1234,18 @@ def day_summary(adate, dent):
     cursor = db.cursor()
 
     # -fist get start date and end date
-    query = '''SELECT start, end FROM aday
-    WHERE adate=%s and (flag=1 or flag=2) and apptix=%s'''
-    values = (adate, dent)
-    cursor.execute(query, values)
-
+    cursor.execute(DAY_TIMES_QUERY, (adate, dent))
     daydata = cursor.fetchall()
-    retarg = ()
-    # -now get data for those days so that we can find slots within
-    if daydata != ():
-        query = ('SELECT start, end, serialno, name, char(flag1), '
-                 'concat(code0, " ", code1," ", code2) FROM aslot '
-                 'WHERE adate = %s and apptix = %s AND flag0!=-128 '
-                 'ORDER BY start')
-        cursor.execute(query, values)
-        results = cursor.fetchall()
-        retarg = convertResults(results)
-    cursor.close()
-    return retarg
+
+    # now get data for those days
+    if daydata == ():
+        cursor.close()
+        return ()
+    else:
+        cursor.execute(DAY_SUMMARY_QUERY, (adate, dent))
+        appts = tuple(convertResults(cursor.fetchall()))
+        cursor.close()
+        return appts
 
 
 def getBlocks(adate, dent):
@@ -1254,47 +1254,24 @@ def getBlocks(adate, dent):
     '''
     db = connect()
     cursor = db.cursor()
-
-    query = ('SELECT start, end FROM aday '
-             'WHERE adate=%s and apptix=%s AND (flag=1 OR flag=2)')
-
-    values = (adate, dent)
-    cursor.execute(query, values)
-
-    retarg = cursor.fetchall()
-
-    query = ""
-    if retarg != ():
-        query = (
-            'SELECT start, end, 0, name, "block", "" FROM aslot '
-            'WHERE adate=%s and apptix=%s AND flag0=-128 and name!="LUNCH" '
-            'ORDER BY start')
-        cursor.execute(query, values)
-        results = cursor.fetchall()
-        retarg = convertResults(results)
+    cursor.execute(BLOCKS_QUERY, (adate, dent))
+    results = cursor.fetchall()
+    blocks = tuple(convertResults(results))
     cursor.close()
-
-    return retarg
+    return blocks
 
 
 def getLunch(gbdate, dent):
     '''
     get lunchtime for date,dent
     '''
+    values = (gbdate, dent)
     db = connect()
     cursor = db.cursor()
-
-    values = (gbdate, dent)
-
-    query = '''SELECT start, end, 0, "Lunch", "block" , "" FROM aslot
-    WHERE adate = %s and apptix = %s AND name="LUNCH" '''
-
-    cursor.execute(query, values)
-
-    results = cursor.fetchall()
+    cursor.execute(LUNCHES_QUERY, values)
+    lunches = cursor.fetchall()
     cursor.close()
-
-    return convertResults(results)
+    return tuple(convertResults(lunches))
 
 
 def clearEms(cedate):

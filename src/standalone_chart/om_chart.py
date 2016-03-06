@@ -1,4 +1,4 @@
-# /usr/bin/python
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
@@ -145,7 +145,7 @@ class MainWindow(QtGui.QMainWindow):
 
         QtGui.QApplication.instance().setOverrideCursor(
             QtCore.Qt.WaitCursor)
-        logging.debug("loading patient %s" % sno)
+        logging.debug("loading patient %s", sno)
         try:
             pt = Patient(sno, self.connection.connection)
 
