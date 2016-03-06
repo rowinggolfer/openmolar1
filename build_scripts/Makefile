@@ -49,7 +49,7 @@ BUILDS_DIR=$(HEAD)builds/
 DIST_DIR=$(HEAD)dist/
 
 #VERSION=`git describe | sed s/v//`
-VERSION=`python $(HEAD)setup.py --version`
+VERSION=`python3 $(HEAD)setup.py --version`
 
 ifeq ($(NEW_VERSION), )
 	NEW_VERSION=$(VERSION)
@@ -101,7 +101,7 @@ tarball:
 	echo "making  tarball (using setup.py sdist)"
 	make clean_tmp
 	cd $(HEAD) ;\
-		python setup.py sdist ;\
+		python3 setup.py sdist ;\
 	echo "tarball created!"
 	mkdir -p $(BUILDS_DIR)
 	echo "moving tarball to $(BUILDS_DIR)"
