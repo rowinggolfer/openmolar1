@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -164,5 +163,5 @@ if __name__ == "__main__":
     dl = MedFormCheckDialog(duck_parent)
 
     if dl.exec_():
-        print dl.check_date
+        print(dl.check_date)
         dl.apply()

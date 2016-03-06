@@ -1,40 +1,37 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
-from __future__ import division
-
+from gettext import gettext as _
 import logging
 import os
 import re
-import sys
-
-LOGGER = logging.getLogger("openmolar")
 
 from PyQt4 import QtCore, QtGui
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.compiled_uis import Ui_bulkmail_options
+
+LOGGER = logging.getLogger("openmolar")
 
 DATE_FORMAT = "MMMM, yyyy"
 DEBUG = False
@@ -47,8 +44,8 @@ BODY = '''%s\n%s''' % (
 )
 
 FAMILY_BODY = '''%s\n%s''' % (
-    _(
-        "We are writing to inform you that your dental examinations are now due."),
+    _("We are writing to inform you that your dental examinations "
+      "are now due."),
     _("Please contact the surgery to arrange suitable appointments. *"),
 )
 
@@ -58,7 +55,8 @@ PS_TEXT = _('* P.S If you already have a future appointment with us - '
             'please accept our apologies and ignore this letter.')
 
 FOOTER = _('We are currently accepting new patients to the practice.'
-           'We would be delighted if you would recommend us to your friends and family.')
+           'We would be delighted if you would recommend us to your '
+           'friends and family.')
 
 try:
     filepath = os.path.join(localsettings.localFileDirectory,
@@ -87,7 +85,7 @@ class OMLetter(object):
     @property
     def _topline(self):
         head = self.head
-        line_ = u"%s %s %s" % (
+        line_ = "%s %s %s" % (
             head.title,
             head.fname.strip(),
             head.sname.strip()
@@ -108,7 +106,7 @@ class OMLetter(object):
     def address(self):
         head = self.head
 
-        address_ = u'%s\n%s\n%s\n%s\n%s\n%s\n%s' % (
+        address_ = '%s\n%s\n%s\n%s\n%s\n%s\n%s' % (
             self._topline,
             head.addr1.title(),
             head.addr2.title(),
@@ -152,7 +150,7 @@ class OMLetter(object):
         else:
             salut_ = "%s %s" % (self.head.title, self.head.sname.strip())
 
-        return u"%s %s," % (SALUTATION, salut_)
+        return "%s %s," % (SALUTATION, salut_)
 
     @property
     def text(self):
@@ -182,7 +180,7 @@ class TreeItem(object):
 
     def data(self, column):
         try:
-            return QtCore.QVariant(self.itemData[column])
+            return self.itemData[column]
         except IndexError:
             return None
 
@@ -199,7 +197,7 @@ class TreeItem(object):
 class treeModel(QtCore.QAbstractItemModel):
 
     def __init__(self, header, mydata):
-        super(QtCore.QAbstractItemModel, self).__init__()
+        super().__init__()
         self.FAMILYICON = QtGui.QIcon()
         self.FAMILYICON.addPixmap(QtGui.QPixmap(":/agt_family.png"))
 
@@ -214,28 +212,27 @@ class treeModel(QtCore.QAbstractItemModel):
 
     def data(self, index, role):
         if not index.isValid():
-            return QtCore.QVariant()
+            return None
 
         item = index.internalPointer()
         if role == QtCore.Qt.DisplayRole:
             return item.data(index.column())
         elif role == QtCore.Qt.DecorationRole and index.column() == 1:
             if item.itemData.grouped:
-                return QtCore.QVariant(self.FAMILYICON)
+                return self.FAMILYICON
         elif role == QtCore.Qt.BackgroundRole:
             if item.itemData.grouped:
                 if item.itemData.letterno % 2:
-                    brush = QtGui.QBrush(QtGui.QColor(190, 190, 190))
+                    return QtGui.QBrush(QtGui.QColor(190, 190, 190))
                 else:
-                    brush = QtGui.QBrush(QtGui.QColor(160, 160, 160))
-                return QtCore.QVariant(brush)
+                    return QtGui.QBrush(QtGui.QColor(160, 160, 160))
             else:
-                return QtCore.QVariant()
+                return None
         elif role == QtCore.Qt.UserRole:
             # a user role which simply returns the python object
             return item.itemData
 
-        return QtCore.QVariant()
+        return None
 
     def flags(self, index):
         if not index.isValid():
@@ -248,7 +245,7 @@ class treeModel(QtCore.QAbstractItemModel):
            role == QtCore.Qt.DisplayRole):
             return self.rootItem.data(section)
 
-        return QtCore.QVariant()
+        return None
 
     def index(self, row, column, parent):
         if not self.hasIndex(row, column, parent):
@@ -292,7 +289,6 @@ class treeModel(QtCore.QAbstractItemModel):
         parents = [parent]
         indentations = [0]
 
-        number = 0
         letterNo = 0
 
         for lineData in lines:
@@ -419,11 +415,11 @@ class bulkMails(object):
         try:
             # item = index.internalPointer()
             pt = self.bulk_model.data(index, QtCore.Qt.UserRole)
-            print pt.serialno
+            print(pt.serialno)
             return pt.serialno
 
         except IndexError:
-            print "selected bulk mail out of range"
+            print("selected bulk mail out of range")
 
     def print_(self):
         dialog = QtGui.QPrintDialog(self.printer, self.om_gui)
@@ -614,11 +610,11 @@ class bulkMails(object):
 
             painter.restore()
 
+
 if __name__ == "__main__":
     DEBUG = True
     localsettings.station = "reception"
     app = QtGui.QApplication([])
-    from datetime import date
     os.chdir(os.environ.get("HOME", "."))
     from openmolar.qt4gui import maingui
     from openmolar.dbtools import recall
@@ -626,7 +622,7 @@ if __name__ == "__main__":
     om_gui = maingui.OpenmolarGui()
 
     conditions = "new_patients.serialno=%s"
-    values =  (1,)
+    values = (1,)
     patients = recall.getpatients(conditions, values)
 
     letters = bulkMails(om_gui)

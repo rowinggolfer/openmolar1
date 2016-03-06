@@ -1,37 +1,35 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
+from gettext import gettext as _
 import logging
+
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
 from openmolar.dbtools import docsprinted
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
-
-from openmolar.qt4gui.printing import om_printing
 from openmolar.qt4gui.printing import receiptPrint
-
 from openmolar import connect
 
 LOGGER = logging.getLogger("openmolar")
@@ -47,8 +45,9 @@ class DuplicateReceiptDialog(BaseDialog):
         self.pt = patient
 
         self.main_ui = parent
-        patient_label = QtGui.QLabel("%s<br /><b>%s</b>" % (
-                                     _("Duplicate receipts for Patient"), patient.name_id))
+        patient_label = QtGui.QLabel(
+            "%s<br /><b>%s</b>" % (_("Duplicate receipts for Patient"),
+                                   patient.name_id))
 
         patient_label.setAlignment(QtCore.Qt.AlignCenter)
 
@@ -98,13 +97,12 @@ class DuplicateReceiptDialog(BaseDialog):
         where serialno = %s and docname like "%%receipt (pdf)"'''
         db = connect.connect()
         cursor = db.cursor()
-        count = cursor.execute(query, (self.pt.serialno,))
+        cursor.execute(query, (self.pt.serialno,))
         rows = cursor.fetchall()
         cursor.close()
 
         for printdate, ix in rows:
             self.prev_receipts[ix] = printdate
-
         self.add_buttons()
 
     def add_buttons(self):
@@ -152,7 +150,7 @@ class DuplicateReceiptDialog(BaseDialog):
 
     def print_existing(self):
         ix = self.sender().ix
-        print "reprint document %s" % ix
+        print("reprint document %s" % ix)
         try:
             data, version = docsprinted.getData(ix)
             f = open(localsettings.TEMP_PDF, "wb")
@@ -187,7 +185,8 @@ class DuplicateReceiptDialog(BaseDialog):
             self.accept()
 
     def apply_changed(self):
-        print "applying changes"
+        print("applying changes")
+
 
 if __name__ == "__main__":
     localsettings.initiate()

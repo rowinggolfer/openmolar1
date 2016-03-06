@@ -1,26 +1,25 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 import logging
 import re
@@ -65,7 +64,7 @@ def plannedItems(pt):
         plannedList.append(("Exam", pt.treatment_course.examt),)
     for attrib in tup_Atts + tup_toothAtts:
         tx = pt.treatment_course.__dict__[attrib + "pl"]
-        if not tx in ("", None):
+        if tx not in ("", None):
             items = tx.strip(" ").split(" ")
             for item in set(items):
                 if item == "":
@@ -87,12 +86,11 @@ def completedItems(pt, teethOnly=False):
     if teethOnly:
         for tooth in tup_toothAtts:
             tx = pt.treatment_course.__dict__[tooth + "cmp"]
-            if not tx in ("", None):
+            if tx not in ("", None):
                 items = tx.strip(" ").split(" ")
                 for item in items:
                     if item == "":
                         continue
-                    item = item.decode("latin-1")
                     if re.match("[ul][lr][1-8]", tooth):
                         compList.append((tooth, item),)
     else:
@@ -101,7 +99,7 @@ def completedItems(pt, teethOnly=False):
 
         for attrib in tup_Atts + tup_toothAtts:
             tx = pt.treatment_course.__dict__[attrib + "cmp"]
-            if not tx in ("", None):
+            if tx not in ("", None):
                 items = tx.strip(" ").split(" ")
                 for item in set(items):
                     if item == "":
@@ -224,6 +222,6 @@ if __name__ == "__main__":
     except:
         serialno = 14860
     pt = patient_class.patient(serialno)
-    print plannedItems(pt)
-    print completedItems(pt)
-    print summary(pt)
+    print(plannedItems(pt))
+    print(completedItems(pt))
+    print(summary(pt))

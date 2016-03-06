@@ -1,5 +1,4 @@
 #! /usr/bin/python
-# -*- coding: utf-8 -*-
 
 # ########################################################################### #
 # #                                                                         # #
@@ -83,5 +82,5 @@ if __name__ == "__main__":
 
     dl = NewFeescaleDialog()
     if dl.exec_():
-        print dl.ix
-        print dl.filename
+        print(dl.ix)
+        print(dl.filename)

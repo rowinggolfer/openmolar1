@@ -1,43 +1,42 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 Use this in preference to pyuic4, because it adapts the files to utilise
 pygettext style translations
 '''
 
-import git
 import logging
 import re
 import os
 import sys
+import git
 
 from PyQt4 import uic
 
 logging.basicConfig(level=logging.INFO)
 
-logger = logging.getLogger("om_pyuic4")
+LOGGER = logging.getLogger("om_pyuic4")
 
 # can be switched off so generated files are not executable
 MAKE_EX = True
@@ -48,13 +47,21 @@ if "ALL" in sys.argv:
     CHANGED_ONLY = False
 
 REMOVALS = [
-    '''try:
+    '''
+try:
     _encoding = QtGui.QApplication.UnicodeUTF8
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
+''',
+    '''
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
 '''
 ]
 
@@ -72,8 +79,18 @@ REPLACEMENT2 = (
 ''')
 
 
-def translate_middle(match):
+def gettext_wrap(match):
+    '''
+    a callable used form regex substitution
+    '''
     return '_(%s)' % match.groups()[0].strip(" ")
+
+
+def de_bracket(match):
+    '''
+    a callable used form regex substitution
+    '''
+    return match.groups()[0].strip("()")
 
 
 def compile_ui(ui_fname, outdir=""):
@@ -83,7 +100,7 @@ def compile_ui(ui_fname, outdir=""):
     outname = "Ui_%s.py" % name.rstrip(".ui")
     pyfile = os.path.join(outdir, outname)
 
-    logger.info("compiling %s" % ui_fname)
+    LOGGER.info("compiling %s", ui_fname)
 
     try:
         f = open(pyfile, "w")
@@ -101,8 +118,10 @@ def compile_ui(ui_fname, outdir=""):
     for removal in REMOVALS:
         newdata = newdata.replace(removal, "")
 
-    newdata = re.sub('_translate\(".*?", (".*?"), None\)', translate_middle,
-                     newdata, 0, re.DOTALL)
+    newdata = re.sub(r'_translate\(".*?", (".*?"), None\)',
+                     gettext_wrap, newdata, 0, re.DOTALL)
+
+    newdata = re.sub(r'_fromUtf8(\(".*"\))', de_bracket, newdata)
 
     orig, new = REPLACEMENT1
     newdata = newdata.replace(orig, new)
@@ -119,7 +138,7 @@ def compile_ui(ui_fname, outdir=""):
         f.write(newdata)
         f.close()
     else:
-        logger.warning("om_pyuic made no changes to the standard uic output!")
+        LOGGER.warning("om_pyuic made no changes to the standard uic output!")
 
     return pyfile
 
@@ -136,6 +155,7 @@ def get_all_ui_files(dirname):
         if re.match(".*.ui$", ui_file):
             yield ui_file
 
+
 if __name__ == "__main__":
     filepath = os.path.abspath(__file__)
     repo = git.Repo(os.path.dirname(os.path.dirname(filepath)))
@@ -146,16 +166,16 @@ if __name__ == "__main__":
         repo.working_dir, "src", "openmolar", "qt4gui", "compiled_uis")
 
     if CHANGED_ONLY:
-        logger.info("using only ui files modified since last commit")
+        LOGGER.info("using only ui files modified since last commit")
         ui_files = get_changed_ui_files(repo)
     else:
-        logger.info("converting all ui files")
+        LOGGER.info("converting all ui files")
         ui_files = get_all_ui_files(uipath)
 
     for ui_file in ui_files:
         path = os.path.join(uipath, os.path.basename(ui_file))
-        pyfile = compile_ui(path, outpath)
-        if pyfile:
-            print "created/updated py file", pyfile
+        py_file = compile_ui(path, outpath)
+        if py_file:
+            print("created/updated py file", py_file)
 
-    logger.info("ALL DONE!")
+    LOGGER.info("ALL DONE!")

@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -102,11 +101,11 @@ class LanguageDialog(Ui_choose_language.Ui_Dialog, QtGui.QDialog):
         try:
             LOGGER.info("trying install your environment language %s", lang1)
             lang1 = gettext.translation('openmolar', languages=[lang, ])
-            lang1.install(unicode=True)
+            lang1.install()
             return True
         except IOError:
             LOGGER.exception("%s not found, sorry" % lang1)
-            gettext.install('openmolar', unicode=True)
+            gettext.install('openmolar')
 
     def getInput(self):
         if not self.exec_():
@@ -115,7 +114,7 @@ class LanguageDialog(Ui_choose_language.Ui_Dialog, QtGui.QDialog):
         message = _("No language selected")
         for rb in self.radioboxes:
             if rb.isChecked():
-                lang = rb.text().toAscii()
+                lang = rb.text()
                 result = self.setLanguage(str(lang))
                 if result:
                     message = "%s %s" % (
@@ -125,6 +124,7 @@ class LanguageDialog(Ui_choose_language.Ui_Dialog, QtGui.QDialog):
                         _("no translation file found for"), lang)
         QtGui.QMessageBox.information(self, _("Advisory"), message)
         return result
+
 
 if __name__ == "__main__":
     logging.basicConfig()

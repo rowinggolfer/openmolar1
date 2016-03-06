@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -40,6 +39,11 @@ from openmolar.settings import localsettings
 LOGGER = logging.getLogger("openmolar")
 
 mainconnection = None
+
+GeneralError = MySQLdb.Error
+ProgrammingError = MySQLdb.ProgrammingError
+IntegrityError = MySQLdb.IntegrityError
+OperationalError = MySQLdb.OperationalError
 
 
 class DB_Params(object):
@@ -86,7 +90,7 @@ class DB_Params(object):
         self.password = xmlnode.getElementsByTagName(
             "password")[0].firstChild.data
         if settingsversion == "1.1":
-            self.password = base64.b64decode(self.password)
+            self.password = base64.b64decode(self.password).decode("utf8")
 
         self.db_name = xmlnode.getElementsByTagName(
             "dbname")[0].firstChild.data
@@ -125,13 +129,6 @@ class DB_Params(object):
     def database_name(self):
         return "%s %s:%s" % (self.db_name, self.host, self.port)
 
-params = DB_Params()
-
-GeneralError = MySQLdb.Error
-ProgrammingError = MySQLdb.ProgrammingError
-IntegrityError = MySQLdb.IntegrityError
-OperationalError = MySQLdb.OperationalError
-
 
 def connect():
     '''
@@ -159,6 +156,11 @@ def connect():
         attempts += 1
 
     raise exc
+
+
+# create a singleton
+params = DB_Params()
+
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)

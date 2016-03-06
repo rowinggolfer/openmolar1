@@ -1,34 +1,34 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
+from gettext import gettext as _
 import logging
-import re
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.customwidgets.chainLabel import ChainLabel
-from openmolar.qt4gui.customwidgets.confirming_check_box import ConfirmingCheckBox
+from openmolar.qt4gui.customwidgets.confirming_check_box \
+    import ConfirmingCheckBox
 
 
 LOGGER = logging.getLogger("openmolar")
@@ -256,8 +256,6 @@ class EstimateItemWidget(QtGui.QWidget):
         (for multiple items)
         jump through hoops here in case user enters a UK pound sign!
         '''
-        description = str(description.toAscii()
-                          ).decode("ascii", "replace").replace('"', '\"')
         for item in self.est_items:
             item.description = description
 
@@ -368,9 +366,9 @@ class EstimateItemWidget(QtGui.QWidget):
         '''
         this is a slot called when the completed checkbox changes
         '''
-        state = (self.completed_checkBox.checkState() == 0 or
-                (self.completed_checkBox.checkState() == 1 and
-                 len(self.est_items) == 1))
+        state = (self.completed_checkBox.checkState() == 0 or (
+            self.completed_checkBox.checkState() == 1 and
+            len(self.est_items) == 1))
 
         self.fee_lineEdit.setEnabled(state)
         self.ptFee_lineEdit.setEnabled(state)
@@ -385,7 +383,7 @@ class EstimateItemWidget(QtGui.QWidget):
         tx_hashes = []
         for item in self.est_items:
             tx_hashes += item.tx_hashes
-        assert len(tx_hashes) > 0 , \
+        assert len(tx_hashes) > 0, \
             "no treatments found.. this shouldn't happen"
 
         txs = []
@@ -401,8 +399,8 @@ class EstimateItemWidget(QtGui.QWidget):
             else:
                 list_ += "</li>"
         message = "%s<ul>%s</ul><hr />%s" % (
-            _(
-                "There are multiple treatments associated with this estimate item"),
+            _("There are multiple treatments associated with this "
+              "estimate item"),
             list_,
             _("All must be completed for the full charge to be applied"))
 
@@ -512,7 +510,8 @@ class _TestParent(QtGui.QWidget):
 
     def sig_catcher(self, *args):
         '''test procedure'''
-        print "signal caught argument=", args
+        print("signal caught argument=", args)
+
 
 if __name__ == "__main__":
 

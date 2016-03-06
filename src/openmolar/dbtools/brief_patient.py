@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -76,7 +75,7 @@ class BriefPatient(object):
 
     @property
     def name_id(self):
-        return u"%s %s %s - %s" % (
+        return "%s %s %s - %s" % (
             self.title, self.fname, self.sname, self.serialno)
 
     @property
@@ -128,5 +127,5 @@ if __name__ == "__main__":
         serialno = 11956
 
     pt = BriefPatient(serialno)
-    for att in pt.__dict__.keys():
-        print att, pt.__dict__[att]
+    for att in list(pt.__dict__.keys()):
+        print(att, pt.__dict__[att])

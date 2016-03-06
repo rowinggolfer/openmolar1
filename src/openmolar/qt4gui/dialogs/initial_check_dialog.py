@@ -1,30 +1,30 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
+from gettext import gettext as _
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
@@ -88,7 +88,7 @@ class InitialCheckDialog(ExtendableDialog):
 
         if len(appointments.future_slots(localsettings.currentDay(),
                                          localsettings.BOOKEND,
-                                         localsettings.apptix.values(),
+                                         list(localsettings.apptix.values()),
                                          override_emergencies=True)
                ) == 0:
             but = QtGui.QPushButton(_("Why is this?"))
@@ -108,38 +108,40 @@ class InitialCheckDialog(ExtendableDialog):
 
     @property
     def messages(self):
-        yield "%s %d %s" % (
-            _("you have"), localsettings.PT_COUNT, _("patients"))
+        yield "%s %d %s" % (_("you have"), localsettings.PT_COUNT,
+                            _("patients"))
 
-        yield "%s %d %s" % (
-            _("you have"), len(localsettings.activedents), _("active dentists"))
+        yield "%s %d %s" % (_("you have"), len(localsettings.activedents),
+                            _("active dentists"))
 
-        yield "%s %d %s" % (
-            _("you have"), len(localsettings.activehygs), _("active hygienists"))
+        yield "%s %d %s" % (_("you have"), len(localsettings.activehygs),
+                            _("active hygienists"))
 
-        yield "%s %s" % (
-            _("appointment search final date is"),
-            localsettings.formatDate(localsettings.BOOKEND))
+        yield "%s %s" % (_("appointment search final date is"),
+                         localsettings.formatDate(localsettings.BOOKEND))
 
     def show_add_clinician_advise(self):
-        self.advise(
-            _("Once the application is open, click on Tools - > Menu - > Add Clinician"))
+        self.advise(_("Once the application is open, click on Tools "
+                      "- > Menu - > Add Clinician"))
 
     def show_edit_practice(self):
-        self.advise(
-            _("Once the application is open, click on Tools - > Menu - > Edit Practice Details"))
+        self.advise(_("Once the application is open, click on Tools "
+                      "- > Menu - > Edit Practice Details"))
 
     def show_appt_space(self):
-        self.advise("<h4>%s</h4><ul><li>%s</li><li>%s</li><li>%s</li><li>%s</li></ul>" % (
-            _("This could be for a variety of reasons"),
-            _(
-                "You need to have at least one clinician with an appointment book"),
-            _(
-                "No Clinicians have any days contracted to work in the practice?"),
-            _("Perhaps all future clinical time is already booked?"),
-            _(
-                "The BOOKEND value (last day to search for appointments) may simply need adjusting"),
-        ))
+        self.advise(
+            "<h4>%s</h4><ul>"
+            "<li>%s</li><li>%s</li><li>%s</li><li>%s</li>"
+            "</ul>" % (
+                _("This could be for a variety of reasons"),
+                _("You need to have at least one clinician with an "
+                  "appointment book"),
+                _("No Clinicians have any days contracted to work "
+                  "in the practice?"),
+                _("Perhaps all future clinical time is already booked?"),
+                _("The BOOKEND value (last day to search for appointments) "
+                  "may simply need adjusting")))
+
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)

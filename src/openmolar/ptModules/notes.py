@@ -1,26 +1,25 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 This module is deprecated with schema version 1.9
@@ -64,7 +63,6 @@ def rec_notes(notes_dict):
     divopen = False
     for key in keys:
         date, op = key
-        notes = get_notes_for_date(notes_dict[key])
         d = get_date_from_date(date)
         ests = get_estimate_for_date(notes_dict[key])
         rec = get_reception_for_date(notes_dict[key])
@@ -130,7 +128,7 @@ def notes(notes_dict, verbosity=0, ignoreRec=False):
         date, op = key
         notes = get_notes_for_date(notes_dict[key])
         if ("REC" in op and notes != "") or (
-                "REC" in op and not ignoreRec) or not "REC" in op:
+                "REC" in op and not ignoreRec) or "REC" not in op:
             newline += "<tr>"
             d = get_date_from_date(date)
             if d != previousdate:
@@ -263,8 +261,9 @@ def decipher_noteline(noteline):
             i += 1
 
         # arghh!!! 2 character year field!!!!!!
-        workingdate = "%s_%02d_%02d" % (
-            1900 + char(noteline[i + 2]), char(noteline[i + 1]), char(noteline[i]))
+        workingdate = "%s_%02d_%02d" % (1900 + char(noteline[i + 2]),
+                                        char(noteline[i + 1]),
+                                        char(noteline[i]))
 
         retarg[2] = operator
         retarg[3] = workingdate
@@ -280,7 +279,7 @@ def decipher_noteline(noteline):
             retarg[1] += "System date - %s" % systemdate
 
         except IndexError as e:
-            print "error getting system date for patient notes - %s", e
+            print("error getting system date for patient notes - %s", e)
             retarg[1] += "System date - ERROR!!!!!"
 
     elif noteline[0] == "\x02":   #
@@ -300,7 +299,7 @@ def decipher_noteline(noteline):
         retarg[1] += "%s %s" % (operator, systemdate)
 
     elif noteline[0] == chr(3):
-        #-- hidden nodes start with chr(3) then another character
+        # hidden nodes start with chr(3) then another character
         if noteline[1] == chr(97):
             retarg[0] = "COURSE CLOSED"
             retarg[1] = "=" * 10
@@ -453,4 +452,4 @@ if __name__ == "__main__":
         verbose = False
     # print "getting notes"
     # print rec_notes(patient_class.patient(serialno).notes_dict)
-    print notes(patient_class.patient(serialno).notes_dict, verbose)
+    print(notes(patient_class.patient(serialno).notes_dict, verbose))

@@ -1,27 +1,27 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
+from gettext import gettext as _
 import logging
 
 from PyQt4 import QtGui, QtCore
@@ -61,14 +61,14 @@ class editor(Ui_toothprops_full_edit.Ui_Dialog):
         self.tooth_label.setText("%s - %s items" % (self.tooth.upper(), type))
 
     def setData(self):
-        self.initialVal = str(self.lineEdit.text().toAscii())
+        self.initialVal = str(self.lineEdit.text())
         props = self.initialVal.split(" ")
         while "" in props:
             props.remove("")
         self.tableWidget.setColumnCount(4)
         self.tableWidget.setRowCount(len(props))
-        self.tableWidget.setHorizontalHeaderLabels(["",
-                                                    _("Item Shortcut"), _("Demote"), _("Erase")])
+        self.tableWidget.setHorizontalHeaderLabels(
+            ["", _("Item Shortcut"), _("Demote"), _("Erase")])
 
         for row, prop in enumerate(props):
             self.fillRow(prop, row)
@@ -124,7 +124,8 @@ class editor(Ui_toothprops_full_edit.Ui_Dialog):
 
     def signals(self):
         self.tableWidget.connect(self.tableWidget,
-                                 QtCore.SIGNAL("cellPressed (int,int)"), self.tableClicked)
+                                 QtCore.SIGNAL("cellPressed (int,int)"),
+                                 self.tableClicked)
 
     def tableClicked(self, row, column):
         if column == 3:
@@ -144,24 +145,23 @@ class editor(Ui_toothprops_full_edit.Ui_Dialog):
             self.updateLineEdit()
 
     def updateLineEdit(self):
-        s = QtCore.QString("")
+        s = ""
         for row in range(self.tableWidget.rowCount()):
             s += self.tableWidget.item(row, 1).text() + " "
         self.lineEdit.setText(s)
 
     def exec_(self):
         if self.dialog.exec_():
-            self.result = self.lineEdit.text().toAscii()
+            self.result = self.lineEdit.text()
             if self.initialVal != self.result:
                 self.result = str(self.result)
                 return True
 
+
 if __name__ == "__main__":
-    import sys
     localsettings.initiate()
-    from openmolar.qt4gui import resources_rc
     LOGGER.setLevel(logging.DEBUG)
-    app = QtGui.QApplication(sys.argv)
+    app = QtGui.QApplication([])
     Dialog = QtGui.QDialog()
 
     le = QtGui.QLineEdit()

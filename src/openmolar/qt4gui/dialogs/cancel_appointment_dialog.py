@@ -1,9 +1,8 @@
 #! /usr/bin/python
-# -*- coding: utf-8 -*-
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -100,7 +99,7 @@ class CancelAppointmentDialog(ExtendableDialog):
     def delete_from_aslot(self):
         if appointments.delete_appt_from_aslot(self.appt):
             if not self.appt.past:
-                print "future appointment deleted - add to notes!!"
+                print("future appointment deleted - add to notes!!")
             return True
 
     def postpone_appointment(self):
@@ -139,4 +138,4 @@ if __name__ == "__main__":
 
     dl = CancelAppointmentDialog(appts[0])
     if dl.exec_():
-        print dl.result
+        print(dl.result)

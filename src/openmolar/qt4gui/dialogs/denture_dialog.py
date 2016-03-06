@@ -1,5 +1,4 @@
 #! /usr/bin/python
-# -*- coding: utf-8 -*-
 
 # ########################################################################### #
 # #                                                                         # #
@@ -100,6 +99,6 @@ if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
     dl = DentureDialog(None)
     if dl.exec_():
-        print dl.chosen_treatments
+        print(dl.chosen_treatments)
     else:
-        print "dialog rejected"
+        print("dialog rejected")

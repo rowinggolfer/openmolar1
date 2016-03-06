@@ -1,30 +1,29 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 import datetime
+from gettext import gettext as _
 import logging
-import re
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
@@ -32,9 +31,7 @@ from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 from openmolar.qt4gui.dialogs.find_patient_dialog import FindPatientDialog
 from openmolar.qt4gui.dialogs.address_match_dialog import AddressMatchDialog
-
 from openmolar.ptModules import patientDetails
-
 from openmolar.dbtools import families
 
 
@@ -70,8 +67,6 @@ class _DuckPatient(object):
         '''
         today = localsettings.currentDay()
 
-        day = self.dob.day
-
         try:
             nextbirthday = datetime.date(today.year, self.dob.month,
                                          self.dob.day)
@@ -101,8 +96,8 @@ class _ConfirmDialog(BaseDialog):
         BaseDialog.__init__(self, parent)
         self.browser = QtGui.QTextBrowser()
 
-        label = QtGui.QLabel(u"%s %s %s" % (_("Add Record"), serialno,
-                                            _("to this family group?")))
+        label = QtGui.QLabel("%s %s %s" % (_("Add Record"), serialno,
+                                           _("to this family group?")))
 
         self.insertWidget(label)
         self.insertWidget(self.browser)
@@ -203,7 +198,7 @@ class FamilyManageDialog(ExtendableDialog):
 
         title = _("Manage Family Group")
         self.setWindowTitle(title)
-        label = QtGui.QLabel(u"<b>%s</b>" % title)
+        label = QtGui.QLabel("<b>%s</b>" % title)
         label.setAlignment(QtCore.Qt.AlignCenter)
 
         frame = QtGui.QFrame()
@@ -253,7 +248,7 @@ class FamilyManageDialog(ExtendableDialog):
             row = (i // 4) * 2
             column = i % 4
             self.frame_layout.addWidget(browser, row, column)
-            message = u"%s %s %s" % (mes1, pt.serialno, mes2)
+            message = "%s %s %s" % (mes1, pt.serialno, mes2)
             if mes1 == _("Unlink"):
                 icon = QtGui.QIcon(":/eraser.png")
             else:
@@ -289,11 +284,12 @@ class FamilyManageDialog(ExtendableDialog):
 
     def member_but_clicked(self):
         pt = self.member_dict[self.sender()]
-        if QtGui.QMessageBox.question(self, _("Confirm"),
-                                      u"%s %s %s %s %s" % (_("Remove"), pt.title, pt.fname, pt.sname,
-                                                           _("from this family group?")),
-                                      QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
-                                      QtGui.QMessageBox.Ok) == QtGui.QMessageBox.Cancel:
+        if QtGui.QMessageBox.question(
+                self, _("Confirm"),
+                "%s %s %s %s %s" % (_("Remove"), pt.title, pt.fname, pt.sname,
+                                    _("from this family group?")),
+                QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
+                QtGui.QMessageBox.Ok) == QtGui.QMessageBox.Cancel:
             return
         families.remove_member(pt.serialno)
         self.load_values()
@@ -317,7 +313,7 @@ class FamilyManageDialog(ExtendableDialog):
 
     def sync_addresses(self):
         address_set = set([])
-        for member in self.member_dict.values():
+        for member in list(self.member_dict.values()):
             address_tup = (
                 member.addr1,
                 member.addr2,
@@ -329,15 +325,17 @@ class FamilyManageDialog(ExtendableDialog):
             address_set.add(address_tup)
 
         if len(address_set) == 1:
-            QtGui.QMessageBox.information(self, _("Information"),
-                                          _("Addresses are all identical - nothing to do!"))
+            QtGui.QMessageBox.information(
+                self, _("Information"),
+                _("Addresses are all identical - nothing to do!"))
             return
 
         dl = _ChooseAddressDialog(address_set, self)
         if dl.exec_():
             count = families.sync_addresses(self.family_no, dl.chosen_address)
-            QtGui.QMessageBox.information(self, _("Information"),
-                                          u"%d %s" % (count, _("Address(es) updated")))
+            QtGui.QMessageBox.information(
+                self, _("Information"),
+                "%d %s" % (count, _("Address(es) updated")))
             self.load_values()
 
     def address_search(self):
@@ -358,10 +356,10 @@ class FamilyManageDialog(ExtendableDialog):
         self.load_values()
 
     def delete_group(self):
-        if QtGui.QMessageBox.question(self, _("Confirm"),
-                                      _("Delete this family group?"),
-                                      QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
-                                      QtGui.QMessageBox.Ok) == QtGui.QMessageBox.Cancel:
+        if QtGui.QMessageBox.question(
+                self, _("Confirm"), _("Delete this family group?"),
+                QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
+                QtGui.QMessageBox.Ok) == QtGui.QMessageBox.Cancel:
             return
         families.delete_group(self.family_no)
         self.load_values()
@@ -378,6 +376,7 @@ class LoadRelativesDialog(FamilyManageDialog):
         self.chosen_sno = pt.serialno
         self.accept()
 
+
 if __name__ == "__main__":
 
     localsettings.initiate()
@@ -385,13 +384,13 @@ if __name__ == "__main__":
 
     mw = QtGui.QWidget()
     mw.pt = _DuckPatient((1, "", "", "", "The Gables",
-                          "Craggiemore Daviot", "Inverness", "", "", "IV2 5XQ", "", "active", ""))
+                          "Craggiemore Daviot", "Inverness", "", "",
+                          "IV2 5XQ", "", "active", ""))
 
     mw.pt.familyno = 1
 
     dl = FamilyManageDialog(mw)
     dl.exec_()
 
-
-    # dl = LoadRelativesDialog(mw)
-    # dl.exec_()
+    dl2 = LoadRelativesDialog(mw)
+    dl2.exec_()

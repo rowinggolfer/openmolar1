@@ -1,5 +1,4 @@
 #! /usr/bin/python
-# -*- coding: utf-8 -*-
 
 # ########################################################################### #
 # #                                                                         # #
@@ -21,8 +20,6 @@
 # # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
 # #                                                                         # #
 # ########################################################################### #
-
-from __future__ import division
 
 from functools import partial
 from gettext import gettext as _
@@ -161,19 +158,19 @@ class InsertBlocksDialog(BaseDialog):
 
     @property
     def chosen_days(self):
-        for day, checked in self.DAY_DICT.iteritems():
+        for day, checked in self.DAY_DICT.items():
             if checked:
                 yield day+1
 
     @property
     def chosen_clinicians(self):
-        for clinician, checked in self.CLINICIAN_DICT.iteritems():
+        for clinician, checked in self.CLINICIAN_DICT.items():
             if checked:
                 yield clinician
 
     @property
     def block_text(self):
-        return unicode(self.combo_box.currentText())
+        return str(self.combo_box.currentText())
 
     @property
     def is_valid_input(self):

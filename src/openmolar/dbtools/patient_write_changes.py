@@ -1,9 +1,8 @@
 #! /usr/bin/python
-# -*- coding: utf-8 -*-
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -63,7 +62,7 @@ def note_splitter(notes, line_end=""):
     '''
     # this next line catches any Qtstrings passed, and changes them to python
     # types.
-    notes = unicode(notes)
+    notes = str(notes)
     lines = notes.split("\n")
     for line in lines:
         if line == "":
@@ -252,7 +251,7 @@ def all_changes(pt, changes):
         if sqlcommands != {}:
             LOGGER.debug(sqlcommands)
             cursor = db.cursor()
-            tables = sqlcommands.keys()
+            tables = list(sqlcommands.keys())
             for table in tables:
                 for query, values in sqlcommands[table]:
                     try:

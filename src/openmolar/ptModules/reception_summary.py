@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -32,7 +31,7 @@ from openmolar.settings import localsettings
 from openmolar.dbtools import paymentHistory
 from openmolar.dbtools import estimate_synopsis
 
-HTML_TEMPLATE = u'''
+HTML_TEMPLATE = '''
 <html>
 <head><link rel="stylesheet" href="%s" type="text/css">
 </head>
@@ -58,22 +57,22 @@ UNKNOWN_DENT = ("??", _("Unknown"), _("Unknown"), "", "")
 def header_html(pt):
 
     if pt.underTreatment:
-        html_ = u"<h3>Patient is under Treatment</h3>course started %s" % (
+        html_ = "<h3>Patient is under Treatment</h3>course started %s" % (
             localsettings.readableDate(pt.treatment_course.accd))
     else:
-        html_ = u"<h3>Last course of treatment</h3>completed %s" % (
+        html_ = "<h3>Last course of treatment</h3>completed %s" % (
             localsettings.readableDate(pt.treatment_course.cmpd))
 
     return html_
 
 
 def treatment_html(pt):
-    return u"<h4>Treatments (courseno %s)</h4>%s" % (
+    return "<h4>Treatments (courseno %s)</h4>%s" % (
         pt.courseno0, estimate_synopsis.html(pt.serialno, pt.courseno0))
 
 
 def payments_html(pt):
-    return u'''<h4>Payments Since this course began (excluding Sundries)</h4>
+    return '''<h4>Payments Since this course began (excluding Sundries)</h4>
         %s ''' % paymentHistory.summary_details(
         pt.serialno, pt.treatment_course.accd)
 
@@ -166,4 +165,4 @@ if __name__ == '__main__':
     pt = patient(26041)
     html = html(pt)
     html = html.encode("ascii", "replace")
-    print html
+    print(html)

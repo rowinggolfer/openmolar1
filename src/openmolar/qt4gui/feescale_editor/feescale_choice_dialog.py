@@ -1,5 +1,4 @@
 #! /usr/bin/python
-# -*- coding: utf-8 -*-
 
 # ########################################################################### #
 # #                                                                         # #
@@ -77,4 +76,4 @@ if __name__ == "__main__":
     app = QtGui.QApplication([])
     dl = ChoiceDialog("Make a choice", ["A", "B", "C"])
     if dl.exec_():
-        print dl.chosen_index
+        print(dl.chosen_index)

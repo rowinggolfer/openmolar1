@@ -1,26 +1,25 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 import re
 
@@ -64,18 +63,18 @@ class TxDisplayWidget(QtGui.QWidget):
         self.cmp_lineedit.textChanged.connect(self.text_edited.emit)
 
     def _complete_treatments(self):
-        self.cmp_lineedit.setText(u"%s %s" % (self.cmp_text, self.plan_text))
+        self.cmp_lineedit.setText("%s %s" % (self.cmp_text, self.plan_text))
         self.pl_lineedit.setText("")
 
     @property
     def plan_text(self):
-        txt = unicode(self.pl_lineedit.text().toUtf8())
+        txt = str(self.pl_lineedit.text())
         # denture codes are dumb!
         return re.sub("SR\ ", "SR_", txt)
 
     @property
     def cmp_text(self):
-        txt = unicode(self.cmp_lineedit.text().toUtf8())
+        txt = str(self.cmp_lineedit.text())
         # denture codes are dumb!
         return re.sub("SR\ ", "SR_", txt)
 
@@ -195,7 +194,7 @@ class AdvancedTxPlanningDialog(ExtendableDialog):
             self.chart_but.setText(_("Show Chart Items"))
 
     def check_appliable(self):
-        for widg in self.widgets.values():
+        for widg in list(self.widgets.values()):
             if widg.has_been_edited:
                 self.enableApply()
                 return
@@ -322,14 +321,14 @@ if __name__ == "__main__":
     dl = AdvancedTxPlanningDialog(mw)
     if dl.exec_():
         for att, item in dl.deleted_plan_items:
-            print "%spl %s deleted" % (att, item)
+            print("%spl %s deleted" % (att, item))
         for att, item in dl.deleted_cmp_items:
-            print "%scmp %s deleted" % (att, item)
+            print("%scmp %s deleted" % (att, item))
         for att, item in dl.new_plan_items:
-            print "%spl %s added" % (att, item)
+            print("%spl %s added" % (att, item))
         for att, item in dl.new_cmp_items:
-            print "%scmp %s added" % (att, item)
+            print("%scmp %s added" % (att, item))
         for att, item in dl.completed_items:
-            print "%s %s was completed" % (att, item)
+            print("%s %s was completed" % (att, item))
         for att, item in dl.reversed_items:
-            print "%s %s was reveresed" % (att, item)
+            print("%s %s was reveresed" % (att, item))

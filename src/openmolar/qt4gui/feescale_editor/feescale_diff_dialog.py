@@ -1,5 +1,4 @@
 #! /usr/bin/python
-# -*- coding: utf-8 -*-
 
 # ########################################################################### #
 # #                                                                         # #
@@ -34,7 +33,7 @@ import sys
 
 from PyQt4 import QtCore, QtGui
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
-from feescale_xml_editor import XMLEditor
+from .feescale_xml_editor import XMLEditor
 
 LOGGER = logging.getLogger("openmolar")
 

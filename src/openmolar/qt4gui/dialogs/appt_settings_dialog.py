@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -240,7 +239,7 @@ if __name__ == "__main__":
 
     dl = ApptSettingsDialog()
     if dl.exec_():
-        print "dentist_policy", dl.dentist_policy
-        print "hygienist_policy", dl.hygienist_policy
-        print "excluded days", dl.excluded_days
-        print "ignore_emergency_space", dl.ignore_emergency_spaces
+        print("dentist_policy", dl.dentist_policy)
+        print("hygienist_policy", dl.hygienist_policy)
+        print("excluded days", dl.excluded_days)
+        print("ignore_emergency_space", dl.ignore_emergency_spaces)

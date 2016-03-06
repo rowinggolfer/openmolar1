@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -78,12 +77,11 @@ class adayData(object):
             self.apptix, self.dent, self.active, self.start,
             self.finish, self.memo)
 
-    def __cmp__(self, other):
-        eq = 0
-        if (self.active != other.active or self.start != other.start or
-           self.finish != other.finish or self.memo != other.memo):
-            eq = 1
-        return eq
+    def __eq__(self, other):
+        return (self.active == other.active and
+                self.start == other.start and
+                self.finish == other.finish and
+                self.memo == other.memo)
 
 
 class dentWidget(Ui_activeDentStartFinish.Ui_Form):
@@ -227,7 +225,7 @@ class alterDayDialog(Ui_aslotEdit.Ui_Dialog):
             alteredClinician.active = dw.checkBox.isChecked()
             alteredClinician.start = dw.start_timeEdit.time()
             alteredClinician.finish = dw.finish_timeEdit.time()
-            alteredClinician.memo = str(dw.lineEdit.text().toAscii())
+            alteredClinician.memo = str(dw.lineEdit.text())
             retlist.append(alteredClinician)
         return retlist
 
@@ -259,6 +257,7 @@ class alterDayDialog(Ui_aslotEdit.Ui_Dialog):
             changes = self.checkForChanges()
             return self.applyChanges(changes)
 
+
 if __name__ == "__main__":
     import sys
     localsettings.initiate()
@@ -267,4 +266,4 @@ if __name__ == "__main__":
     d_widg = DiaryWidget()
     dl = alterDayDialog(d_widg, QtCore.QDate.currentDate())
 
-    print dl.getInput()
+    print(dl.getInput())

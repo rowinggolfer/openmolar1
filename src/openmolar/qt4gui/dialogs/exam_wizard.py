@@ -1,26 +1,25 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 import logging
 from PyQt4 import QtGui, QtCore
@@ -81,7 +80,7 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
                self.pt.dnt2 == self.pt.dnt1):  # --no dnt2
                 APPLIED = True
             else:
-                message = u'''<p>%s %s<br />%s</p>
+                message = '''<p>%s %s<br />%s</p>
                 <hr /><p><i>%s %s</i></p>''' % (
                     examdent,
                     _("is now both the registered and course dentist"),
@@ -99,18 +98,18 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
                     self.om_gui.updateDetails()
                     APPLIED = True
         else:
-            message = u'<p>%s %s<br />%s</p>' % (
+            message = '<p>%s %s<br />%s</p>' % (
                 examdent,
                 _("performed this exam"),
                 _("Is this correct?"))
 
             if examdent != localsettings.ops.get(self.pt.dnt2):
-                message += u'<br /><i>%s, %s</i></p>' % (
+                message += '<br /><i>%s, %s</i></p>' % (
                     _("confirming this will change the course dentist"),
                     _("but not the registered dentist")
                 )
             else:
-                message += u'<i>%s %s %s</i>' % (
+                message += '<i>%s %s %s</i>' % (
                     _("consider making"),
                     examdent,
                     _("the registered dentist"))
@@ -138,7 +137,7 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
             om_gui.advise("no patient selected", 1)
             return
         if self.pt.treatment_course.has_exam:
-            message = u"<p>%s</p><hr /><p>%s</p>" % (
+            message = "<p>%s</p><hr /><p>%s</p>" % (
                 _('You already have a completed exam '
                   'on this course of treatment'),
                 _("Unable to perform exam"))
@@ -180,8 +179,8 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
                 manipulate_plan.add_treatment_to_estimate(
                     self.om_gui, "exam", examtype, dentid, [tx_hash])
 
-                newnotes = unicode(
-                    self.om_gui.ui.notesEnter_textEdit.toPlainText().toUtf8())
+                newnotes = str(
+                    self.om_gui.ui.notesEnter_textEdit.toPlainText())
                 if newnotes != "" and newnotes[-1] != "\n":
                     newnotes += "\n"
                 newnotes += "%s %s %s\n" % (
@@ -216,4 +215,4 @@ if __name__ == "__main__":
     mw.getrecord(11956)
 
     dl = ExamWizard(mw)
-    print dl.perform_exam()
+    print(dl.perform_exam())

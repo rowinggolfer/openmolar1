@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -75,23 +74,23 @@ class TreeItem(object):
 
     def data(self, column):
         if column == 0:
-            return QtCore.QVariant(self.headerCol)
+            return self.headerCol
         if not self.isAppointment:
-            return QtCore.QVariant()
+            return None
         if column == 1:
-            return QtCore.QVariant(self.appointment.dent_inits)
+            return self.appointment.dent_inits
         if column == 2:
-            return QtCore.QVariant(self.appointment.length)
+            return self.appointment.length
         if column == 3:
             trt = "%s %s %s" % (self.appointment.trt1,
                                 self.appointment.trt2, self.appointment.trt3)
-            return QtCore.QVariant(trt)
+            return trt
         if column == 5:
-            return QtCore.QVariant(self.appointment.memo)
+            return self.appointment.memo
         if column == 4:
-            return QtCore.QVariant(self.appointment.aprix)
+            return self.appointment.aprix
 
-        return QtCore.QVariant()
+        return None
 
     def parent(self):
         return self.parentItem
@@ -182,34 +181,31 @@ class PatientDiaryTreeModel(QtCore.QAbstractItemModel):
 
     def data(self, index, role):
         if not index.isValid():
-            return QtCore.QVariant()
+            return None
 
         item = index.internalPointer()
         if role == QtCore.Qt.DisplayRole:
             return item.data(index.column())
         if role == QtCore.Qt.ForegroundRole:
             if item.appointment and item.appointment.today:
-                brush = QtGui.QBrush(colours.DIARY.get("TODAY"))
-                return QtCore.QVariant(brush)
+                return QtGui.QBrush(colours.DIARY.get("TODAY"))
             if item.appointment and item.appointment.future:
-                brush = QtGui.QBrush(colours.DIARY.get("Future"))
-                return QtCore.QVariant(brush)
+                return QtGui.QBrush(colours.DIARY.get("Future"))
             if item.appointment and item.appointment.unscheduled:
-                brush = QtGui.QBrush(colours.DIARY.get("Unscheduled"))
-                return QtCore.QVariant(brush)
+                return QtGui.QBrush(colours.DIARY.get("Unscheduled"))
         elif role == QtCore.Qt.DecorationRole:
             if (index.column() == 0 and
                item.appointment and item.appointment.unscheduled):
                 # if (self.selectedAppt and
                 #   item.appointment.aprix == self.selectedAppt.aprix):
-                #    return QtCore.QVariant(self.selected_icon)
-                return QtCore.QVariant(self.normal_icon)
+                #    return self.selected_icon
+                return self.normal_icon
         if role == QtCore.Qt.UserRole:
             # a user role which simply returns the python object
             if item:
                 return item.appointment
 
-        return QtCore.QVariant()
+        return None
 
     def flags(self, index):
         if not index.isValid():
@@ -221,11 +217,11 @@ class PatientDiaryTreeModel(QtCore.QAbstractItemModel):
         if (orientation == QtCore.Qt.Horizontal and
            role == QtCore.Qt.DisplayRole):
             try:
-                return QtCore.QVariant(HORIZONTAL_HEADERS[column])
+                return HORIZONTAL_HEADERS[column]
             except IndexError:
                 pass
 
-        return QtCore.QVariant()
+        return None
 
     def index(self, row, column, parent):
         if not self.hasIndex(row, column, parent):
@@ -379,7 +375,7 @@ class ColouredItemDelegate(QtGui.QItemDelegate):
         QtGui.QItemDelegate.__init__(self, parent)
 
     def paint(self, painter, option, index):
-        app = index.data(QtCore.Qt.UserRole).toPyObject()
+        app = index.data(QtCore.Qt.UserRole)
         model = index.model()
 
         pal = option.palette

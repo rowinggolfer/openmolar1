@@ -1,30 +1,28 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-#
-#
-# Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-#
-# This file is part of OpenMolar.                                          # #
-#
-# OpenMolar is free software: you can redistribute it and/or modify        # #
-# it under the terms of the GNU General Public License as published by     # #
-# the Free Software Foundation, either version 3 of the License, or        # #
-# (at your option) any later version.                                      # #
-#
-# OpenMolar is distributed in the hope that it will be useful,             # #
-# but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# GNU General Public License for more details.                             # #
-#
-# You should have received a copy of the GNU General Public License        # #
-# along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-#
-#
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
-import time
-import datetime
 from collections import namedtuple
+from gettext import gettext as _
 
 from openmolar.settings import localsettings
 from openmolar.connect import connect
@@ -69,9 +67,10 @@ HTML = '''
 </body></html>'''
 
 
-ReferralCentre = namedtuple('ReferralCentre',
+ReferralCentre = namedtuple(
+    'ReferralCentre',
     ('ix', 'description', 'greeting', 'addr1', 'addr2',
-'addr3', 'addr4', 'addr5', 'addr6', 'addr7')
+     'addr3', 'addr4', 'addr5', 'addr6', 'addr7')
     )
 
 
@@ -147,7 +146,6 @@ def getHtml(description, pt):
     get the HTML for a letter to
     referral_centre identified by description about this pt
     '''
-    descriptions = []
     db = connect()
     cursor = db.cursor()
     cursor.execute(ADDRESS_QUERY, (description,))
@@ -181,10 +179,11 @@ def getHtml(description, pt):
         tel,
         _("Yours Sincerely"))
 
+
 if __name__ == "__main__":
     localsettings.initiate()
     from openmolar.dbtools import patient_class
     pt = patient_class.patient(4)
     d = getDescriptions()
-    print d
-    print getHtml(d[0], pt)
+    print(d)
+    print(getHtml(d[0], pt))

@@ -1,26 +1,25 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 from PyQt4 import QtGui, QtCore
 
@@ -45,7 +44,7 @@ class AlterCashbookDialog(ExtendableDialog):
         self.ix = ix
         title = _("Alter Cashbook Entry")
         self.setWindowTitle(title)
-        label = QtGui.QLabel(u"<b>%s</b>" % title)
+        label = QtGui.QLabel("<b>%s</b>" % title)
         label.setAlignment(QtCore.Qt.AlignCenter)
 
         frame = QtGui.QFrame()
@@ -61,7 +60,7 @@ class AlterCashbookDialog(ExtendableDialog):
         self.amount_sb = QtGui.QDoubleSpinBox()
         self.amount_sb.setRange(0, 10000)
 
-        self.codestrings = localsettings.cashbookCodesDict.values()
+        self.codestrings = list(localsettings.cashbookCodesDict.values())
         self.code_cb.addItems(self.codestrings)
 
         form_layout.addRow(_("Patient Number"), self.serialno_le)
@@ -135,9 +134,9 @@ class AlterCashbookDialog(ExtendableDialog):
 
     def apply(self):
         date_ = self.date_edit.date().toPyDate()
-        ref = str(self.serialno_le.text().toAscii())
-        descr = str(self.patient_le.text().toAscii())
-        for key, value in localsettings.cashbookCodesDict.viewitems():
+        ref = str(self.serialno_le.text())
+        descr = str(self.patient_le.text())
+        for key, value in localsettings.cashbookCodesDict.items():
             if self.code_cb.currentText() == value:
                 code = key
                 break
@@ -162,6 +161,7 @@ class AlterCashbookDialog(ExtendableDialog):
             return True
         return False
 
+
 if __name__ == "__main__":
 
     localsettings.initiate()
@@ -169,4 +169,4 @@ if __name__ == "__main__":
 
     dl = AlterCashbookDialog(152039)
 
-    print (dl.exec_())
+    print((dl.exec_()))

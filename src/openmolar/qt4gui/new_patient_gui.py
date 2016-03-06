@@ -1,31 +1,30 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 import logging
 from gettext import gettext as _
 
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui
 
 from openmolar.settings import localsettings
 from openmolar.dbtools import writeNewPatient, families
@@ -59,9 +58,9 @@ def check_use_family(om_gui):
     if localsettings.last_family_no in (None, 0):
         if QtGui.QMessageBox.question(
                 om_gui,
-            _("Question"),
-            _("Start a new family group?"),
-            QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                _("Question"),
+                _("Start a new family group?"),
+                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
                 QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
             om_gui.pt.familyno = families.new_group(
                 localsettings.previous_sno())
@@ -82,36 +81,36 @@ def enterNewPatient(om_gui):
     called by the user clicking the new patient button
     '''
 
-    #--check for unsaved changes
+    # check for unsaved changes
     if not om_gui.okToLeaveRecord():
         LOGGER.debug(
             "not entering new patient - still editing current record")
         return
 
-    #--make the ui dialog like
+    # make the ui dialog like
     om_gui.entering_new_patient = True
     om_gui.ui.new_notes_frame.hide()
     om_gui.ui.details_frame.hide()
     om_gui.ui.new_patient_frame.show()
     om_gui.ui.family_groupBox.hide()
 
-    #--disable the tabs which are normally enabled by default
+    # disable the tabs which are normally enabled by default
     om_gui.ui.tabWidget.setTabEnabled(4, False)
     om_gui.ui.tabWidget.setTabEnabled(3, False)
 
-    #--clear any current record
+    # clear any current record
     om_gui.clearRecord()
     om_gui.pt.familyno = None
 
-    #--disable the majority of widgets
+    # disable the majority of widgets
     om_gui.enableEdit(False)
 
-    #--move to the edit patient details page
+    # move to the edit patient details page
     om_gui.ui.tabWidget.setTabEnabled(0, True)
     om_gui.ui.tabWidget.setCurrentIndex(0)
     om_gui.ui.patientEdit_groupBox.setTitle("Enter New Patient")
 
-    #--set default sex ;)
+    # set default sex ;)
     om_gui.ui.sexEdit.setCurrentIndex(0)
     om_gui.ui.titleEdit.setFocus()
 
@@ -124,7 +123,6 @@ def checkNewPatient(om_gui):
     before commiting to database
     '''
     LOGGER.debug("check new patient")
-    atts = []
     allfields_entered = True
 
     # check these widgets for entered text.
@@ -183,11 +181,12 @@ def abortNewPatientEntry(om_gui):
     '''
     om_gui.ui.main_tabWidget.setCurrentIndex(0)
 
-    if QtGui.QMessageBox.question(om_gui, "Confirm",
-                                  "%s<hr /><em>%s</em>" % (
-                                      _("New Patient not saved."),
-                                      _("Abandon Changes?")),
-                                  QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
-                                  QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok:
+    if QtGui.QMessageBox.question(
+            om_gui,
+            _("Confirm"),
+            "%s<hr /><em>%s</em>" % (_("New Patient not saved."),
+                                     _("Abandon Changes?")),
+            QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
+            QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok:
         finishedNewPatientInput(om_gui)
         return True

@@ -3,7 +3,7 @@
 
 # ############################################################################ #
 # #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>                # #
 # #                                                                          # #
 # # This file is part of OpenMolar.                                          # #
 # #                                                                          # #

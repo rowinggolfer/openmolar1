@@ -1,35 +1,32 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
-
-import logging
-import re
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 from functools import partial
+from gettext import gettext as _
+import logging
 
 from PyQt4 import QtCore, QtGui
 
-from openmolar.dbtools.treatment_course import CURRTRT_ROOT_ATTS
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 
 LOGGER = logging.getLogger("openmolar")
@@ -44,11 +41,10 @@ class CompleteTreatmentDialog(ExtendableDialog):
         LOGGER.debug("CompleteTreatmentDialog %s" % treatments)
         self.setWindowTitle(_("Complete Multiple Treatments"))
 
-        label = QtGui.QLabel(u"%s<br />%s" % (
-                             _("You have selected multiple treatments."),
-                             _(
-                             "Please complete, reverse or delete then apply changes.")
-                             ))
+        label = QtGui.QLabel(
+            "%s<br />%s" % (
+                _("You have selected multiple treatments."),
+                _("Please complete, reverse or delete then apply changes.")))
         self.insertWidget(label)
 
         self.treatments = treatments
@@ -63,7 +59,7 @@ class CompleteTreatmentDialog(ExtendableDialog):
 
         col = 1
         for header in (_("Planned"), _("Completed")):
-            label = QtGui.QLabel(u"<b>%s</b>" % header)
+            label = QtGui.QLabel("<b>%s</b>" % header)
             label.setAlignment(QtCore.Qt.AlignCenter)
             self.but_layout.addWidget(label, row, col)
             col += 1
@@ -244,26 +240,18 @@ class CompleteTreatmentDialog(ExtendableDialog):
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
-    from gettext import gettext as _
-    from openmolar.dbtools.patient_class import patient
-    from openmolar.qt4gui import resources_rc
-
     app = QtGui.QApplication([])
     mw = QtGui.QWidget()
 
-    dl = CompleteTreatmentDialog([
-        ("perio", "SP", False),
-        ("perio", "SP", True),
-        ("ur5", "MOD", False),
-        ("ur5", "RT", False),
-        ("ur4", "DR", True)
-    ], mw)
+    dl = CompleteTreatmentDialog([("perio", "SP", False),
+                                  ("perio", "SP", True),
+                                  ("ur5", "MOD", False),
+                                  ("ur5", "RT", False),
+                                  ("ur4", "DR", True)], mw)
     if dl.exec_():
         for att, treat in dl.completed_treatments:
-            print "%s %s was completed" % (att, treat)
-
+            print("%s %s was completed" % (att, treat))
         for att, treat in dl.uncompleted_treatments:
-            print "%s %s was reversed" % (att, treat)
-
+            print("%s %s was reversed" % (att, treat))
         for att, treat, completed in dl.deleted_treatments:
-            print "%s %s %s was deleted" % (att, treat, completed)
+            print("%s %s %s was deleted" % (att, treat, completed))

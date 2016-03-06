@@ -1,26 +1,25 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 This module provides a function 'run' which will move data from the estimates
@@ -29,11 +28,13 @@ The NewTable schema is contained in module variable NEW_TABLE_SQLSTRINGS
 Incidentally - this script introduces the "settings table" in which the schema
 variable is stored.
 '''
+
+from gettext import gettext as _
 import logging
 import sys
 
-from openmolar.settings import localsettings
-from openmolar.schema_upgrades.database_updater_thread import DatabaseUpdaterThread
+from openmolar.schema_upgrades.database_updater_thread \
+    import DatabaseUpdaterThread
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -114,7 +115,7 @@ class DatabaseUpdater(DatabaseUpdaterThread):
             newrow = []
             for i in range(len(row)):
                 data = row[i]
-                if i == 2:  # split the type into the new catergory / type fields
+                if i == 2:  # split into the new category / type fields
                     try:
                         splitdata = data.split(" ")
                         category = splitdata[0]
@@ -161,7 +162,7 @@ class DatabaseUpdater(DatabaseUpdaterThread):
         LOGGER.info("running script to convert from schema 1.0 to 1.1")
         try:
             self.connect()
-            #- execute the SQL commands
+            # execute the SQL commands
             self.progressSig(10, _("creating new tables"))
             self.execute_statements(SQLSTRINGS)
             self.progressSig(15, "extracting estimates")
@@ -180,6 +181,7 @@ class DatabaseUpdater(DatabaseUpdaterThread):
             LOGGER.exception("error transfering data")
             self.rollback()
             raise self.UpdateError(exc)
+
 
 if __name__ == "__main__":
     dbu = DatabaseUpdater()

@@ -1,5 +1,4 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
@@ -22,18 +21,19 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from feescale_parser import FeescaleParser
-from feescale_list_model import ItemsListModel, ComplexShortcutsListModel
-from feescale_xml_editor import XMLEditor
-from feescale_compare_items_dockwidget import CompareItemsDockWidget
-from feescale_input_dialogs import (PercentageInputDialog,
-                                    RoundupFeesDialog,
-                                    ChargePercentageInputDialog)
-from feescale_diff_dialog import DiffDialog
-from feescale_choice_dialog import ChoiceDialog
-from new_feescale_dialog import NewFeescaleDialog
+from .feescale_parser import FeescaleParser
+from .feescale_list_model import ItemsListModel, ComplexShortcutsListModel
+from .feescale_xml_editor import XMLEditor
+from .feescale_compare_items_dockwidget import CompareItemsDockWidget
+from .feescale_input_dialogs import (PercentageInputDialog,
+                                     RoundupFeesDialog,
+                                     ChargePercentageInputDialog)
+from .feescale_diff_dialog import DiffDialog
+from .feescale_choice_dialog import ChoiceDialog
+from .new_feescale_dialog import NewFeescaleDialog
 from openmolar.dbtools.feescales import feescale_handler, FEESCALE_DIR
 
+from collections import OrderedDict
 from functools import partial
 import logging
 import re
@@ -45,12 +45,6 @@ from xml.dom import minidom
 from PyQt4 import QtCore, QtGui
 
 LOGGER = logging.getLogger("openmolar")
-try:
-    from collections import OrderedDict
-except ImportError:
-    # OrderedDict only came in python 2.7
-    LOGGER.warning("using openmolar.backports for OrderedDict")
-    from openmolar.backports import OrderedDict
 
 
 class ControlPanel(QtGui.QTabWidget):
@@ -361,7 +355,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         called when application closes.
         '''
         if self.is_dirty:
-            message = u"<b>%s</b><hr />%s" % (
+            message = "<b>%s</b><hr />%s" % (
                 _("WARNING - you have unsaved changes!"),
                 _("Are you sure you want to quit?"))
 
@@ -383,11 +377,11 @@ class FeescaleEditor(QtGui.QMainWindow):
         if self._checking_files:
             return
         self._checking_files = True
-        for parser in self.feescale_parsers.values():
+        for parser in list(self.feescale_parsers.values()):
             if parser in self._known_deleted_parsers:
                 pass
             elif parser.is_deleted:
-                message = u"%s<br />%s<hr />%s" % (
+                message = "%s<br />%s<hr />%s" % (
                     parser.filepath,
                     _("has been deleted!"),
                     _("Save now?"))
@@ -403,7 +397,7 @@ class FeescaleEditor(QtGui.QMainWindow):
                     self._known_deleted_parsers.append(parser)
 
             elif parser.is_externally_modified:
-                message = u"%s<br />%s<hr />%s" % (
+                message = "%s<br />%s<hr />%s" % (
                     parser.filepath,
                     _("has been modified!"),
                     _("Do you want to reload now and lose current changes?")
@@ -452,7 +446,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         try:
             fp.parse_file()
         except:
-            message = u"%s '%s'" % (_("unable to parse file"), filepath)
+            message = "%s '%s'" % (_("unable to parse file"), filepath)
             self.advise(message, 2)
             LOGGER.exception(message)
 
@@ -551,12 +545,13 @@ class FeescaleEditor(QtGui.QMainWindow):
 
     @property
     def current_parser(self):
-        return self.feescale_parsers.values()[self.tab_widget.currentIndex()]
+        i = self.tab_widget.currentIndex()
+        return list(self.feescale_parsers.values())[i]
 
     def refactor(self):
         if not self.check_parseable(show_message=False):
             return
-        xml = unicode(self.text_edit.text().toUtf8())
+        xml = str(self.text_edit.text())
         xml = re.sub(">[\s]*<", "><", xml)
         dom = minidom.parseString(xml)
 
@@ -564,19 +559,19 @@ class FeescaleEditor(QtGui.QMainWindow):
         self.text_edit.update_text(dom.toprettyxml())
 
     def check_parseable(self, action=None, show_message=True):
-        xml = self.text_edit.text().toUtf8()
+        xml = self.text_edit.text()
         try:
             minidom.parseString(xml)
             if show_message:
                 self.advise(_("feescale is well formed"), 1)
             return True
         except Exception as exc:
-            self.advise(u"<b>%s</b><hr />%s" % (
+            self.advise("<b>%s</b><hr />%s" % (
                 _("feescale is not well formed"), exc.message), 2)
         return False
 
     def check_validity(self):
-        xml = self.text_edit.text().toUtf8()
+        xml = self.text_edit.text()
         result, message = self.current_parser.check_validity(xml)
         if result:
             self.advise(_("feescale is valid"), 1)
@@ -608,7 +603,7 @@ class FeescaleEditor(QtGui.QMainWindow):
     def compare_items_dockwidget(self):
         if self._compare_items_dockwidget is None:
             self._compare_items_dockwidget = CompareItemsDockWidget(
-                self.feescale_parsers.values(), self)
+                list(self.feescale_parsers.values()), self)
             self.addDockWidget(QtCore.Qt.BottomDockWidgetArea,
                                self._compare_items_dockwidget)
         return self._compare_items_dockwidget
@@ -688,7 +683,7 @@ class FeescaleEditor(QtGui.QMainWindow):
             return
 
         i = 0
-        for parser in self.feescale_parsers.itervalues():
+        for parser in self.feescale_parsers.values():
             if parser in self._known_deleted_parsers:
                 self._known_deleted_parsers.remove(parser)
             if not parser.is_dirty:
@@ -698,7 +693,7 @@ class FeescaleEditor(QtGui.QMainWindow):
                 parser.saved_xml = parser.text
                 parser.reset_orig_modified()
                 i += 1
-        self.advise(u"%s %s" % (i, _("Files saved")), 1)
+        self.advise("%s %s" % (i, _("Files saved")), 1)
 
     def save(self):
         LOGGER.debug("save")
@@ -719,12 +714,12 @@ class FeescaleEditor(QtGui.QMainWindow):
         parser = self.current_parser
         try:
             if filepath is None:
-                filepath = unicode(
+                filepath = str(
                     QtGui.QFileDialog.getSaveFileName(
                         self,
                         _("save as"),
                         parser.filepath,
-                        "%s (*.xml)" % _("xml_files")).toUtf8()
+                        "%s (*.xml)" % _("xml_files"))
                 )
             if filepath == '':
                 return
@@ -752,7 +747,7 @@ class FeescaleEditor(QtGui.QMainWindow):
                 QtGui.QMessageBox.question(
                     self,
                     _("confirm"),
-                    u"<b>%s</b><hr />%s" % (
+                    "<b>%s</b><hr />%s" % (
                         _("Warning - you have unsaved changes, "
                           "if you refresh now, these will be lost"),
                         _("Refresh anyway?")),
@@ -794,7 +789,7 @@ class FeescaleEditor(QtGui.QMainWindow):
                 mappings[ins_id] = self.feescale_handler.insert_db(ins_id)
 
         move_required = False
-        for file_ix, db_ix in mappings.iteritems():
+        for file_ix, db_ix in mappings.items():
             if file_ix != db_ix:
                 move_required = True
                 self.advise(
@@ -806,9 +801,9 @@ class FeescaleEditor(QtGui.QMainWindow):
             return
 
         # self._checking_files = True
-        for file_ix in mappings.keys():
+        for file_ix in list(mappings.keys()):
             self.feescale_handler.temp_move(file_ix)
-        for file_ix, db_ix in mappings.iteritems():
+        for file_ix, db_ix in mappings.items():
             self.feescale_handler.final_move(file_ix, db_ix)
         self.refresh_files()
 
@@ -825,12 +820,12 @@ class FeescaleEditor(QtGui.QMainWindow):
     def te_editing_finished(self, te):
         i = self.text_editors.index(te)
         new_text = te.text()
-        self.feescale_parsers.values()[i].set_edited_text(new_text)
+        list(self.feescale_parsers.values())[i].set_edited_text(new_text)
 
     def show_database_diff(self):
         orig = self.feescale_handler.get_feescale_from_database(
             self.current_parser.ix)
-        new = unicode(self.text_edit.text().toUtf8())
+        new = str(self.text_edit.text())
         dl = DiffDialog(orig, new)
         dl.exec_()
 
@@ -858,15 +853,15 @@ class FeescaleEditor(QtGui.QMainWindow):
         if dl.exec_():
             chosen = dl.chosen_index
 
-            orig = unicode(self.text_edit.text().toUtf8())
-            new = unicode(self.text_editors[chosen].text().toUtf8())
+            orig = str(self.text_edit.text())
+            new = str(self.text_editors[chosen].text())
             dl = DiffDialog(orig, new)
             dl.exec_()
 
     @property
     def is_dirty(self):
         try:
-            for parser in self.feescale_parsers.values():
+            for parser in list(self.feescale_parsers.values()):
                 if parser.is_dirty:
                     LOGGER.debug("%s is dirty" % parser.filepath)
                     return True

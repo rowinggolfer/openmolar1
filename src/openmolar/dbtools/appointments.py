@@ -1,9 +1,8 @@
 #! /usr/bin/python
-# -*- coding: utf-8 -*-
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -353,13 +352,24 @@ class APR_Appointment(object):
             % (self.serialno, self.date, not self.unscheduled, self.dent_inits,
                self.trt1, self.length, self.aprix)
 
-    def __cmp__(self, other):
-        eq = isinstance(self, type(other))
-        if eq and self.serialno == other.serialno and \
-                self.aprix == other.aprix:
-            return 0
-        else:
-            return 1
+    def __eq__(self, other):
+        try:
+            return (self.serialno == other.serialno and
+                    self.aprix == other.aprix)
+        except AttributeError:
+            return False
+
+    def __lt__(self, other):
+        try:
+            return self.aprix < other.aprix
+        except AttributeError:
+            return False
+
+    def __gt__(self, other):
+        try:
+            return self.aprix > other.aprix
+        except AttributeError:
+            return False
 
 
 class DaySummary(object):
@@ -699,11 +709,9 @@ class Appointment(object):
     startcell = 0
     endcell = 0
 
-    def __init__(
-        self,
+    def __init__(self, args):
         (apptix, start, end, name, serialno, code0, code1, code2, note,
-         flag0, flag1, flag2, flag3, timestamp, mh_date)
-    ):
+         flag0, flag1, flag2, flag3, timestamp, mh_date) = args
         self.apptix = apptix
         self.start = start
         self.end = end
@@ -1041,7 +1049,7 @@ def setMemos(adate, memos):
     updates the aday table with memos
     useage is setMemos(pydate, ((4, "NW not working"),(5, "BW is")))
     '''
-    print "setting memos", memos
+    print("setting memos", memos)
     db = connect()
     cursor = db.cursor()
     query = '''insert into aday (memo, adate, apptix, start, end)
@@ -1091,7 +1099,7 @@ def setPubHol(adate, arg):
     updates the aday table with memos
     useage is pubHol(pydate, "Christmas Day")
     '''
-    print "updating pubHol", arg
+    print("updating pubHol", arg)
     db = connect()
     cursor = db.cursor()
     if arg == "":
@@ -1304,8 +1312,8 @@ def clearEms(cedate):
         number = cursor.execute(query, values)
         db.commit()
     except Exception as ex:
-        print "exception in appointments module, clearEms"
-        print ex
+        print("exception in appointments module, clearEms")
+        print(ex)
 
     cursor.close()
     # db.close()
@@ -1423,7 +1431,7 @@ def add_pt_appt(serialno, practix, length, code0, aprix=-1, code1="", code2="",
         db.commit()
         result = aprix
     except Exception as ex:
-        print "exception in appointments.add_pt_appt ", ex
+        print("exception in appointments.add_pt_appt ", ex)
         result = False
     cursor.close()
     # db.close()
@@ -1604,8 +1612,8 @@ def block_appt(bldate, apptix, start, end, bl_start, bl_end, reason):
         db.commit()
         result = True
     else:
-        print "couldn't insert into aslot %s %s %s" % (
-            bldate, apptix, start)
+        print("couldn't insert into aslot %s %s %s" % (
+            bldate, apptix, start))
         result = False
     cursor.close()
     # db.close()
@@ -1632,9 +1640,9 @@ def modify_aslot_appt(moddate, apptix, start, serialno, code0, code1, code2,
         db.commit()
         result = True
     except Exception as ex:
-        print "exception in appointments.modify_aslot_appt ", ex
-        print "couldn't modify aslot %s %s %s serialno %d" % (
-            moddate, apptix, start, serialno)
+        print("exception in appointments.modify_aslot_appt ", ex)
+        print("couldn't modify aslot %s %s %s serialno %d" % (
+            moddate, apptix, start, serialno))
 
         result = False
     cursor.close()
@@ -1670,7 +1678,7 @@ def delete_appt_from_apr(appt):
         result = cursor.execute(query, tuple(values))
         db.commit()
     except Exception as ex:
-        print "exception in appointments.delete_appt_from_apr ", ex
+        print("exception in appointments.delete_appt_from_apr ", ex)
     cursor.close()
 
     return result
@@ -1772,13 +1780,13 @@ def future_slots(startdate, enddate, dents,
     cursor.close()
     return slotlist
 
+
 if __name__ == "__main__":
     '''
     test procedures......
     '''
 
     class duckPt(object):
-
         def __init__(self):
             self.serialno = 1
             self.sname = "Neil"
@@ -1787,20 +1795,20 @@ if __name__ == "__main__":
 
     localsettings.initiate()
 
-    testdate = datetime.date(2015, 06, 01)
+    testdate = datetime.date(2015, 0o6, 0o1)
 
     d_a_d = DayAppointmentData()
     d_a_d.setDate(testdate)
     d_a_d.getAppointments((4,))
-    print "RESULTS"
-    print "\tWORKING DENTS:\n\t%s" % str(d_a_d.workingDents)
-    print "\tAPPOINTMENTS:"
+    print("RESULTS")
+    print("\tWORKING DENTS:\n\t%s" % str(d_a_d.workingDents))
+    print("\tAPPOINTMENTS:")
     for appt in d_a_d.appointments:
-        print "\t\t%s" % str(appt)
-    print "\tSLOTS:"
+        print("\t\t%s" % str(appt))
+    print("\tSLOTS:")
     for slot in d_a_d.slots(30):
-        print "\t\t%s" % slot
-    print "\tSLOTS (ignoring emergencies):"
+        print("\t\t%s" % slot)
+    print("\tSLOTS (ignoring emergencies):")
     for slot in d_a_d.slots(15, ignore_emergency=True):
-        print "\t\t%s" % slot
+        print("\t\t%s" % slot)
     cancel_emergency_slot(testdate, 4, 1130, 1210)

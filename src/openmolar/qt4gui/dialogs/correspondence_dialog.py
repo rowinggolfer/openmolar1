@@ -1,5 +1,4 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
@@ -87,7 +86,7 @@ class CorrespondenceDialog(BaseDialog):
             for letter in standard_letter.get_standard_letters():
                 CorrespondenceDialog.LETTERS[letter.description] = letter
 
-        for key, letter in self.LETTERS.iteritems():
+        for key, letter in self.LETTERS.items():
             if key != _("Blank Letter"):
                 self.combo_box.addItem(letter.description)
         self.combo_box.currentIndexChanged.connect(
@@ -95,7 +94,7 @@ class CorrespondenceDialog(BaseDialog):
 
     def preformed_letter_selected(self, i):
         LOGGER.debug("selecting preformed letter %s", i)
-        selected = unicode(self.combo_box.currentText())
+        selected = str(self.combo_box.currentText())
         if self.has_edits and QtGui.QMessageBox.question(
                 self,
                 _("Confirm"),
@@ -131,11 +130,11 @@ class CorrespondenceDialog(BaseDialog):
 
     @property
     def text(self):
-        return unicode(self.text_edit.toHtml())
+        return str(self.text_edit.toHtml())
 
     @property
     def letter_description(self):
-        return unicode(self.combo_box.currentText())
+        return str(self.combo_box.currentText())
 
 
 if __name__ == "__main__":

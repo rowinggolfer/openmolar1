@@ -1,5 +1,4 @@
 #! /usr/bin/python
-# -*- coding: utf-8 -*-
 
 # ########################################################################### #
 # #                                                                         # #
@@ -84,7 +83,7 @@ class XMLEditor(Qsci.QsciScintilla):
             QtGui.QColor("#ee1111"), self.MARKER_COLUMN)
 
     def focusOutEvent(self, event):
-        self.text_object.update_text(unicode(self.text().toUtf8()))
+        self.text_object.update_text(str(self.text()))
         self.editing_finished.emit(self)
 
     def setText(self, text):
@@ -102,7 +101,7 @@ class XMLEditor(Qsci.QsciScintilla):
 
     @property
     def is_dirty(self):
-        self.text_object.update_text(unicode(self.text().toUtf8()))
+        self.text_object.update_text(str(self.text()))
         return self.text_object.is_dirty
 
 
@@ -114,4 +113,4 @@ if __name__ == "__main__":
     widg.show()
     widg.setText("hello world")
     app.exec_()
-    print "Text modified = %s" % widg.is_dirty
+    print("Text modified = %s" % widg.is_dirty)

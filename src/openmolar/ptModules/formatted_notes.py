@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -28,6 +27,7 @@ This module replaces notes.py with schema version 1.9
 
 from gettext import gettext as _
 
+from collections import OrderedDict
 import logging
 import re
 import sys
@@ -36,13 +36,6 @@ from openmolar.settings import localsettings
 from openmolar.dbtools import db_notes
 
 LOGGER = logging.getLogger("openmolar")
-
-try:
-    from collections import OrderedDict
-except ImportError:
-    # OrderedDict only came in python 2.7
-    LOGGER.warning("using openmolar.backports for OrderedDict")
-    from openmolar.backports import OrderedDict
 
 # some user variables which determine the verbosity of the notes
 
@@ -176,7 +169,7 @@ def rec_notes(notes_dict, startdate=None):
     if startdate:
         retarg += "<h4>%s</h4>\n" % _("Course Activity")
 
-    keys = notes_dict.keys()
+    keys = list(notes_dict.keys())
     # keys.sort()
 
     for key in keys:
@@ -211,7 +204,7 @@ def notes(notes_dict, full_notes=True):
                 <th class="notes">Notes</th>
         '''
 
-    keys = notes_dict.keys()
+    keys = list(notes_dict.keys())
 
     if full_notes and show_metadata:
         retarg += '<th class="reception">metadata</th>'
@@ -271,7 +264,7 @@ def todays_notes(serialno):
         html += "%s <a href='edit_notes?%s'>%s</a></body></html>" % (
             _("No notes found"), serialno, _("Add a note"))
 
-    return  html.replace("||SNO||", str(serialno))
+    return html.replace("||SNO||", str(serialno))
 
 
 if __name__ == "__main__":
@@ -284,7 +277,7 @@ if __name__ == "__main__":
         serialno = 303  # 1
 
     notes_ = notes(patient_class.patient(serialno).notes_dict)
-    print notes_.encode("ascii", "replace")
+    print(notes_.encode("ascii", "replace"))
     notes_ = rec_notes(
         patient_class.patient(serialno).notes_dict, datetime.date(2015, 10, 1))
-    print notes_.encode("ascii", "replace")
+    print(notes_.encode("ascii", "replace"))

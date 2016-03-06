@@ -1,32 +1,29 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 provides printing functions for the main gui.
 '''
-
-from __future__ import division
 
 from gettext import gettext as _
 import logging
@@ -47,7 +44,7 @@ from openmolar.dbtools import standard_letter
 
 from openmolar.qt4gui.compiled_uis import Ui_daylist_print
 
-#--modules which use qprinter
+# modules which use qprinter
 from openmolar.qt4gui.printing import receiptPrint
 from openmolar.qt4gui.printing import chartPrint
 from openmolar.qt4gui.printing import bookprint
@@ -57,7 +54,6 @@ from openmolar.qt4gui.printing import daylistprint
 from openmolar.qt4gui.printing import multiDayListPrint
 from openmolar.qt4gui.printing import accountPrint
 from openmolar.qt4gui.printing import estimatePrint
-from openmolar.qt4gui.printing.mh_print import MHPrint
 
 from openmolar.qt4gui.dialogs.correspondence_dialog import CorrespondenceDialog
 from openmolar.qt4gui.dialogs.print_record_dialog import PrintRecordDialog
@@ -79,9 +75,9 @@ def commitPDFtoDB(om_gui, descr, serialno=None):
         if pdfDup is None:
             om_gui.advise(_("PDF is NONE - (tell devs this happened)"))
         else:
-            #-field is 20 chars max.. hence the [:14]
+            # field is 20 chars max.. hence the [:14]
             docsprinted.add(serialno, descr[:14] + " (pdf)", pdfDup)
-            #--now refresh the docprinted widget (if visible)
+            # -now refresh the docprinted widget (if visible)
             if om_gui.ui.prevCorres_treeWidget.isVisible():
                 om_gui.docsPrintedInit()
     except Exception as e:
@@ -98,8 +94,8 @@ def printReceipt(om_gui, valDict, total="0.00"):
     myreceipt = receiptPrint.Receipt()
 
     myreceipt.setProps(om_gui.pt.title, om_gui.pt.fname, om_gui.pt.sname,
-                       om_gui.pt.addr1, om_gui.pt.addr2, om_gui.pt.addr3, om_gui.pt.town,
-                       om_gui.pt.county, om_gui.pt.pcde)
+                       om_gui.pt.addr1, om_gui.pt.addr2, om_gui.pt.addr3,
+                       om_gui.pt.town, om_gui.pt.county, om_gui.pt.pcde)
 
     myreceipt.total = total
 
@@ -144,7 +140,7 @@ def printAccountsTable(om_gui):
     '''
     print the table
     '''
-    #-- set a pointer for readability
+    # - set a pointer for readability
     table = om_gui.ui.accounts_tableWidget
     rowno = table.rowCount()
     if rowno == 0:
@@ -402,13 +398,13 @@ def printmultiDayList(om_gui, args):
 
 def daylistPrintWizard(om_gui):
     def checkAll(arg):
-        for cb in checkBoxes.values():
+        for cb in list(checkBoxes.values()):
             cb.setChecked(arg)
     Dialog = QtGui.QDialog(om_gui)
     dl = Ui_daylist_print.Ui_Dialog()
     dl.setupUi(Dialog)
     vlayout = QtGui.QGridLayout(dl.scrollArea)
-    dl.alldentscheckBox = QtGui.QCheckBox(QtCore.QString("All Books"))
+    dl.alldentscheckBox = QtGui.QCheckBox(_("All Books"))
     dl.alldentscheckBox.setChecked(True)
     dl.alldentscheckBox.connect(dl.alldentscheckBox,
                                 QtCore.SIGNAL("stateChanged(int)"), checkAll)
@@ -416,7 +412,7 @@ def daylistPrintWizard(om_gui):
     vlayout.addWidget(dl.alldentscheckBox, row, 0, 1, 2)
     checkBoxes = {}
     for dent in localsettings.activedents + localsettings.activehygs:
-        cb = QtGui.QCheckBox(QtCore.QString(dent))
+        cb = QtGui.QCheckBox(dent)
         cb.setChecked(True)
         checkBoxes[localsettings.apptix[dent]] = cb
         row += 1
@@ -498,19 +494,25 @@ def printSelectedAccounts(om_gui):
                 LOGGER.info("Account tone %s letter to %s" % (tone, sno))
                 printpt = patient_class.patient(sno)
 
-                doc = accountPrint.document(printpt.title,
-                                            printpt.fname, printpt.sname, (
-                                                printpt.addr1,
-                                            printpt.addr2, printpt.addr3, printpt.town,
-                                            printpt.county), printpt.pcde, printpt.fees)
+                doc = accountPrint.document(
+                    printpt.title,
+                    printpt.fname,
+                    printpt.sname,
+                    (printpt.addr1,
+                     printpt.addr2,
+                     printpt.addr3,
+                     printpt.town,
+                     printpt.county),
+                    printpt.pcde,
+                    printpt.fees)
 
                 doc.setTone(tone)
 
                 if firstPage:
-                    #--raise a print dialog for the first letter of the run
-                    #--only
+                    # -raise a print dialog for the first letter of the run
+                    # -only
                     if not doc.dialogExec():
-                        #-- user has abandoned the print run
+                        # - user has abandoned the print run
                         return
                     chosenPrinter = doc.printer
                     chosenPageSize = doc.printer.pageSize()

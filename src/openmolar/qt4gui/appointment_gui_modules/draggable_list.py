@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -22,7 +21,7 @@
 # #                                                                         # #
 # ########################################################################### #
 
-import cPickle
+import pickle
 import logging
 
 from PyQt4 import QtGui, QtCore
@@ -62,7 +61,7 @@ class DraggableList(QtGui.QListView):
             self.setCurrentIndex(index)
 
         # convert to  a bytestream
-        bstream = cPickle.dumps(selectedApp)
+        bstream = pickle.dumps(selectedApp)
         mimeData = QtCore.QMimeData()
         mimeData.setData("application/x-appointment", bstream)
         drag = QtGui.QDrag(self)

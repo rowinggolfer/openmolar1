@@ -1,26 +1,25 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 import logging
 import re
@@ -77,7 +76,7 @@ class BridgeDialog(BaseDialog):
         if dl.exec_():
             LOGGER.debug(dl.chosen_properties)
             material = dl.chosen_properties["material"]
-            for key, value in dl.chosen_properties.iteritems():
+            for key, value in dl.chosen_properties.items():
                 if re.match("[ul][lr][1-8]", key) and value == "pontic":
                     self.chosen_treatments.append((key, "BR/P,%s" % material))
                 elif re.match("[ul][lr][1-8]", key) and value == "retainer":
@@ -90,12 +89,13 @@ class BridgeDialog(BaseDialog):
         QtGui.QMessageBox.information(self, "todo", "not yet implemented")
         self.reject()
 
+
 if __name__ == "__main__":
 
     app = QtGui.QApplication([])
     LOGGER.setLevel(logging.DEBUG)
     dl = BridgeDialog(None)
     if dl.exec_():
-        print dl.chosen_treatments
+        print(dl.chosen_treatments)
     else:
-        print "dialog rejected"
+        print("dialog rejected")

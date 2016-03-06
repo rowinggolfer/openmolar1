@@ -1,31 +1,31 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 this module provides read/write tools for the daybook database table
 '''
 
+from gettext import gettext as _
 from collections import namedtuple
 import logging
 
@@ -48,26 +48,28 @@ HASH_QUERY = 'insert into daybook_link (daybook_id, tx_hash) values (%s, %s)'
 INSPECT_QUERY = '''select description, fee, ptfee
 from newestimates join est_link2 on newestimates.ix = est_link2.est_id
 where tx_hash in
-(select tx_hash from daybook join daybook_link on daybook.id = daybook_link.daybook_id where id=%s)'''
+(select tx_hash from daybook
+join daybook_link on daybook.id = daybook_link.daybook_id where id=%s)'''
 
 DETAILS_QUERY = '''select DATE_FORMAT(date,'%s'), daybook.serialno,
-        concat (fname, " ", sname), coursetype, dntid,
-        trtid, diagn, perio, anaes, misc, ndu, ndl, odu, odl, other, chart,
-        feesa, feesb, feesc, id
-        from daybook join new_patients on daybook.serialno = new_patients.serialno
-        where {{DENT CONDITIONS}}
-        date >= %%s and date <= %%s {{FILTERS}} order by date''' % (
+concat (fname, " ", sname), coursetype, dntid,
+trtid, diagn, perio, anaes, misc, ndu, ndl, odu, odl, other, chart,
+feesa, feesb, feesc, id
+from daybook join new_patients on daybook.serialno = new_patients.serialno
+where {{DENT CONDITIONS}}
+date >= %%s and date <= %%s {{FILTERS}} order by date''' % (
     localsettings.OM_DATE_FORMAT.replace("%", "%%"))
 
 DAYBOOK_QUERY = '''select date, coursetype, dntid,
-        trtid, diagn, perio, anaes, misc, ndu, ndl, odu, odl, other, chart,
-        feesa, feesb, feesc, id
-        from daybook where serialno=%s order by date'''
+trtid, diagn, perio, anaes, misc, ndu, ndl, odu, odl, other, chart,
+feesa, feesb, feesc, id
+from daybook where serialno=%s order by date'''
 
 FIELD_NAMES_QUERY = '''
 SELECT concat(table_name, ".", column_name) as fieldname FROM
-information_schema.columns
-WHERE table_name='patients' or table_name="daybook" order by fieldname'''
+information_schema.columns WHERE table_schema="%s" AND
+(table_name='new_patients' or table_name="daybook") order by fieldname
+''' % connect.params.db_name
 
 
 UPDATE_ROW_FEES_QUERY = "update daybook set feesa=%s, feesb=%s where id=%s"
@@ -78,15 +80,16 @@ DELETE_ROW_QUERY = "delete from daybook where id=%s"
 TREATMENTS_QUERY = ('select diagn, perio, anaes, misc, ndu, ndl, '
                     'odu, odl, other, chart from daybook where id = %s')
 
-UPDATE_TREATMENTS_QUERY = ('update daybook '
-                           'set diagn=%s, perio=%s, anaes=%s, misc=%s, ndu=%s, ndl=%s, '
+UPDATE_TREATMENTS_QUERY = ('update daybook set diagn=%s, '
+                           'perio=%s, anaes=%s, misc=%s, ndu=%s, ndl=%s, '
                            'odu=%s, odl=%s, other=%s, chart=%s where id = %s')
 
 # custom class for daybook data
-DaybookEntry = namedtuple('DaybookEntry',
-                         ('date', 'coursetype', 'dntid', 'trtid', 'diagn', 'perio',
-                          'anaes', 'misc', 'ndu', 'ndl', 'odu', 'odl', 'other', 'chart',
-                          'feesa', 'feesb', 'feesc', 'id')
+DaybookEntry = namedtuple(
+    'DaybookEntry',
+    ('date', 'coursetype', 'dntid', 'trtid', 'diagn', 'perio',
+     'anaes', 'misc', 'ndu', 'ndl', 'odu', 'odl', 'other', 'chart',
+     'feesa', 'feesb', 'feesc', 'id')
                           )
 
 
@@ -133,7 +136,7 @@ def details(regdent, trtdent, startdate, enddate, filters=""):
             dent_conditions += 'trtid=%s and '
             dents.append(localsettings.ops_reverse[trtdent])
     except KeyError:
-        print "Key Error - %s or %s unregconised" % (regdent, trtdent)
+        print("Key Error - %s or %s unregconised" % (regdent, trtdent))
         return '<html><body>%s</body></html>' % _(
             "Error - unrecognised practioner- sorry")
 
@@ -192,10 +195,11 @@ def details(regdent, trtdent, startdate, enddate, filters=""):
 
             retarg += '</td><td>%s</td><td>%s</td><td>%s</td>' % (row[1:4])
 
-            tx = ""
-            for item in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15):
-                if row[item] is not None and row[item] != "":
-                    tx += "%s " % row[item]
+            txs = []
+            for item in (6, 7, 8, 9, 10, 11, 12, 13, 14):
+                if row[item]:
+                    txs.append(row[item])
+            txs.append(row[15].decode("utf8").strip(" %s" % chr(0)))
 
             if ALLOW_TX_EDITS:
                 extra_link = ' / <a href="daybook_id_edit?%s">%s</a>' % (
@@ -205,13 +209,13 @@ def details(regdent, trtdent, startdate, enddate, filters=""):
             retarg += '''<td>%s</td>
             <td><a href="daybook_id?%sfeesa=%sfeesb=%s">%s</a>%s</td>
             <td align="right">%s</td>
-            <td align="right">%s</td></tr>''' % (tx.strip("%s " % chr(0)),
-                                                 row[19], row[16], row[17],
-                                                 _("Ests"),
-                                                 extra_link,
-                                                 localsettings.formatMoney(
-                                                 row[16]),
-                                                 localsettings.formatMoney(row[17]))
+            <td align="right">%s</td></tr>''' % (
+                " ".join(txs),
+                row[19], row[16], row[17],
+                _("Ests"),
+                extra_link,
+                localsettings.formatMoney(row[16]),
+                localsettings.formatMoney(row[17]))
 
             total += int(row[16])
             monthtotal += int(row[16])
@@ -314,22 +318,18 @@ def all_data(serialno):
 
 def all_data_header():
     color_string = ' bgcolor="#ffff99"'
-
-    return '''
-    <tr>
-    <th%s colspan="14">%s</th><th%s colspan="3"><!--gap--></th>
-    </tr>
-    <tr><th%s>%s</th></tr>
-    ''' % (color_string,
-           _("Daybook Items during this Period"),
-           color_string, color_string,
-           ("</th><th%s>" % color_string).join(
-           ("date", "cset", "dntid", "trtid",
-            "diagn", "perio", "anaes", "misc",
-            "ndu", "ndl", "odu", "odl", "other",
-            "chart", "feesa", "feesb", "id")
-           )
-           )
+    seperator = "</th><th%s>" % color_string
+    headers = ("date", "cset", "dntid", "trtid", "diagn", "perio", "anaes",
+               "misc", "ndu", "ndl", "odu", "odl", "other", "chart",
+               "feesa", "feesb", "id")
+    return '''<tr><th%s colspan="14">%s</th><th%s colspan="3">
+              <!--gap--></th></tr><tr><th%s>%s</th></tr>''' % (
+                  color_string,
+                  _("Daybook Items during this Period"),
+                  color_string,
+                  color_string,
+                  seperator.join(headers)
+                  )
 
 
 class FilterHelp(object):
@@ -351,8 +351,8 @@ class FilterHelp(object):
         '''
         html = "<html><body><h4>%s</h4>%s<br />%s<table>" % (
             _("Filter your results"),
-            _("If this text box is left blank, then results from the daybook are "
-              "returned dependent on the dates and clinicians entered."),
+            _("If this text box is left blank, then results from the daybook "
+              "are returned dependent on the dates and clinicians entered."),
             _("You can filter using the following fields.")
         )
         for i, field in enumerate(self.field_names):
@@ -364,9 +364,11 @@ class FilterHelp(object):
 
         html += "</tr></table><h5>%s</h5><pre>%s</pre></body></html>" % (
             _("Examples"),
-            'patients.serialno=1 AND chart REGEXP ".*MOD,CO.*"\n'
+            'new_patients.serialno=1 AND chart REGEXP ".*MOD,CO.*"\n'
+            'familyno=2\n'
             'ndu="SR/F"\nexmpt="M"\n')
         return html
+
 
 _filter_help = FilterHelp()
 
@@ -374,12 +376,13 @@ _filter_help = FilterHelp()
 def filter_help_text():
     return _filter_help.help_text()
 
+
 if __name__ == "__main__":
     localsettings.initiate()
 
     for combo in (("*ALL*", "NW"), ("NW", "AH"), ("NW", "NW")):
         r = details(combo[0], combo[1], QDate(
             2008, 10, 31), QDate(2008, 11, 11))
-        print r.encode("ascii", "replace")
+        print(r.encode("ascii", "replace"))
 
-    print filter_help_text()
+    print(filter_help_text())

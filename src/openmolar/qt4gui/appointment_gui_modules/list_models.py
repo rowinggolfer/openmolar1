@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -46,7 +45,7 @@ class ColouredItemDelegate(QtGui.QItemDelegate):
     brush2 = (QtGui.QBrush(colours.APPTCOLORS["SLOT2"]))
 
     def paint(self, painter, option, index):
-        app = index.data(QtCore.Qt.UserRole).toPyObject()
+        app = index.data(QtCore.Qt.UserRole)
         model = index.model()
         if app == model.currentAppt:
             pal = option.palette
@@ -239,7 +238,7 @@ class SimpleListModel(QtCore.QAbstractListModel):
 
     def data(self, index, role):
         if not index.isValid():
-            return QtCore.QVariant()
+            return None
         app = self.items[index.row()]
         if role == QtCore.Qt.DisplayRole:
             if app.flag == -128:
@@ -254,18 +253,18 @@ class SimpleListModel(QtCore.QAbstractListModel):
             else:
                 info = "%s %s with %s" % (app.readableDate,
                                           app.readableTime, app.dent_inits)
-            return QtCore.QVariant(info)
+            return info
         elif role == QtCore.Qt.ForegroundRole:
             if app.unscheduled:
-                return QtCore.QVariant(QtGui.QBrush(QtGui.QColor("red")))
+                return QtGui.QBrush(QtGui.QColor("red"))
         elif role == QtCore.Qt.DecorationRole:
             if app.unscheduled:
                 if app in self.selectedAppts:
-                    return QtCore.QVariant(self.selected_icon)
-            return QtCore.QVariant(self.normal_icon)
+                    return self.selected_icon
+            return self.normal_icon
         elif role == QtCore.Qt.UserRole:  # return the whole python object
             return app
-        return QtCore.QVariant()
+        return None
 
     def load_from_database(self, pt):
         LOGGER.debug(
@@ -283,13 +282,13 @@ class BlockListModel(SimpleListModel):
     def __init__(self, parent=None):
         super(BlockListModel, self).__init__(parent)
         for val, length in (
-            (_("Lunch"), 60),
-            (_("Lunch"), 30),
-            (_("staff meeting"), 15),
-            (_("emergency"), 10),
-            (_("emergency"), 15),
-            (_("emergency"), 20),
-            (_("emergency"), 30),
+                (_("Lunch"), 60),
+                (_("Lunch"), 30),
+                (_("staff meeting"), 15),
+                (_("emergency"), 10),
+                (_("emergency"), 15),
+                (_("emergency"), 20),
+                (_("emergency"), 30),
                 (_("Out of Office"), 30)):
             block = appointments.APR_Appointment()
             block.name = val

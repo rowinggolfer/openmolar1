@@ -1,35 +1,24 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/showMemo.ui'
 #
-# Created: Wed Nov  6 23:05:24 2013
-#      by: PyQt4 UI code generator 4.10.3
+# Created by: PyQt4 UI code generator 4.11.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
 
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    def _fromUtf8(s):
-        return s
-
-
 class Ui_Dialog(object):
-
     def setupUi(self, Dialog):
-        Dialog.setObjectName(_fromUtf8("Dialog"))
+        Dialog.setObjectName("Dialog")
         Dialog.resize(611, 262)
         self.gridLayout = QtGui.QGridLayout(Dialog)
-        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+        self.gridLayout.setObjectName("gridLayout")
         self.label = QtGui.QLabel(Dialog)
-        self.label.setText(_fromUtf8(""))
-        self.label.setPixmap(
-            QtGui.QPixmap(_fromUtf8(":/newlogo_launchpadSize.png")))
+        self.label.setText("")
+        self.label.setPixmap(QtGui.QPixmap(":/newlogo_launchpadSize.png"))
         self.label.setScaledContents(True)
-        self.label.setObjectName(_fromUtf8("label"))
+        self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 0, 0, 2, 1)
         self.message_label = QtGui.QLabel(Dialog)
         font = QtGui.QFont()
@@ -37,27 +26,21 @@ class Ui_Dialog(object):
         self.message_label.setFont(font)
         self.message_label.setAlignment(QtCore.Qt.AlignCenter)
         self.message_label.setWordWrap(True)
-        self.message_label.setObjectName(_fromUtf8("message_label"))
+        self.message_label.setObjectName("message_label")
         self.gridLayout.addWidget(self.message_label, 0, 1, 1, 2)
         self.checkBox = QtGui.QCheckBox(Dialog)
-        self.checkBox.setObjectName(_fromUtf8("checkBox"))
+        self.checkBox.setObjectName("checkBox")
         self.gridLayout.addWidget(self.checkBox, 1, 1, 1, 1)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setCenterButtons(True)
-        self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
+        self.buttonBox.setObjectName("buttonBox")
         self.gridLayout.addWidget(self.buttonBox, 1, 2, 1, 1)
 
         self.retranslateUi(Dialog)
-        QtCore.QObject.connect(
-            self.buttonBox,
-            QtCore.SIGNAL(_fromUtf8("accepted()")),
-            Dialog.accept)
-        QtCore.QObject.connect(
-            self.buttonBox,
-            QtCore.SIGNAL(_fromUtf8("rejected()")),
-            Dialog.reject)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), Dialog.accept)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -66,6 +49,7 @@ class Ui_Dialog(object):
         self.checkBox.setText(_("Delete this memo when I close this"))
 
 from openmolar.qt4gui import resources_rc
+
 
 if __name__ == "__main__":
     import gettext
@@ -77,3 +61,4 @@ if __name__ == "__main__":
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())
+

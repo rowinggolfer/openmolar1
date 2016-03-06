@@ -1,26 +1,25 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 this module provides read/write tools for the est_logger database table
@@ -99,20 +98,20 @@ def html_history(courseno):
     cursor.close()
 
     if not rows:
-        return u'''
+        return '''
         <html>
             <body>
                 <h1>%s %s</h1>
             </body>
         </html>''' % (_("No estimate history found for course"), courseno)
 
-    html = u'''<html>
+    html = '''<html>
         <body>
             <h1>%s</h1>
             <table width = '100%%' border="1">
     ''' % _("Current Estimate Version History")
 
-    html += u'''<tr>
+    html += '''<tr>
             <th>%s</th>
             <th>%s</th>
             </tr>''' % (
@@ -133,7 +132,7 @@ def html_history(courseno):
                 align = 'align="center"' if i < 6 else 'align="right"'
                 formatted_est += "<td %s>%s</td>" % (align, field)
             formatted_est += "</tr>"
-        html += u'''<tr>
+        html += '''<tr>
             <td>%s</table></td>
             <td>%s<br />%s</td>
             </tr>
@@ -149,4 +148,4 @@ if __name__ == "__main__":
     est_logger = EstLogger(1)
     est_logger.add_row(1, "test_data")
 
-    print html_history(1)
+    print(html_history(1))

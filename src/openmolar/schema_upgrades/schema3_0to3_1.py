@@ -1,50 +1,40 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 This module provides a function 'run' which will move data
 to schema 3_1
 '''
-from __future__ import division
 
 from collections import namedtuple
-try:
-    from collections import OrderedDict
-except ImportError:
-    # OrderedDict only came in python 2.7
-    LOGGER.warning("using openmolar.backports for OrderedDict")
-    from openmolar.backports import OrderedDict
-
-import datetime
+from collections import OrderedDict
+from gettext import gettext as _
 import logging
-import os
 import re
-import sys
 from MySQLdb import IntegrityError
 
-from openmolar.settings import localsettings
-from openmolar.schema_upgrades.database_updater_thread import DatabaseUpdaterThread
+from openmolar.schema_upgrades.database_updater_thread import \
+    DatabaseUpdaterThread
 
 from openmolar.schema_upgrades.druglist import DRUGLIST
 
@@ -54,7 +44,11 @@ SQLSTRINGS = [
     'drop table if exists medication_link',
     'drop table if exists medhist',
     'drop table if exists medications',
-    'update mednotes, (select serialno, max(chgdate) max_date from mnhist group by serialno) tmp_table set mednotes.chkdate = tmp_table.max_date where mednotes.serialno = tmp_table.serialno',
+    '''
+update mednotes, (select serialno, max(chgdate) max_date from mnhist
+group by serialno) tmp_table set mednotes.chkdate = tmp_table.max_date
+where mednotes.serialno = tmp_table.serialno
+''',
     '''
 create table medhist (
   ix                           int(11) unsigned not null auto_increment ,
@@ -110,7 +104,8 @@ select serialno, drnm, adrtel, curmed, oldmed, allerg, heart, lungs, liver,
 kidney, bleed, anaes, other, alert, chkdate from mednotes
 '''
 
-SOURCE2_QUERY = 'select chgdate, ix, note from mnhist where serialno=%s order by chgdate desc'
+SOURCE2_QUERY = '''select chgdate, ix, note from mnhist where serialno=%s
+order by chgdate desc'''
 
 INSERT_MEDS_QUERY = 'insert into medications (medication) values (%s)'
 
@@ -159,7 +154,7 @@ class DatabaseUpdater(DatabaseUpdaterThread):
         cursor.close()
         dates = []
         for dt, ix, note in rows:
-            if not dt in dates:
+            if dt not in dates:
                 dates.append(dt)
         dates.append(None)
         for changed_dt, ix, note in rows:
@@ -167,7 +162,8 @@ class DatabaseUpdater(DatabaseUpdaterThread):
             try:
                 prev_mednote = prev_mednotes[dt]
             except KeyError:
-                prev_mednote = prev_mednotes.values()[-1]._replace(chkdate=dt)
+                prev_mednote = list(
+                    prev_mednotes.values())[-1]._replace(chkdate=dt)
                 prev_mednotes[dt] = prev_mednote
             if ix == 142:
                 prev_mednotes[dt] = prev_mednotes[dt]._replace(curmed=note)
@@ -195,7 +191,7 @@ class DatabaseUpdater(DatabaseUpdaterThread):
                 # 152 previous chgdate
                 continue
 
-        for mn in reversed(prev_mednotes.values()):
+        for mn in reversed(list(prev_mednotes.values())):
             yield mn
 
     def transfer_data(self):
@@ -259,7 +255,7 @@ class DatabaseUpdater(DatabaseUpdaterThread):
         LOGGER.info("running script to convert from schema 3.0 to 3.1")
         try:
             self.connect()
-            #- execute the SQL commands
+            # execute the SQL commands
             self.progressSig(10, _("creating new tables"))
             self.execute_statements(SQLSTRINGS)
 
@@ -281,6 +277,7 @@ class DatabaseUpdater(DatabaseUpdaterThread):
             LOGGER.exception("error transfering data")
             self.rollback()
             raise self.UpdateError(exc)
+
 
 if __name__ == "__main__":
     dbu = DatabaseUpdater()

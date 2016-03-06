@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -29,13 +28,13 @@ PATIENT_QUERY_FIELDS = (
     "pd8", "pd9", "pd10", "pd11", "pd12", "pd13", "pd14",
     "sname", "fname", "title", "sex", "dob",
     "addr1", "addr2", "addr3", "pcde", "tel1", "tel2",
-    "occup", "nhsno", "cnfd", "cset", "dnt1", "dnt2", "courseno0",
-    "ur8", "ur7", "ur6", "ur5", "ur4", "ur3", "ur2", "ur1", "ul1", "ul2", "ul3",
-    "ul4", "ul5", "ul6", "ul7", "ul8", "ll8", "ll7", "ll6", "ll5", "ll4", "ll3",
-    "ll2", "ll1", "lr1", "lr2", "lr3", "lr4", "lr5", "lr6", "lr7", "lr8",
-    "dent0", "dent1", "dent2", "dent3", "billdate", "billct", "billtype",
-    "money11", "familyno", "memo", "town", "county", "mobile", "fax", "email1",
-    "email2", "status", "initaccept", "lastreaccept",
+    "occup", "nhsno", "cnfd", "cset", "dnt1", "dnt2", "courseno0", "ur8",
+    "ur7", "ur6", "ur5", "ur4", "ur3", "ur2", "ur1", "ul1", "ul2", "ul3",
+    "ul4", "ul5", "ul6", "ul7", "ul8", "ll8", "ll7", "ll6", "ll5", "ll4",
+    "ll3", "ll2", "ll1", "lr1", "lr2", "lr3", "lr4", "lr5", "lr6", "lr7",
+    "lr8", "dent0", "dent1", "dent2", "dent3", "billdate", "billct",
+    "billtype", "money11", "familyno", "memo", "town", "county", "mobile",
+    "fax", "email1", "email2", "status", "initaccept", "lastreaccept",
     "lastclaim", "expiry", "cstatus", "transfer", "pstatus"
 )
 
@@ -51,11 +50,13 @@ FUTURE_EXAM_QUERY = '''select count(*) from aslot
 where serialno=%s
 and (code0="EXAM" or code1="EXAM" or code2="EXAM") and adate >= CURDATE()'''
 
-PSN_QUERY = "select psn from previous_snames where serialno=%s order by ix desc"
+PSN_QUERY = \
+    "select psn from previous_snames where serialno=%s order by ix desc"
 
 FAMILY_COUNT_QUERY = "select count(*) from new_patients where familyno=%s"
 
-QUICK_MED_QUERY = 'select alert, chkdate from medhist where pt_sno=%s order by ix desc limit 1'
+QUICK_MED_QUERY = '''select alert, chkdate from medhist
+where pt_sno=%s order by ix desc limit 1'''
 
 MED_FORM_QUERY = '''select chk_date from medforms where pt_sno=%s
 order by chk_date desc'''

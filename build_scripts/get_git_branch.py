@@ -1,9 +1,8 @@
 #! /usr/bin/python
-# -*- coding: utf-8 -*-
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -24,14 +23,15 @@
 
 '''
 usage is:
-    'get_git_branch.py' to return the repo working directory
-    'get_git_branch.py main' to return path to the maingui.py file
-    'get_git_branch.py module' to return the path which contains the openmolar modules"
+    'get_git_branch.py'        to return the repo working directory
+    'get_git_branch.py main'   to return path to the maingui.py file
+    'get_git_branch.py module' to return the path which contains
+                                   the openmolar modules"
 '''
 
-import git
 import os
 import sys
+import git
 
 message = ""
 userdir = os.path.expanduser("~")
@@ -41,8 +41,8 @@ file_path = os.path.abspath(os.curdir)
 repo = None
 while repo is None:
     if not file_path.startswith(userdir):
-        sys.exit(
-            "command not run from a subdirectory of %s or no repo found" % userdir)
+        sys.exit("command not run from a subdirectory of %s "
+                 "or no repo found" % userdir)
     try:
         repo = git.Repo(file_path)
     except git.InvalidGitRepositoryError as exc:
@@ -59,6 +59,7 @@ elif "main" in sys.argv:
     message = main_path
 else:
     message = repo.working_dir
+
 
 if __name__ == "__main__":
     if message:

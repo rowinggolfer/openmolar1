@@ -1,9 +1,8 @@
 #! /usr/bin/python
-# -*- coding: utf-8 -*-
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -25,8 +24,6 @@
 '''
 find_patient_dialog.py
 '''
-
-from __future__ import division
 
 import datetime
 from gettext import gettext as _
@@ -74,11 +71,11 @@ class FindPatientDialog(QtGui.QDialog, Ui_patient_finder.Ui_Dialog):
             return False
         if localsettings.PT_COUNT < 5 or QtGui.QDialog.exec_(self):
             dob = self.dateEdit.date().toPyDate()
-            addr = str(self.addr1.text().toAscii())
-            tel = str(self.tel.text().toAscii())
-            sname = str(self.sname.text().toAscii())
-            fname = str(self.fname.text().toAscii())
-            pcde = str(self.pcde.text().toAscii())
+            addr = str(self.addr1.text())
+            tel = str(self.tel.text())
+            sname = str(self.sname.text())
+            fname = str(self.fname.text())
+            pcde = str(self.pcde.text())
             localsettings.lastsearch = (sname, fname, dob, tel, addr, pcde)
 
             try:
@@ -227,6 +224,7 @@ class FinalChoiceDialog(ExtendableDialog):
             return True
         return False
 
+
 if __name__ == "__main__":
 
     localsettings.initiate()
@@ -234,4 +232,4 @@ if __name__ == "__main__":
 
     dl = FindPatientDialog()
     if dl.exec_():
-        print (dl.chosen_sno)
+        print((dl.chosen_sno))

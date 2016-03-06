@@ -1,32 +1,31 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 import datetime
 import hashlib
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui
 
 from openmolar.settings import localsettings
 from openmolar.dbtools import db_settings
@@ -38,7 +37,7 @@ LOGGER = logging.getLogger("openmolar")
 
 def _hashed_input(input_):
     salted_input = "%s%s" % (input_, localsettings.SALT)
-    return hashlib.sha1(salted_input).hexdigest()
+    return hashlib.sha1(salted_input.encode("utf8")).hexdigest()
 
 
 class RaisePermissionsDialog(BaseDialog):
@@ -64,7 +63,7 @@ class RaisePermissionsDialog(BaseDialog):
 
     @property
     def correct_password(self):
-        return _hashed_input(self.line_edit.text().toAscii()) == \
+        return _hashed_input(self.line_edit.text()) == \
             localsettings.SUPERVISOR
 
     def exec_(self):
@@ -99,11 +98,11 @@ class ResetSupervisorPasswordDialog(RaisePermissionsDialog):
 
     @property
     def _new_password(self):
-        return self.new_password_line_edit.text().toAscii()
+        return self.new_password_line_edit.text()
 
     def passwords_match(self):
         if self._new_password == \
-                self.confirm_password_line_edit.text().toAscii():
+                self.confirm_password_line_edit.text():
             return True
         QtGui.QMessageBox.warning(self, _("error"),
                                   _("new passwords didn't match"))
@@ -136,10 +135,11 @@ def resetExpireTime():
     diff = datetime.timedelta(minutes=5)
     localsettings.permissionExpire = datetime.datetime.now() + diff
 
+
 if __name__ == "__main__":
     import sys
     app = QtGui.QApplication(sys.argv)
-    print granted()
+    print(granted())
     dl = ResetSupervisorPasswordDialog()
     dl.exec_()
     sys.exit(app.exec_())

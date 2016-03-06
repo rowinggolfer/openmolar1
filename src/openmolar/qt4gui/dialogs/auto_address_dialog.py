@@ -1,26 +1,25 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 import logging
 from PyQt4 import QtGui, QtCore
@@ -37,7 +36,7 @@ class AutoAddressDialog(BaseDialog):
         self.om_gui = om_gui
         title = _("Apply Saved Address")
         self.setWindowTitle(title)
-        label = QtGui.QLabel(u"<b>%s</b>" % title)
+        label = QtGui.QLabel("<b>%s</b>" % title)
         label.setAlignment(QtCore.Qt.AlignCenter)
 
         frame = QtGui.QFrame()
@@ -75,8 +74,8 @@ class AutoAddressDialog(BaseDialog):
         self.pcde_cb = QtGui.QCheckBox()
         self.tel1_cb = QtGui.QCheckBox()
 
-        self.old_header_label = QtGui.QLabel(u"%s" % _("Existing"))
-        new_header_label = QtGui.QLabel(u"%s" % _("New"))
+        self.old_header_label = QtGui.QLabel("%s" % _("Existing"))
+        new_header_label = QtGui.QLabel("%s" % _("New"))
 
         rows = (
             (label_1, self.old_addr1_le, self.addr1_le, self.addr1_cb),
@@ -155,6 +154,7 @@ class AutoAddressDialog(BaseDialog):
             return True
         return False
 
+
 if __name__ == "__main__":
 
     localsettings.initiate()
@@ -164,4 +164,4 @@ if __name__ == "__main__":
 
     dl = AutoAddressDialog(mw)
 
-    print (dl.exec_())
+    print((dl.exec_()))

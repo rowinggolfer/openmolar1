@@ -1,27 +1,27 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
+from gettext import gettext as _
 import logging
 
 from PyQt4 import QtGui, QtCore
@@ -137,11 +137,9 @@ class EditReferralCentresDialog(BaseDialog):
         return QtCore.QSize(700, 300)
 
     def signals(self, connect=True):
-        for signal in (
-            self.description_line_edit.textChanged,
-            self.greeting_line_edit.textChanged,
-            self.text_edit.textChanged
-        ):
+        for signal in (self.description_line_edit.textChanged,
+                       self.greeting_line_edit.textChanged,
+                       self.text_edit.textChanged):
             if connect:
                 signal.connect(self.update_centre)
             else:
@@ -215,7 +213,7 @@ class EditReferralCentresDialog(BaseDialog):
 
     @property
     def address(self):
-        lines = unicode(self.text_edit.toPlainText()).split("\n")
+        lines = str(self.text_edit.toPlainText()).split("\n")
         while len(lines) < 8:
             lines.append("")
         return lines
@@ -240,10 +238,9 @@ class EditReferralCentresDialog(BaseDialog):
     def remove_centre(self):
         if len(self.referral_centres) < 2:
             QtGui.QMessageBox.warning(
-                self,
-                _("Warning"),
-                _("You should have at least one referral centre in the database")
-            )
+                self, _("Warning"),
+                _("You should have at least one referral centre "
+                  "in the database"))
             return
         self.deleted_centres.append(self.current_centre)
         self.load_existing()
@@ -296,6 +293,7 @@ class EditReferralCentresDialog(BaseDialog):
             referral.delete_centres(self.deleted_centres)
             return True
         return False
+
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)

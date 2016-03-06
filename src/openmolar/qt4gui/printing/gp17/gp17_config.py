@@ -1,32 +1,32 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 Provides a Class for printing the GP17-1(Scotland) NHS form (back side)
 '''
-import ConfigParser
+import configparser
 import os
+
 from openmolar.settings import localsettings
 
 CONF_PATH = os.path.join(localsettings.localFileDirectory, "gp17.conf")
@@ -34,15 +34,15 @@ CONF_PATH = os.path.join(localsettings.localFileDirectory, "gp17.conf")
 SECTIONS = ("gp17Front", "gp17iFront", "gp17iBack")
 
 
-class GP17Config(ConfigParser.ConfigParser):
+class GP17Config(configparser.ConfigParser):
 
     def __init__(self):
-        ConfigParser.ConfigParser.__init__(self)
+        configparser.ConfigParser.__init__(self)
         self.read_conf()
         for section in SECTIONS:
             try:
                 self.add_section(section)
-            except ConfigParser.DuplicateSectionError:
+            except configparser.DuplicateSectionError:
                 pass
 
     def read_conf(self):
@@ -52,84 +52,84 @@ class GP17Config(ConfigParser.ConfigParser):
     def OFFSET_LEFT(self):
         try:
             return int(self.get("gp17Front", "left"))
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             return 0
 
     @property
     def OFFSET_TOP(self):
         try:
             return int(self.get("gp17Front", "top"))
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             return 0
 
     @property
     def SCALE_X(self):
         try:
             return float(self.get("gp17Front", "scale_x"))
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             return 1.0
 
     @property
     def SCALE_Y(self):
         try:
             return float(self.get("gp17Front", "scale_y"))
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             return 1.0
 
     @property
     def GP17i_OFFSET_LEFT(self):
         try:
             return int(self.get("gp17iFront", "left"))
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             return 0
 
     @property
     def GP17i_OFFSET_TOP(self):
         try:
             return int(self.get("gp17iFront", "top"))
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             return 0
 
     @property
     def GP17i_SCALE_X(self):
         try:
             return float(self.get("gp17iFront", "scale_x"))
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             return 1.0
 
     @property
     def GP17i_SCALE_Y(self):
         try:
             return float(self.get("gp17iFront", "scale_y"))
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             return 1.0
 
     @property
     def GP17iback_OFFSET_LEFT(self):
         try:
             return int(self.get("gp17iBack", "left"))
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             return 0
 
     @property
     def GP17iback_OFFSET_TOP(self):
         try:
             return int(self.get("gp17iBack", "top"))
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             return 0
 
     @property
     def GP17iback_SCALE_X(self):
         try:
             return float(self.get("gp17iBack", "scale_x"))
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             return 1.0
 
     @property
     def GP17iback_SCALE_Y(self):
         try:
             return float(self.get("gp17iBack", "scale_y"))
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             return 1.0
 
     def save_config(self):
@@ -152,7 +152,9 @@ class GP17Config(ConfigParser.ConfigParser):
         self.write(f)
         f.close()
 
+
 gp17config = GP17Config()
+
 
 if __name__ == "__main__":
     gp17config.save_config()

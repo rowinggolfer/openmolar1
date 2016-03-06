@@ -1,5 +1,4 @@
 #! /usr/bin/python
-# -*- coding: utf-8 -*-
 
 # ########################################################################### #
 # #                                                                         # #
@@ -75,10 +74,10 @@ class dentHygSelector(QtGui.QTreeWidget):
     def checkAll(self, checkstate=QtCore.Qt.Checked,
                  ignoreHygs=False, ignoreDents=False):
         if not ignoreHygs:
-            for hyg in self.hyg_cbs.values():
+            for hyg in list(self.hyg_cbs.values()):
                 hyg.setCheckState(0, checkstate)
         if not ignoreDents:
-            for dent in self.dent_cbs.values():
+            for dent in list(self.dent_cbs.values()):
                 dent.setCheckState(0, checkstate)
 
     def interact(self, item, column):
@@ -116,13 +115,13 @@ class dentHygSelector(QtGui.QTreeWidget):
 
     @property
     def selectedDents(self):
-        for initials, cb in self.dent_cbs.iteritems():
+        for initials, cb in self.dent_cbs.items():
             if cb.checkState(0):
                 yield initials
 
     @property
     def selectedHygs(self):
-        for initials, cb in self.hyg_cbs.iteritems():
+        for initials, cb in self.hyg_cbs.items():
             if cb.checkState(0):
                 yield initials
 
@@ -136,6 +135,7 @@ class dentHygSelector(QtGui.QTreeWidget):
     def allChecked(self):
         return self.root.checkState(0) == QtCore.Qt.Checked
 
+
 if __name__ == "__main__":
     app = QtGui.QApplication([])
     dents = ["Neil", "Bea", "Helen"]
@@ -145,4 +145,4 @@ if __name__ == "__main__":
     w.set_hygs(hygs)
     w.show()
     app.exec_()
-    print list(w.selectedClinicians)
+    print(list(w.selectedClinicians))

@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -373,6 +372,7 @@ class SchemaUpdater(BaseDialog, Advisor):
         else:
             self.failure()
 
+
 if __name__ == "__main__":
     from gettext import gettext as _
     # - put "openmolar" on the pyth path and go....
@@ -390,8 +390,8 @@ if __name__ == "__main__":
             retarg = os.path.dirname(os.path.abspath(root))
             return retarg
         except:
-            print "I'm sorry, but something is wrong."
-            print "There is no __file__ variable. Please contact the author."
+            print("I'm sorry, but something is wrong.")
+            print("There is no __file__ variable. Please contact the author.")
             sys.exit()
 
     wkdir = determine_path()
@@ -399,4 +399,4 @@ if __name__ == "__main__":
 
     app = QtGui.QApplication(sys.argv)
     schema_updater = SchemaUpdater()
-    print schema_updater.exec_()
+    print(schema_updater.exec_())

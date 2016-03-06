@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -525,6 +524,7 @@ class EstimateWidget(QtGui.QWidget):
 
         self.resetEstimate()
 
+
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
 
@@ -543,4 +543,4 @@ if __name__ == "__main__":
 
     form.show()
     app.exec_()
-    print pt.estimates
+    print(pt.estimates)

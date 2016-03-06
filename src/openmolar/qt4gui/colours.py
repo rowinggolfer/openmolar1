@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -89,5 +88,6 @@ APPTCOLORS = {
 MED_STYLESHEET = "background-color: %s; color: %s" % (med_warning,
                                                       med_foreground)
 
+
 if __name__ == "__main__":
-    print BACKGROUND
+    print(BACKGROUND)

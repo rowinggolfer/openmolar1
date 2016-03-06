@@ -1,32 +1,33 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
-import sys
-import types
+from gettext import gettext as _
+import logging
 from openmolar.settings import localsettings
 from openmolar.connect import connect
 from datetime import date
+
+LOGGER = logging.getLogger("openmolar")
 
 HEADERS = (
     _("Letter No"), _("Serial No"), _("Title"), _("First Name"), _("Surname"),
@@ -104,7 +105,6 @@ class RecalledPatient(object):
             return self.dnt1
         elif pos == 13:
             return self.familyno
-
         else:
             raise IndexError
 
@@ -127,30 +127,27 @@ class RecalledPatient(object):
     def __len__(self):
         return 15
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         '''
         allow comparison based on family number and address line 1
         '''
-        if not isinstance(self, type(other)) or self.familyno in (None, 0):
-            return cmp(0, 1)
-        else:
-            return cmp(
-                (self.familyno, self.addr1),
-                (other.familyno, other.addr1)
-            )
+        if isinstance(self, type(other)):
+            return (self.familyno, self.addr1) == (other.familyno, other.addr1)
+        return False
 
     def __repr__(self):
         '''
         represent the object
         '''
-        return "%s %s %s" % (self.serialno, self.sname, self.fname)
+        return "%s %s %s %s" % (self.serialno, self.sname,
+                                self.fname, self.grouped)
 
 
 def getpatients(conditions="", values=()):
     '''
     returns patients with a recall between the two dates
     '''
-    assert isinstance(conditions, bytes), "conditions must be a string"
+    assert isinstance(conditions, str), "conditions must be a string"
     assert isinstance(values, tuple), "values must be a tuple"
 
     query = RECALL_QUERY.replace("CONDITIONS", conditions)
@@ -178,9 +175,11 @@ def getpatients(conditions="", values=()):
 
     return patients
 
+
 if __name__ == "__main__":
     localsettings.initiate()
     conditions = "recdent>=%s and recdent<=%s and dnt1=%s"
-    values = date(2012, 7, 1), date(2012, 7, 31), 6
+    values = date(2016, 2, 1), date(2016, 2, 28), 4
     patients = getpatients(conditions, values)
-    print patients
+    for patient in patients:
+        print(patient)

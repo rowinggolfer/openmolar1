@@ -1,27 +1,27 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
+from gettext import gettext as _
 import logging
 import re
 
@@ -51,6 +51,7 @@ class chartLineEdit(QtGui.QLineEdit):
     '''
     changed_properties_signal = QtCore.pyqtSignal(object)
     deleted_comments_signal = QtCore.pyqtSignal()
+    nav_key_pressed_signal = QtCore.pyqtSignal(object)
 
     def __init__(self, parent=None):
         QtGui.QLineEdit.__init__(self, parent)
@@ -89,7 +90,7 @@ class chartLineEdit(QtGui.QLineEdit):
         we have finished editing the text.. let the main gui know by
         means of a signal
         '''
-        props = str(self.text().toAscii())
+        props = self.text()
         if props != "" or (props == "" and self.originalPropList != []):
             if not re.match("..* $", props):
                 if props != "":
@@ -110,14 +111,14 @@ class chartLineEdit(QtGui.QLineEdit):
         '''
         returns the current property list
         '''
-        text = str(self.text().toAscii())
+        text = self.text()
         propList = text.strip(" ").split(" ")
         return propList
 
     def updateFromPropList(self, propList):
         text = ""
         for prop in propList:
-            if not prop in ("", " "):
+            if prop not in ("", " "):
                 text += "%s " % prop
         self.setKnownProps(text)
         # not sure these are needed??
@@ -141,7 +142,7 @@ class chartLineEdit(QtGui.QLineEdit):
         if snapshotPropList == self.originalPropList:
             return True
         for prop in self.originalPropList:
-            if not prop in snapshotPropList:
+            if prop not in snapshotPropList:
                 self.originalPropList.remove(prop)
         verified = True
         for prop in snapshotPropList:
@@ -164,7 +165,7 @@ class chartLineEdit(QtGui.QLineEdit):
             self.deleted_comments_signal.emit()
 
     def addItem(self, item):
-        if not item in ("", " "):
+        if item not in ("", " "):
             snapshotPropList = self.propListFromText()
             snapshotPropList.append(item)
             self.updateFromPropList(snapshotPropList)
@@ -193,25 +194,27 @@ class chartLineEdit(QtGui.QLineEdit):
         if prop[:1] == "!":  # comment
             return True
         if prop in self.originalPropList:
-        #    print "already present, ignoring"
             return True
 
         allowedCode = True
         if prop != "":
-            if self.om_gui.tooth.isBacktooth and not (prop in allowed.backToothCodes):
-                allowedCode = False
-            if not self.om_gui.tooth.isBacktooth and \
-                    not (prop in allowed.frontToothCodes):
-                allowedCode = False
-            if (not self.om_gui.is_Static) and (prop in allowed.treatment_only):
-                allowedCode = True
+            if self.om_gui.tooth.isBacktooth:
+                if prop not in allowed.backToothCodes:
+                    allowedCode = False
+            else:
+                if not prop not in allowed.frontToothCodes:
+                    allowedCode = False
+            if not self.om_gui.is_Static:
+                if prop in allowed.treatment_only:
+                    allowedCode = True
         if not allowedCode:
-            message = '''"%s" is not recognised <br />
-            do you want to accept anyway?''' % prop
-            input = QtGui.QMessageBox.question(self, "Confirm", message,
-                                               QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                                               QtGui.QMessageBox.No)
-            if input == QtGui.QMessageBox.Yes:
+            message = '"%s" %s <br /> %s?' % (
+                prop, _("is not recognised"),
+                _("do you want to accept anyway"))
+            if QtGui.QMessageBox.question(
+                    self, _("Confirm"), message,
+                    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                    QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
                 allowedCode = True
             else:
                 allowedCode = False
@@ -224,7 +227,7 @@ class chartLineEdit(QtGui.QLineEdit):
         handles the events when a user hits space, up, down or return
         '''
         if arg in ("up", "down"):
-            self.emit(QtCore.SIGNAL("NavKeyPressed"), (arg))
+            self.nav_key_pressed_signal.emit(arg)
         else:
             self.additional()
 
@@ -239,7 +242,7 @@ class chartLineEdit(QtGui.QLineEdit):
         if event.key() in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Down):
             self.specialKeyPressed("down")
             return
-        if event.text().toAscii() == "!" and not self.om_gui.is_Static:
+        if event.text() == "!" and not self.om_gui.is_Static:
             # don't allow comments if not in static:
             return
 
@@ -250,7 +253,7 @@ class chartLineEdit(QtGui.QLineEdit):
                 event.type(),
                 event.key(),
                 event.modifiers(),
-                event.text().toUpper()
+                event.text().upper()
             )
 
         QtGui.QLineEdit.keyPressEvent(self, event)
@@ -267,8 +270,10 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         hlayout = QtGui.QHBoxLayout(self.editframe)
         hlayout.setContentsMargins(0, 0, 0, 0)
         self.lineEdit = chartLineEdit(self)
-        self.lineEdit.setMaxLength(
-            34)  # as defined in the sql tables for a static entry - may exceed the plan stuff.... but I will validate that anyway.
+        self.lineEdit.setMaxLength(34)
+        # as defined in the sql tables for a static entry -
+        # may exceed the plan stuff.... but I will validate that anyway.
+
         hlayout.addWidget(self.lineEdit)
         self.tooth = Tooth()
         self.toothlayout = QtGui.QHBoxLayout(self.frame)
@@ -345,7 +350,7 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         self.tooth.clear()
         self.tooth.update()
 
-        #--ALLOWS for deciduous teeth
+        # ALLOWS for deciduous teeth
         self.tooth_label.setText(
             self.om_gui.pt.chartgrid[selectedTooth].upper())
 
@@ -414,8 +419,8 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         self.lineEdit.setKnownProps(arg)
 
     def updateSurfaces(self):
-        existing = str(self.lineEdit.text().toAscii())
-        if " " in existing:  # we have an existing filling/property in the tooth
+        existing = self.lineEdit.text()
+        if " " in existing:  # we have an existing property in the tooth
             colonPos = existing.rindex(" ")
             keep = existing[:colonPos + 1]
             currentFill = existing[colonPos:]
@@ -443,7 +448,7 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         self.tooth.update()
 
     def plasticMaterial(self, arg):
-        existing = str(self.lineEdit.text().toAscii())
+        existing = self.lineEdit.text()
         if " " in existing:
             colonPos = existing.rindex(" ")
             keep = existing[:colonPos + 1]
@@ -473,7 +478,7 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         self.lineEdit.setText(keep + currentFill)
 
     def toggle_pin(self):
-        existing = str(self.lineEdit.text().toAscii())
+        existing = self.lineEdit.text()
         if " " in existing:
             colonPos = existing.rindex(" ")
             keep = existing[:colonPos + 1]
@@ -490,7 +495,7 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         self.lineEdit.setText(keep + current)
 
     def labMaterial(self, arg):
-        existing = str(self.lineEdit.text().toAscii())
+        existing = self.lineEdit.text()
         if " " in existing:
             colonPos = existing.rindex(" ")
             keep = existing[:colonPos + 1]
@@ -648,64 +653,34 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
             self.lineEdit.additional()
 
     def signals(self):
-        QtCore.QObject.connect(self.am_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.am)
 
-        QtCore.QObject.connect(self.co_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.co)
-
-        QtCore.QObject.connect(self.gl_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.gl)
-
-        QtCore.QObject.connect(self.gold_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.go)
-
-        QtCore.QObject.connect(self.porc_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.pi)
-
-        # user has clicked a surface
-        QtCore.QObject.connect(self.tooth, QtCore.
-                               SIGNAL("toothSurface"), self.updateSurfaces)
-
-        QtCore.QObject.connect(self.clear_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.lineEdit.removeEndItem)
-
-        QtCore.QObject.connect(self.edit_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.fulledit)
-
-        QtCore.QObject.connect(self.pushButton,
-                               QtCore.SIGNAL("clicked()"), self.lineEdit.additional)
-
-        QtCore.QObject.connect(self.lineEdit,
-                               QtCore.SIGNAL("NavKeyPressed"), self.keyNav)
-
-        QtCore.QObject.connect(self.rightTooth_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.rightTooth)
-
-        QtCore.QObject.connect(self.leftTooth_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.leftTooth)
-
-        QtCore.QObject.connect(self.ex_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.ex)
-
-        QtCore.QObject.connect(self.rt_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.rt)
+        self.tooth.surfaces_changed_signal.connect(self.updateSurfaces)
+        self.lineEdit.nav_key_pressed_signal.connect(self.keyNav)
+        self.comments_comboBox.currentIndexChanged[str].connect(self.comments)
+        self.am_pushButton.clicked.connect(self.am)
+        self.co_pushButton.clicked.connect(self.co)
+        self.gl_pushButton.clicked.connect(self.gl)
+        self.gold_pushButton.clicked.connect(self.go)
+        self.porc_pushButton.clicked.connect(self.pi)
+        self.clear_pushButton.clicked.connect(self.lineEdit.removeEndItem)
+        self.edit_pushButton.clicked.connect(self.fulledit)
+        self.pushButton.clicked.connect(self.lineEdit.additional)
+        self.rightTooth_pushButton.clicked.connect(self.rightTooth)
+        self.leftTooth_pushButton.clicked.connect(self.leftTooth)
+        self.ex_pushButton.clicked.connect(self.ex)
+        self.rt_pushButton.clicked.connect(self.rt)
         self.dressing_pushButton.clicked.connect(self.dressing)
-
-        QtCore.QObject.connect(self.comments_comboBox,
-                               QtCore.SIGNAL("currentIndexChanged (const QString&)"), self.comments)
-
         self.crown_but.clicked.connect(self.crown)
         self.post_but.clicked.connect(self.posts)
         self.bridge_but.clicked.connect(self.bridge)
         self.implant_but.clicked.connect(self.implant_but_clicked)
-
         self.fs_but.clicked.connect(self.fs_but_clicked)
         self.endo_but.clicked.connect(self.endo_but_clicked)
         self.surgical_but.clicked.connect(self.surgical_but_clicked)
 
 
 class Tooth(QtGui.QWidget):
+    surfaces_changed_signal = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
@@ -749,11 +724,11 @@ class Tooth(QtGui.QWidget):
         retarg = ""
         if "M" in arg:
             retarg += "M"
-        if "D" in arg and not "M" in retarg:
+        if "D" in arg and "M" not in retarg:
             retarg += "D"
         if "O" in arg:
             retarg += "O"
-        if "D" in arg and not "D" in retarg:
+        if "D" in arg and "D" not in retarg:
             retarg += "D"
         if "B" in arg:
             retarg += "B"
@@ -781,53 +756,63 @@ class Tooth(QtGui.QWidget):
     def mouseMoveEvent(self, event):
         y = event.y()
         x = event.x()
-        if self.mesial.containsPoint(QtCore.QPoint(x, y), QtCore.Qt.OddEvenFill):
+        if self.mesial.containsPoint(
+                QtCore.QPoint(x, y), QtCore.Qt.OddEvenFill):
             self.mouseOverSurface = self.mesial
             self.update()
-        elif self.occlusal.containsPoint(QtCore.QPoint(x, y), QtCore.Qt.OddEvenFill):
+        elif self.occlusal.containsPoint(
+                QtCore.QPoint(x, y), QtCore.Qt.OddEvenFill):
             self.mouseOverSurface = self.occlusal
             self.update()
-        elif self.distal.containsPoint(QtCore.QPoint(x, y), QtCore.Qt.OddEvenFill):
+        elif self.distal.containsPoint(
+                QtCore.QPoint(x, y), QtCore.Qt.OddEvenFill):
             self.mouseOverSurface = self.distal
             self.update()
-        elif self.buccal.containsPoint(QtCore.QPoint(x, y), QtCore.Qt.OddEvenFill):
+        elif self.buccal.containsPoint(
+                QtCore.QPoint(x, y), QtCore.Qt.OddEvenFill):
             self.mouseOverSurface = self.buccal
             self.update()
-        elif self.palatal.containsPoint(QtCore.QPoint(x, y), QtCore.Qt.OddEvenFill):
+        elif self.palatal.containsPoint(
+                QtCore.QPoint(x, y), QtCore.Qt.OddEvenFill):
             self.mouseOverSurface = self.palatal
             self.update()
 
     def mousePressEvent(self, event):
         y = event.y()
         x = event.x()
-        if self.mesial.containsPoint(QtCore.QPoint(x, y), QtCore.Qt.OddEvenFill):
+        if self.mesial.containsPoint(
+                QtCore.QPoint(x, y), QtCore.Qt.OddEvenFill):
             if self.isRight:
                 self.setFilledSurfaces("D")
             else:
                 self.setFilledSurfaces("M")
-        elif self.occlusal.containsPoint(QtCore.QPoint(x, y), QtCore.Qt.OddEvenFill):
+        elif self.occlusal.containsPoint(
+                QtCore.QPoint(x, y), QtCore.Qt.OddEvenFill):
             if self.isBacktooth:
                 self.setFilledSurfaces("O")
             else:
                 self.setFilledSurfaces("I")
-        elif self.distal.containsPoint(QtCore.QPoint(x, y), QtCore.Qt.OddEvenFill):
+        elif self.distal.containsPoint(
+                QtCore.QPoint(x, y), QtCore.Qt.OddEvenFill):
             if not self.isRight:
                 self.setFilledSurfaces("D")
             else:
                 self.setFilledSurfaces("M")
-        elif self.buccal.containsPoint(QtCore.QPoint(x, y), QtCore.Qt.OddEvenFill):
+        elif self.buccal.containsPoint(
+                QtCore.QPoint(x, y), QtCore.Qt.OddEvenFill):
             if self.isUpper:
                 self.setFilledSurfaces("B")
             else:
                 self.setFilledSurfaces("L")
-        elif self.palatal.containsPoint(QtCore.QPoint(x, y), QtCore.Qt.OddEvenFill):
+        elif self.palatal.containsPoint(
+                QtCore.QPoint(x, y), QtCore.Qt.OddEvenFill):
             if self.isUpper:
                 self.setFilledSurfaces("P")
             else:
                 self.setFilledSurfaces("B")
         else:
             return  # missed!!
-        self.emit(QtCore.SIGNAL("toothSurface"))
+        self.surfaces_changed_signal.emit()
 
     def resizeEvent(self, event):
         self.shapes()
@@ -844,45 +829,62 @@ class Tooth(QtGui.QWidget):
                 0.40  # fronttooth inner rectangle height
         self.innerRect = self.toothRect.adjusted(irw, irh, -irw, -irh)
 
-        self.mesial = QtGui.QPolygon([0, 0,
-                                      self.innerRect.topLeft().x(
-                                      ), self.innerRect.topLeft().y(),
-                                      self.innerRect.bottomLeft().x(
-                                      ), self.innerRect.bottomLeft().y(),
-                                      self.toothRect.bottomLeft().x(), self.toothRect.bottomLeft().y()])
+        self.mesial = QtGui.QPolygon(
+            [0,
+             0,
+             self.innerRect.topLeft().x(),
+             self.innerRect.topLeft().y(),
+             self.innerRect.bottomLeft().x(),
+             self.innerRect.bottomLeft().y(),
+             self.toothRect.bottomLeft().x(),
+             self.toothRect.bottomLeft().y()])
 
         self.occlusal = QtGui.QPolygon(
-            [self.innerRect.topLeft().x(), self.innerRect.topLeft().y(),
-             self.innerRect.topRight().x(), self.innerRect.topRight().y(),
-             self.innerRect.bottomRight().x(
-             ), self.innerRect.bottomRight().y(),
-                self.innerRect.bottomLeft().x(), self.innerRect.bottomLeft().y()])
+            [self.innerRect.topLeft().x(),
+             self.innerRect.topLeft().y(),
+             self.innerRect.topRight().x(),
+             self.innerRect.topRight().y(),
+             self.innerRect.bottomRight().x(),
+             self.innerRect.bottomRight().y(),
+             self.innerRect.bottomLeft().x(),
+             self.innerRect.bottomLeft().y()])
 
         self.distal = QtGui.QPolygon(
-            [self.innerRect.topRight().x(), self.innerRect.topRight().y(),
-             self.toothRect.topRight().x(), self.toothRect.topRight().y(),
-             self.toothRect.bottomRight().x(
-             ), self.toothRect.bottomRight().y(),
-             self.innerRect.bottomRight().x(), self.innerRect.bottomRight().y()])
+            [self.innerRect.topRight().x(),
+             self.innerRect.topRight().y(),
+             self.toothRect.topRight().x(),
+             self.toothRect.topRight().y(),
+             self.toothRect.bottomRight().x(),
+             self.toothRect.bottomRight().y(),
+             self.innerRect.bottomRight().x(),
+             self.innerRect.bottomRight().y()])
 
-        self.buccal = QtGui.QPolygon([0, 0,
-                                      self.toothRect.topRight().x(
-                                      ), self.toothRect.topRight().y(),
-                                      self.innerRect.topRight().x(
-                                      ), self.innerRect.topRight().y(),
-                                      self.innerRect.topLeft().x(), self.innerRect.topLeft().y()])
+        self.buccal = QtGui.QPolygon(
+            [0,
+             0,
+             self.toothRect.topRight().x(),
+             self.toothRect.topRight().y(),
+             self.innerRect.topRight().x(),
+             self.innerRect.topRight().y(),
+             self.innerRect.topLeft().x(),
+             self.innerRect.topLeft().y()])
 
         self.palatal = QtGui.QPolygon(
-            [self.toothRect.bottomLeft().x(), self.toothRect.bottomLeft().y(),
-             self.innerRect.bottomLeft().x(), self.innerRect.bottomLeft().y(),
-             self.innerRect.bottomRight().x(
-             ), self.innerRect.bottomRight().y(),
-                self.toothRect.bottomRight().x(), self.toothRect.bottomRight().y()])
+            [self.toothRect.bottomLeft().x(),
+             self.toothRect.bottomLeft().y(),
+             self.innerRect.bottomLeft().x(),
+             self.innerRect.bottomLeft().y(),
+             self.innerRect.bottomRight().x(),
+             self.innerRect.bottomRight().y(),
+             self.toothRect.bottomRight().x(),
+             self.toothRect.bottomRight().y()])
 
         self.mouseOverSurface = None  # initiate a value
 
     def paintEvent(self, event=None):
-        '''override the paint event so that we can draw our grid'''
+        '''
+        override the paint event so that we can draw our grid
+        '''
         if self.isBacktooth:
             if self.isUpper:
                 if self.isRight:

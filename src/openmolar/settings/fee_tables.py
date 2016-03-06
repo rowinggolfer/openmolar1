@@ -1,5 +1,4 @@
 #! /usr/bin/python
-# -*- coding: utf-8 -*-
 
 # ########################################################################### #
 # #                                                                         # #
@@ -22,23 +21,16 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from collections import namedtuple
+from collections import OrderedDict
 from gettext import gettext as _
 import datetime
 import logging
 import re
 from xml.dom import minidom
 
-from collections import namedtuple
-
 from openmolar.settings import localsettings
 from openmolar.dbtools.feescales import feescale_handler
-
-try:
-    from collections import OrderedDict
-except ImportError:
-    # OrderedDict only came in python 2.7
-    print "using openmolar.backports for OrderedDict"
-    from openmolar.backports import OrderedDict
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -129,7 +121,7 @@ class FeeTables(object):
     @property
     def csetypes(self):
         csetypes = []
-        for table in self.tables.values():
+        for table in list(self.tables.values()):
             for cset in table.categories:
                 if cset not in csetypes:
                     csetypes.append(cset)
@@ -138,14 +130,14 @@ class FeeTables(object):
     @property
     def default_table(self):
         try:
-            return self.tables.values()[0]
+            return list(self.tables.values())[0]
         except IndexError:
             return None
 
     def get_all_buts(self, att):
         unique_shortcuts = set([])
         types_ = []
-        for table in self.tables.values():
+        for table in list(self.tables.values()):
             for button in table.ui_lists.get(att, []):
                 if button.shortcut not in unique_shortcuts:
                     types_.append(button)
@@ -241,7 +233,7 @@ class FeeTables(object):
         '''
         iterate through the child tables, and get them loaded
         '''
-        for table in self.tables.values():
+        for table in list(self.tables.values()):
             try:
                 table.load_from_xml()
             except Exception as exc:
@@ -256,7 +248,7 @@ class FeeTables(object):
 
     @property
     def all_other_shortcuts(self):
-        for table in self.tables.values():
+        for table in list(self.tables.values()):
             if table.is_current:
                 for shortcut in table.other_shortcuts:
                     yield table, shortcut
@@ -313,7 +305,7 @@ class FeeTable(object):
 
     @property
     def hasPtCols(self):
-        for fee_item in self.feesDict.values():
+        for fee_item in list(self.feesDict.values()):
             if fee_item.has_pt_fees:
                 return True
         return False
@@ -555,7 +547,7 @@ class FeeTable(object):
         try:
             return self.feesDict[itemcode].description
         except KeyError:
-            return u"%s (%s)" % (_("OTHER TREATMENT"), usercode)
+            return "%s (%s)" % (_("OTHER TREATMENT"), usercode)
 
     @property
     def other_shortcuts(self):
@@ -563,7 +555,7 @@ class FeeTable(object):
         shortcuts which are used in association with 'other' items
         '''
         items = {}
-        for item in self.feesDict.values():
+        for item in list(self.feesDict.values()):
             if item.pt_attribute == "other":
                 items[item.description.lower()] = item.shortcut
         for key in sorted(items.keys()):
@@ -989,16 +981,16 @@ if __name__ == "__main__":
     fts = FeeTables()
 
     table = fts.default_table
-    for id_, fee_item in table.feesDict.iteritems():
-        print id_, fee_item
+    for id_, fee_item in table.feesDict.items():
+        print(id_, fee_item)
 
-    print table.hasPtCols
+    print(table.hasPtCols)
     for i, complex_shortcut in enumerate(table.complex_shortcuts):
-        print "looking for SP in complex_shortcut %d" % i
+        print("looking for SP in complex_shortcut %d" % i)
         if complex_shortcut.matches("perio", "SP"):
-            print "    match found"
+            print("    match found")
 
-    print table.categories
-    print table.ui_lists
-    print fts.ui_crown_chart_buttons
-    print fts.ui_implant_chart_buttons
+    print(table.categories)
+    print(table.ui_lists)
+    print(fts.ui_crown_chart_buttons)
+    print(fts.ui_implant_chart_buttons)

@@ -1,28 +1,28 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 import base64
+from gettext import gettext as _
 import hashlib
 import logging
 import os
@@ -128,8 +128,8 @@ class PageOne(_InputPage):
         _InputPage.__init__(self, parent)
 
         message = "%s<br />%s<br /><br /><em>%s</em>" % (
-            _("You may wish to enter a password which will hereafter be required"
-              " to login to the OpenMolar application"),
+            _("You may wish to enter a password which will hereafter be "
+              "required to login to the OpenMolar application"),
             _("This password will help prevent an unauthorised person"
               " accessing any sensitive data."),
             _("If your data is simply demonstration data, "
@@ -189,9 +189,8 @@ class PageTwo(_InputPage):
             _("If you do not have a mysql/mariadb server on your computer"
               " or local network, please quit this setup, "
               "and install one now!"),
-            _(
-                "Make a note of the root password you create during this set up.")
-        )
+            _("Make a note of the root password you create during "
+              "this set up."))
         self.label.setText(message)
 
         frame1 = QtGui.QFrame()
@@ -221,7 +220,7 @@ class PageTwo(_InputPage):
     @property
     def port(self):
         try:
-            return int(self.line_edit2.text().toAscii())
+            return int(self.line_edit2.text())
         except ValueError:
             pass
         return None
@@ -352,19 +351,19 @@ class PageFive(_InputPage):
         message = "%s<br />%s" % (
             _("To create a database, and set the privileges for user, "
               "OpenMolar must log into mysql as a privileged mysql user."),
-            _("OpenMolar does NOT store this username or password.")
-        )
-
-        message2 = "%s<br /><em>%s</em>" % (
+            _("OpenMolar does NOT store this username or password."))
+        message1 = "%s<br /><em>%s</em>" % (
             _("Please enter the username and password of a "
               "privileged mysql user."),
             _("(note - on most mysql setups, login by 'root' is only allowed"
-              " on localhost)")
-        )
+              " on localhost)"))
 
         self.label.setText(message)
+        label = QtGui.QLabel(message1)
 
         layout = QtGui.QFormLayout(self.frame)
+        layout.addRow(label)
+
         self.line_edit1 = QtGui.QLineEdit()
         self.line_edit1.setText("root")
         self.line_edit2 = QtGui.QLineEdit()
@@ -373,6 +372,7 @@ class PageFive(_InputPage):
         layout.addRow(_("Privileged user"), self.line_edit1)
         layout.addRow(_("Password for this user"), self.line_edit2)
         layout.addRow("", self.show_cb)
+
         self.show_passwords()
 
         self.show_cb.toggled.connect(self.show_passwords)
@@ -444,21 +444,19 @@ class PageSix(_InputPage):
 
         try:
             from openmolar import create_db
-            if (create_db.exists_already(
-                self.dialog.host,
-               self.dialog.port,
-               self.dialog.db_name,
-               self.dialog.privileged_user_pass,
-               self.dialog.privileged_user
-                ) and
-               QtGui.QMessageBox.question(self, _("Confirm"),
-                                          "%s '%s' %s<hr />%s" % (_("A database named"),
-                                                                  self.dialog.db_name,
-                                                                  _(
-                                                                  "exists already"),
-                                                                  _("Overwrite this database?")),
-                                          QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                                          QtGui.QMessageBox.No) == QtGui.QMessageBox.No):
+            if (create_db.exists_already(self.dialog.host,
+                                         self.dialog.port,
+                                         self.dialog.db_name,
+                                         self.dialog.privileged_user_pass,
+                                         self.dialog.privileged_user) and
+                    QtGui.QMessageBox.question(
+                        self, _("Confirm"),
+                        "%s '%s' %s<hr />%s" % (_("A database named"),
+                                                self.dialog.db_name,
+                                                _("exists already"),
+                                                _("Overwrite this database?")),
+                        QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                        QtGui.QMessageBox.No) == QtGui.QMessageBox.No):
                 self.dialog.database_exists_already()
                 return
             self.timer1.start(10)  # 1/100thsecond
@@ -490,7 +488,7 @@ class PageSix(_InputPage):
                 _("Database created successfully!")
             )
             self.db_created = True
-            self.dialog.next()
+            next(self.dialog)
         except Exception as exc:
             LOGGER.exception("error creating database")
             message = "%s<hr />%s" % (_("Error Creating Database"), exc)
@@ -502,11 +500,8 @@ class PageSeven(_InputPage):
 
     def __init__(self, parent=None):
         _InputPage.__init__(self, parent)
-
         message = _("Testing connection")
         self.label.setText(message + ".......")
-
-        layout = QtGui.QVBoxLayout(self.frame)
 
     @property
     def header_text(self):
@@ -526,12 +521,12 @@ class PageSeven(_InputPage):
                                  db=self.dialog.db_name,
                                  passwd=self.dialog.db_pass,
                                  user=self.dialog.db_user)
-            result = db.open
+            db.open
             db.close()
             self.dialog.wait(False)
             self.label.setText(_("Your database is accepting connections!"))
             return True
-        except Exception as exc:
+        except Exception:
             self.dialog.wait(False)
             LOGGER.exception("connection attempt failed")
             self.label.setText("<b>%s</b>" % (
@@ -609,7 +604,7 @@ class FirstRunDialog(BaseDialog):
         else:
             self.next_but.setText(_("Next"))
 
-    def next(self):
+    def __next__(self):
         '''
         0 = intro
         1 = application password
@@ -653,31 +648,31 @@ class FirstRunDialog(BaseDialog):
 
     def finish(self):
         dom = minidom.parseString(XML_TEMPLATE)
-        #-- hash the password and save it
+        #  hash the password and save it
         PSWORD = hashlib.md5(
             hashlib.sha1(
                 str("diqug_ADD_SALT_3i2some" + self.sys_password)).hexdigest()
         ).hexdigest()
         dom.getElementsByTagName(
             "system_password")[0].firstChild.replaceWholeText(PSWORD)
-        #-- server settings
+        #  server settings
         xmlnode = dom.getElementsByTagName("server")[0]
-        #-- host
+        #  host
         xmlnode.getElementsByTagName(
             "location")[0].firstChild.replaceWholeText(self.host)
-        #--port
+        # port
         xmlnode.getElementsByTagName(
             "port")[0].firstChild.replaceWholeText(str(self.port))
-        #-- database settings
+        #  database settings
         xmlnode = dom.getElementsByTagName("database")[0]
-        #--user
+        # user
         xmlnode.getElementsByTagName(
             "user")[0].firstChild.replaceWholeText(self.db_user)
-        #--password
+        # password
         xmlnode.getElementsByTagName(
             "password")[0].firstChild.replaceWholeText(
             base64.b64encode(self.db_pass))
-        #--db name
+        # db name
         xmlnode.getElementsByTagName(
             "dbname")[0].firstChild.replaceWholeText(self.db_name)
 
@@ -728,7 +723,7 @@ class FirstRunDialog(BaseDialog):
         "private" function called when button box is clicked
         '''
         if but == self.next_but:
-            self.next()
+            next(self)
         elif but == self.back_but:
             self.back()
         else:
@@ -744,46 +739,47 @@ class FirstRunDialog(BaseDialog):
 
     @property
     def sys_password(self):
-        return str(self.page1.line_edit1.text().toAscii())
+        return str(self.page1.line_edit1.text())
 
     @property
     def host(self):
-        return str(self.page2.line_edit1.text().toAscii())
+        return str(self.page2.line_edit1.text())
 
     @property
     def port(self):
-        return int(str(self.page2.line_edit2.text().toAscii()))
+        return int(str(self.page2.line_edit2.text()))
 
     @property
     def db_name(self):
-        return str(self.page4.line_edit1.text().toAscii())
+        return str(self.page4.line_edit1.text())
 
     @property
     def db_user(self):
-        return str(self.page4.line_edit2.text().toAscii())
+        return str(self.page4.line_edit2.text())
 
     @property
     def db_pass(self):
-        return str(self.page4.line_edit3.text().toAscii())
+        return str(self.page4.line_edit3.text())
 
     @property
     def privileged_user(self):
-        return str(self.page5.line_edit1.text().toAscii())
+        return str(self.page5.line_edit1.text())
 
     @property
     def privileged_user_pass(self):
-        return str(self.page5.line_edit2.text().toAscii())
+        return str(self.page5.line_edit2.text())
+
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
     app = QtGui.QApplication([])
 
     dl = FirstRunDialog()
-    print dl.exec_()
-    print dl.host
-    print dl.port
-    print dl.db_name
-    print dl.db_user
-    print dl.db_pass
-    print dl.privileged_user
-    print dl.privileged_user_pass
+    print(dl.exec_())
+    print(dl.host)
+    print(dl.port)
+    print(dl.db_name)
+    print(dl.db_user)
+    print(dl.db_pass)
+    print(dl.privileged_user)
+    print(dl.privileged_user_pass)

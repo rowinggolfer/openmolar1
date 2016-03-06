@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -221,9 +220,9 @@ class Advisor(QtGui.QWidget):
         '''
         def show_brief_messages():
             self.hide_brief_message()
-            full_message = u"<body>"
+            full_message = "<body>"
             for mess in self.brief_messages:
-                full_message += u"%s <hr />" % mess
+                full_message += "%s <hr />" % mess
             full_message = full_message.rstrip("<hr />") + "</body>"
             self.brief_message_box = MessagePopup(full_message, self)
             self.brief_message_box.right_to_left = self.right_to_left

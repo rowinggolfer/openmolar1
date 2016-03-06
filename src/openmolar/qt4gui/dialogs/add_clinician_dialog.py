@@ -1,28 +1,28 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 from collections import namedtuple
+from gettext import gettext as _
 import logging
 
 from PyQt4 import QtGui, QtCore
@@ -38,10 +38,10 @@ from openmolar.dbtools import db_settings
 
 LOGGER = logging.getLogger("openmolar")
 
-NewClinician = namedtuple('NewClinician',
-    ('initials', 'name', 'formal_name', 'qualifications',
-    'type', 'speciality', 'data', 'start_date', 'end_date', "new_diary")
-    )
+NewClinician = namedtuple(
+    'NewClinician',
+    ('initials', 'name', 'formal_name', 'qualifications', 'type',
+     'speciality', 'data', 'start_date', 'end_date', "new_diary"))
 
 
 class AddClinicianDialog(ExtendableDialog):
@@ -70,7 +70,7 @@ class AddClinicianDialog(ExtendableDialog):
         self.data_lineedit = QtGui.QLineEdit()
         self.new_diary_checkbox = QtGui.QCheckBox(
             _("Create a new diary for this clinician "
-            "(uncheck to map to an existing diary)"))
+              "(uncheck to map to an existing diary)"))
         self.new_diary_checkbox.setChecked(True)
 
         row1 = QtGui.QWidget()
@@ -81,8 +81,7 @@ class AddClinicianDialog(ExtendableDialog):
 
         frame = QtGui.QFrame(self)
         layout = QtGui.QFormLayout(frame)
-        layout.addRow(_("Initials/Nickname (must be an existing Login)"),
-            row1)
+        layout.addRow(_("Initials/Nickname (must be an existing Login)"), row1)
         layout.addRow(_("Name eg. Fred Smith"), self.name_lineedit)
         layout.addRow(_("Formal Name eg. Dr.F. Smith"), self.f_name_lineedit)
         layout.addRow(_("Qualifications"), self.quals_lineedit)
@@ -99,7 +98,8 @@ class AddClinicianDialog(ExtendableDialog):
         self.name_lineedit.setFocus()
 
         list_widget = QtGui.QListWidget()
-        list_widget.addItems([str(val) for val in sorted(localsettings.dentDict.values())])
+        list_widget.addItems(
+            [str(val) for val in sorted(localsettings.dentDict.values())])
         self.add_advanced_widget(list_widget)
         self.set_advanced_but_text(_("view existing dentists"))
 
@@ -110,16 +110,16 @@ class AddClinicianDialog(ExtendableDialog):
         return QtCore.QSize(500, 400)
 
     def _check_enable(self, *args):
-        self.enableApply(self.initials != ""
-            and self.name != "" and self.full_name != "")
+        self.enableApply(self.initials != "" and self.name != "" and
+                         self.full_name != "")
 
     def load_logins(self, chosen=None):
         poss_inits = localsettings.allowed_logins
-        for val in localsettings.ops.values() + ["rec"]:
+        for val in list(localsettings.ops.values()) + ["rec"]:
             try:
                 poss_inits.remove(val)
             except ValueError:
-                print "couldn't remove %s" % val
+                print("couldn't remove %s" % val)
                 pass
         self.user_id_comboBox.clear()
         self.user_id_comboBox.addItems(poss_inits)
@@ -137,23 +137,23 @@ class AddClinicianDialog(ExtendableDialog):
 
     @property
     def initials(self):
-        return unicode(self.user_id_comboBox.currentText().toUtf8())
+        return str(self.user_id_comboBox.currentText())
 
     @property
     def name(self):
-        return unicode(self.name_lineedit.text().toUtf8())
+        return str(self.name_lineedit.text())
 
     @property
     def full_name(self):
-        return unicode(self.f_name_lineedit.text().toUtf8())
+        return str(self.f_name_lineedit.text())
 
     @property
     def qualifications(self):
-        return unicode(self.quals_lineedit.text().toUtf8())
+        return str(self.quals_lineedit.text())
 
     @property
     def speciality(self):
-        return unicode(self.speciality_lineedit.text().toUtf8())
+        return str(self.speciality_lineedit.text())
 
     @property
     def type(self):
@@ -161,7 +161,7 @@ class AddClinicianDialog(ExtendableDialog):
 
     @property
     def data(self):
-        return unicode(self.data_lineedit.text().toUtf8())
+        return str(self.data_lineedit.text())
 
     @property
     def start_date(self):
@@ -178,15 +178,14 @@ class AddClinicianDialog(ExtendableDialog):
     def apply(self):
         new_clinician = NewClinician(self.initials,
                                      self.name,
-                                    self.full_name,
-                                    self.qualifications,
-                                    self.type,
-                                    self.speciality,
-                                    self.data,
-                                    self.start_date,
-                                    self.end_date,
-                                    self.new_diary,
-                                    )
+                                     self.full_name,
+                                     self.qualifications,
+                                     self.type,
+                                     self.speciality,
+                                     self.data,
+                                     self.start_date,
+                                     self.end_date,
+                                     self.new_diary,)
         LOGGER.info(new_clinician)
         return db_settings.insert_clinician(new_clinician)
 
@@ -194,6 +193,7 @@ class AddClinicianDialog(ExtendableDialog):
         if ExtendableDialog.exec_(self):
             return self.apply()
         return False
+
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
@@ -203,4 +203,4 @@ if __name__ == "__main__":
 
     dl = AddClinicianDialog(True)
     if dl.exec_():
-        print "clinician added to database successfully"
+        print("clinician added to database successfully")

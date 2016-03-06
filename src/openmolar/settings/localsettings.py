@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -22,7 +21,8 @@
 # #                                                                         # #
 # ########################################################################### #
 
-import ConfigParser
+from gettext import gettext as _
+import configparser
 import datetime
 import hashlib
 import logging
@@ -70,14 +70,14 @@ except NameError:
     # - an unelegant hack to get _() on the namespace for testing
     # - main.py will normally do this for us.
     import gettext
-    gettext.install("openmolar", unicode=True)
+    gettext.install("openmolar")
 
 
 def showVersion():
     '''
     push version details to std out
     '''
-    print ("OpenMolar %s" % VERSION)
+    print(("OpenMolar %s" % VERSION))
 
 if LOGGER.level == logging.DEBUG:
     showVersion()
@@ -126,7 +126,7 @@ def determine_path():
         return retarg
     except:
         # - this shouldn't happen!
-        print "no __file__ variable found !!!!"
+        print("no __file__ variable found !!!!")
         return os.path.dirname(os.getcwd())
 
 server_names = []
@@ -237,7 +237,7 @@ def about():
 OpenMolar - open Source dental practice management software.<br />
 Version %s<br />
 Client Schema Version is %s, DataBase is at version %s<br /><hr />
-Copyright (C) 2009-2014 Neil A. Wallace B.Ch.D.<br />
+Copyright (C) 2009-2016 Neil A. Wallace B.Ch.D.<br />
 Project Homepage
 <a href="http://www.openmolar.com">
 http://www.openmolar.com</a>.
@@ -387,7 +387,7 @@ def hash_func(message):
     '''
     the function to get a unique value for all treatments in the database
     '''
-    return hashlib.sha1(message).hexdigest()
+    return hashlib.sha1(message.encode("utf8")).hexdigest()
 
 
 def pencify(input_):
@@ -459,20 +459,18 @@ def formatMoney(m):
     '''
     takes an integer, returns a string
     '''
-    if isinstance(m, bytes):
+    if isinstance(m, str):
         try:
-            retarg = locale.currency(float(m))
-            return retarg.decode(ENCODING, "replace")
-        except Exception as e:
-            print "formatMoney error", e
+            return locale.currency(float(m))
+        except Exception:
+            LOGGER.exception("formatMoney error, str sent")
             return "%s" % m
     else:
         val = pence_to_pounds(m)
         try:
-            retarg = locale.currency(float(val))
-            return retarg.decode(ENCODING, "replace")
-        except Exception as e:
-            LOGGER.exception("formatMoney error")
+            return locale.currency(float(val))
+        except Exception:
+            LOGGER.exception("formatMoney error, int sent")
             return val
 
 
@@ -492,7 +490,7 @@ def reverseFormatMoney(m):
     try:
         numbers = re.findall("\d", m)
     except TypeError:
-        print "unable to convert %s to an integer - returning 0" % m
+        print("unable to convert %s to an integer - returning 0" % m)
         return 0
 
     retarg = ""
@@ -588,7 +586,7 @@ def longDate(d):
             day = day + "th"
         return "%s, %s %s %d" % (dayName(d), day, monthName(d), d.year)
     except Exception as e:
-        print e
+        print(e)
         return "date"
 
 
@@ -759,22 +757,22 @@ def autologin():
     look in ~/.openmolar/login.conf for login options
     '''
     PASSWORD, USER1, USER2 = "", "", ""
-    scp = ConfigParser.SafeConfigParser()
+    scp = configparser.SafeConfigParser()
     scp.read(LOGIN_CONF)
     try:
         try:
             PASSWORD = scp.get("login", "PASSWORD")
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             pass
         try:
             USER1 = scp.get("login", "USER1")
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             pass
         try:
             USER2 = scp.get("login", "USER2")
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             pass
-    except ConfigParser.NoSectionError:
+    except configparser.NoSectionError:
         LOGGER.info("no autologin")
 
     return PASSWORD, USER1, USER2
@@ -949,6 +947,7 @@ def loadFeeTables():
 def _test():
     import doctest
     doctest.testmod()
+
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)

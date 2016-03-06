@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -531,7 +530,7 @@ class DiaryWidget(Advisor):
 
             else:
                 self.advise(
-                    u"<b>%s</b><hr /><em>%s<br />%s</em>" % (
+                    "<b>%s</b><hr /><em>%s<br />%s</em>" % (
                         _("Error making appointment - sorry!"),
                         _("It is most likely that another user utilised "
                           "this space."),
@@ -804,7 +803,7 @@ class DiaryWidget(Advisor):
             headerText += '''<tr><td colspan="3" class="bankholiday">%s</td>
             </tr>''' % dayData.publicHoliday
 
-        for dentix in dayData.dents.keys():
+        for dentix in list(dayData.dents.keys()):
             dent = dayData.dents[dentix]
             if dentix == 0:
                 headerText += '''<tr><td class="yearops" colspan="2">ALL</td>
@@ -1421,7 +1420,7 @@ class DiaryWidget(Advisor):
             _("Enter the information for ") + localsettings.longDate(date_),
             QtGui.QLineEdit.Normal,
             current)
-        new_value = unicode(new.toUtf8())
+        new_value = str(new)
         if result and current != new_value:
             appointments.setPubHol(date_, new_value)
             self.layout_diary()
@@ -1585,7 +1584,7 @@ class _testDiary(QtGui.QMainWindow):
         self.menuBar().addAction(action2)
 
     def sig_catcher(self, *args):
-        print "signal caught", args
+        print("signal caught", args)
 
 
 if __name__ == "__main__":

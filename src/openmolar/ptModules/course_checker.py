@@ -1,28 +1,28 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 import datetime
+from gettext import gettext as _
 import logging
 import re
 
@@ -31,6 +31,7 @@ from openmolar.dbtools import estimatesHistory
 from openmolar.dbtools import daybook
 
 LOGGER = logging.getLogger("openmolar")
+
 
 class CourseChecker(object):
     '''
@@ -77,50 +78,58 @@ class CourseChecker(object):
             self._daybook_course.courseno = self.courseno
             accd, cmpd = None, None
             for daybook_entry in self.daybook_entries:
-                #LOGGER.debug(daybook_entry)
                 if not accd or daybook_entry.date < accd:
                     accd = daybook_entry.date
                 if not cmpd or daybook_entry.date > cmpd:
                     cmpd = daybook_entry.date
-                #diagn
+                # diagn
                 m = re.search("(E?CE) ", daybook_entry.diagn)
                 if m:
                     self._daybook_course.examt += m.groups()[0]
                     self._daybook_course.examd = daybook_entry.date
-                #xray
-                for xray in re.findall("\d?[S|M|P] ", daybook_entry.diagn):
+                # xray
+                for xray in re.findall(r"\d?[S|M|P] ", daybook_entry.diagn):
                     self._daybook_course.xraycmp += xray
-                #perio
+                # perio
                 if daybook_entry.perio.strip(" "):
-                    self._daybook_course.periocmp += daybook_entry.perio.strip(" ") + " "
-                #anaes
+                    self._daybook_course.periocmp += \
+                        daybook_entry.perio.strip(" ") + " "
+                # anaes
                 if daybook_entry.anaes.strip(" "):
-                    self._daybook_course.anaescmp += daybook_entry.anaes.strip(" ") + " "
-                #misc
+                    self._daybook_course.anaescmp += \
+                        daybook_entry.anaes.strip(" ") + " "
+                # misc
                 if daybook_entry.misc.strip(" "):
-                    self._daybook_course.customcmp += daybook_entry.misc.strip(" ") + " "
-                #ndu
+                    self._daybook_course.customcmp += \
+                        daybook_entry.misc.strip(" ") + " "
+                # ndu
                 if daybook_entry.ndu.strip(" "):
-                    self._daybook_course.nducmp += daybook_entry.ndu.strip(" ") + " "
-                #ndl
+                    self._daybook_course.nducmp += \
+                        daybook_entry.ndu.strip(" ") + " "
+                # ndl
                 if daybook_entry.ndl.strip(" "):
-                    self._daybook_course.ndlcmp += daybook_entry.ndl.strip(" ") + " "
-                #odu
+                    self._daybook_course.ndlcmp += \
+                        daybook_entry.ndl.strip(" ") + " "
+                # odu
                 if daybook_entry.odu.strip(" "):
-                    self._daybook_course.oducmp += daybook_entry.odu.strip(" ") + " "
-                #odl
+                    self._daybook_course.oducmp += \
+                        daybook_entry.odu.strip(" ") + " "
+                # odl
                 if daybook_entry.odl.strip(" "):
-                    self._daybook_course.odlcmp += daybook_entry.odl.strip(" ") + " "
-                #other
+                    self._daybook_course.odlcmp += \
+                        daybook_entry.odl.strip(" ") + " "
+                # other
                 if daybook_entry.other.strip(" "):
-                    self._daybook_course.othercmp += daybook_entry.other.strip(" ") + " "
-                #chart
-                for chart_entry in daybook_entry.chart.split("  "):
+                    self._daybook_course.othercmp += \
+                        daybook_entry.other.strip(" ") + " "
+                # chart
+                chart_entries = daybook_entry.chart.decode("utf8").split("  ")
+                for chart_entry in chart_entries:
                     m = re.match("([UL][LR][1-8]) (.*)", chart_entry)
                     if m:
                         att = "%scmp" % m.groups()[0].lower()
                         tx = m.groups()[1] + " "
-                        self._daybook_course.__dict__[att]+=tx
+                        self._daybook_course.__dict__[att] += tx
 
             if accd is None or (self.course.accd and self.course.accd < accd):
                 self._daybook_course.accd = self.course.accd
@@ -132,7 +141,7 @@ class CourseChecker(object):
 
     def completed_txs_match_daybook(self):
         for hash_, att, tx in self.course.completed_tx_hash_tups:
-            print "checking '%s' '%s'" % (att, tx)
+            print("checking '%s' '%s'" % (att, tx))
 
     @property
     def results(self):
@@ -155,8 +164,8 @@ class CourseChecker(object):
     def courses_match(self):
         if self._courses_match is None:
             html = self.daybook_course.to_html()
-            html1c = self.course.to_html(completed_only = True)
-            self._courses_match =  html == html1c
+            html1c = self.course.to_html(completed_only=True)
+            self._courses_match = html == html1c
         return self._courses_match
 
     @property
@@ -165,9 +174,10 @@ class CourseChecker(object):
         currently this looks for consistency betwwen the daybook
         and treatment plan only
         '''
-        return (self.days_at_course_end > 0
-                or self.is_ongoing
-                or not self.courses_match)
+        return (self.days_at_course_end > 0 or
+                self.is_ongoing or
+                not self.courses_match)
+
 
 def get_course_checker(serialno, courseno):
     course = TreatmentCourse(serialno, courseno)
@@ -179,7 +189,7 @@ def get_course_checker(serialno, courseno):
         if accd <= daybook_entry.date <= cmpd:
             daybook_list.append(daybook_entry)
 
-    return  CourseChecker(course, ests, daybook_list)
+    return CourseChecker(course, ests, daybook_list)
 
 
 if __name__ == "__main__":
@@ -187,8 +197,8 @@ if __name__ == "__main__":
     courseno = 29749
 
     course_check = get_course_checker(serialno, courseno)
-    print course_check.results()
+    print(course_check.results)
 
     course_check.completed_txs_match_daybook()
 
-    print course_check.daybook_course.to_html()
+    print(course_check.daybook_course.to_html())

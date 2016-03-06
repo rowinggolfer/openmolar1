@@ -1,27 +1,27 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
+from gettext import gettext as _
 import hashlib
 import logging
 import os
@@ -131,8 +131,8 @@ class LoginDialog(ExtendableDialog):
         self.password_lineEdit.setText(PASSWORD)
         self.user1_lineEdit.setText(USER1)
         self.user2_lineEdit.setText(USER2)
-        self.autoreception(QtCore.QString(USER1))
-        self.autoreception(QtCore.QString(USER2))
+        self.autoreception(USER1)
+        self.autoreception(USER2)
 
         self.parse_conf_file()
 
@@ -149,7 +149,7 @@ class LoginDialog(ExtendableDialog):
         self.dirty = True
         self.set_check_on_cancel(True)
 
-        QtCore.QTimer.singleShot(0, self._developer_login)
+        QtCore.QTimer.singleShot(500, self._developer_login)
 
     def sizeHint(self):
         return QtCore.QSize(350, 300)
@@ -176,10 +176,12 @@ class LoginDialog(ExtendableDialog):
                 except KeyError:
                     localsettings.server_names.append("%d" % i + 1)
 
-        except IOError as e:
+        except IOError:
             LOGGER.warning("still no settings file. quitting politely")
-            QtGui.QMessageBox.information(None, _("Unable to Run OpenMolar"),
-                                          _("Good Bye!"))
+            QtGui.QMessageBox.information(
+                None,
+                _("Unable to Run OpenMolar"),
+                _("Good Bye!"))
 
             QtGui.QApplication.instance().closeAllWindows()
             sys.exit("unable to run - openMolar couldn't find a settings file")
@@ -189,7 +191,7 @@ class LoginDialog(ExtendableDialog):
         check to see if the user is special user "rec"
         which implies a reception machine
         '''
-        if user.toLower() == "rec":
+        if user.lower() == "rec":
             self.reception_radioButton.setChecked(True)
 
     @property
@@ -218,25 +220,29 @@ class LoginDialog(ExtendableDialog):
         '''
         convenience function for developer to login without password
         '''
-        if self._is_developer_environment and not "--no-dev-login" in sys.argv:
+        LOGGER.debug("Checking for developer environment")
+        if "--no-dev-login" in sys.argv:
+            return
+        if self._is_developer_environment:
+            LOGGER.info("developer environment found!")
             self.accept()
+        LOGGER.debug("not a developer environment")
 
     @property
     def password_ok(self):
         LOGGER.info("checking password")
-        pword = "diqug_ADD_SALT_3i2some%s" % (
-            self.password_lineEdit.text().toAscii())
-        #-- hash the salted password (twice!) and compare to the value
-        #-- stored in /etc/openmolar/openmolar.conf (linux)
-        stored_password = hashlib.md5(
-            hashlib.sha1(pword).hexdigest()).hexdigest()
+        pword = "diqug_ADD_SALT_3i2some%s" % self.password_lineEdit.text()
+        #  hash the salted password (twice!) and compare to the value
+        #  stored in /etc/openmolar/openmolar.conf (linux)
+        sha1_pass = hashlib.sha1(pword.encode("utf8")).hexdigest()
+        stored_password = hashlib.md5(sha1_pass.encode("utf8")).hexdigest()
 
         match = stored_password == self.sys_password
         return match
 
     @property
     def user1(self):
-        return str(self.user1_lineEdit.text().toAscii())
+        return self.user1_lineEdit.text()
 
     @property
     def user1_ok(self):
@@ -244,7 +250,7 @@ class LoginDialog(ExtendableDialog):
 
     @property
     def user2(self):
-        return str(self.user2_lineEdit.text().toAscii())
+        return self.user2_lineEdit.text()
 
     @property
     def user2_ok(self):
@@ -252,8 +258,11 @@ class LoginDialog(ExtendableDialog):
 
     @property
     def login_ok(self):
-        return self.user1_ok and self.user2_ok and (
-            self._is_developer_environment or self.password_ok)
+        try:
+            return self.user1_ok and self.user2_ok and (
+                self._is_developer_environment or self.password_ok)
+        except:
+            LOGGER.exception("error checking login")
 
     @property
     def chosen_server(self):
@@ -265,13 +274,13 @@ class LoginDialog(ExtendableDialog):
         localsettings.setChosenServer(self.chosen_server)
 
         if self.uninitiated or changedServer:
-            #- user has entered the correct password
-            #- so now we connect to the mysql database
-            #- for the 1st time
-            #- I do it this way so that anyone sniffing the network
-            #- won't see the mysql password until this point
-            #- this could and should possibly still be improved upon
-            #- maybe by using an ssl connection to the server.
+            #  user has entered the correct password
+            #  so now we connect to the mysql database
+            #  for the 1st time
+            #  I do it this way so that anyone sniffing the network
+            #  won't see the mysql password until this point
+            #  this could and should possibly still be improved upon
+            #  maybe by using an ssl connection to the server.
             localsettings.initiateUsers(changedServer)
             self.uninitiated = False
 
@@ -291,7 +300,7 @@ class LoginDialog(ExtendableDialog):
                 QtGui.QMessageBox.warning(
                     self.parent(),
                     _("Login Error"),
-                    u'<h2>%s %s</h2><em>%s</em>' % (
+                    '<h2>%s %s</h2><em>%s</em>' % (
                         _('Incorrect'),
                         _("User/password combination!"),
                         _('Please Try Again.')
@@ -299,9 +308,10 @@ class LoginDialog(ExtendableDialog):
                 )
         return False
 
+
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
     app = QtGui.QApplication([])
 
     dl = LoginDialog()
-    print dl.exec_()
+    print(dl.exec_())

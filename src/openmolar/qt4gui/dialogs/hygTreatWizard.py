@@ -1,28 +1,29 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
-from PyQt4 import QtGui, QtCore
+from gettext import gettext as _
+
+from PyQt4 import QtGui
 
 from openmolar.settings import localsettings
 from openmolar.ptModules.estimates import TXHash
@@ -47,11 +48,11 @@ class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
             tx_list = ""
             for trt in self.om_gui.pt.treatment_course.periopl.split(" "):
                 tx_list += "<li>%s</li>" % trt
-            self.label.setText(u"<b>%s</b><hr /><ul>%s</ul>" % (
-                               _(
-                               "WARNING - THE FOLLOWING TREATMENTS ARE ALREADY PLANNED."),
-                               tx_list
-                               ))
+            self.label.setText(
+                "<b>%s</b><hr /><ul>%s</ul>" % (
+                    _("WARNING - "
+                      "THE FOLLOWING TREATMENTS ARE ALREADY PLANNED."),
+                    tx_list))
             self.buttonBox.setEnabled(False)
             self.pushButton.clicked.connect(self._re_enable)
             self.groupBox.hide()
@@ -136,8 +137,8 @@ class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
                 trts = (("perio", "%s" % self.trt),)
                 manipulate_plan.add_treatments_to_plan(self.om_gui, trts, True)
 
-            newnotes = unicode(
-                self.om_gui.ui.notesEnter_textEdit.toPlainText().toUtf8())
+            newnotes = str(
+                self.om_gui.ui.notesEnter_textEdit.toPlainText())
             if newnotes != "" and newnotes[-1] != "\n":
                 newnotes += "\n"
             newnotes += "%s %s %s\n" % (
@@ -151,17 +152,17 @@ class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
 
         return False
 
+
 if __name__ == "__main__":
     localsettings.initiate()
     localsettings.loadFeeTables()
     localsettings.station = "reception"
 
     from openmolar.qt4gui import maingui
-    from openmolar.dbtools import patient_class
 
     app = QtGui.QApplication([])
     mw = maingui.OpenmolarGui()
     mw.getrecord(11956)
 
     dl = HygTreatWizard(mw)
-    print dl.perform_tx()
+    print(dl.perform_tx())

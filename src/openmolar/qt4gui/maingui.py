@@ -1,9 +1,8 @@
 #! /usr/bin/python
-# -*- coding: utf-8 -*-
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -25,8 +24,6 @@
 '''
 provides the main class which is my gui
 '''
-
-from __future__ import division
 
 import datetime
 import logging
@@ -673,7 +670,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             return False
 
         # -apply changes to patient details
-        self.pt.synopsis = str(self.ui.synopsis_lineEdit.text().toAscii())
+        self.pt.synopsis = str(self.ui.synopsis_lineEdit.text())
         if self.editPageVisited:
             self.apply_editpage_changes()
 
@@ -1145,7 +1142,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         '''
         populate several comboboxes with the activedentists
         '''
-        s = ["*ALL*"] + localsettings.ops.values()
+        s = ["*ALL*"] + list(localsettings.ops.values())
         self.ui.daybookDent1ComboBox.addItems(s)
         self.ui.daybookDent2ComboBox.addItems(s)
         self.ui.cashbookDentComboBox.addItems(s)
@@ -1200,27 +1197,26 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             #  and no new patient to apply
             return
 
-        self.pt.title = str(self.ui.titleEdit.text().toAscii()).upper()
-        # -NB - these are QSTRINGs... hence toUpper() not PYTHON equiv upper()
-        self.pt.fname = str(self.ui.fnameEdit.text().toAscii()).upper()
-        self.pt.sname = str(self.ui.snameEdit.text().toAscii()).upper()
+        self.pt.title = self.ui.titleEdit.text().upper()
+        self.pt.fname = self.ui.fnameEdit.text().upper()
+        self.pt.sname = self.ui.snameEdit.text().upper()
         self.pt.dob = self.ui.dobEdit.date().toPyDate()
-        self.pt.addr1 = str(self.ui.addr1Edit.text().toAscii()).upper()
-        self.pt.addr2 = str(self.ui.addr2Edit.text().toAscii()).upper()
-        self.pt.addr3 = str(self.ui.addr3Edit.text().toAscii()).upper()
-        self.pt.town = str(self.ui.townEdit.text().toAscii()).upper()
-        self.pt.county = str(self.ui.countyEdit.text().toAscii()).upper()
-        self.pt.sex = str(self.ui.sexEdit.currentText().toAscii()).upper()
-        self.pt.pcde = str(self.ui.pcdeEdit.text().toAscii()).upper()
-        self.pt.memo = str(self.ui.memoEdit.toPlainText().toAscii())
-        self.pt.tel1 = str(self.ui.tel1Edit.text().toAscii()).upper()
-        self.pt.tel2 = str(self.ui.tel2Edit.text().toAscii()).upper()
-        self.pt.mobile = str(self.ui.mobileEdit.text().toAscii()).upper()
-        self.pt.fax = str(self.ui.faxEdit.text().toAscii()).upper()
-        self.pt.email1 = str(self.ui.email1Edit.text().toAscii())
+        self.pt.addr1 = self.ui.addr1Edit.text().upper()
+        self.pt.addr2 = self.ui.addr2Edit.text().upper()
+        self.pt.addr3 = self.ui.addr3Edit.text().upper()
+        self.pt.town = self.ui.townEdit.text().upper()
+        self.pt.county = self.ui.countyEdit.text().upper()
+        self.pt.sex = self.ui.sexEdit.currentText().upper()
+        self.pt.pcde = self.ui.pcdeEdit.text().upper()
+        self.pt.memo = self.ui.memoEdit.toPlainText()
+        self.pt.tel1 = self.ui.tel1Edit.text().upper()
+        self.pt.tel2 = self.ui.tel2Edit.text().upper()
+        self.pt.mobile = self.ui.mobileEdit.text().upper()
+        self.pt.fax = self.ui.faxEdit.text().upper()
+        self.pt.email1 = self.ui.email1Edit.text()
         # -leave as user entered case
-        self.pt.email2 = str(self.ui.email2Edit.text().toAscii())
-        self.pt.occup = str(self.ui.occupationEdit.text().toAscii()).upper()
+        self.pt.email2 = self.ui.email2Edit.text()
+        self.pt.occup = self.ui.occupationEdit.text().upper()
         self.updateDetails()
         self.editPageVisited = False
 
@@ -1279,7 +1275,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             except Exception as e:
                 message = _("Error populating interface")
                 LOGGER.exception(message)
-                self.advise(u"<b>%s</b><hr /><pre>%s" % (message, e), 2)
+                self.advise("<b>%s</b><hr /><pre>%s" % (message, e), 2)
 
         except localsettings.PatientNotFoundError:
             LOGGER.exception("Patient Not Found - %s", serialno)
@@ -1511,7 +1507,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         get valid memos for the patient
         '''
         for umemo in memos.get_memos(self.pt.serialno):
-            message = u'''<center>%s %s
+            message = '''<center>%s %s
             <br />%s %s<br /><br /><br />
             <b>%s</b></center>''' % (
                 _('Message from'),
@@ -1579,8 +1575,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         if self.pt.status == "BAD DEBT" and not permissions.granted(self):
             self.updateStatus()
             return
-        self.pt.status = unicode(
-            self.ui.status_comboBox.currentText().toUtf8())
+        self.pt.status = str(
+            self.ui.status_comboBox.currentText())
         self.updateDetails()
 
     def updateDetails(self):
@@ -1608,7 +1604,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.completed_listView.setEnabled(self.pt.underTreatment)
 
         if self.pt.underTreatment:
-            self.ui.estimate_label.setText(u"<b>%s</b><br />%s %s" % (
+            self.ui.estimate_label.setText("<b>%s</b><br />%s %s" % (
                 _("Active Course"),
                 _("started"),
                 localsettings.formatDate(self.pt.treatment_course.accd)))
@@ -1616,7 +1612,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
         else:
             self.ui.estimate_label.setText(
-                u"<b>%s</b><br />%s %s<br />%s %s" % (
+                "<b>%s</b><br />%s %s<br />%s %s" % (
                     _("Previous Course"),
                     _("started"),
                     localsettings.formatDate(self.pt.treatment_course.accd),
@@ -1849,7 +1845,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         '''
         used when I programatically add text to the user textEdit
         '''
-        current = self.ui.notesEnter_textEdit.toPlainText().trimmed()
+        current = self.ui.notesEnter_textEdit.toPlainText()
         if current != "":
             current += "\n"
         self.ui.notesEnter_textEdit.setText(current + arg)
@@ -1888,7 +1884,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         if result[0]:
             self.pt.bpe.append((localsettings.currentDay(), result[1]), )
             # -add a bpe
-            newnotes = str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
+            newnotes = str(self.ui.notesEnter_textEdit.toPlainText())
             newnotes += " bpe of %s recorded \n" % result[1]
             self.ui.notesEnter_textEdit.setText(newnotes)
         else:
@@ -1972,7 +1968,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                 )
 
         if "New Notes" in uc:
-            newnotes = str(self.ui.notesEnter_textEdit.toPlainText().toAscii())
+            newnotes = str(self.ui.notesEnter_textEdit.toPlainText())
             newnotes = newnotes.rstrip(" \n")
 
             result = patient_write_changes.toNotes(self.pt.serialno,
@@ -3037,7 +3033,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.forumParent_pushButton.clicked.connect(
             self.forumParent_clicked)
         self.ui.forumViewFilter_comboBox.currentIndexChanged[
-            QtCore.QString].connect(self.forumViewFilterChanged)
+            str].connect(self.forumViewFilterChanged)
         self.ui.forumCollapse_pushButton.clicked.connect(self.forumCollapse)
         self.ui.forumExpand_pushButton.clicked.connect(self.forumExpand)
 
@@ -3095,11 +3091,11 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.badDebt_pushButton.clicked.connect(self.makeBadDebt_clicked)
         self.ui.contract_tabWidget.currentChanged.connect(
             self.contractTab_navigated)
-        self.ui.dnt1comboBox.activated[QtCore.QString].connect(
+        self.ui.dnt1comboBox.activated[str].connect(
             self.dnt1comboBox_clicked)
-        self.ui.dnt2comboBox.activated[QtCore.QString].connect(
+        self.ui.dnt2comboBox.activated[str].connect(
             self.dnt2comboBox_clicked)
-        self.ui.cseType_comboBox.activated[QtCore.QString].connect(
+        self.ui.cseType_comboBox.activated[str].connect(
             self.cseType_comboBox_clicked)
         self.ui.editNHS_pushButton.clicked.connect(
             self.editNHS_pushButton_clicked)
@@ -3257,7 +3253,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         if QtGui.QMessageBox.question(
             self,
             _("Confirm"),
-            u"%s<hr /><i>(%s)</i>" % (
+            "%s<hr /><i>(%s)</i>" % (
                 _("Scrap the estimate and re-price everything?"),
                 _("Custom items and items added using feescale "
                   "method will be unaffected")
@@ -3306,9 +3302,9 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         when the title field is edited, make assumptions about the patient's
         sex
         '''
-        if self.ui.titleEdit.text().toUpper() in ("MISS", "MRS"):
+        if self.ui.titleEdit.text().upper() in ("MISS", "MRS"):
             self.ui.sexEdit.setCurrentIndex(1)
-        elif self.ui.titleEdit.text().toUpper() in ("MR", "MASTER"):
+        elif self.ui.titleEdit.text().upper() in ("MR", "MASTER"):
             self.ui.sexEdit.setCurrentIndex(0)
 
     def raise_address_dialog(self):
@@ -3328,9 +3324,9 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             dl.apply()
 
     def update_family_label(self):
-        message_2 = u"&%s" % _("Relatives")
+        message_2 = "&%s" % _("Relatives")
         if self.pt.familyno:
-            message = u"%s %s - <b>%d %s</b>" % (
+            message = "%s %s - <b>%d %s</b>" % (
                 _("Family ID"),
                 self.pt.familyno,
                 self.pt.n_family_members,
@@ -3361,7 +3357,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
     def load_fee_tables(self):
         localsettings.loadFeeTables()
         for warning in localsettings.FEETABLES.warnings:
-            self.advise(u"<b>%s</b><hr />%s" % (
+            self.advise("<b>%s</b><hr />%s" % (
                         _("error loading feetable"), warning), 2)
         self.ui.cseType_comboBox.addItems(localsettings.CSETYPES)
 
@@ -3536,7 +3532,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         A function to re-implement QTextBrowser.setUrl
         this will catch "edit links"
         '''
-        url = str(url.toString().toAscii())
+        url = str(url.toString())
         m1 = re.match(r"daybook_id\?(\d+)feesa=(\d+)feesb=(\d+)", url)
         m2 = re.match(r"daybook_id_edit\?(\d+)", url)
         m3 = re.match(r"edit_courseno\?(\d+)", url)

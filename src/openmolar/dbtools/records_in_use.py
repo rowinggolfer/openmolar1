@@ -1,9 +1,9 @@
+#! /usr/bin/python
 #! /usr/bin/env p
-# -*- coding: utf-8 -*-
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -192,15 +192,16 @@ def get_usage_info(serialno):
     for row in rows:
         yield RecordInfo(row)
 
+
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
     sno = 24
     localsettings.surgeryno = 7
 
-    print "set in use", set_in_use(sno)
-    print "set locked", set_locked(sno)
-    print "is locked", is_locked(sno)
-    print "clear locked", clear_lock(sno)
-    print "is locked", is_locked(sno)
-    print "clear in use", clear_in_use(sno)
-    print "clear all", clear_surgery_records()
+    print("set in use", set_in_use(sno))
+    print("set locked", set_locked(sno))
+    print("is locked", is_locked(sno))
+    print("clear locked", clear_lock(sno))
+    print("is locked", is_locked(sno))
+    print("clear in use", clear_in_use(sno))
+    print("clear all", clear_surgery_records())

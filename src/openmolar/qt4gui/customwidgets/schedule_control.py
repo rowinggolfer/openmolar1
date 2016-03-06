@@ -1,9 +1,8 @@
 #! /usr/bin/python
-# -*- coding: utf-8 -*-
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -816,7 +815,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
             LOGGER.debug("automatic searching")
             if date_ > localsettings.BOOKEND:
                 self.advice_signal.emit(
-                    u'''<b>%s<br />%s</b><hr /><em>(%s)</em>
+                    '''<b>%s<br />%s</b><hr /><em>(%s)</em>
                     <ul>
                     <li>%s</li><li>%s</li><li>%s</li><li>%s</li>
                     </ul>''' % (

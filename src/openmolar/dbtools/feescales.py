@@ -1,5 +1,4 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
@@ -333,11 +332,12 @@ class FeescaleHandler(object):
 
 feescale_handler = FeescaleHandler()
 
+
 if __name__ == "__main__":
     logging.basicConfig()
     LOGGER.setLevel(logging.DEBUG)
 
     feescale_handler.get_feescales_from_database()
     for ix, local_file in feescale_handler.local_files:
-        print ix, local_file
-    print feescale_handler.non_existant_and_modified_local_files()
+        print(ix, local_file)
+    print(feescale_handler.non_existant_and_modified_local_files())

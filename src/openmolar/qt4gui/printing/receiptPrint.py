@@ -1,33 +1,30 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
-from __future__ import division
+from gettext import gettext as _
 
 from PyQt4 import QtCore, QtGui
 from openmolar.settings import localsettings
-
-import datetime
 
 
 class Receipt(object):
@@ -86,7 +83,7 @@ class Receipt(object):
                         100,
                         pageRect.width(),
                         serifLineHeight),
-                    QtCore.QString("DUPLICATE RECEIPT"),
+                    _("DUPLICATE RECEIPT"),
                     center)
 
             x, y = LeftMargin, TopMargin + 30
@@ -94,7 +91,8 @@ class Receipt(object):
                 x, y, "%s %s %s" %
                 (self.title.title(), self.fname.title(), self.sname.title()))
             y += serifLineHeight
-            for line in (self.addr1, self.addr2, self.addr3, self.town, self.county):
+            for line in (self.addr1, self.addr2, self.addr3, self.town,
+                         self.county):
                 if line != "":
                     painter.drawText(x, y, str(line).title() + ",")
                     y += serifLineHeight
@@ -106,26 +104,28 @@ class Receipt(object):
             w = fm.width(mystr)
             painter.drawText(x, y, mystr)
             if not self.isDuplicate:
-                painter.drawText(x + w, y,
-                                 QtCore.QDate.currentDate().toString(
-                                 localsettings.QDATE_FORMAT))
+                painter.drawText(
+                    x + w,
+                    y,
+                    QtCore.QDate.currentDate().toString(
+                        localsettings.QDATE_FORMAT))
             else:
                 painter.drawText(x + w, y, self.dupdate.toString(
                     localsettings.QDATE_FORMAT))
 
             y += serifLineHeight * 2
 
-            painter.drawText(x, y, QtCore.QString('relating to:-'))
+            painter.drawText(x, y, _('relating to:-'))
             y += serifLineHeight
 
-            for key in self.receivedDict.keys():
+            for key in list(self.receivedDict.keys()):
                 amount = self.receivedDict[key]
                 if float(amount) != 0:
                     rect_f = QtCore.QRectF(x, y, 180, serifLineHeight)
-                    painter.drawText(rect_f, QtCore.QString(key))
+                    painter.drawText(rect_f, str(key))
 
                     rect_f = QtCore.QRectF(x + 180, y, 100, serifLineHeight)
-                    text = QtCore.QString(localsettings.formatMoney(amount))
+                    text = localsettings.formatMoney(amount)
                     painter.drawText(rect_f, text, alignRight)
 
                     y += serifLineHeight
@@ -143,7 +143,7 @@ class Receipt(object):
             painter.drawText(rect_f, "TOTAL")
 
             rect_f = QtCore.QRectF(x + 180, y, 100, serifLineHeight)
-            text = QtCore.QString(localsettings.formatMoney(self.total))
+            text = localsettings.formatMoney(self.total)
             painter.drawText(rect_f, text, alignRight)
 
             y += serifLineHeight * 4
@@ -153,6 +153,7 @@ class Receipt(object):
             painter.setFont(font)
             painter.drawText(x, y, _("Thankyou for your custom."))
         return True
+
 
 if __name__ == "__main__":
     import os

@@ -1,27 +1,27 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
+from gettext import gettext as _
 import logging
 
 from PyQt4 import QtGui, QtCore
@@ -42,9 +42,7 @@ class AppointmentsMemoDialog(ExtendableDialog):
         ExtendableDialog.__init__(self, parent, remove_stretch=True)
         self.date = date_
         label = WarningLabel(
-            "%s %s" % (_("Edit Memos for"),
-                       localsettings.longDate(date_))
-        )
+            "%s %s" % (_("Edit Memos for"), localsettings.longDate(date_)))
 
         self.bank_hol_label = QtGui.QLabel("")
         font = self.font()
@@ -64,7 +62,8 @@ class AppointmentsMemoDialog(ExtendableDialog):
         form_layout = QtGui.QFormLayout(frame2)
 
         self.le_dict = {}
-        for apptix in localsettings.activedent_ixs + localsettings.activehyg_ixs:
+        for apptix in \
+                localsettings.activedent_ixs + localsettings.activehyg_ixs:
             le = QtGui.QLineEdit()
             form_layout.addRow(localsettings.apptix_reverse.get(apptix), le)
             self.le_dict[apptix] = le
@@ -104,7 +103,7 @@ class AppointmentsMemoDialog(ExtendableDialog):
         self.bank_hol_label.setVisible(self.orig_pub_holiday != "")
 
         self.memo_dict = appointments.getMemos(self.date)
-        for apptix, memo in self.memo_dict.iteritems():
+        for apptix, memo in self.memo_dict.items():
             if apptix == 0:
                 self.global_lineedit.setText(memo)
                 continue
@@ -125,16 +124,16 @@ class AppointmentsMemoDialog(ExtendableDialog):
 
     @property
     def public_holiday_text(self):
-        return unicode(self.public_holiday_le.text().toUtf8())
+        return str(self.public_holiday_le.text())
 
     @property
     def changed_memos(self):
-        new_memo = unicode(self.global_lineedit.text().toUtf8())
+        new_memo = str(self.global_lineedit.text())
         if new_memo != self.memo_dict.get(0, ""):
             yield (0, new_memo)
-        for apptix, le in self.le_dict.iteritems():
+        for apptix, le in self.le_dict.items():
             memo = self.memo_dict.get(apptix, "")
-            new_memo = unicode(le.text().toUtf8())
+            new_memo = str(le.text())
             if new_memo != memo:
                 yield (apptix, new_memo)
 
@@ -145,6 +144,7 @@ class AppointmentsMemoDialog(ExtendableDialog):
         new_memos = list(self.changed_memos)
         if new_memos:
             appointments.setMemos(self.date, new_memos)
+
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)

@@ -1,26 +1,25 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 functions to open a course, close a course, or check if one is needed.
@@ -62,7 +61,7 @@ def newCourseNeeded(om_gui):
 
     if om_gui.pt.newer_course_found:
         om_gui.ui.actionFix_Locked_New_Course_of_Treatment.setEnabled(True)
-        message = u"<p>%s<br />%s</p><hr /><em>%s</em>" % (
+        message = "<p>%s<br />%s</p><hr /><em>%s</em>" % (
             _("It looks as if another user is "
               "starting a course of treatment"),
             _("Please allow this other user to commit their changes"
@@ -78,7 +77,7 @@ def newCourseNeeded(om_gui):
                     om_gui.pt.treatment_course.accd)
         return False
     else:
-        om_gui.advise(u"<p>%s</p>" % _(
+        om_gui.advise("<p>%s</p>" % _(
                       "unable to plan or perform treatment if"
                       " the patient does not have an active course"), 1)
 
@@ -300,7 +299,7 @@ def fix_zombied_course(om_gui):
     if QtGui.QMessageBox.question(
         om_gui,
         _("question"),
-        u"%s<hr /><b>%s</b>" % (message, question),
+        "%s<hr /><b>%s</b>" % (message, question),
         QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
             QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
 

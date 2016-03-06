@@ -78,7 +78,7 @@ clean_tmp:
 	rm -rf $(TMP_DIR)*
 
 resources:
-	pyrcc4 -py2 $(HEAD)/src/openmolar/resources/resources.qrc > $(HEAD)/src/openmolar/qt4gui/resources_rc.py
+	pyrcc4 -py3 $(HEAD)/src/openmolar/resources/resources.qrc > $(HEAD)/src/openmolar/qt4gui/resources_rc.py
 
 ui_files:
 	./om_pyuic4.py

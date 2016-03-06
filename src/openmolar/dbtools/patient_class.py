@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -518,7 +517,8 @@ class patient(object):
                 cse_accd = localsettings.currentDay()
             else:
                 cse_accd = self.treatment_course.accd
-            for table in reversed(localsettings.FEETABLES.tables.values()):
+            for table in reversed(
+                    list(localsettings.FEETABLES.tables.values())):
                 LOGGER.debug(
                     "checking feescale %s to see if suitable a feetable",
                     table)
@@ -840,14 +840,14 @@ class patient(object):
         '''
         name and serialno
         '''
-        return u"%s - %s" % (self.name, self.serialno)
+        return "%s - %s" % (self.name, self.serialno)
 
     @property
     def name(self):
         '''
         patients name in a readable form
         '''
-        return u"%s %s %s" % (self.title, self.fname, self.sname)
+        return "%s %s %s" % (self.title, self.fname, self.sname)
 
     @property
     def psn(self):
@@ -958,7 +958,7 @@ class patient(object):
         cls = self.__class__
         snapshot = cls.__new__(cls)
         memo[id(self)] = snapshot
-        for att_, val_ in self.__dict__.items():
+        for att_, val_ in list(self.__dict__.items()):
             if att_ in self.COPIED_ATTRIBUTES:
                 setattr(snapshot, att_, deepcopy(val_, memo))
         self.dbstate = snapshot
@@ -1088,15 +1088,15 @@ if __name__ == "__main__":
     pt = patient(serialno)
     if verbose:
         for att in sorted(pt.__dict__.keys()):
-            print "%s '%s'" % (att.ljust(20), pt.__dict__[att])
+            print("%s '%s'" % (att.ljust(20), pt.__dict__[att]))
 
     localsettings.loadFeeTables()
-    print pt.fee_table
+    print(pt.fee_table)
 
     pt.take_snapshot()
-    print list(pt.tx_hash_tups)
+    print(list(pt.tx_hash_tups))
 
-    print pt.treatment_course
-    print pt.ageYears
-    print pt.age_course_start
-    print pt.under_capitation
+    print(pt.treatment_course)
+    print(pt.ageYears)
+    print(pt.age_course_start)
+    print(pt.under_capitation)

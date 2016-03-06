@@ -1,39 +1,30 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
-from types import IntType
 from PyQt4 import QtCore, QtGui
-
-if __name__ == "__main__":
-    import os
-    import sys
-    sys.path.insert(0, os.path.abspath("../../../"))
-
 
 from openmolar.qt4gui.customwidgets.money_line_edit import MoneyLineEdit
 from openmolar.qt4gui.customwidgets.currency_label import CurrencyLabel
-
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 
 
@@ -163,8 +154,12 @@ class PaymentDialog(ExtendableDialog):
 
         self.insertWidget(frame)
 
-        for widg in (self.cash_le, self.cheque_le, self.card_le,
-                     self.cash_sundries_le, self.cheque_sundries_le, self.card_sundries_le):
+        for widg in (self.cash_le,
+                     self.cheque_le,
+                     self.card_le,
+                     self.cash_sundries_le,
+                     self.cheque_sundries_le,
+                     self.card_sundries_le):
             widg.textEdited.connect(self.update_totals)
 
         self.cash_but.clicked.connect(self.cash_but_clicked)
@@ -177,8 +172,8 @@ class PaymentDialog(ExtendableDialog):
         self.misc_payment_widget.updated.connect(self.update_totals)
 
     def int_to_decimal(self, i):
-        assert isinstance(i, IntType), "input must be an integer, not %s, (%s)" % (
-            i, type(i))
+        assert isinstance(i, int), \
+            "input must be an integer, not %s, (%s)" % (i, type(i))
         ss = str(i)
         negative = "-" if "-" in ss else ""
         ss = ss.strip("-")
@@ -307,6 +302,7 @@ class PaymentDialog(ExtendableDialog):
             self.card_but.setEnabled(False)
 
         self.misc_payment_widget.hide_treatment(hide)
+
 
 if __name__ == "__main__":
     from gettext import gettext as _

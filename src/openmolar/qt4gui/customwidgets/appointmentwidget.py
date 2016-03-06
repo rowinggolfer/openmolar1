@@ -1,5 +1,4 @@
 #! /usr/bin/python
-# -*- coding: utf-8 -*-
 
 # ########################################################################### #
 # #                                                                         # #
@@ -26,8 +25,6 @@
 provides one class - the appointment widget
 the canvas is a subclass of this
 '''
-
-from __future__ import division
 
 import datetime
 from functools import partial
@@ -248,7 +245,7 @@ class AppointmentWidget(QtGui.QFrame):
         if not self.memo_lineEdit.hasFocus():
             self.new_memo_signal.emit(
                 self.dentist,
-                unicode(self.memo_lineEdit.text().toUtf8(), "utf8", "ignore")
+                str(self.memo_lineEdit.text(), "utf8", "ignore")
             )
 
     def signals(self):
@@ -863,12 +860,12 @@ class AppointmentCanvas(QtGui.QWidget):
 
             if dl.block:
                 reason = str(
-                    dl.comboBox.currentText().toAscii())[:30]
+                    dl.comboBox.currentText())[:30]
                 args = (start, finish, adjstart, adjfinish,
                         localsettings.apptix.get(self.pWidget.dentist), reason)
                 self.pWidget.block_empty_slot_signal.emit(args)
             else:
-                reason = dl.reason_comboBox.currentText().toAscii()
+                reason = dl.reason_comboBox.currentText()
                 self.pWidget.appt_empty_slot_signal.emit(
                     (start, finish, adjstart, adjfinish,
                      localsettings.apptix.get(self.pWidget.dentist),
@@ -905,7 +902,7 @@ class AppointmentCanvas(QtGui.QWidget):
 
         # DRAW HORIZONTAL LINES AND TIMES
 
-        for currentSlot in xrange(self.slotNo):
+        for currentSlot in range(self.slotNo):
             textneeded = True if currentSlot % self.textDetail == 0 else False
             y = currentSlot * self.slotHeight
             # code to check if within the appointment hours
@@ -1120,7 +1117,7 @@ if __name__ == "__main__":
     from openmolar.dbtools.brief_patient import BriefPatient
 
     def clicktest(*args):
-        print "clicktest", args
+        print("clicktest", args)
 
     import sys
     localsettings.initiate()
@@ -1139,7 +1136,7 @@ if __name__ == "__main__":
     form.setEndTime("1430")
     form.apptix = 5
 
-    print'''
+    print('''
     created a calendar with start %d minutes past midnight
                 1st appointment %d minutes past midnight
             appointments finish %d minutes past midnight
@@ -1150,7 +1147,7 @@ if __name__ == "__main__":
         form.canvas.endTime,
         form.canvas.dayEndTime,
         form.canvas.slotNo,
-        form.canvas.slotDuration)
+        form.canvas.slotDuration))
 
     form.setCurrentTime("945")
     form.clearAppts()

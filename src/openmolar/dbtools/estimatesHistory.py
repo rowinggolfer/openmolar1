@@ -1,37 +1,32 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
+
+from gettext import gettext as _
+from collections import OrderedDict
 
 from openmolar.settings import localsettings
 from openmolar.connect import connect
 from openmolar.ptModules.estimates import Estimate, TXHash
-
-try:
-    from collections import OrderedDict
-except ImportError:
-    # OrderedDict only came in python 2.7
-    LOGGER.warning("using openmolar.backports for OrderedDict")
-    from openmolar.backports import OrderedDict
 
 QUERY = '''SELECT newestimates.ix, number, itemcode, description,
 fee, ptfee, feescale, csetype, dent, est_link2.completed, tx_hash, courseno
@@ -85,7 +80,7 @@ def getEsts(sno, courseno=None):
 
         estimates[ix] = est
 
-    return estimates.values()
+    return list(estimates.values())
 
 
 def details(sno):
@@ -122,8 +117,9 @@ def details(sno):
 
     return html
 
+
 if __name__ == "__main__":
     localsettings.initiate()
-    print'<html><body>'
-    print details(707).encode("ascii", "replace")
-    print "</body></html>"
+    print('<html><body>')
+    print(details(707).encode("ascii", "replace"))
+    print("</body></html>")

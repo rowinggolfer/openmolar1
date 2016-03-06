@@ -1,28 +1,28 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 import copy
+from gettext import gettext as _
 import logging
 from PyQt4 import QtGui, QtCore
 
@@ -113,17 +113,20 @@ class EstimateEditDialog(ExtendableDialog):
         overwrite BaseDialog method
         '''
         role = self.button_box.buttonRole(but)
-        if role == QtGui.QDialogButtonBox.ApplyRole and QtGui.QMessageBox.question(
-            self, _("Confirm"), _("Apply Changes?"),
-            QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
-            QtGui.QMessageBox.Cancel
-        ) == QtGui.QMessageBox.Cancel:
+        if (role == QtGui.QDialogButtonBox.ApplyRole and
+                QtGui.QMessageBox.question(
+                    self,
+                    _("Confirm"),
+                    _("Apply Changes?"),
+                    QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
+                    QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel):
             return
         ExtendableDialog._clicked(self, but)
 
     def update_db(self):
         estimates.apply_changes(
             self.patient, self.orig_ests, self.patient.estimates)
+
 
 if __name__ == "__main__":
 
@@ -132,4 +135,4 @@ if __name__ == "__main__":
     dl = EstimateEditDialog(11956, 29749)
     if dl.exec_():
         dl.update_db()
-        print dl.patient.estimates
+        print(dl.patient.estimates)

@@ -1,59 +1,49 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
-from functools import partial
+from collections import OrderedDict
+from gettext import gettext as _
 import logging
 import re
 import os
 import sys
-from gettext import gettext as _
 from xml.dom import minidom
 
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtXmlPatterns import QXmlSchemaValidator, QXmlSchema
 
 from openmolar.settings import localsettings
-from openmolar.qt4gui import resources_rc
 
 from openmolar.qt4gui.feescale_editor.feescale_xml_editor import XMLEditor
 from openmolar.qt4gui.feescale_editor.feescale_parser import MessageHandler
 
 from openmolar.qt4gui.phrasebook.phrasebook_model import PhrasesListModel
+from openmolar.dbtools.phrasebook import PHRASEBOOKS
 
 LOGGER = logging.getLogger("openmolar")
 
 STYLESHEET = os.path.join(
     localsettings.resources_location, "phrasebook", "phrasebook.xsd")
-
-try:
-    from collections import OrderedDict
-except ImportError:
-    # OrderedDict only came in python 2.7
-    LOGGER.warning("using openmolar.backports for OrderedDict")
-    from openmolar.backports import OrderedDict
-
-from openmolar.dbtools.phrasebook import PHRASEBOOKS
 
 
 class ControlPanel(QtGui.QListView):
@@ -209,14 +199,15 @@ class PhrasebookEditor(QtGui.QMainWindow):
         called when application closes.
         '''
         if self.is_dirty:
-            message = u"<b>%s</b><hr />%s" % (
+            message = "<b>%s</b><hr />%s" % (
                 _("WARNING - you have unsaved changes!"),
                 _("Are you sure you want to quit?"))
 
-            if QtGui.QMessageBox.question(self, _("Confirm"),
-                                          message,
-                                          QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
-                                          QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+            if QtGui.QMessageBox.question(
+                    self, _("Confirm"),
+                    message,
+                    QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
+                    QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
                 event.ignore()
                 return
         self.closed_signal.emit()
@@ -261,8 +252,10 @@ class PhrasebookEditor(QtGui.QMainWindow):
                 "%s - %s" % (self.window_title, ix))
             self.update_index()
         else:
-            QtGui.QMessageBox.information(self, _("Information"),
-                                          _("You appear to have no phrasebooks installed in your database"))
+            QtGui.QMessageBox.information(
+                self, _("Information"),
+                _("You appear to have no phrasebooks "
+                  "installed in your database"))
 
     def update_index(self):
         self.control_panel.set_xml(self.text)
@@ -273,7 +266,7 @@ class PhrasebookEditor(QtGui.QMainWindow):
 
     @property
     def text(self):
-        return unicode(self.text_edit.text().toUtf8())
+        return str(self.text_edit.text())
 
     def refactor(self):
         if not self.check_parseable(show_message=False):
@@ -291,7 +284,7 @@ class PhrasebookEditor(QtGui.QMainWindow):
                 self.advise(_("Phrasebook is well formed"), 1)
             return True
         except Exception as exc:
-            self.advise(u"<b>%s</b><hr />%s" % (
+            self.advise("<b>%s</b><hr />%s" % (
                 _("Phrasebook is not well formed"), exc.message), 2)
         return False
 
@@ -305,7 +298,7 @@ class PhrasebookEditor(QtGui.QMainWindow):
     def check_xml_validity(self, xml):
         message_handler = MessageHandler()
 
-        LOGGER.debug("checking phrasebook xml against %s"% STYLESHEET)
+        LOGGER.debug("checking phrasebook xml against %s", STYLESHEET)
         f = QtCore.QFile(STYLESHEET)
         f.open(QtCore.QIODevice.ReadOnly)
         schema = QXmlSchema()
@@ -355,18 +348,20 @@ class PhrasebookEditor(QtGui.QMainWindow):
             self.advise(_("Everyone has a phrasebook already!"), 2)
             return
         dl = QtGui.QInputDialog(self)
-        choice, result = dl.getItem(self, _("Choose"),
-                                    _("A phrasebook for which clinician?"), sorted(offer_list))
+        choice, result = dl.getItem(
+            self, _("Choose"),
+            _("A phrasebook for which clinician?"), sorted(offer_list))
         if result:
-            ix = localsettings.ops_reverse[str(choice.toAscii())]
+            ix = localsettings.ops_reverse[str(choice)]
             PHRASEBOOKS.create_book(ix)
             self.load_phrasebooks()
 
     def apply_changes(self):
-        if QtGui.QMessageBox.question(self, _("confirm"),
-                                      _("commit all local files to database?"),
-                                      QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel
-                                      ) == QtGui.QMessageBox.Ok:
+        if QtGui.QMessageBox.question(
+                self, _("confirm"),
+                _("commit all local files to database?"),
+                QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel
+                ) == QtGui.QMessageBox.Ok:
             no_ = 0
             for te in self.text_editors:
                 if not te.is_dirty:
@@ -374,8 +369,8 @@ class PhrasebookEditor(QtGui.QMainWindow):
                 new_xml = te.text()
                 result, message = self.check_xml_validity(new_xml)
                 if not result:
-                    self.advise("%s %s %s" % (
-                                _("Phrasebook"), te.db_index, _("is not valid")), 2)
+                    self.advise("%s %s %s" % (_("Phrasebook"), te.db_index,
+                                              _("is not valid")), 2)
                     continue
                 result = PHRASEBOOKS.update_database(new_xml, te.db_index)
                 if result:

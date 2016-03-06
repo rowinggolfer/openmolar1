@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -134,7 +133,7 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
         if itemcode != "-----":
             return itemcode, table
         LOGGER.debug("%s %s not matched by %s" % (att, shortcut, table))
-        for alt_table in localsettings.FEETABLES.tables.itervalues():
+        for alt_table in localsettings.FEETABLES.tables.values():
             if alt_table == table or not alt_table.is_current:
                 continue
             alt_code = alt_table.getToothCode(att, shortcut)
@@ -142,7 +141,7 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
                 if QtGui.QMessageBox.question(
                     om_gui,
                     _("Confirm"),
-                    u"<p><b>%s %s</b> %s.</p><p>%s <em>%s</em></p><hr />%s" % (
+                    "<p><b>%s %s</b> %s.</p><p>%s <em>%s</em></p><hr />%s" % (
                         att, shortcut,
                         _(
                             "was not found in the patient's default feescale"),
@@ -161,23 +160,21 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
         if itemcode != "-----":
             return itemcode, table
         LOGGER.debug("%s not matched by %s" % (usercode, table))
-        for alt_table in localsettings.FEETABLES.tables.itervalues():
+        for alt_table in localsettings.FEETABLES.tables.values():
             if alt_table == table or not alt_table.is_current:
                 continue
             alt_code = alt_table.getItemCodeFromUserCode(usercode)
             if alt_code != "-----":
                 if QtGui.QMessageBox.question(
-                    om_gui,
-                    _("Confirm"),
-                    u"<p><b>%s</b> %s.</p><p>%s <em>%s</em></p><hr />%s" % (
-                        usercode,
-                        _(
-                            "was not found in the patient's default feescale"),
-                        _(
-                            "It is matched in another feescale -"),
-                        alt_table.briefName,
-                        _("Shall we add this item from this feescale?")),
-                    QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                        om_gui, _("Confirm"),
+                        "<p><b>%s</b> %s.</p><p>%s <em>%s</em></p><hr />%s" % (
+                            usercode,
+                            _("was not found in the patient's "
+                              "default feescale"),
+                            _("It is matched in another feescale -"),
+                            alt_table.briefName,
+                            _("Shall we add this item from this feescale?")),
+                        QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
                         QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
                     return alt_code, alt_table
         return itemcode, table
@@ -234,7 +231,7 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
     pt.estimates.append(est)
 
     if itemcode == "-----":
-        om_gui.advise(u"%s - %s <b>%s</b><br />%s.<hr />%s" % (
+        om_gui.advise("%s - %s <b>%s</b><br />%s.<hr />%s" % (
                       _("WARNING"),
                       _("treatment"),
                       usercode,
@@ -357,7 +354,7 @@ def customAdd(om_gui, description=None):
         dl.description_lineEdit.setText(description)
     if Dialog.exec_():
         no = dl.number_spinBox.value()
-        descr = unicode(dl.description_lineEdit.text(), "ascii", "ignore")
+        descr = str(dl.description_lineEdit.text(), "ascii", "ignore")
 
         if descr == "":
             descr = "??"
@@ -551,8 +548,8 @@ def fromFeeTable(om_gui, fee_item, sub_index):
 
     def confirm_selected_table():
         '''
-        check that the user is happy to use the suggested table, not the current
-        one. returns the selected table, or None to keep the current.
+        check that the user is happy to use the suggested table, not the
+        current one. returns the selected table, or None to keep the current.
         '''
         table = pt.fee_table
         if fee_item.table == table:
@@ -682,7 +679,7 @@ def fromFeeTable(om_gui, fee_item, sub_index):
                                   fee_item.itemcode, cset, descr, fee,
                                   pt_fee, table)
 
-    om_gui.advise(u"<b>%s</b> %s (%s)" % (
+    om_gui.advise("<b>%s</b> %s (%s)" % (
         fee_item.description, _("added to estimate"), _("from feescale")), 1)
 
     om_gui.update_plan_est()
@@ -919,11 +916,12 @@ def remove_treatments_from_plan_and_est(om_gui, treatments, completed=False):
             affected_ests = list(om_gui.pt.ests_from_hash(tx_hash))
 
             if not affected_ests:
-                om_gui.advise(u"%s '%s' %s<hr />%s" % (
-                              _("Couldn't find"),
-                              "%s%s%s%s" % (courseno, att, n_txs, shortcut),
-                              _("in the patient's estimate"),
-                              _("This Shouldn't Happen!")), 2)
+                om_gui.advise(
+                    "%s '%s' %s<hr />%s" % (
+                        _("Couldn't find"),
+                        "%s%s%s%s" % (courseno, att, n_txs, shortcut),
+                        _("in the patient's estimate"),
+                        _("This Shouldn't Happen!")), 2)
 
             for est in affected_ests:
                 LOGGER.debug("removing reference to %s in estimate %s" % (
@@ -988,10 +986,8 @@ def remove_estimate_item(om_gui, est_item):
 
     if not found:
         LOGGER.debug("NO MATCHING hash FOUND!")
-        om_gui.advise(
-            u"%s - %s" % (_("couldn't pass on delete message for"),
-                          est_item.description),
-            1)
+        om_gui.advise("%s - %s" % (
+            _("couldn't pass on delete message for"), est_item.description), 1)
 
 
 def recalculate_estimate(om_gui):
@@ -1078,7 +1074,7 @@ def reverse_txs(om_gui, treatments, confirm_multiples=True):
         treatments = dl.uncompleted_treatments
         deleted_treatments = dl.deleted_treatments
     else:
-        deleted_treatments = []
+        deleted_treatments = iter([])
 
     for att, treatment in treatments:
         completed = pt.treatment_course.__dict__["%scmp" % att]
@@ -1086,7 +1082,7 @@ def reverse_txs(om_gui, treatments, confirm_multiples=True):
         treat = treatment.strip(" ")
         count = completed.split(" ").count(treat)
         LOGGER.debug(
-            "creating tx_hash using %s %s %s" % (att, count, treat))
+            "creating tx_hash using %s %s %s", att, count, treat)
         hash_ = localsettings.hash_func(
             "%s%s%s%s" %
             (courseno, att, count, treat))
@@ -1127,7 +1123,7 @@ def complete_txs(om_gui, treatments, confirm_multiples=True):
         treatments = dl.completed_treatments
         deleted_treatments = dl.deleted_treatments
     else:
-        deleted_treatments = []
+        deleted_treatments = iter([])
 
     for att, treatment in treatments:
         existingcompleted = pt.treatment_course.__dict__["%scmp" % att]
@@ -1136,7 +1132,7 @@ def complete_txs(om_gui, treatments, confirm_multiples=True):
         treat = treatment.strip(" ")
         count = newcompleted.split(" ").count(treat)
         LOGGER.debug(
-            "creating tx_hash using %s %s %s" % (att, count, treat))
+            "creating tx_hash using %s %s %s", att, count, treat)
         hash_ = localsettings.hash_func(
             "%s%s%s%s" %
             (courseno, att, count, treat))
@@ -1212,8 +1208,10 @@ def tx_hash_complete(om_gui, tx_hash):
                         "%s %s\n" % (_("Completed"), estimate.description))
 
     if not found:
-        msg = "This item '%s' was not found in the patient's estimate" % tx_hash
-        om_gui.advise("<p>%s</p><hr />This shouldn't happen!" % msg, 2)
+        om_gui.advise("<p>%s '%s' %s</p><hr />%s" % (
+            _("This item"), tx_hash,
+            _("was not found in the patient's estimate"),
+            _("This shouldn't happen!")), 2)
         return
 
     om_gui.ui.toothPropsWidget.setTooth(
@@ -1234,7 +1232,7 @@ def tx_hash_reverse(om_gui, tx_hash):
     pt = om_gui.pt
     found = False
     for hash_, att, treat_code in pt.tx_hash_tups:
-        LOGGER.debug("comparing %s with %s" % (hash_, tx_hash))
+        LOGGER.debug("comparing %s with %s", hash_, tx_hash)
         if hash_ == tx_hash:
             found = True
 

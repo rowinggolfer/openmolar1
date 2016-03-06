@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -22,10 +21,10 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from __future__ import division
 import calendar
 import datetime
 from functools import partial
+from gettext import gettext as _
 import sys
 
 from PyQt4 import QtGui, QtCore
@@ -222,7 +221,7 @@ class monthCalendar(QtGui.QWidget):
         determine the width needed to display the public hols
         '''
         self.bankHolColwidth = 20
-        for value in self.headingdata.values():
+        for value in list(self.headingdata.values()):
             width = self.fm.width("%s  " % value)
             if width > self.bankHolColwidth:
                 self.bankHolColwidth = width
@@ -250,7 +249,7 @@ class monthCalendar(QtGui.QWidget):
 
         for ix in self.dents:
             memo = ""
-            for dentDict in self.data.values():
+            for dentDict in list(self.data.values()):
                 if ix in dentDict:
                     dent = dentDict.get(ix)
                     if dent:
@@ -641,7 +640,8 @@ class yearCalendar(QtGui.QWidget):
                 action.triggered.connect(
                     partial(self.memo_dialog_signal.emit, self.selectedDate))
                 action2.triggered.connect(
-                    partial(self.public_holiday_signal.emit, self.selectedDate))
+                    partial(self.public_holiday_signal.emit,
+                            self.selectedDate))
 
                 menu.setDefaultAction(action)
                 menu.exec_(event.globalPos())
@@ -851,10 +851,10 @@ class yearCalendar(QtGui.QWidget):
 if __name__ == "__main__":
 
     def signal_trap(*args):
-        print cal.selectedDate()
+        print(cal.selectedDate())
 
     def week_signal_trap(*args):
-        print "week - %s" % wcal.selectedDate()
+        print("week - %s" % wcal.selectedDate())
 
     app = QtGui.QApplication(sys.argv)
     cal = controlCalendar()

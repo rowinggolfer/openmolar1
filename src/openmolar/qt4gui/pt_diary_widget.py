@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -218,10 +217,9 @@ class PtDiaryWidget(QtGui.QWidget):
         dl.makeNow = False
 
         # -add active appointment dentists to the combobox
-        dents = localsettings.apptix.keys()
+        dents = list(localsettings.apptix.keys())
         for dent in dents:
-            s = QtCore.QString(dent)
-            dl.practix_comboBox.addItem(s)
+            dl.practix_comboBox.addItem(str(dent))
         # -and select the patient's dentist
         if self.pt.dnt1 in localsettings.apptix_reverse:
             if localsettings.apptix_reverse[self.pt.dnt1] in dents:
@@ -232,7 +230,7 @@ class PtDiaryWidget(QtGui.QWidget):
 
         # -add appointment treatment types
         for apptType in localsettings.apptTypes:
-            s = QtCore.QString(apptType)
+            s = str(apptType)
             dl.trt1_comboBox.addItem(s)
             # -only offer exam as treatment1
             if apptType != "EXAM":
@@ -273,7 +271,7 @@ class PtDiaryWidget(QtGui.QWidget):
                     code1 = dl.trt2_comboBox.currentText()
                     code2 = dl.trt3_comboBox.currentText()
                     # -memo
-                    note = str(dl.lineEdit.text().toAscii())
+                    note = str(dl.lineEdit.text())
 
                     # TODO - add datespec and joint appointment options
 
@@ -355,22 +353,20 @@ class PtDiaryWidget(QtGui.QWidget):
         '''
         hours, mins = int(hourstext), int(minstext)
         if hours == 1:
-            lengthText = "1 hour "
+            lengthText = "1 %s " % _("hour")
         elif hours > 1:
-            lengthText = "%d hours " % hours
+            lengthText = "%d %s " % (hours, _("hours"))
         else:
             lengthText = ""
         if mins > 0:
-            lengthText += "%d minutes" % mins
+            lengthText += "%d %s" % (mins, _("minutes"))
         lengthText = lengthText.strip(" ")
         try:
-            dl.apptlength_comboBox.insertItem(0, QtCore.QString(lengthText))
+            dl.apptlength_comboBox.insertItem(0, lengthText)
             dl.apptlength_comboBox.setCurrentIndex(0)
-            return
-        except Exception as e:
-            print "exception in addApptLengthFunction", e
+        except Exception:
+            LOGGER.exception("addApptLengthFunction")
             self.advise("unable to set the length of the appointment", 1)
-            return
 
     def modifyAppt_clicked(self):
         '''
@@ -402,12 +398,12 @@ class PtDiaryWidget(QtGui.QWidget):
             dl.setupUi(Dialog)
             dl.makeNow = False
 
-            dents = localsettings.apptix.keys()
+            dents = list(localsettings.apptix.keys())
             for dent in dents:
-                s = QtCore.QString(dent)
+                s = str(dent)
                 dl.practix_comboBox.addItem(s)
             for apptType in localsettings.apptTypes:
-                s = QtCore.QString(apptType)
+                s = str(apptType)
                 dl.trt1_comboBox.addItem(s)
                 if apptType != "EXAM":
                     dl.trt2_comboBox.addItem(s)
@@ -455,7 +451,7 @@ class PtDiaryWidget(QtGui.QWidget):
                 code0 = dl.trt1_comboBox.currentText()
                 code1 = dl.trt2_comboBox.currentText()
                 code2 = dl.trt3_comboBox.currentText()
-                note = str(dl.lineEdit.text().toAscii())
+                note = str(dl.lineEdit.text())
 
                 if self.pt.cset == "":
                     cst = 32
@@ -497,7 +493,7 @@ class PtDiaryWidget(QtGui.QWidget):
         # self.updateHiddenNotesLabel()
 
     def memo_edited(self):
-        self.pt.set_appt_memo(unicode(self.ui.appt_memo_lineEdit.text()))
+        self.pt.set_appt_memo(str(self.ui.appt_memo_lineEdit.text()))
 
     def pt_diary_treeview_doubleclicked(self, index):
         LOGGER.debug("pt diary double clicked %s", index)
@@ -511,7 +507,7 @@ class PtDiaryWidget(QtGui.QWidget):
 
     def execute_menu(self, index, point):
         appt = self.diary_model.data(index, QtCore.Qt.UserRole)
-        if appt == QtCore.QVariant():
+        if appt == None:
             return
         qmenu = QtGui.QMenu(self)
         modify_action = QtGui.QAction(_("Modify Appointment"), self)
@@ -559,6 +555,7 @@ class PtDiaryWidget(QtGui.QWidget):
             self.show_context_menu)
         self.ui.pt_diary_treeView.doubleClicked.connect(
             self.pt_diary_treeview_doubleclicked)
+
 
 class _TestMainWindow(QtGui.QMainWindow):
     def __init__(self, parent=None):

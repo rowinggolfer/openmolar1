@@ -1,27 +1,27 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
+from gettext import gettext as _
 import logging
 
 from openmolar import connect
@@ -234,8 +234,8 @@ class TreatmentCourse(object):
                 message += "   %s,%s\n" % (att, value)
         return message
 
-    def __cmp__(self, other):
-        return cmp(unicode(self), unicode(other))
+    def __eq__(self, other):
+        return str(self) == str(other)
 
     def _non_tooth_items(self, suffix="pl"):
         for att in CURRTRT_NON_TOOTH_ATTS:
@@ -271,7 +271,7 @@ class TreatmentCourse(object):
 
     @property
     def underTreatment(self):
-        return not self.accd in ("", None) and self.cmpd in ("", None)
+        return self.accd not in ("", None) and self.cmpd in ("", None)
 
     @property
     def max_tx_courseno(self):
@@ -336,7 +336,7 @@ class TreatmentCourse(object):
     @property
     def planned_tx_hash_tups(self):
         for tup in self._get_tx_hashes():
-            if not tup in self.completed_tx_hash_tups:
+            if tup not in self.completed_tx_hash_tups:
                 yield tup
 
     def _get_tx_hashes(self, completed_only=False):
@@ -424,7 +424,8 @@ class TreatmentCourse(object):
                 return "1 %s" % _("day")
             return "%s %s" % (days, _("days"))
 
-    def to_html(self, allow_edit=False, days_elapsed=None, completed_only=False):
+    def to_html(self, allow_edit=False, days_elapsed=None,
+                completed_only=False):
         def sorted_work(work):
             items = work.split(" ")
             return " ".join(sorted([item for item in items if item != ""]))
@@ -465,7 +466,7 @@ class TreatmentCourse(object):
 
         attributes = ("cmp",) if completed_only else ("pl", "cmp")
 
-        #-plan row.
+        # plan row.
         for planned in attributes:
             rows = []
 
@@ -540,16 +541,17 @@ class TreatmentCourse(object):
         html += '</table>\n'
         return html
 
+
 if __name__ == "__main__":
     '''
     testing stuff
     '''
     tc = TreatmentCourse(14469, 45869)
-    print tc
+    print(tc)
 
-    print tc.non_tooth_plan_items
-    print tc.non_tooth_cmp_items
-    print tc.all_txs("ur5")
+    print(tc.non_tooth_plan_items)
+    print(tc.non_tooth_cmp_items)
+    print(tc.all_txs("ur5"))
 
     f = open("/home/neil/out.html", "w")
     f.write(tc.to_html())

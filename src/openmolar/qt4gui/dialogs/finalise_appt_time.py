@@ -1,28 +1,30 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
-from PyQt4 import QtGui, QtCore
+from gettext import gettext as _
+
+from PyQt4 import QtGui
+
 from openmolar.qt4gui.compiled_uis import Ui_finalise_appt_time
 from openmolar.settings import localsettings
 
@@ -49,12 +51,11 @@ class ftDialog(Ui_finalise_appt_time.Ui_Dialog, QtGui.QDialog):
         self.maxtime = self.starttime + slotLength
         self.length = apptLength
         self.minslotlength = 5
-        self.selectedTime = slotstarttime  # this value is what the user chooses
+        self.selectedTime = slotstarttime  # the value the user chooses
         self.verticalSlider.setMinimum(self.starttime // self.minslotlength)
         self.verticalSlider.setMaximum(
             (self.maxtime - self.length) // self.minslotlength)
-        QtCore.QObject.connect(self.verticalSlider,
-                               QtCore.SIGNAL("valueChanged(int)"), self.updateLabels)
+        self.verticalSlider.valueChanged.connect(self.updateLabels)
         self.updateLabels(self.verticalSlider.value())
 
     def updateLabels(self, arg):
@@ -62,11 +63,11 @@ class ftDialog(Ui_finalise_appt_time.Ui_Dialog, QtGui.QDialog):
         minL8r = (self.verticalSlider.maximum() - arg) * self.minslotlength
         self.selectedTime = localsettings.minutesPastMidnighttoPytime(
             self.starttime + minB4)
-        self.minutesB4label.setText("%d minutes" % minB4)
+        self.minutesB4label.setText("%d %s" % (minB4, _("Minutes")))
         self.apptTimelabel.setText("%s - %s" % (
             localsettings.humanTime(arg * self.minslotlength),
             localsettings.humanTime(arg * self.minslotlength + self.length)))
-        self.minutesL8Rlabel.setText("%d minutes" % minL8r)
+        self.minutesL8Rlabel.setText("%d %s" % (minL8r, _("Minutes")))
 
 
 if __name__ == "__main__":
@@ -75,7 +76,7 @@ if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
     Dialog = ftDialog(datetime.time(8, 30), 60, 15)
     if Dialog.exec_():
-        print "accepted - selected appointment is (%s, %d)" % (
-            Dialog.selectedTime, Dialog.length)
+        print("accepted - selected appointment is (%s, %d)" % (
+            Dialog.selectedTime, Dialog.length))
     else:
-        print "rejected"
+        print("rejected")

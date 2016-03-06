@@ -1,39 +1,33 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
-from PyQt4 import QtGui, QtCore
+from collections import OrderedDict
+from gettext import gettext as _
 import types
 from xml.dom import minidom
 
+from PyQt4 import QtGui, QtCore
 from openmolar.dbtools.phrasebook import PHRASEBOOKS
-
-try:
-    from collections import OrderedDict
-except ImportError:
-    # OrderedDict only came in python 2.7
-    print "using openmolar.backports for OrderedDict"
-    from openmolar.backports import OrderedDict
 
 
 class shadePicker(QtGui.QFrame):
@@ -58,8 +52,7 @@ class shadePicker(QtGui.QFrame):
                                        QtGui.QSizePolicy.Minimum)
         layout.addItem(spacerItem)
 
-        QtCore.QObject.connect(self.comboBox,
-                               QtCore.SIGNAL("currentIndexChanged(int)"), self.slot)
+        self.comboBox.currentIndexChanged.connect(self.slot)
 
     def slot(self, index):
         self.cb.setChecked(True)
@@ -163,7 +156,7 @@ class PhraseBookDialog(QtGui.QDialog):
                     layout.addStretch()
                 elif phrase.hasAttribute("sub_heading"):
                     text = phrase.firstChild.data
-                    label = QtGui.QLabel(u"<b>%s</b>" % text)
+                    label = QtGui.QLabel("<b>%s</b>" % text)
                     layout.addWidget(label)
                 else:
                     text = phrase.firstChild.data
@@ -190,7 +183,7 @@ class PhraseBookDialog(QtGui.QDialog):
     @property
     def selectedPhrases(self):
         retlist = []
-        for cb, value in self.dict.iteritems():
+        for cb, value in self.dict.items():
             if cb.isChecked():
                 if isinstance(value, types.MethodType):
                     text = value()
@@ -199,10 +192,10 @@ class PhraseBookDialog(QtGui.QDialog):
                 retlist.append(text)
         return retlist
 
+
 if __name__ == "__main__":
-    from openmolar.qt4gui import resources_rc
     app = QtGui.QApplication([])
     dl = PhraseBookDialog()
     if dl.exec_():
-        print dl.selectedPhrases
+        print(dl.selectedPhrases)
     app.closeAllWindows()

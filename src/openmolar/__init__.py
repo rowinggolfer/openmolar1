@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -61,11 +60,11 @@ if lang:
     try:
         LOGGER.debug("trying to install your environment language %s", lang)
         lang1 = gettext.translation('openmolar', languages=[lang, ])
-        lang1.install(unicode=True)
+        lang1.install()
     except IOError:
         LOGGER.warning("%s not found, using default", lang)
-        gettext.install('openmolar', unicode=True)
+        gettext.install('openmolar')
 else:
     # - on windows.. os.environ.get("LANG") is None
     LOGGER.warning("no language environment found (windows?)")
-    gettext.install('openmolar', unicode=True)
+    gettext.install('openmolar')

@@ -1,5 +1,4 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
@@ -36,8 +35,8 @@ LOGGER = logging.getLogger("openmolar")
 
 ALL_MEDS_QUERY = 'select medication from medications'
 
-NEW_MED_QUERY = '''insert into medications (medication, warning) values (%s, %s)
-on duplicate key update medication=medication'''
+NEW_MED_QUERY = '''insert into medications (medication, warning)
+values (%s, %s) on duplicate key update medication=medication'''
 
 MH_QUERY = '''
 select ix, warning_card, medication_comments, allergies,
@@ -139,25 +138,25 @@ def html_history(sno):
                 _("MEDICATIONS"), meds_html[:-6])
 
         for key, value in (
-            (_("Warning Card"), mh.warning_card),
-            (_("Medication Comments"), mh.medication_comments),
-            (_("Allergies"), mh.allergies),
-            (_("Respiratory"), mh.respiratory),
-            (_("Heart"), mh.heart),
-            (_("Diabetes"), mh.diabetes),
-            (_("Arthritis"), mh.arthritis),
-            (_("Bleeding"), mh.bleeding),
-            (_("Infectious disease"), mh.infectious_disease),
-            (_("Endorcarditis"), mh.endocarditis),
-            (_("Liver"), mh.liver),
-            (_("Anaesthetic"), mh.anaesthetic),
-            (_("Join Replacement"), mh.joint_replacement),
-            (_("Heart Surgery"), mh.heart_surgery),
-            (_("Brain Surgery"), mh.brain_surgery),
-            (_("Hospitalised"), mh.hospital),
-            (_("CJD"), mh.cjd),
-            (_("OTHER"), mh.other),
-            (_("ALERT"), _("TRUE") if mh.alert else "")
+                (_("Warning Card"), mh.warning_card),
+                (_("Medication Comments"), mh.medication_comments),
+                (_("Allergies"), mh.allergies),
+                (_("Respiratory"), mh.respiratory),
+                (_("Heart"), mh.heart),
+                (_("Diabetes"), mh.diabetes),
+                (_("Arthritis"), mh.arthritis),
+                (_("Bleeding"), mh.bleeding),
+                (_("Infectious disease"), mh.infectious_disease),
+                (_("Endorcarditis"), mh.endocarditis),
+                (_("Liver"), mh.liver),
+                (_("Anaesthetic"), mh.anaesthetic),
+                (_("Join Replacement"), mh.joint_replacement),
+                (_("Heart Surgery"), mh.heart_surgery),
+                (_("Brain Surgery"), mh.brain_surgery),
+                (_("Hospitalised"), mh.hospital),
+                (_("CJD"), mh.cjd),
+                (_("OTHER"), mh.other),
+                (_("ALERT"), _("TRUE") if mh.alert else "")
         ):
             if value:
                 table += "<tr><th>%s</th><td>%s<td></tr>" % (
@@ -274,8 +273,8 @@ if __name__ == "__main__":
     mh_null = get_mh(0)
     mh_valid = get_mh(1)
 
-    print mh_null
+    print(mh_null)
     assert mh_null == MedHist(*NULLS), "null medical history shouldn't happen"
-    print mh_valid
+    print(mh_valid)
 
     insert_mh(1, mh_valid)

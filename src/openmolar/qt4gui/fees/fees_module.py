@@ -1,5 +1,4 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
@@ -26,8 +25,6 @@
 this module contains functions which were originally part of the maingui.py
 script, concerning fees, accounts and graphical feescale display.
 '''
-
-from __future__ import division
 
 from gettext import gettext as _
 import logging
@@ -162,10 +159,10 @@ def loadFeesTable(om_gui):
     loads the fee table
     '''
     try:
-        tableKeys = localsettings.FEETABLES.tables.keys()
+        tableKeys = list(localsettings.FEETABLES.tables.keys())
     except AttributeError:
         localsettings.loadFeeTables()
-        tableKeys = localsettings.FEETABLES.tables.keys()
+        tableKeys = list(localsettings.FEETABLES.tables.keys())
 
     om_gui.feestableLoaded = True
     i = om_gui.ui.chooseFeescale_comboBox.currentIndex()
@@ -180,7 +177,7 @@ def loadFeesTable(om_gui):
         om_gui.fee_models.append(model)
         om_gui.ui.chooseFeescale_comboBox.addItem(table.briefName)
 
-    text = u"%d %s" % (len(om_gui.fee_models), _("Fee Scales Available"))
+    text = "%d %s" % (len(om_gui.fee_models), _("Fee Scales Available"))
     om_gui.ui.feescales_available_label.setText(text)
 
     if i != -1:
@@ -337,7 +334,7 @@ def chooseFeescale(om_gui, i):
     try:
         om_gui.ui.feeScales_treeView.setModel(om_gui.fee_models[i])
     except IndexError:
-        print i, len(om_gui.fee_models)
+        print(i, len(om_gui.fee_models))
         om_gui.advise(_("fee table error"), 2)
 
 
@@ -412,26 +409,20 @@ def populateAccountsTable(om_gui):
                 if col == 0:
                     item.setText(localsettings.ops.get(d))
                 elif col in (5, 7, 8):
-                    item.setData(QtCore.Qt.DisplayRole,
-                                 QtCore.QVariant(QtCore.QDate(d)))
+                    item.setData(QtCore.Qt.DisplayRole, QtCore.QDate(d))
                 elif col == 12:
                     total += d
+                    # item.setText(localsettings.formatMoney(d))
                     # jump through hoops to make the string sortable!
-                    money = QtCore.QVariant(QtCore.QString("%L1").
-                                            arg(float(d / 100), 8, "f", 2))
-
-                    item.setData(QtCore.Qt.DisplayRole, money)
+                    money = "%.02f" % float(d / 100)
+                    item.setData(QtCore.Qt.DisplayRole, money.rjust(8, " "))
                     item.setTextAlignment(
                         QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
-
-                    # item.setText(localsettings.formatMoney(d))
-
                 elif col == 11:
                     if d is None:
                         item.setText(_("Under Treatment"))
                     else:
-                        item.setData(QtCore.Qt.DisplayRole,
-                                     QtCore.QVariant(QtCore.QDate(d)))
+                        item.setData(QtCore.Qt.DisplayRole, QtCore.QDate(d))
                 else:
                     item.setText(str(d).title())
                 om_gui.ui.accounts_tableWidget.setItem(rowno, col, item)

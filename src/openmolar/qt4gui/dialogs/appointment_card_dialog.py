@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -22,6 +21,8 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
+
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
@@ -38,8 +39,8 @@ class AppointmentCardDialog(BaseDialog):
         self.pt = patient
 
         self.main_ui = parent
-        patient_label = QtGui.QLabel("%s<br /><b>%s</b>" % (
-                                     _("Appointment Card for"), patient.name_id))
+        patient_label = QtGui.QLabel(
+            "%s<br /><b>%s</b>" % (_("Appointment Card for"), patient.name_id))
 
         patient_label.setAlignment(QtCore.Qt.AlignCenter)
 
@@ -112,9 +113,9 @@ class AppointmentCardDialog(BaseDialog):
         self.pt.addHiddenNote("printed", "appt card")
         BaseDialog.accept(self)
 
+
 if __name__ == "__main__":
     localsettings.initiate()
-    from openmolar.qt4gui import resources_rc
     from openmolar.dbtools import patient_class
     pt = patient_class.patient(20862)
 

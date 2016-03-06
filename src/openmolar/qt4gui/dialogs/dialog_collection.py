@@ -1,5 +1,4 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
@@ -135,5 +134,6 @@ __all__ = ['AccountSeverityDialog',
            'SaveMemoDialog',
            ]
 
+
 if __name__ == "__main__":
-    print "All imports suceeded!"
+    print("All imports suceeded!")

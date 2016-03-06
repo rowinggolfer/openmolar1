@@ -1,26 +1,25 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 import logging
 from collections import namedtuple
@@ -30,8 +29,8 @@ from openmolar.settings import localsettings
 
 LOGGER = logging.getLogger("openmolar")
 
-QUERY = \
-    "SELECT description, body_text, footer FROM standard_letters ORDER BY description"
+QUERY = '''SELECT description, body_text, footer
+FROM standard_letters ORDER BY description'''
 
 INSERT_QUERY = '''INSERT INTO standard_letters
 (description, body_text, footer) VALUES (%s, %s, %s)
@@ -134,10 +133,12 @@ def delete_letters(letters):
     for letter in letters:
         delete_letter(letter)
 
+
 def _test():
     from openmolar.dbtools import patient_class
     pt = patient_class.patient(1)
     return getHtml(pt)
+
 
 def _test2():
     letter = StandardLetter("test", "test body", "footer")
@@ -149,5 +150,5 @@ def _test2():
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
-    print _test().encode("ascii", "replace")
+    print(_test().encode("ascii", "replace"))
     _test2()

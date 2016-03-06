@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -62,7 +61,7 @@ class SaveMemoDialog(Ui_saveMemo.Ui_Dialog, QtGui.QDialog):
         if author == "":
             author = "Anon"
 
-        message = self.textEdit.toPlainText().toAscii()
+        message = self.textEdit.toPlainText()
 
         if self.viewSurgery_radioButton.isChecked():
             type = "surg"
@@ -73,9 +72,10 @@ class SaveMemoDialog(Ui_saveMemo.Ui_Dialog, QtGui.QDialog):
 
         return memos.saveMemo(self.sno, author, type, exdate, message, True)
 
+
 if __name__ == "__main__":
     localsettings.initiateUsers()
     localsettings.initiate()
     app = QtGui.QApplication([])
     dl = SaveMemoDialog(11956)
-    print dl.getInput()
+    print(dl.getInput())

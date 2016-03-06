@@ -1,27 +1,27 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
+from gettext import gettext as _
 import logging
 import re
 from PyQt4 import QtGui, QtCore
@@ -267,7 +267,7 @@ class PageFour(_OptionPage):
     def cleanup(self):
         n_clasps = self.clasp_input.value()
         if n_clasps > 1:
-            text = unicode(self.dialog.default_lineedit.text().toUtf8())
+            text = str(self.dialog.default_lineedit.text())
             text = text.replace("A/C", "A/%dC" % n_clasps)
             self.dialog.default_lineedit.setText(text)
 
@@ -399,7 +399,7 @@ class AlterDentureDialog(ExtendableDialog):
 
         index_ = self.current_index + self.current_page.next_index
         if index_ >= self.wizard_widget.count() - 1:
-            index = self.wizard_widget.count()
+            index_ = self.wizard_widget.count()
             self.apply_but.show()
             self.next_but.hide()
 
@@ -440,8 +440,9 @@ class AlterDentureDialog(ExtendableDialog):
                     break
             if not matched:
                 LOGGER.debug("failed to match %s %s" % (input_, odu))
-                QtGui.QMessageBox.warning(self, _("Warning"),
-                                          _("Your upper denture input is invalid"))
+                QtGui.QMessageBox.warning(
+                    self, _("Warning"),
+                    _("Your upper denture input is invalid"))
                 return False
         for odl in odls.split(" "):
             matched = False
@@ -451,8 +452,9 @@ class AlterDentureDialog(ExtendableDialog):
                     break
             if not matched:
                 LOGGER.debug("failed to match %s %s" % (input_, odu))
-                QtGui.QMessageBox.warning(self, _("Warning"),
-                                          _("Your lower denture input is invalid"))
+                QtGui.QMessageBox.warning(
+                    self, _("Warning"),
+                    _("Your lower denture input is invalid"))
                 return False
         return True
 
@@ -465,11 +467,11 @@ class AlterDentureDialog(ExtendableDialog):
 
     @property
     def upper_input(self):
-        return str(self.odu_le.text().toAscii()).strip(" ")
+        return str(self.odu_le.text()).strip(" ")
 
     @property
     def lower_input(self):
-        return str(self.odl_le.text().toAscii()).strip(" ")
+        return str(self.odl_le.text()).strip(" ")
 
     @property
     def chosen_treatments(self):
@@ -494,4 +496,4 @@ if __name__ == "__main__":
     dl = AlterDentureDialog(None)
     if dl.exec_():
         for att, tx in dl.chosen_treatments:
-            print att, tx
+            print(att, tx)

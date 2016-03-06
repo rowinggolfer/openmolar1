@@ -1,5 +1,4 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
@@ -21,8 +20,6 @@
 # # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
 # #                                                                         # #
 # ########################################################################### #
-
-from __future__ import division
 
 from gettext import gettext as _
 

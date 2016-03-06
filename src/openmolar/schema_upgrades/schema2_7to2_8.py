@@ -1,50 +1,46 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 This module provides a function 'run' which will move data
 to schema 2_8
 '''
-from __future__ import division
 
-import datetime
+from gettext import gettext as _
 import logging
-import os
-import sys
 
-from openmolar.settings import localsettings
-from openmolar.schema_upgrades.database_updater_thread import DatabaseUpdaterThread
+from openmolar.schema_upgrades.database_updater_thread \
+    import DatabaseUpdaterThread
 
 LOGGER = logging.getLogger("openmolar")
 
 SQLSTRINGS = [
-'DROP TABLE IF EXISTS static_chart',
-'DROP TABLE IF EXISTS patient_money',
-'DROP TABLE IF EXISTS patient_dates',
-'DROP TABLE IF EXISTS patient_nhs',
-'DROP TABLE IF EXISTS new_patients',
-'''
+    'DROP TABLE IF EXISTS static_chart',
+    'DROP TABLE IF EXISTS patient_money',
+    'DROP TABLE IF EXISTS patient_dates',
+    'DROP TABLE IF EXISTS patient_nhs',
+    'DROP TABLE IF EXISTS new_patients',
+    '''
 CREATE TABLE new_patients (
   serialno       int(11) NOT NULL,
   sname          varchar(30),
@@ -80,7 +76,7 @@ CREATE TABLE new_patients (
   PRIMARY KEY (serialno)
 )
 ''',
-'''
+    '''
 CREATE TABLE patient_nhs (
   pt_sno         int(11)     not null,
   initaccept     date,
@@ -93,8 +89,7 @@ CREATE TABLE patient_nhs (
 FOREIGN KEY (pt_sno) REFERENCES new_patients(serialno)
 )
 ''',
-
-'''
+    '''
 CREATE TABLE static_chart (
 pt_sno             int(11)     not null,
 dent0              tinyint(4),
@@ -136,7 +131,7 @@ ll8                varchar(34) not null default "",
 FOREIGN KEY (pt_sno) REFERENCES new_patients(serialno)
 )
 ''',
-'''
+    '''
 CREATE TABLE patient_money (
 pt_sno             int(11)     not null,
 money0             int(11)     not null default 0,
@@ -154,7 +149,7 @@ money11            int(11)     not null default 0,
 FOREIGN KEY (pt_sno) REFERENCES new_patients(serialno)
 )
 ''',
-'''
+    '''
 CREATE TABLE patient_dates (
   pt_sno         int(11)     not null,
   pd0            date,
@@ -178,18 +173,17 @@ FOREIGN KEY (pt_sno) REFERENCES new_patients(serialno)
 ]
 
 # NOTE - if next statement fails, it is silently overlooked.
-CLEANUPSTRINGS = [
-]
+CLEANUPSTRINGS = []
 
 
 SOURCE1_QUERY = '''
 select serialno, IFNULL(sname, ""), IFNULL(fname, ""), IFNULL(title, ""),
-IFNULL(sex, "") , dob , IFNULL(addr1, ""), IFNULL(addr2, ""), IFNULL(addr3, ""),
-IFNULL(town, ""), IFNULL(county, ""), IFNULL(pcde, ""), IFNULL(tel1, ""),
-IFNULL(tel2, ""), IFNULL(mobile, ""), IFNULL(fax, ""), IFNULL(email1, ""),
-IFNULL(email2, ""), IFNULL(occup, ""), IFNULL(nhsno, ""), cnfd, cset,dnt1, dnt2,
-courseno0, billdate, billct, billtype, familyno, IFNULL(memo,""),
-IFNULL(status,"") from patients'''
+IFNULL(sex, "") , dob , IFNULL(addr1, ""), IFNULL(addr2, ""),
+IFNULL(addr3, ""), IFNULL(town, ""), IFNULL(county, ""), IFNULL(pcde, ""),
+IFNULL(tel1, ""), IFNULL(tel2, ""), IFNULL(mobile, ""), IFNULL(fax, ""),
+IFNULL(email1, ""), IFNULL(email2, ""), IFNULL(occup, ""), IFNULL(nhsno, ""),
+cnfd, cset,dnt1, dnt2, courseno0, billdate, billct, billtype, familyno,
+IFNULL(memo,""), IFNULL(status,"") from patients'''
 
 DEST1_QUERY = '''
 INSERT INTO new_patients (serialno, sname, fname, title, sex , dob , addr1,
@@ -289,7 +283,7 @@ class DatabaseUpdater(DatabaseUpdaterThread):
         LOGGER.info("running script to convert from schema 2.7 to 2.8")
         try:
             self.connect()
-            #- execute the SQL commands
+            # execute the SQL commands
             self.progressSig(10, _("creating new tables"))
             self.execute_statements(SQLSTRINGS)
 
@@ -311,6 +305,7 @@ class DatabaseUpdater(DatabaseUpdaterThread):
             LOGGER.exception("error transfering data")
             self.rollback()
             raise self.UpdateError(exc)
+
 
 if __name__ == "__main__":
     dbu = DatabaseUpdater()

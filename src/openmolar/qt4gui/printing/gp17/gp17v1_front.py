@@ -1,26 +1,25 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 Provides a Class for printing the GP17-1(Scotland) NHS form (front side)
@@ -114,12 +113,12 @@ for i, y in enumerate([302, 340, 360, 380, 408, 432, 452]):
 # chart
 for quadrant in range(1, 5):
     y = 356 if quadrant < 3 else 370
+    t_range = list(range(1, 9))  # Left teeth are in left to right order
     if quadrant in (2, 3):
         x_offset = 206
-        t_range = range(1, 9)  # Left teeth are in left to right order
     else:
         x_offset = 58
-        t_range = range(8, 0, -1)  # reverse for the right side
+        t_range.reverse()  # reverse for the right side
     for i, toothno in enumerate(t_range):
         tooth = "chart_%s%s" % (quadrant, toothno)
         x = i * 17.5 + x_offset
@@ -127,12 +126,12 @@ for quadrant in range(1, 5):
 
 for quadrant in range(5, 9):
     y = 344 if quadrant < 7 else 382
+    t_range = list(range(1, 6))  # Left teeth are in left to right order
     if quadrant in (6, 7):
         x_offset = 206
-        t_range = range(1, 6)  # Left teeth are in left to right order
     else:
         x_offset = 112
-        t_range = range(5, 0, -1)  # reverse for the right side
+        t_range.reverse()  # reverse for the right side
     for i, toothno in enumerate(t_range):
         tooth = "chart_%s%s" % (quadrant, toothno)
         x = i * 17.5 + x_offset
@@ -166,12 +165,12 @@ for row in range(10):
     # item chart
     for quadrant in range(1, 5):
         ty = y + 1 if quadrant < 3 else y + 23
+        t_range = list(range(1, 9))  # Left teeth are in left to right order
         if quadrant in (2, 3):
             x_offset = 226
-            t_range = range(1, 9)  # Left teeth are in left to right order
         else:
             x_offset = 98
-            t_range = range(8, 0, -1)  # reverse for the right side
+            t_range.reverse()  # reverse for the right side
         for i, toothno in enumerate(t_range):
             tooth = "item%s_chart_%s%s" % (row + 1, quadrant, toothno)
             x = i * 15 + x_offset
@@ -209,8 +208,9 @@ class GP17iFront(PrintedForm):
     @property
     def BACKGROUND_IMAGE(self):
         if self._bg_pixmap is None:
-            self._bg_pixmap = QtGui.QPixmap(os.path.join(
-                                            localsettings.resources_location, "gp17-1", "front.png"))
+            self._bg_pixmap = QtGui.QPixmap(
+                os.path.join(localsettings.resources_location,
+                             "gp17-1", "front.png"))
         return self._bg_pixmap
 
     def print_(self):
@@ -227,8 +227,6 @@ class GP17iFront(PrintedForm):
 
         serifFont = QtGui.QFont("Courier", 12)
         serifFont.setBold(True)
-        fm = QtGui.QFontMetrics(serifFont)
-        serifLineHeight = fm.height()
 
         painter.setPen(QtGui.QPen(QtCore.Qt.black, 1))
         painter.setFont(serifFont)
@@ -291,7 +289,7 @@ class GP17iFront(PrintedForm):
         elif sex == "F":
             painter.drawText(self.rects["female"], "F", OPTION)
         else:
-            print "UNKNOWN SEX for GP17!"
+            print("UNKNOWN SEX for GP17!")
 
     def _fill_pid(self, painter):
         for i in range(10):
@@ -397,7 +395,7 @@ class GP17iFront(PrintedForm):
         '''
         exams, perio, small xrays, special trays
         '''
-        for code, number in self.data.common_codes.iteritems():
+        for code, number in self.data.common_codes.items():
             if code == "0201":
                 # small xrays could be multiple
                 n_string = "%02d" % number
@@ -407,16 +405,16 @@ class GP17iFront(PrintedForm):
                     painter.drawText(
                         self.rects["rad_02"], n_string[1], OPTION)
                 except KeyError:
-                    print "unable to claim code %s" % code
+                    print("unable to claim code %s" % code)
             else:
                 try:
                     painter.drawText(self.rects[code], "X", OPTION)
                 except KeyError:
-                    print "unable to claim code %s" % code
+                    print("unable to claim code %s" % code)
 
     def _fill_tooth_specific_codes(self, painter):
         row = 1
-        for code, teeth in self.data.tooth_specific_codes.iteritems():
+        for code, teeth in self.data.tooth_specific_codes.items():
             if row > 9:
                 self.unhandled_ts_codes.append(code)
                 continue
@@ -448,9 +446,10 @@ class GP17iFront(PrintedForm):
 
     def _fill_unhandled_codes(self, painter):
         for item in self.unhandled_ts_codes:
-            print "unhandled tooth specific code", item
+            print("unhandled tooth specific code", item)
         for item in self.unhandled_codes:
-            print "unhandled item code", item
+            print("unhandled item code", item)
+
 
 if __name__ == "__main__":
     os.chdir(os.path.expanduser("~"))  # for print to file
@@ -468,7 +467,3 @@ if __name__ == "__main__":
     form.set_background_mode(True)
 
     form.controlled_print()
-
-    for key in sorted(form.rects.keys()):
-        # print key, form.rects[key]
-        pass

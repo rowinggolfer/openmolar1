@@ -1,26 +1,25 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 Provides Gp17Data class for the data required by a GP17(Scotland) NHS form
@@ -401,7 +400,7 @@ class Gp17Data(object):
         try:
             text = localsettings.dentDict[self.dentist][2] + "\n"
         except KeyError:
-            print "Key Error getting dentist", self.dentist
+            print("Key Error getting dentist", self.dentist)
             text = "\n"
         for line in localsettings.PRACTICE_ADDRESS:
             text += line + "\n"
@@ -418,7 +417,8 @@ class Gp17Data(object):
 
     @property
     def addr2(self):
-        for att in (self.pt.addr2, self.pt.addr3, self.pt.town, self.pt.county):
+        for att in (self.pt.addr2, self.pt.addr3,
+                    self.pt.town, self.pt.county):
             att = att.strip(" ")
             if att != "":
                 return att
@@ -509,7 +509,7 @@ class Gp17Data(object):
             if self._is_deciduous(quadrant, tooth):
                 result = "+P" in static_string
             else:
-                result = not "AT" in static_string
+                result = "AT" not in static_string
 
         return result
 
@@ -602,9 +602,8 @@ class Gp17Data(object):
                     att, tx = self.pt.get_tx_from_hash(hash_)
                     iso_tooth = convert_tooth(att)
                     if iso_tooth is None:
-                        LOGGER.error(
-                            "GP17 IGNORING itemcode %s as not tooth specific?" %
-                            item.itemcode)
+                        LOGGER.error("GP17 IGNORING itemcode %s as not "
+                                     "tooth specific?" % item.itemcode)
                         continue
                     try:
                         ts_items[item.itemcode].append(iso_tooth)

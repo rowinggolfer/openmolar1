@@ -1,117 +1,97 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/newBPE.ui'
 #
-# Created: Wed Nov  6 23:05:24 2013
-#      by: PyQt4 UI code generator 4.10.3
+# Created by: PyQt4 UI code generator 4.11.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
 
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    def _fromUtf8(s):
-        return s
-
-
 class Ui_Dialog(object):
-
     def setupUi(self, Dialog):
-        Dialog.setObjectName(_fromUtf8("Dialog"))
+        Dialog.setObjectName("Dialog")
         Dialog.resize(261, 161)
         self.verticalLayout = QtGui.QVBoxLayout(Dialog)
-        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.verticalLayout.setObjectName("verticalLayout")
         self.frame = QtGui.QFrame(Dialog)
-        sizePolicy = QtGui.QSizePolicy(
-            QtGui.QSizePolicy.Preferred,
-            QtGui.QSizePolicy.Preferred)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(120)
         sizePolicy.setVerticalStretch(90)
-        sizePolicy.setHeightForWidth(
-            self.frame.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
         self.frame.setSizePolicy(sizePolicy)
         self.frame.setMinimumSize(QtCore.QSize(200, 90))
         self.frame.setMaximumSize(QtCore.QSize(300, 90))
         self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtGui.QFrame.Raised)
-        self.frame.setObjectName(_fromUtf8("frame"))
+        self.frame.setObjectName("frame")
         self.gridLayout = QtGui.QGridLayout(self.frame)
-        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+        self.gridLayout.setObjectName("gridLayout")
         self.bpe_comboBox = QtGui.QComboBox(self.frame)
-        self.bpe_comboBox.setObjectName(_fromUtf8("bpe_comboBox"))
-        self.bpe_comboBox.addItem(_fromUtf8(""))
-        self.bpe_comboBox.addItem(_fromUtf8(""))
-        self.bpe_comboBox.addItem(_fromUtf8(""))
-        self.bpe_comboBox.addItem(_fromUtf8(""))
-        self.bpe_comboBox.addItem(_fromUtf8(""))
-        self.bpe_comboBox.addItem(_fromUtf8(""))
+        self.bpe_comboBox.setObjectName("bpe_comboBox")
+        self.bpe_comboBox.addItem("")
+        self.bpe_comboBox.addItem("")
+        self.bpe_comboBox.addItem("")
+        self.bpe_comboBox.addItem("")
+        self.bpe_comboBox.addItem("")
+        self.bpe_comboBox.addItem("")
         self.gridLayout.addWidget(self.bpe_comboBox, 0, 0, 1, 1)
         self.bpe2_comboBox = QtGui.QComboBox(self.frame)
-        self.bpe2_comboBox.setObjectName(_fromUtf8("bpe2_comboBox"))
-        self.bpe2_comboBox.addItem(_fromUtf8(""))
-        self.bpe2_comboBox.addItem(_fromUtf8(""))
-        self.bpe2_comboBox.addItem(_fromUtf8(""))
-        self.bpe2_comboBox.addItem(_fromUtf8(""))
-        self.bpe2_comboBox.addItem(_fromUtf8(""))
-        self.bpe2_comboBox.addItem(_fromUtf8(""))
+        self.bpe2_comboBox.setObjectName("bpe2_comboBox")
+        self.bpe2_comboBox.addItem("")
+        self.bpe2_comboBox.addItem("")
+        self.bpe2_comboBox.addItem("")
+        self.bpe2_comboBox.addItem("")
+        self.bpe2_comboBox.addItem("")
+        self.bpe2_comboBox.addItem("")
         self.gridLayout.addWidget(self.bpe2_comboBox, 0, 1, 1, 1)
         self.bpe3_comboBox = QtGui.QComboBox(self.frame)
-        self.bpe3_comboBox.setObjectName(_fromUtf8("bpe3_comboBox"))
-        self.bpe3_comboBox.addItem(_fromUtf8(""))
-        self.bpe3_comboBox.addItem(_fromUtf8(""))
-        self.bpe3_comboBox.addItem(_fromUtf8(""))
-        self.bpe3_comboBox.addItem(_fromUtf8(""))
-        self.bpe3_comboBox.addItem(_fromUtf8(""))
-        self.bpe3_comboBox.addItem(_fromUtf8(""))
+        self.bpe3_comboBox.setObjectName("bpe3_comboBox")
+        self.bpe3_comboBox.addItem("")
+        self.bpe3_comboBox.addItem("")
+        self.bpe3_comboBox.addItem("")
+        self.bpe3_comboBox.addItem("")
+        self.bpe3_comboBox.addItem("")
+        self.bpe3_comboBox.addItem("")
         self.gridLayout.addWidget(self.bpe3_comboBox, 0, 2, 1, 1)
         self.bpe4_comboBox = QtGui.QComboBox(self.frame)
-        self.bpe4_comboBox.setObjectName(_fromUtf8("bpe4_comboBox"))
-        self.bpe4_comboBox.addItem(_fromUtf8(""))
-        self.bpe4_comboBox.addItem(_fromUtf8(""))
-        self.bpe4_comboBox.addItem(_fromUtf8(""))
-        self.bpe4_comboBox.addItem(_fromUtf8(""))
-        self.bpe4_comboBox.addItem(_fromUtf8(""))
-        self.bpe4_comboBox.addItem(_fromUtf8(""))
+        self.bpe4_comboBox.setObjectName("bpe4_comboBox")
+        self.bpe4_comboBox.addItem("")
+        self.bpe4_comboBox.addItem("")
+        self.bpe4_comboBox.addItem("")
+        self.bpe4_comboBox.addItem("")
+        self.bpe4_comboBox.addItem("")
+        self.bpe4_comboBox.addItem("")
         self.gridLayout.addWidget(self.bpe4_comboBox, 1, 0, 1, 1)
         self.bpe5_comboBox = QtGui.QComboBox(self.frame)
-        self.bpe5_comboBox.setObjectName(_fromUtf8("bpe5_comboBox"))
-        self.bpe5_comboBox.addItem(_fromUtf8(""))
-        self.bpe5_comboBox.addItem(_fromUtf8(""))
-        self.bpe5_comboBox.addItem(_fromUtf8(""))
-        self.bpe5_comboBox.addItem(_fromUtf8(""))
-        self.bpe5_comboBox.addItem(_fromUtf8(""))
-        self.bpe5_comboBox.addItem(_fromUtf8(""))
+        self.bpe5_comboBox.setObjectName("bpe5_comboBox")
+        self.bpe5_comboBox.addItem("")
+        self.bpe5_comboBox.addItem("")
+        self.bpe5_comboBox.addItem("")
+        self.bpe5_comboBox.addItem("")
+        self.bpe5_comboBox.addItem("")
+        self.bpe5_comboBox.addItem("")
         self.gridLayout.addWidget(self.bpe5_comboBox, 1, 1, 1, 1)
         self.bpe6_comboBox = QtGui.QComboBox(self.frame)
-        self.bpe6_comboBox.setObjectName(_fromUtf8("bpe6_comboBox"))
-        self.bpe6_comboBox.addItem(_fromUtf8(""))
-        self.bpe6_comboBox.addItem(_fromUtf8(""))
-        self.bpe6_comboBox.addItem(_fromUtf8(""))
-        self.bpe6_comboBox.addItem(_fromUtf8(""))
-        self.bpe6_comboBox.addItem(_fromUtf8(""))
-        self.bpe6_comboBox.addItem(_fromUtf8(""))
+        self.bpe6_comboBox.setObjectName("bpe6_comboBox")
+        self.bpe6_comboBox.addItem("")
+        self.bpe6_comboBox.addItem("")
+        self.bpe6_comboBox.addItem("")
+        self.bpe6_comboBox.addItem("")
+        self.bpe6_comboBox.addItem("")
+        self.bpe6_comboBox.addItem("")
         self.gridLayout.addWidget(self.bpe6_comboBox, 1, 2, 1, 1)
         self.verticalLayout.addWidget(self.frame)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(
-            QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Save)
+        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Save)
         self.buttonBox.setCenterButtons(True)
-        self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
+        self.buttonBox.setObjectName("buttonBox")
         self.verticalLayout.addWidget(self.buttonBox)
 
         self.retranslateUi(Dialog)
-        QtCore.QObject.connect(
-            self.buttonBox,
-            QtCore.SIGNAL(_fromUtf8("accepted()")),
-            Dialog.accept)
-        QtCore.QObject.connect(
-            self.buttonBox,
-            QtCore.SIGNAL(_fromUtf8("rejected()")),
-            Dialog.reject)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), Dialog.accept)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         Dialog.setTabOrder(self.buttonBox, self.bpe_comboBox)
         Dialog.setTabOrder(self.bpe_comboBox, self.bpe2_comboBox)
@@ -170,3 +150,4 @@ if __name__ == "__main__":
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())
+

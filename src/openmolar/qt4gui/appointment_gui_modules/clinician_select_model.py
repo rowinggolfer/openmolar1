@@ -1,5 +1,4 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
@@ -55,11 +54,10 @@ class ClinicianSelectModel(QtCore.QAbstractListModel):
 
     def data(self, index, role):
         if not index.isValid():
-            return QtCore.QVariant()
+            return None
         if role == QtCore.Qt.DisplayRole:
-            option = self.options_list[index.row()]
-            return QtCore.QVariant(option)
-        return QtCore.QVariant()
+            return self.options_list[index.row()]
+        return None
 
     @property
     def all_clinicians(self):

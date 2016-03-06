@@ -1,5 +1,4 @@
 #! /usr/bin/python
-# -*- coding: utf-8 -*-
 
 # ########################################################################### #
 # #                                                                         # #
@@ -317,7 +316,7 @@ class FeescaleParser(object):
         return "%s - %s" % (att, shortcut)
 
     def set_edited_text(self, text):
-        self._edited_text = unicode(text)
+        self._edited_text = str(text)
         try:
             dom = minidom.parseString(self._edited_text)
             self.dom = dom

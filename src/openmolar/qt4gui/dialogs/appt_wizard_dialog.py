@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -115,7 +114,7 @@ if __name__ == "__main__":
             self.pt = patient_class.patient(3)
 
     def test(*args):
-        print "signal caught", args
+        print("signal caught", args)
 
     localsettings.initiate()
     app = QtGui.QApplication(sys.argv)

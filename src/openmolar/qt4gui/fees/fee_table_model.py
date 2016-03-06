@@ -1,5 +1,4 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
@@ -26,8 +25,6 @@
 this module provides a model class so that feescales can be displayed
 (and in the long term adjusted?)
 '''
-
-from __future__ import division
 
 import logging
 
@@ -73,7 +70,7 @@ class TreeItem(object):
     def data(self, column):
         if column == 0:
             if self.key != self.parentItem.key:
-                return QtCore.QVariant(self.key)
+                return self.key
         if self.itemData is None:
             pass
         elif column == 1:
@@ -105,7 +102,7 @@ class TreeItem(object):
             except IndexError:
                 return "error in feescale"
 
-        return QtCore.QVariant()
+        return None
 
     def parent(self):
         return self.parentItem
@@ -143,23 +140,22 @@ class treeModel(QtCore.QAbstractItemModel):
 
     def data(self, index, role):
         if not index.isValid():
-            return QtCore.QVariant()
+            return None
 
         item = index.internalPointer()
         if role == QtCore.Qt.DisplayRole:
             return item.data(index.column())
         if role == QtCore.Qt.BackgroundRole and index in self.foundItems:
-            brush = QtGui.QBrush(QtGui.QColor("yellow"))
-            return QtCore.QVariant(brush)
+            return QtGui.QBrush(QtGui.QColor("yellow"))
         if role == QtCore.Qt.TextAlignmentRole:
             if index.column() > 3:
-                return QtCore.QVariant(QtCore.Qt.AlignRight)
+                return QtCore.Qt.AlignRight
         if role == QtCore.Qt.UserRole:
             # a user role which simply returns the python object
             # in this case a FeeItem
             return (item.itemData, item.myindex)
 
-        return QtCore.QVariant()
+        return None
 
     def flags(self, index):
         if not index.isValid():
@@ -182,7 +178,7 @@ class treeModel(QtCore.QAbstractItemModel):
             elif column == 5:
                 return _("Charge to Patient")
 
-        return QtCore.QVariant()
+        return None
 
     def index(self, row, column, parent):
         if not self.hasIndex(row, column, parent):
@@ -263,8 +259,10 @@ class treeModel(QtCore.QAbstractItemModel):
         for column in columns:
             start_index = self.createIndex(0, column, child)
 
-            indexes = self.match(start_index, QtCore.Qt.DisplayRole,
-                                 QtCore.QVariant(self.search_phrase), -1,
+            indexes = self.match(start_index,
+                                 QtCore.Qt.DisplayRole,
+                                 self.search_phrase,
+                                 -1,
                                  matchflags)
 
             for index in indexes:
@@ -282,6 +280,7 @@ class treeModel(QtCore.QAbstractItemModel):
         self.searchNode(self.rootItem, columns)
 
         return self.foundItems != []
+
 
 if __name__ == "__main__":
     def resize(arg):

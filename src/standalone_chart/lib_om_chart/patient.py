@@ -1,30 +1,30 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 import logging
 
-from connect import Connection
+
+LOGGER = logging.getLogger("om_chart")
 
 
 class PatientNotFoundException(Exception):
@@ -78,9 +78,7 @@ class Patient(object):
         'llA', 'llB', 'llC', 'llD', 'llE', '***', '***', '***'
     )
 
-    connection = Connection()
-
-    def __init__(self, sno):
+    def __init__(self, sno, connection):
         '''
         initiate the class with default variables, then load from database
         '''
@@ -88,7 +86,7 @@ class Patient(object):
             raise PatientNotFoundException
 
         self.serialno = sno
-        db = self.connection.connection
+        db = connection
         cursor = db.cursor()
         cursor.execute(self.query, (sno,))
         row = cursor.fetchone()
@@ -107,7 +105,6 @@ class Patient(object):
             query += "%sst, " % field
         return '%s from patients where serialno = %%s' % query.rstrip(", ")
 
-    #@property
     def chartgrid(self):
         grid = ""
         chart_dict = {}
@@ -121,11 +118,9 @@ class Patient(object):
                 chart_dict[tooth] = self.DECIDUOUS[i]
         return chart_dict
 
-if __name__ == "__main__":
-    try:
-        serialno = int(sys.argv[len(sys.argv) - 1])
-    except:
-        serialno = 11956
 
-    pt = Patient(serialno)
-    print pt.__dict__
+if __name__ == "__main__":
+    from lib_om_chart.connect import Connection
+    conn = Connection()
+    pt = Patient(11956, conn.connection)
+    print(pt.__dict__)

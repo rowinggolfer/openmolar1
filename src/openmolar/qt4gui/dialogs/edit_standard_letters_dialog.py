@@ -1,27 +1,27 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
+from gettext import gettext as _
 import logging
 
 from PyQt4 import QtGui, QtCore, Qsci
@@ -136,11 +136,9 @@ class EditStandardLettersDialog(BaseDialog):
         return QtCore.QSize(800, 600)
 
     def signals(self, connect=True):
-        for signal in (
-            self.description_line_edit.editingFinished,
-            self.text_edit.textChanged,
-            self.footer_text_edit.textChanged
-        ):
+        for signal in (self.description_line_edit.editingFinished,
+                       self.text_edit.textChanged,
+                       self.footer_text_edit.textChanged):
             if connect:
                 signal.connect(self.update_letter)
             else:
@@ -207,14 +205,14 @@ class EditStandardLettersDialog(BaseDialog):
         '''
         return the current body text
         '''
-        return unicode(self.text_edit.text())
+        return str(self.text_edit.text())
 
     @property
     def footer_text(self):
         '''
         return the current footer text
         '''
-        return unicode(self.footer_text_edit.text())
+        return str(self.footer_text_edit.text())
 
     def add_letter(self, triggered=None, name=""):
         LOGGER.debug("add_letter")
@@ -246,9 +244,8 @@ class EditStandardLettersDialog(BaseDialog):
             QtGui.QMessageBox.warning(
                 self,
                 _("Warning"),
-                _(
-                    "You should have at least one standard letter in the database")
-            )
+                _("You should have at least one standard letter "
+                  "in the database"))
             return
         self.deleted_letters.append(self.current_letter)
         self.load_existing()
@@ -298,6 +295,7 @@ class EditStandardLettersDialog(BaseDialog):
             standard_letter.delete_letters(self.deleted_letters)
             return True
         return False
+
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)

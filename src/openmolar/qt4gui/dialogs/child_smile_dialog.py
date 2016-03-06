@@ -1,43 +1,39 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
+from gettext import gettext as _
 import logging
 import re
 import socket
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 from xml.dom import minidom
 from xml.parsers.expat import ExpatError
 
 from PyQt4 import QtGui, QtCore
 
-if __name__ == "__main__":
-    import os
-    import sys
-    sys.path.insert(0, os.path.abspath("../../../"))
-
 from openmolar.settings import localsettings
-from openmolar.qt4gui.customwidgets.upper_case_line_edit import UpperCaseLineEdit
+from openmolar.qt4gui.customwidgets.upper_case_line_edit \
+    import UpperCaseLineEdit
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
 LOGGER = logging.getLogger("openmolar")
@@ -63,12 +59,15 @@ EXAMPLE_RESULT = '''
 </html>
 '''
 
-HEADERS = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
-       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-       'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-       'Accept-Encoding': 'none',
-       'Accept-Language': 'en-US,en;q=0.8',
-       'Connection': 'keep-alive'}
+HEADERS = {
+    'User-Agent': ('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 '
+                   '(KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11'),
+    'Accept':
+        'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+    'Accept-Encoding': 'none',
+    'Accept-Language': 'en-US,en;q=0.8',
+    'Connection': 'keep-alive'}
 
 TODAYS_LOOKUPS = {}  # {"IV1 1PP": "SIMD Area: 1"}
 
@@ -158,14 +157,14 @@ class ChildSmileDialog(BaseDialog):
         try:
             QtGui.QApplication.instance().setOverrideCursor(
                 QtCore.Qt.WaitCursor)
-            req = urllib2.Request(url, headers=HEADERS)
-            response = urllib2.urlopen(req, timeout=20)
+            req = urllib.request.Request(url, headers=HEADERS)
+            response = urllib.request.urlopen(req, timeout=20)
             result = response.read()
             self.result = self._parse_result(result)
-        except urllib2.URLError as exc:
+        except urllib.error.URLError:
             LOGGER.error("url error polling NHS website?")
             self.result = _("Error polling website")
-        except socket.timeout as e:
+        except socket.timeout:
             LOGGER.error("timeout error polling NHS website?")
             self.result = _("Timeout polling website")
         finally:
@@ -188,12 +187,10 @@ class ChildSmileDialog(BaseDialog):
             return "UNDECIPHERABLE REPLY"
 
     def manual_entry(self):
-        simd, result = QtGui.QInputDialog.getInteger(self,
-                                                     _(
-                                                     "Manual Input Required"),
-                                                     _(
-                                                     "Online lookup has failed, please enter the SIMD manually"),
-                                                     4, 1, 5)
+        simd, result = QtGui.QInputDialog.getInteger(
+            self, _("Manual Input Required"),
+            _("Online lookup has failed, please enter the SIMD manually"),
+            4, 1, 5)
         if not result:
             self.reject()
         self.result += " - Manually entered SIMD of %d" % simd
@@ -225,27 +222,28 @@ class ChildSmileDialog(BaseDialog):
     @property
     def tx_items(self):
         age = self.main_ui.pt.ageYears
-        dentist = localsettings.clinicianNo in localsettings.dentDict.keys()
-        LOGGER.debug("Performed by dentist = %s" % dentist)
+        is_dentist = \
+            localsettings.clinicianNo in list(localsettings.dentDict.keys())
+        LOGGER.debug("Performed by dentist = %s" % is_dentist)
         if age < 3:
             if self.simd_number < 4:
                 yield ("other", "CS1")
             else:
                 yield ("other", "CS2")
             if self.tbi_performed:
-                code = "TB1" if dentist else "TB2"
+                code = "TB1" if is_dentist else "TB2"
                 yield ("other", code)
             if self.di_performed:
-                code = "DI1" if dentist else "DI2"
+                code = "DI1" if is_dentist else "DI2"
                 yield ("other", code)
         else:
             if self.simd_number < 4:
                 yield ("other", "CS3")
             if self.tbi_performed:
-                code = "TB3" if dentist else "TB4"
+                code = "TB3" if is_dentist else "TB4"
                 yield ("other", code)
             if self.di_performed:
-                code = "DI3" if dentist else "DI4"
+                code = "DI3" if is_dentist else "DI4"
                 yield ("other", code)
 
         if 2 <= age <= 5:
@@ -259,11 +257,10 @@ class ChildSmileDialog(BaseDialog):
         if BaseDialog.exec_(self):
             if self.valid_postcode:
                 self.main_ui.pt.pcde = self.pcde
-
-            self.main_ui.addNewNote("CHILDSMILE (postcode '%s'): %s" %
-                                   (self.pcde, self.result))
-
+            self.main_ui.addNewNote(
+                "CHILDSMILE (postcode '%s'): %s" % (self.pcde, self.result))
             return True
+        return False
 
 
 if __name__ == "__main__":
@@ -286,10 +283,10 @@ if __name__ == "__main__":
     dl = ChildSmileDialog(ui)
     # print dl._parse_result(EXAMPLE_RESULT)
     if dl.exec_():
-        print (dl.result)
-        print (dl.simd_number)
-        print ("toothbrush instruction = %s" % dl.tbi_performed)
-        print ("dietary advice = %s" % dl.di_performed)
+        print((dl.result))
+        print((dl.simd_number))
+        print(("toothbrush instruction = %s" % dl.tbi_performed))
+        print(("dietary advice = %s" % dl.di_performed))
 
         for item in dl.tx_items:
-            print item
+            print(item)

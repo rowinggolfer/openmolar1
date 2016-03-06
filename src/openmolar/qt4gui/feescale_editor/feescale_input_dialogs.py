@@ -1,5 +1,4 @@
 #! /usr/bin/python
-# -*- coding: utf-8 -*-
 
 # ########################################################################### #
 # #                                                                         # #
@@ -197,10 +196,10 @@ if __name__ == "__main__":
     app = QtGui.QApplication([])
     dl = PercentageInputDialog()
     if dl.exec_():
-        print dl.message
+        print(dl.message)
     dl = RoundupFeesDialog()
     if dl.exec_():
-        print dl.message
+        print(dl.message)
     dl = ChargePercentageInputDialog()
     if dl.exec_():
-        print dl.message
+        print(dl.message)

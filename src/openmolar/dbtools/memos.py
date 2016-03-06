@@ -1,26 +1,25 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 from openmolar.connect import connect
 from openmolar.settings import localsettings
@@ -117,20 +116,20 @@ def html_history(serialno):
     cursor.close()
 
     if not rows:
-        return u'''
+        return '''
         <html>
             <body>
                 <h1>%s</h1>
             </body>
         </html>''' % _("No memo history found")
 
-    html = u'''<html>
+    html = '''<html>
         <body>
             <h1>%s</h1>
             <table width = '100%%' border="1">
     ''' % _("Memo History")
 
-    html += u'''<tr>
+    html += '''<tr>
             <th>%s</th>
             <th>%s</th>
             <th>%s</th>
@@ -154,7 +153,7 @@ def html_history(serialno):
         message = row[5]
         open_ = row[6]
         expiry_date = row[7]
-        html += u'''<tr>
+        html += '''<tr>
             <td>%s</td>
             <td>%s</td>
             <td>%s</td>
@@ -171,5 +170,6 @@ def html_history(serialno):
 
     return html + "</table></body></html>"
 
+
 if __name__ == "__main__":
-    print html_history(11956)
+    print(html_history(11956))

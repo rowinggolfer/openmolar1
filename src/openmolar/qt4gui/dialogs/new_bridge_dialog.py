@@ -1,33 +1,31 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
+from gettext import gettext as _
 import logging
-import re
+
 from PyQt4 import QtGui, QtCore
 
-from openmolar.qt4gui.customwidgets.upper_case_line_edit import \
-    UpperCaseLineEdit
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 from openmolar.qt4gui.customwidgets.simple_chartwidget import SimpleChartWidg
 
@@ -156,14 +154,14 @@ class PageTwo(_OptionPage):
 
     @property
     def is_completed(self):
-        for rad_but in self.radio_buttons.values():
+        for rad_but in list(self.radio_buttons.values()):
             if rad_but.isChecked():
                 return True
         return False
 
     @property
     def properties(self):
-        for shortcut, rad_but in self.radio_buttons.iteritems():
+        for shortcut, rad_but in self.radio_buttons.items():
             if rad_but.isChecked():
                 return (("material", shortcut),)
 
@@ -173,8 +171,8 @@ class PageThree(_OptionPage):
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
         self.dl = parent
-        self.label.setText(_(
-                           "Please select teeth which are to be used as retainers"))
+        self.label.setText(
+            _("Please select teeth which are to be used as retainers"))
         self.chartwidg = SimpleChartWidg(self, auto_ctrl_key=True)
         layout = QtGui.QVBoxLayout(self.frame)
         layout.addWidget(self.chartwidg)
@@ -200,8 +198,8 @@ class PageFour(_OptionPage):
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
         self.dl = parent
-        self.label.setText(_(
-                           "Please select teeth which are to be used as pontics"))
+        self.label.setText(
+            _("Please select teeth which are to be used as pontics"))
         self.chartwidg = SimpleChartWidg(self, auto_ctrl_key=True)
         layout = QtGui.QVBoxLayout(self.frame)
         layout.addWidget(self.chartwidg)
@@ -318,4 +316,4 @@ if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
     dl = NewBridgeDialog(None)
     if dl.exec_():
-        print dl.chosen_properties
+        print(dl.chosen_properties)

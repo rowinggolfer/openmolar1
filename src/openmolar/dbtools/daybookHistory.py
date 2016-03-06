@@ -1,28 +1,27 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
-from __future__ import division
+from gettext import gettext as _
 from openmolar.settings import localsettings
 from openmolar.connect import connect
 
@@ -58,18 +57,18 @@ def details(sno):
     retarg += '</tr>'
 
     fee_total, ptfee_total = 0, 0
-    for i, (
-            date_, cset, dnt, trt, tx, tx1, tx2, fee, ptfee, id) in enumerate(rows):
+    for i, (date_, cset, dnt, trt, tx, tx1, tx2, fee,
+            ptfee, id_) in enumerate(rows):
 
         if tx1 is not None:
-            #-- the "other treatment" column allows nulls,
-            #-- which stuffs up the sql concat
+            #  the "other treatment" column allows nulls,
+            #  which stuffs up the sql concat
             tx += tx1
         retarg += '    <tr>' if i % 2 else '    <tr bgcolor="#eeeeee">'
 
         if ALLOW_TX_EDITS:
             extra_link = ' / <a href="daybook_id_edit?%s">%s</a>' % (
-                id, _("Edit Tx"))
+                id_, _("Edit Tx"))
         else:
             extra_link = ""
 
@@ -86,8 +85,9 @@ def details(sno):
             date_, cset,
             localsettings.ops.get(dnt),
             localsettings.ops.get(trt),
-            tx, tx2.strip("\x00"),
-            id, fee, ptfee, _("Ests"),
+            tx,
+            tx2.decode("utf8").strip(" \x00"),
+            id_, fee, ptfee, _("Ests"),
             extra_link,
             localsettings.formatMoney(fee),
             localsettings.formatMoney(ptfee)
@@ -106,8 +106,9 @@ def details(sno):
 
     return retarg
 
+
 if __name__ == "__main__":
     localsettings.initiate()
-    print'<html><body>'
-    print details(17322).encode("ascii", errors="replace")
-    print "</body></html>"
+    print('<html><body>')
+    print(details(17322))
+    print("</body></html>")

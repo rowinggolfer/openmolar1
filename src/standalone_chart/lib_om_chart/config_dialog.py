@@ -1,26 +1,25 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 has one class, a dialog to write the config
@@ -31,7 +30,9 @@ import sys
 
 from PyQt4 import QtGui, QtCore
 
-import config
+from lib_om_chart import config
+
+LOGGER = logging.getLogger("om_chart")
 
 
 class ConfigDialog(QtGui.QDialog):
@@ -39,7 +40,7 @@ class ConfigDialog(QtGui.QDialog):
     def __init__(self, parent=None):
         QtGui.QDialog.__init__(self, parent)
 
-        label = QtGui.QLabel(u"<b>%s</b>" % _(
+        label = QtGui.QLabel("<b>%s</b>" % _(
             "Please complete the following form"))
         label.setAlignment(QtCore.Qt.AlignCenter)
         frame = QtGui.QFrame()
@@ -47,6 +48,8 @@ class ConfigDialog(QtGui.QDialog):
 
         self.host_le = QtGui.QLineEdit()
         self.port_le = QtGui.QLineEdit()
+        val = QtGui.QIntValidator(1, 65535, self)
+        self.port_le.setValidator(val)
         self.database_le = QtGui.QLineEdit()
         self.user_le = QtGui.QLineEdit()
         self.password_le = QtGui.QLineEdit()
@@ -72,6 +75,7 @@ class ConfigDialog(QtGui.QDialog):
         layout.addStretch()
         layout.addWidget(self.button_box)
 
+        self.load_config()
         self.button_box.clicked.connect(self._clicked)
 
     def sizeHint(self):
@@ -86,24 +90,23 @@ class ConfigDialog(QtGui.QDialog):
 
     @property
     def host(self):
-        return unicode(self.host_le.text())
+        return str(self.host_le.text())
 
     @property
     def port(self):
-        port, result = self.port_le.text().toInt()
-        return port
+        return int(self.port_le.text())
 
     @property
     def user(self):
-        return unicode(self.user_le.text())
+        return str(self.user_le.text())
 
     @property
     def password(self):
-        return unicode(self.password_le.text())
+        return str(self.password_le.text())
 
     @property
     def db_name(self):
-        return unicode(self.database_le.text())
+        return str(self.database_le.text())
 
     @property
     def surgery(self):
@@ -111,14 +114,17 @@ class ConfigDialog(QtGui.QDialog):
 
     @property
     def has_acceptable_values(self):
-        return (
-            self.host != "" and
-            self.user != "" and
-            self.port != 0 and
-            self.password != "" and
-            self.db_name != "" and
-            self.surgery != 0
-        )
+        try:
+            return (
+                self.host != "" and
+                self.user != "" and
+                self.port != 0 and
+                self.password != "" and
+                self.db_name != "" and
+                self.surgery != 0
+            )
+        except Exception:
+            LOGGER.exception("error checking values")
 
     def exec_(self, reconfigure=False):
         result = True
@@ -128,11 +134,11 @@ class ConfigDialog(QtGui.QDialog):
         return result
 
     def load_config(self):
-        self.host_le.setText(config.KWARGS["host"])
-        self.port_le.setText(str(config.KWARGS["port"]))
-        self.database_le.setText(config.KWARGS["db"])
-        self.user_le.setText(config.KWARGS["user"])
-        self.password_le.setText(config.KWARGS["passwd"])
+        self.host_le.setText(config.KWARGS.get("host", "localhost"))
+        self.port_le.setText(str(config.KWARGS.get("port", "3306")))
+        self.database_le.setText(config.KWARGS.get("db", ""))
+        self.user_le.setText(config.KWARGS.get("user", ""))
+        self.password_le.setText(config.KWARGS.get("passwd", ""))
         self.surgery_sb.setValue(config.SURGERY_NO)
 
     def write_config(self):
@@ -146,6 +152,7 @@ class ConfigDialog(QtGui.QDialog):
                 self.surgery)
         else:
             sys.exit("TERMINAL ERROR - Unable to write config file")
+
 
 if __name__ == "__main__":
     from gettext import gettext as _

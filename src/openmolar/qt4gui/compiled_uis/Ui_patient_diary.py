@@ -1,28 +1,21 @@
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/patient_diary.ui'
 #
-# Created by: PyQt4 UI code generator 4.11.3
+# Created by: PyQt4 UI code generator 4.11.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
 
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    def _fromUtf8(s):
-        return s
-
-
 class Ui_Form(object):
     def setupUi(self, Form):
-        Form.setObjectName(_fromUtf8("Form"))
+        Form.setObjectName("Form")
         Form.resize(829, 205)
         self.gridLayout = QtGui.QGridLayout(Form)
-        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+        self.gridLayout.setObjectName("gridLayout")
         self.pt_diary_treeView = QtGui.QTreeView(Form)
-        self.pt_diary_treeView.setObjectName(_fromUtf8("pt_diary_treeView"))
+        self.pt_diary_treeView.setObjectName("pt_diary_treeView")
         self.gridLayout.addWidget(self.pt_diary_treeView, 1, 0, 3, 1)
         self.apptWizard_pushButton = QtGui.QPushButton(Form)
         self.apptWizard_pushButton.setEnabled(True)
@@ -31,7 +24,7 @@ class Ui_Form(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.apptWizard_pushButton.sizePolicy().hasHeightForWidth())
         self.apptWizard_pushButton.setSizePolicy(sizePolicy)
-        self.apptWizard_pushButton.setObjectName(_fromUtf8("apptWizard_pushButton"))
+        self.apptWizard_pushButton.setObjectName("apptWizard_pushButton")
         self.gridLayout.addWidget(self.apptWizard_pushButton, 1, 1, 1, 1)
         self.newAppt_pushButton = QtGui.QPushButton(Form)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
@@ -41,9 +34,9 @@ class Ui_Form(object):
         self.newAppt_pushButton.setSizePolicy(sizePolicy)
         self.newAppt_pushButton.setMaximumSize(QtCore.QSize(16777215, 16777215))
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/add_user.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/add_user.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.newAppt_pushButton.setIcon(icon)
-        self.newAppt_pushButton.setObjectName(_fromUtf8("newAppt_pushButton"))
+        self.newAppt_pushButton.setObjectName("newAppt_pushButton")
         self.gridLayout.addWidget(self.newAppt_pushButton, 2, 1, 1, 1)
         self.printAppt_pushButton = QtGui.QPushButton(Form)
         self.printAppt_pushButton.setEnabled(True)
@@ -54,13 +47,13 @@ class Ui_Form(object):
         self.printAppt_pushButton.setSizePolicy(sizePolicy)
         self.printAppt_pushButton.setMaximumSize(QtCore.QSize(16777215, 16777215))
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/ps.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(":/ps.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.printAppt_pushButton.setIcon(icon1)
-        self.printAppt_pushButton.setObjectName(_fromUtf8("printAppt_pushButton"))
+        self.printAppt_pushButton.setObjectName("printAppt_pushButton")
         self.gridLayout.addWidget(self.printAppt_pushButton, 3, 1, 1, 1)
         self.appt_memo_lineEdit = QtGui.QLineEdit(Form)
-        self.appt_memo_lineEdit.setStyleSheet(_fromUtf8("color:rgb(255, 0, 0)"))
-        self.appt_memo_lineEdit.setObjectName(_fromUtf8("appt_memo_lineEdit"))
+        self.appt_memo_lineEdit.setStyleSheet("color:rgb(255, 0, 0)")
+        self.appt_memo_lineEdit.setObjectName("appt_memo_lineEdit")
         self.gridLayout.addWidget(self.appt_memo_lineEdit, 0, 0, 1, 2)
 
         self.retranslateUi(Form)
@@ -77,6 +70,7 @@ class Ui_Form(object):
         self.appt_memo_lineEdit.setToolTip(_("<html><head/><body><p>A place to keep a reminder of the patients appointment preferences.</p><p>Eg. &quot;30 minute appointments for examinations&quot; etc. </p></body></html>"))
 
 from openmolar.qt4gui import resources_rc
+
 
 if __name__ == "__main__":
     import gettext

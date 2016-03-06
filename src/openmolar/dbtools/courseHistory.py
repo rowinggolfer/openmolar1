@@ -1,32 +1,32 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 a module to search for previous course items
 '''
 
 import datetime
+from gettext import gettext as _
 import logging
 
 from openmolar.settings import localsettings
@@ -156,8 +156,10 @@ def details(sno, current_csno, include_estimates=False, include_daybook=False):
                              daybook_entry.diagn, daybook_entry.perio,
                              daybook_entry.anaes, daybook_entry.misc,
                              daybook_entry.ndu, daybook_entry.ndl,
-                             daybook_entry.odu, daybook_entry.odl, daybook_entry.other,
-                             daybook_entry.chart.strip(chr(0) + " \n"),
+                             daybook_entry.odu, daybook_entry.odl,
+                             daybook_entry.other,
+                             daybook_entry.chart.decode(
+                                 "utf8").strip(" %s" % chr(0)),
                              localsettings.formatMoney(daybook_entry.feesa),
                              localsettings.formatMoney(daybook_entry.feesb),
                              id_col))
@@ -204,7 +206,6 @@ def details(sno, current_csno, include_estimates=False, include_daybook=False):
             days_elapsed = (course.accd - prev_course.cmpd).days
         except IndexError:
             days_elapsed = None
-            pass
         except TypeError:
             pass
         finally:
@@ -217,7 +218,7 @@ def details(sno, current_csno, include_estimates=False, include_daybook=False):
     orphaned_html = ""
     i = 0
     for est in estimates_list:
-        if not est in displayed_ests:
+        if est not in displayed_ests and est.courseno != current_csno:
             if i == 0:
                 orphaned_html += '''<h1>%s %s</h1>
                 <table width="100%%" border="1">%s ''' % (
@@ -242,8 +243,8 @@ def details(sno, current_csno, include_estimates=False, include_daybook=False):
                             _("This shouldn't happen!"))
                         )
 
+
 if __name__ == "__main__":
-    from gettext import gettext as _
     # ALLOW_EDIT = True
     localsettings.initiate()
-    print details(27107, 0, True, True).encode("ascii", "replace")
+    print(details(27107, 0, True, True))

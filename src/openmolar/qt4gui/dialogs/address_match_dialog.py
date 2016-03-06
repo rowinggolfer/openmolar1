@@ -1,26 +1,25 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 import datetime
 import re
@@ -77,7 +76,7 @@ class AddressMatchDialog(BaseDialog):
         while re.search(", *,", addr):
             addr = re.sub(", *,", ", ", addr)
 
-        message = u"<b>%s<b><hr />%s" % (
+        message = "<b>%s<b><hr />%s" % (
             _("Top 12 address matches for"), addr)
 
         label = QtGui.QLabel()
@@ -146,13 +145,14 @@ if __name__ == "__main__":
     localsettings.initiate()
     app = QtGui.QApplication([])
 
-    from family_manage_dialog import _DuckPatient
+    from .family_manage_dialog import _DuckPatient
 
     mw = QtGui.QWidget()
     mw.pt = _DuckPatient((1, "", "", "", "The Gables",
-                          "Craggiemore Daviot", "Inverness", "", "", "IV2 5XQ", "", "active", ""))
+                          "Craggiemore Daviot", "Inverness", "", "",
+                          "IV2 5XQ", "", "active", ""))
 
-    print mw.pt
+    print(mw.pt)
     dl = AddressMatchDialog(mw)
     if dl.exec_():
-        print dl.selected_patients
+        print(dl.selected_patients)

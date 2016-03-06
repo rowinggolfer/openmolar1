@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -26,7 +25,6 @@
 Provides a Class for printing on an A4 Sheet
 '''
 
-from __future__ import division
 import logging
 from PyQt4 import QtCore, QtGui
 
@@ -147,11 +145,12 @@ class PrintedForm(object):
 
             painter.save()
             painter.setPen(QtGui.QPen(QtCore.Qt.black, 1))
-            for rect in self.rects.values():
+            for rect in list(self.rects.values()):
                 painter.drawRect(rect)
             painter.restore()
 
         return painter
+
 
 if __name__ == "__main__":
     import os

@@ -1,38 +1,35 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 provides some logic functions for the charts within openmolar gui.
 '''
 
-from __future__ import division
-
 import copy
 import logging
 import re
 
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui
 from openmolar.settings import localsettings
 
 LOGGER = logging.getLogger("openmolar")
@@ -47,7 +44,7 @@ def navigateCharts(om_gui, direction):
     [x, y] = om_gui.ui.staticChartWidget.selected
 
     if y == 0:
-        #--upper teeth
+        # upper teeth
         if direction == "up":
             if x != 0:
                 x -= 1
@@ -57,7 +54,7 @@ def navigateCharts(om_gui, direction):
             else:
                 x += 1
     else:
-        #--lower teeth
+        # lower teeth
         if direction == "up":
             if x == 15:
                 x, y = 15, 0
@@ -100,7 +97,7 @@ def updateCharts(om_gui, arg):
     tooth = om_gui.ui.toothPropsWidget.selectedTooth
     if om_gui.selectedChartWidget == "st":
         om_gui.pt.__dict__[tooth + om_gui.selectedChartWidget] = arg
-        #--update the patient!!
+        # update the patient!!
         om_gui.ui.staticChartWidget.setToothProps(tooth, arg)
         om_gui.ui.summaryChartWidget.setToothProps(tooth, arg)
         om_gui.ui.staticChartWidget.update()
@@ -130,7 +127,7 @@ def flipDeciduous(om_gui):
         for cell in selectedCells:
             row = cell.row()
             selectedTooth = str(
-                om_gui.ui.chartsTableWidget.item(row, 0).text().toAscii())
+                om_gui.ui.chartsTableWidget.item(row, 0).text())
 
             om_gui.pt.flipDec_Perm(selectedTooth)
         for chart in (om_gui.ui.staticChartWidget,
@@ -139,7 +136,7 @@ def flipDeciduous(om_gui):
                       om_gui.ui.summaryChartWidget
                       ):
             chart.chartgrid = om_gui.pt.chartgrid
-            #--necessary to restore the chart to full dentition
+            # necessary to restore the chart to full dentition
             chart.update()
     else:
         om_gui.advise(
@@ -161,23 +158,22 @@ def chartNavigation(om_gui, teeth, callerIsTable=False):
     one way or another, a tooth has been selected...
     this updates all relevant widgets
     '''
-    #--called by a navigating a chart or the underlying table
-    #--convert from QString
-    # print "chartNavigation", teeth, callerIsTable
+    # called by a navigating a chart or the underlying table
+    LOGGER.debug("chartNavigation %s table=%s", teeth, callerIsTable)
     grid = (["ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1',
              'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8'],
             ["lr8", "lr7", "lr6", "lr5", 'lr4', 'lr3', 'lr2', 'lr1',
              'll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8'])
 
     if teeth == []:
-        print '''chartNavigation called with teeth=[]\n
-        THIS SHOULDN'T HAPPEN!!!!'''
+        LOGGER.warning(
+            "chartNavigation called with teeth=[] THIS SHOULDN'T HAPPEN!!!!")
         return
     tooth = teeth[0]
 
     om_gui.ui.toothPropsWidget.setTooth(tooth, om_gui.selectedChartWidget)
 
-    #--calculate x, y co-ordinates for the chartwidgets
+    # calculate x, y co-ordinates for the chartwidgets
     if tooth in grid[0]:
         y = 0
     else:
@@ -195,8 +191,8 @@ def chartNavigation(om_gui, teeth, callerIsTable=False):
             y = 1
         x = grid[y].index(tooth)
 
-        om_gui.ui.chartsTableWidget.setCurrentCell(x + y * 16, 0,
-                                                   QtGui.QItemSelectionModel.Select)
+        om_gui.ui.chartsTableWidget.setCurrentCell(
+            x + y * 16, 0, QtGui.QItemSelectionModel.Select)
 
 
 def selectChartedTooth(om_gui, x, y):
@@ -204,19 +200,13 @@ def selectChartedTooth(om_gui, x, y):
     only one tooth can be 'selected'
     '''
     om_gui.ui.planChartWidget.setSelected(
-        x,
-        y,
-     showSelection=om_gui.selectedChartWidget == "pl")
+        x, y, showSelection=om_gui.selectedChartWidget == "pl")
 
     om_gui.ui.completedChartWidget.setSelected(
-        x,
-        y,
-     showSelection=om_gui.selectedChartWidget == "cmp")
+        x, y, showSelection=om_gui.selectedChartWidget == "cmp")
 
     om_gui.ui.staticChartWidget.setSelected(
-        x,
-        y,
-     showSelection=om_gui.selectedChartWidget == "st")
+        x, y, showSelection=om_gui.selectedChartWidget == "st")
 
 
 def bpe_table(om_gui, arg):
@@ -241,7 +231,7 @@ def bpe_table(om_gui, arg):
         bpe_html += '</tr></table>'
         om_gui.ui.bpe_textBrowser.setHtml(bpe_html)
     else:
-        #--necessary in case of the "NO DATA FOUND" option
+        # necessary in case of the "NO DATA FOUND" option
         om_gui.ui.bpe_groupBox.setTitle(_("BPE"))
         om_gui.ui.bpe_textBrowser.setHtml("")
 
@@ -264,7 +254,7 @@ def chartsTable(om_gui):
                   om_gui.ui.completedChartWidget,
                   ):
         chart.chartgrid = om_gui.pt.chartgrid
-        #--sets the tooth numbering
+        # sets the tooth numbering
     row = 0
 
     for tooth in ("ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1',

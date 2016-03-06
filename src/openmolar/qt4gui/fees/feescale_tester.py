@@ -1,30 +1,28 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
-import re
-import sys
-from xml.dom import minidom
+from gettext import gettext as _
+
 from PyQt4 import QtGui, QtCore
 from openmolar.settings import localsettings
 from openmolar.dbtools.patient_class import mouth, decidmouth
@@ -70,7 +68,7 @@ class DeciduousAttributeModel(QtCore.QAbstractTableModel):
 
     def data(self, index, role):
         if role != QtCore.Qt.DisplayRole:
-            return QtCore.QVariant()
+            return None
 
         if index.column() == 0:
             return self.attributes[index.row()].upper()
@@ -95,7 +93,6 @@ class FeescaleTestingDialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
         self.table_list = []
-        tablenames = []
         self.load_feescales()
 
         self.model2 = DeciduousAttributeModel(self.current_table)
@@ -109,8 +106,7 @@ class FeescaleTestingDialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
 
         self.setWindowTitle(_("Shortcut tester"))
 
-        self.connect(self.comboBox, QtCore.SIGNAL("currentIndexChanged (int)"),
-                     self.change_table)
+        self.comboBox.currentIndexChanged.connect(self.change_table)
 
         self.pushButton.clicked.connect(self.check_codes)
 
@@ -134,14 +130,14 @@ class FeescaleTestingDialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
     def load_feescales(self):
         self.table_list = []
         self.tablenames = []
-        for table in localsettings.FEETABLES.tables.values():
+        for table in list(localsettings.FEETABLES.tables.values()):
             self.table_list.append(table)
             self.tablenames.append(table.briefName)
         self.comboBox.clear()
         self.comboBox.addItems(self.tablenames)
 
     def check_codes(self):
-        tx = str(self.lineEdit.text().toAscii()).upper()
+        tx = str(self.lineEdit.text()).upper()
 
         complex_matches = []
         for att in CURRTRT_NON_TOOTH_ATTS:
@@ -166,12 +162,12 @@ class FeescaleTestingDialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
                     complex_matches.append(att)
 
         if complex_matches != []:
-            QtGui.QMessageBox.information(self, _("Information"),
-                                          "%s '%s' %s<hr />%s" % (
-                                              _("This feescale handles"), tx,
-                                              _(
-                                                  "as a complex code for the following attributes."),
-                                              complex_matches))
+            QtGui.QMessageBox.information(
+                self, _("Information"),
+                "%s '%s' %s<hr />%s" % (
+                    _("This feescale handles"), tx,
+                    _("as a complex code for the following attributes."),
+                    complex_matches))
 
     @property
     def current_table(self):
@@ -182,6 +178,7 @@ class FeescaleTestingDialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
         self.model3.table = self.current_table
 
         self.check_codes()
+
 
 if __name__ == "__main__":
     localsettings.initiate()

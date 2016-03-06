@@ -1,5 +1,4 @@
 #! /usr/bin/python
-# -*- coding: utf-8 -*-
 
 # ########################################################################### #
 # #                                                                         # #
@@ -263,7 +262,7 @@ class SettingsFetcher(object):
         except ValueError:
             LOGGER.warning(
                 "Badly formatted value for practice_address in settings")
-            address_list.append(unicode(address))
+            address_list.append(str(address))
         return tuple(address_list)
 
     @property
@@ -331,15 +330,16 @@ class SettingsFetcher(object):
         self.archived_dents = tuple(archived_dents)
         self.archived_hygs = tuple(archived_hygs)
 
+
 if __name__ == "__main__":
     sf = SettingsFetcher()
     sf.fetch()
 
-    print sf.PT_COUNT
-    print sf.wiki_url
-    print sf.book_end
-    print sf.supervisor_pword
-    print sf.getData("enddate")
-    print sf.active_dents
-    print sf.active_hygs
-    print sf.dentist_data
+    print(sf.PT_COUNT)
+    print(sf.wiki_url)
+    print(sf.book_end)
+    print(sf.supervisor_pword)
+    print(sf.getData("enddate"))
+    print(sf.active_dents)
+    print(sf.active_hygs)
+    print(sf.dentist_data)

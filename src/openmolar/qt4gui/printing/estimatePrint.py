@@ -1,33 +1,30 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
-from __future__ import division
+from gettext import gettext as _
 
 from PyQt4 import QtCore, QtGui
 from openmolar.settings import localsettings
-
-import datetime
 
 
 class estimate(object):
@@ -67,12 +64,12 @@ class estimate(object):
             pageRect = printer.pageRect()
             painter.setPen(QtCore.Qt.black)
             painter.setFont(serifFont)
-            center = QtGui.QTextOption(QtCore.Qt.AlignCenter)
             alignRight = QtGui.QTextOption(QtCore.Qt.AlignRight)
 
             x, y = LeftMargin, TopMargin
             painter.drawText(x, y, "%s %s %s" % (self.title.title(),
-                                                 self.fname.title(), self.sname.title()))
+                                                 self.fname.title(),
+                                                 self.sname.title()))
 
             y += serifLineHeight
             painter.drawText(x, y, "Our Ref - " + str(self.ourref))
@@ -83,7 +80,8 @@ class estimate(object):
             painter.drawText(x, y, mystr)
 
             painter.drawText(x + w, y,
-                             QtCore.QDate.currentDate().toString(localsettings.QDATE_FORMAT))
+                             QtCore.QDate.currentDate().toString(
+                                 localsettings.QDATE_FORMAT))
 
             x = LeftMargin + 10
             y += serifLineHeight
@@ -130,26 +128,25 @@ class estimate(object):
                     painter.drawText(QtCore.QRectF(x, y, 60, serifLineHeight),
                                      str(number))
 
-                    painter.drawText(QtCore.QRectF(x + 60, y, 280,
-                                                   serifLineHeight), QtCore.QString(item))
+                    painter.drawText(
+                        QtCore.QRectF(x + 60, y, 280, serifLineHeight), item)
 
-                    painter.drawText(QtCore.QRectF(x + 280, y, 100,
-                                                   serifLineHeight), localsettings.formatMoney(
-                                     amount),
-                                     alignRight)
+                    painter.drawText(
+                        QtCore.QRectF(x + 280, y, 100, serifLineHeight),
+                        localsettings.formatMoney(amount), alignRight)
 
                     y += serifLineHeight
 
             y += serifLineHeight
-            #-- 280+100=280
+            # 280+100=280
             painter.drawLine(int(x), int(y), int(x) + 380, int(y))
             y += serifLineHeight * 1.5
 
             painter.drawText(QtCore.QRectF(x, y, 180, serifLineHeight),
-                             QtCore.QString("TOTAL"))
+                             _("TOTAL"))
 
             painter.drawText(QtCore.QRectF(x + 280, y, 100, serifLineHeight),
-                             QtCore.QString(localsettings.formatMoney(pt_total)), alignRight)
+                             localsettings.formatMoney(pt_total), alignRight)
 
             y += serifLineHeight * 4
 
@@ -158,20 +155,21 @@ class estimate(object):
             painter.setFont(font)
             option = QtGui.QTextOption(QtCore.Qt.AlignCenter)
             option.setWrapMode(QtGui.QTextOption.WordWrap)
-            painter.drawText(QtCore.QRectF(0, y, pageRect.width(), 31),
-                             "Please note, this estimate may be subject to change if " +
-                             "clinical circumstances dictate.", option)
+            painter.drawText(
+                QtCore.QRectF(0, y, pageRect.width(), 31),
+                _("Please note, this estimate may be subject to change if "
+                  "clinical circumstances dictate."), option)
         return True
+
 
 if __name__ == "__main__":
 
-    import sys
     localsettings.initiate(False)
     from openmolar.dbtools import patient_class
     from openmolar.ptModules import estimates
     pt = patient_class.patient(23664)
 
-    app = QtGui.QApplication(sys.argv)
+    app = QtGui.QApplication([])
 
     myreceipt = estimate()
 

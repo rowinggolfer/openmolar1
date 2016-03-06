@@ -1,5 +1,4 @@
 #! /usr/bin/python
-# -*- coding: utf-8 -*-
 
 # ########################################################################### #
 # #                                                                         # #
@@ -120,4 +119,4 @@ if __name__ == "__main__":
 
     dl = OtherTreatmentDialog(mw)
     if dl.exec_():
-        print list(dl.chosen_treatments)
+        print(list(dl.chosen_treatments))

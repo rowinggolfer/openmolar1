@@ -1,31 +1,30 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
+
+from gettext import gettext as _
 
 from PyQt4 import QtCore, QtGui
 from openmolar.settings import localsettings
-
-import datetime
 
 
 class document():
@@ -89,8 +88,6 @@ class document():
             serifFont = QtGui.QFont("Times", 10)
             serifLineHeight = QtGui.QFontMetrics(serifFont).height()
             sigFont = QtGui.QFont("Lucida Handwriting", 8)
-            fm = QtGui.QFontMetrics(serifFont)
-            DateWidth = fm.width(" September 99, 2999 ")
 
             painter = QtGui.QPainter(printer)
             pageRect = printer.pageRect()
@@ -113,7 +110,8 @@ class document():
             painter.setFont(serifFont)
             x, y = LeftMargin, (pageRect.height() * 0.35)
             painter.drawText(x + 250, y,
-                             QtCore.QDate.currentDate().toString(localsettings.QDATE_FORMAT))
+                             QtCore.QDate.currentDate().toString(
+                                 localsettings.QDATE_FORMAT))
             y += sansLineHeight
             y += serifLineHeight
             painter.drawText(
@@ -122,26 +120,23 @@ class document():
             y += serifLineHeight * 1.5
             if self.tone == "C":
                 painter.drawText(
-                    x,
-                    y,
+                    x, y,
                     _("STATEMENT OF ACCOUNT - FINAL REMINDER"))
                 y += serifLineHeight * 1.2
                 painter.drawText(
-                    x,
-                    y,
-                    _("We are concerned that despite previous correspondance,"))
+                    x, y,
+                    _("We are concerned that despite previous "
+                      "correspondance,"))
                 y += serifLineHeight
                 painter.drawText(
-                    x,
-                    y,
+                    x, y,
                     _("your account still stands as follows: "))
             else:
                 painter.drawText(
-                    x,
-                    y,
+                    x, y,
                     _("Please note that your account stands as follows:- "))
             y += serifLineHeight * 1.5
-            painter.drawText(x, y, _(u"Amount : %s") % self.amount)
+            painter.drawText(x, y, _("Amount : %s") % self.amount)
             y += serifLineHeight * 2
             if self.tone == "A":
                 painter.drawText(x, y, _("This amount is now due in full. *"))
@@ -149,27 +144,25 @@ class document():
                 d = self.previousCorrespondenceDate
                 if d == "" or d is None:
                     painter.drawText(
-                        x, y, _("A previous account was sent out to you on %s") %
-                        d)
+                        x, y, "%s %s" % (
+                            _("A previous account was sent out to you on"), d))
                     y += serifLineHeight
                 painter.drawText(
-                    x,
-                    y,
-                    _("It would be appreciated if you would settle this matter as soon as possible."))
+                    x, y,
+                    _("It would be appreciated if you would settle this "
+                      "matter as soon as possible."))
             else:
                 painter.drawText(
-                    x,
-                    y,
-                    _("It would be appreciated if this account is settled within seven days."))
+                    x, y,
+                    _("It would be appreciated if this account is "
+                      "settled within seven days."))
                 y += serifLineHeight
                 painter.drawText(
-                    x,
-                    y,
+                    x, y,
                     _("On this deadline, we will pass this debt to"))
                 y += serifLineHeight
                 painter.drawText(
-                    x,
-                    y,
+                    x, y,
                     _("Scott & Company Sheriff Officers for collection."))
 
             y += serifLineHeight * 2
@@ -186,14 +179,16 @@ class document():
             option = QtGui.QTextOption(QtCore.Qt.AlignCenter)
             option.setWrapMode(QtGui.QTextOption.WordWrap)
             painter.drawText(
-                QtCore.QRectF(x, y,
-                              pageRect.width() - (2 * AddressMargin), 31),
-                _('* Cheques payable to: "Academy Dental Practice"\n') +
-                _(
-                    'Or telephone us with your switch/visa/mastercard details.'),
+                QtCore.QRectF(
+                    x, y, pageRect.width() - (2 * AddressMargin), 31),
+                "* %s\n%s" % (
+                    _('Cheques payable to: "Academy Dental Practice"'),
+                    _('Or telephone us with your switch/visa/mastercard '
+                      'details.')),
                 option)
             painter.restore()
         return True
+
 
 if __name__ == "__main__":
     import sys

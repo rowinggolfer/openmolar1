@@ -1,5 +1,4 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
@@ -125,7 +124,7 @@ class AlterTodaysNotesDialog(BaseDialog):
         self.enableApply()
 
     def apply_changed(self):
-        notes = unicode(self.text_edit.toPlainText()).rstrip(" \n")
+        notes = str(self.text_edit.toPlainText()).rstrip(" \n")
         short_lines = list(patient_write_changes.note_splitter(notes, "\n"))
 
         LOGGER.debug(short_lines)

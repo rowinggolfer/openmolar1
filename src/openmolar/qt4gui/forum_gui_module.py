@@ -1,33 +1,32 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 provides the logic to manipulate the forum.
 '''
 
-import time
 import datetime
+from gettext import gettext as _
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
@@ -51,10 +50,10 @@ def loadForum(om_gui):
     twidg.setSortingEnabled(False)
     chosen = om_gui.ui.forumViewFilter_comboBox.currentText()
     GROUP_TOPICS = om_gui.ui.group_replies_radioButton.isChecked()
-    #-- set the column headers (stored in another module)
+    #  set the column headers (stored in another module)
     headers = forum.headers
     twidg.setHeaderLabels(headers)
-    #-- get the posts
+    #  get the posts
     show_closed = om_gui.ui.forum_deletedposts_checkBox.isChecked()
     if chosen != _("Everyone"):
         posts = forum.getPosts(chosen, show_closed)
@@ -63,8 +62,6 @@ def loadForum(om_gui):
 
     parentItems = {None: twidg}
 
-    #--set a boolean for alternating row colours
-    highlighted = True
     for post in posts:
         if GROUP_TOPICS:
             parentItem = parentItems.get(post.parent_ix, twidg)
@@ -79,8 +76,7 @@ def loadForum(om_gui):
         else:
             item.setText(3, "-")
 
-        d = QtCore.QDateTime(post.date)
-        item.setData(4, QtCore.Qt.DisplayRole, QtCore.QVariant(d))
+        item.setData(4, QtCore.Qt.DisplayRole, QtCore.QDateTime(post.date))
 
         item.setText(5, post.comment)
         item.setText(6, post.briefcomment)
@@ -128,7 +124,7 @@ def loadForum(om_gui):
     om_gui.ui.forumReply_pushButton.setEnabled(False)
     om_gui.ui.forumParent_pushButton.setEnabled(False)
 
-    #-- turn the tab red.
+    #  turn the tab red.
 
 
 def forumItemSelected(om_gui):
@@ -136,9 +132,7 @@ def forumItemSelected(om_gui):
     user has selected an item in the forum
     '''
     item = om_gui.ui.forum_treeWidget.currentItem()
-
-    datetext = item.data(4,
-                         QtCore.Qt.DisplayRole).toDateTime().toString("ddd d MMM h:mm")
+    datetext = item.data(4, QtCore.Qt.DisplayRole).toString("ddd d MMM h:mm")
 
     heading = "<b>Subject:\t%s<br />" % item.text(0)
     heading += "From:\t%s<br />" % item.text(2)
@@ -181,8 +175,8 @@ def forumNewTopic(om_gui):
             return
 
     post = forum.post()
-    post.topic = dl.topic_lineEdit.text().toAscii()
-    post.comment = dl.comment_textEdit.toPlainText().toAscii()
+    post.topic = dl.topic_lineEdit.text()
+    post.comment = dl.comment_textEdit.toPlainText()
     post.inits = dl.from_comboBox.currentText()
     if dl.to_comboBox.currentIndex != 0:
         post.recipient = dl.to_comboBox.currentText()
@@ -197,27 +191,25 @@ def forumDeleteItem(om_gui):
     items = om_gui.ui.forum_treeWidget.selectedItems()
     number = len(items)
     if number > 1:
-        result = QtGui.QMessageBox.question(om_gui, "Confirm",
-                                            _("Delete %d Posts?") % number,
-                                            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                                            QtGui.QMessageBox.Yes)
-        if result == QtGui.QMessageBox.Yes:
+        if QtGui.QMessageBox.question(
+                om_gui, _("Confirm"),
+                "%s %d %s?" % (_("Delete"), number, _(" Posts")),
+                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
             for item in items:
                 ix = int(item.text(1))
                 forum.deletePost(ix)
     else:
         item = om_gui.ui.forum_treeWidget.currentItem()
         heading = item.text(0)
-
-        result = QtGui.QMessageBox.question(om_gui, "Confirm",
-                                            _("Delete selected Post?") +
-                                            "<br />'%s'" % heading,
-                                            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                                            QtGui.QMessageBox.Yes)
-        if result == QtGui.QMessageBox.Yes:
+        if QtGui.QMessageBox.question(
+                om_gui, _("Confirm"),
+                _("Delete selected Post?") +
+                "<br />'%s'" % heading,
+                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
             ix = int(item.text(1))
             forum.deletePost(ix)
-
     loadForum(om_gui)
 
 
@@ -241,8 +233,8 @@ def forumReply(om_gui):
         parentix = int(item.text(1))
         post = forum.post()
         post.parent_ix = parentix
-        post.topic = dl.topic_lineEdit.text().toAscii()
-        post.comment = dl.comment_textEdit.toPlainText().toAscii()
+        post.topic = dl.topic_lineEdit.text()
+        post.comment = dl.comment_textEdit.toPlainText()
         post.inits = dl.from_comboBox.currentText()
         post.recipient = dl.to_comboBox.currentText()
         forum.commitPost(post)

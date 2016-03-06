@@ -1,5 +1,4 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
@@ -25,8 +24,6 @@
 '''
 this module provides an html summary of the patient's details
 '''
-
-from __future__ import division
 
 import datetime
 from gettext import gettext as _
@@ -204,4 +201,4 @@ if __name__ == '__main__':
         serialno = int(sys.argv[len(sys.argv) - 1])
     except:
         serialno = 4792
-    print details(patient_class.patient(serialno))
+    print(details(patient_class.patient(serialno)))

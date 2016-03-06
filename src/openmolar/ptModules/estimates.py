@@ -1,35 +1,33 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
-from __future__ import division
 import copy
+from gettext import gettext as _
 import logging
 import re
 import sys
 
 from openmolar.settings import localsettings
-from openmolar.ptModules import plan
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -76,14 +74,6 @@ class Estimate(object):
         self.dent = None
 
         self.tx_hashes = []
-
-    def __cmp__(self, other):
-        '''
-        this function enables sorting for the estimate widget.
-        the replacement of "-" with "Z" ensures that "other" items are last
-        '''
-        return cmp(
-            self.itemcode.replace("-", "Z"), other.itemcode.replace("-", "Z"))
 
     @property
     def completed(self):
@@ -153,6 +143,20 @@ class Estimate(object):
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    def __lt__(self, other):
+        try:
+            return (self.itemcode.replace("-", "Z") <
+                    other.itemcode.replace("-", "Z"))
+        except AttributeError:
+            return False
+
+    def __gt__(self, other):
+        try:
+            return (self.itemcode.replace("-", "Z") >
+                    other.itemcode.replace("-", "Z"))
+        except AttributeError:
+            return False
 
     def toHtmlRow(self):
         hash_string = ""
@@ -275,7 +279,7 @@ def sorted_estimates(ests):
         for se in sortedEsts:
             if se.itemcode == est.itemcode:
                 if se.description == strip_curlies(est.description):
-                    #--don't combine items where description has changed
+                    # don't combine items where description has changed
                     if est.number is not None and se.number is not None:
                         se.number += est.number
                     se.fee += est.fee
@@ -298,9 +302,8 @@ def apply_exemption(pt, maxCharge=0):
     '''
     total = 0
     for est in pt.estimates:
-        if not "N" in est.csetype:
+        if "N" not in est.csetype:
             continue
-
         if maxCharge - total >= est.ptfee:
             pass
         else:
@@ -322,6 +325,6 @@ if __name__ == "__main__":
         serialno = 23664
 
     pt = patient_class.patient(serialno)
-    print str(pt.estimates)
+    print(str(pt.estimates))
     for estimate in pt.estimates:
-        print estimate.toHtmlRow().encode("ascii", "replace")
+        print(estimate.toHtmlRow().encode("ascii", "replace"))

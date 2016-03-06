@@ -1,39 +1,38 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 This module provides a function 'run' which will move data
 to schema 2_2
 '''
-from __future__ import division
 
+from gettext import gettext as _
 import logging
 import os
-import sys
 from openmolar.settings import localsettings
 
-from openmolar.schema_upgrades.database_updater_thread import DatabaseUpdaterThread
+from openmolar.schema_upgrades.database_updater_thread \
+    import DatabaseUpdaterThread
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -46,7 +45,6 @@ SQLSTRINGS = [
     'update patients set addr3="" where addr3 is NULL',
     'update patients set town="" where town is NULL',
     'update patients set county="" where town is NULL',
-
     '''
 alter table patients
     alter column addr2 set default "",
@@ -155,9 +153,7 @@ class DatabaseUpdater(DatabaseUpdaterThread):
         '''
         self.cursor.execute(SOURCE_QUERY)
         rows = self.cursor.fetchall()
-        step = 1 / len(rows)
         count, prev_courseno, prev_cat_type = 1, 0, ""
-        prev_hash = None
         for i, row in enumerate(rows):
             courseno, ix, category, type_, completed = row
             cat_type = "%s%s" % (category, type_)
@@ -226,7 +222,7 @@ class DatabaseUpdater(DatabaseUpdaterThread):
         LOGGER.info("running script to convert from schema 2.1 to 2.2")
         try:
             self.connect()
-            #- execute the SQL commands
+            # execute the SQL commands
             self.progressSig(5, _("creating tables"))
             self.execute_statements(SQLSTRINGS)
             self.progressSig(10, _("populating est_link table"))
@@ -238,12 +234,13 @@ class DatabaseUpdater(DatabaseUpdaterThread):
             self.update_schema_version(("2.2",), "2_1 to 2_2 script")
             self.progressSig(100, _("updating stored schema version"))
             self.commit()
-            self.completeSig(_("Successfully moved db to")+ " 2.2")
+            self.completeSig(_("Successfully moved db to") + " 2.2")
             return True
         except Exception as exc:
             LOGGER.exception("error transfering data")
             self.rollback()
             raise self.UpdateError(exc)
+
 
 if __name__ == "__main__":
     dbu = DatabaseUpdater()

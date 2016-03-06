@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -26,7 +25,7 @@
 This module provides a function 'run' which will move data
 to schema 3.2
 '''
-from __future__ import division
+
 from gettext import gettext as _
 
 import logging
@@ -88,6 +87,7 @@ class DatabaseUpdater(DatabaseUpdaterThread):
             LOGGER.exception("error transfering data")
             self.rollback()
             raise self.UpdateError(exc)
+
 
 if __name__ == "__main__":
     dbu = DatabaseUpdater()

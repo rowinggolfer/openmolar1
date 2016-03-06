@@ -1,26 +1,25 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 '''
 provides functions which act on the contract of the patient
@@ -67,7 +66,7 @@ def changeContractedDentist(om_gui, inits):
             "Get an NHS form signed to change the patients contract", 1)
     else:
         om_gui.advise("changed dentist to %s" % inits, 1)
-    print "changing contracted dentist to ", inits
+    print("changing contracted dentist to ", inits)
     om_gui.pt.dnt1 = newdentist
     om_gui.updateDetails()
 
@@ -87,7 +86,7 @@ def changeCourseDentist(om_gui, inits):
     else:
         om_gui.advise("changed course dentist to %s" % inits, 1)
 
-    print "changing course dentist to ", inits
+    print("changing course dentist to ", inits)
     om_gui.pt.dnt2 = newdentist
     om_gui.updateDetails()
 
@@ -113,9 +112,9 @@ def exemption_edited(om_gui):
     '''
     user has edited the exemption text fields
     '''
-    om_gui.pt.exemption = str(om_gui.ui.exemption_lineEdit.text().toAscii())
+    om_gui.pt.exemption = str(om_gui.ui.exemption_lineEdit.text())
     om_gui.pt.exempttext = str(
-        om_gui.ui.exempttext_lineEdit.text().toAscii())
+        om_gui.ui.exempttext_lineEdit.text())
     if not om_gui.pt.checkExemption():
         om_gui.advise(_("erroneous exemption category entered"), 1)
         om_gui.ui.exemption_lineEdit.setText(om_gui.pt.dbstate.exemption)

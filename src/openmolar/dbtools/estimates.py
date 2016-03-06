@@ -1,26 +1,25 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
-# ############################################################################ #
-# #                                                                          # #
-# # Copyright (c) 2009-2014 Neil Wallace <neil@openmolar.com>                # #
-# #                                                                          # #
-# # This file is part of OpenMolar.                                          # #
-# #                                                                          # #
-# # OpenMolar is free software: you can redistribute it and/or modify        # #
-# # it under the terms of the GNU General Public License as published by     # #
-# # the Free Software Foundation, either version 3 of the License, or        # #
-# # (at your option) any later version.                                      # #
-# #                                                                          # #
-# # OpenMolar is distributed in the hope that it will be useful,             # #
-# # but WITHOUT ANY WARRANTY; without even the implied warranty of           # #
-# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            # #
-# # GNU General Public License for more details.                             # #
-# #                                                                          # #
-# # You should have received a copy of the GNU General Public License        # #
-# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.       # #
-# #                                                                          # #
-# ############################################################################ #
+# ########################################################################### #
+# #                                                                         # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
+# #                                                                         # #
+# # This file is part of OpenMolar.                                         # #
+# #                                                                         # #
+# # OpenMolar is free software: you can redistribute it and/or modify       # #
+# # it under the terms of the GNU General Public License as published by    # #
+# # the Free Software Foundation, either version 3 of the License, or       # #
+# # (at your option) any later version.                                     # #
+# #                                                                         # #
+# # OpenMolar is distributed in the hope that it will be useful,            # #
+# # but WITHOUT ANY WARRANTY; without even the implied warranty of          # #
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           # #
+# # GNU General Public License for more details.                            # #
+# #                                                                         # #
+# # You should have received a copy of the GNU General Public License       # #
+# # along with OpenMolar.  If not, see <http://www.gnu.org/licenses/>.      # #
+# #                                                                         # #
+# ########################################################################### #
 
 import logging
 
@@ -38,8 +37,8 @@ from newestimates right join est_link2 on newestimates.ix = est_link2.est_id
 where serialno=%s and courseno=%s order by itemcode, ix'''
 
 ESTS_INS_QUERY = ('insert into newestimates (serialno, '
-                  'courseno, number, itemcode, description, fee, ptfee, feescale, '
-                  'csetype, dent, modified_by, time_stamp) values '
+                  'courseno, number, itemcode, description, fee, ptfee, '
+                  'feescale, csetype, dent, modified_by, time_stamp) values '
                   '(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())')
 
 EST_LINK_INS_QUERY = (
@@ -184,7 +183,7 @@ def apply_changes(pt, old_ests, new_ests):
 
             estimate_insertions.append((ESTS_INS_QUERY, values, est.tx_hashes))
 
-        elif est.ix in old_ests_dict.keys():
+        elif est.ix in list(old_ests_dict.keys()):
             oldEst = old_ests_dict[est.ix]
             if oldEst != est:
                 values = (est.number,
@@ -200,11 +199,11 @@ def apply_changes(pt, old_ests, new_ests):
 
             old_ests_dict.pop(est.ix)
 
-    #-- all that is left in old_ests_dict now are items which
-    #-- have been removed.
-    #-- so remove from database if they are current course!
-    for ix, old_est in old_ests_dict.iteritems():
-        #--removed
+    # all that is left in old_ests_dict now are items which
+    # have been removed.
+    # so remove from database if they are current course!
+    for ix, old_est in old_ests_dict.items():
+        # removed
         if old_est.courseno == pt.courseno0:
             values = (ix,)
             estimate_deletions.append((EST_DEL_QUERY, values))
@@ -233,9 +232,7 @@ def apply_changes(pt, old_ests, new_ests):
         cursor.execute(EST_LINK_DEL_QUERY, (estimate.ix,))
         for tx_hash in estimate.tx_hashes:
             cursor.execute(EST_LINK_INS_QUERY,
-                          (estimate.ix, tx_hash.hash,
-                           tx_hash.completed)
-                           )
+                           (estimate.ix, tx_hash.hash, tx_hash.completed))
 
     for query, values in estimate_deletions:
         LOGGER.debug(query)
@@ -252,6 +249,6 @@ def apply_changes(pt, old_ests, new_ests):
 
 if __name__ == "__main__":
     ests = get_ests(11956, 29749)
-    print ests
-    print "equality test   (should be True)     ", ests[0] == ests[0]
-    print "inequality test (should also be True)", ests[0] != ests[1]
+    print(ests)
+    print("equality test   (should be True)     ", ests[0] == ests[0])
+    print("inequality test (should also be True)", ests[0] != ests[1])

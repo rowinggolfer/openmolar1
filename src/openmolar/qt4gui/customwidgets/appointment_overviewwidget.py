@@ -1,5 +1,4 @@
 #! /usr/bin/python
-# -*- coding: utf-8 -*-
 
 # ########################################################################### #
 # #                                                                         # #
@@ -25,8 +24,6 @@
 '''
 provides one class - the appointment overview widget used in the weekview
 '''
-
-from __future__ import division
 
 import datetime
 from gettext import gettext as _
@@ -250,12 +247,14 @@ class AppointmentOverviewWidget(QtGui.QWidget):
 
                 if rect.contains(event.pos()):
                     self.selected_rect = rect
-                    feedback = '%d mins starting at %s with %s' % (
+                    feedback = '%d %s %s %s %s' % (
                         slot.length,
-                        slot.date_time.strftime("%H:%M"), dent.initials)
+                        _("mins starting at"),
+                        slot.date_time.strftime("%H:%M"),
+                        _("with"),
+                        dent.initials)
 
-                    QtGui.QToolTip.showText(event.globalPos(),
-                                            QtCore.QString(feedback))
+                    QtGui.QToolTip.showText(event.globalPos(), feedback)
                     self.update()
                     return
 
@@ -363,7 +362,7 @@ class AppointmentOverviewWidget(QtGui.QWidget):
                     self.selected_rect = rect
                     start = "%d:%02d" % (appt.mpm // 60, appt.mpm % 60)
                     finish = "%d:%02d" % ((appt.mpm + appt.length) // 60,
-                                            (appt.mpm + appt.length) % 60)
+                                          (appt.mpm + appt.length) % 60)
                     self.clear_slot_signal.emit(start, finish, dent.ix,
                                                 self.date.toPyDate())
                     return

@@ -1,9 +1,8 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#! /usr/bin/python
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -97,19 +96,19 @@ class DrugTextEdit(CompletionTextEdit):
 
     @property
     def meds(self):
-        for drug in unicode(self.document().toPlainText()).split("\n"):
+        for drug in str(self.document().toPlainText()).split("\n"):
             if drug and drug.title() in self.known_drugs:
                 yield drug.title()
 
     @property
     def unknown_meds(self):
-        for drug in unicode(self.document().toPlainText()).split("\n"):
+        for drug in str(self.document().toPlainText()).split("\n"):
             if drug and drug.title() not in self.known_drugs:
                 yield drug.title()
 
     def remove_med(self, med):
         meds = []
-        for drug in unicode(self.document().toPlainText()).split("\n"):
+        for drug in str(self.document().toPlainText()).split("\n"):
             if drug and drug.lower() != med.lower():
                 meds.append(drug)
         self.setText("\n".join(meds))
@@ -340,25 +339,25 @@ class MedicalHistoryDialog(BaseDialog):
                 LOGGER.debug("deleted medication %s", med)
         self.new_mh = medhist.MedHist(
             None,  # ix
-            unicode(self.warning_line_edit.text().toUtf8()),
+            str(self.warning_line_edit.text()),
             meds_dict,
-            unicode(self.meds_line_edit.text().toUtf8()),
-            unicode(self.allergies_line_edit.text().toUtf8()),
-            unicode(self.respiratory_line_edit.text().toUtf8()),
-            unicode(self.heart_line_edit.text().toUtf8()),
-            unicode(self.diabetes_line_edit.text().toUtf8()),
-            unicode(self.arthritis_line_edit.text().toUtf8()),
-            unicode(self.bleeding_line_edit.text().toUtf8()),
-            unicode(self.infection_line_edit.text().toUtf8()),
-            unicode(self.endocarditis_line_edit.text().toUtf8()),
-            unicode(self.liver_line_edit.text().toUtf8()),
-            unicode(self.anaesthetic_line_edit.text().toUtf8()),
-            unicode(self.joint_line_edit.text().toUtf8()),
-            unicode(self.heart_surgery_line_edit.text().toUtf8()),
-            unicode(self.brain_surgery_line_edit.text().toUtf8()),
-            unicode(self.hospitalised_line_edit.text().toUtf8()),
-            unicode(self.cjd_line_edit.text().toUtf8()),
-            unicode(self.other_text_edit.toPlainText().toUtf8()),
+            str(self.meds_line_edit.text()),
+            str(self.allergies_line_edit.text()),
+            str(self.respiratory_line_edit.text()),
+            str(self.heart_line_edit.text()),
+            str(self.diabetes_line_edit.text()),
+            str(self.arthritis_line_edit.text()),
+            str(self.bleeding_line_edit.text()),
+            str(self.infection_line_edit.text()),
+            str(self.endocarditis_line_edit.text()),
+            str(self.liver_line_edit.text()),
+            str(self.anaesthetic_line_edit.text()),
+            str(self.joint_line_edit.text()),
+            str(self.heart_surgery_line_edit.text()),
+            str(self.brain_surgery_line_edit.text()),
+            str(self.hospitalised_line_edit.text()),
+            str(self.cjd_line_edit.text()),
+            str(self.other_text_edit.toPlainText()),
             self.med_alert_cb.isChecked(),
             localsettings.currentDay(),
             None,
@@ -451,6 +450,7 @@ class MedicalHistoryDialog(BaseDialog):
     def update_chkdate(self):
         LOGGER.info("updating chkdate for existing mh")
         medhist.update_chkdate(self.mh.ix)
+
 
 if __name__ == "__main__":
     import sys

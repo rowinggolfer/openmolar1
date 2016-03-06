@@ -1,9 +1,8 @@
 #! /usr/bin/python
-# -*- coding: utf-8 -*-
 
 # ########################################################################### #
 # #                                                                         # #
-# # Copyright (c) 2009-2015 Neil Wallace <neil@openmolar.com>               # #
+# # Copyright (c) 2009-2016 Neil Wallace <neil@openmolar.com>               # #
 # #                                                                         # #
 # # This file is part of OpenMolar.                                         # #
 # #                                                                         # #
@@ -71,7 +70,7 @@ def usage():
     called by --help, bad arguments, or no arguments
     simply importing the localsettings will display some system info
     '''
-    print USAGE % (
+    print(USAGE % (
         _("command line options are as follows"),
         _("quiet (minimal logging to console)"),
         _("verbose logging to console (for debugging)"),
@@ -81,7 +80,7 @@ def usage():
           "(NOT ADVISABLE!)"),
         _("show the versioning and exit"),
         _("Ignore dev login (advanced)")
-    )
+    ))
 
 
 def version():
@@ -100,7 +99,7 @@ def run():
         opts, args = getopt.gnu_getopt(sys.argv[1:], SHORTARGS, LONGARGS)
     except getopt.GetoptError as exc:
         # LOGGER.exception ("Unable to parse command line arguments")
-        print "\n%s\n" % exc.msg
+        print("\n%s\n" % exc.msg)
         opts = (("--help", ""),)
 
     # some backward compatibility stuff here...
@@ -122,6 +121,7 @@ def run():
             localsettings.IGNORE_SCHEMA_CHECK = True
             LOGGER.warning("command line args demand no schema check")
     chosen_func()
+
 
 if __name__ == "__main__":
     # - put "openmolar" on the pyth path and go....
