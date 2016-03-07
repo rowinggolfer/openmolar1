@@ -32,6 +32,9 @@ import logging
 import os
 import sys
 
+if sys.version < '3.0':
+    sys.exit("This program requires a python3 runtime")
+
 from openmolar.settings import localsettings
 
 SHORTARGS = "vq"

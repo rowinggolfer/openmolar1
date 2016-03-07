@@ -26,6 +26,7 @@ provides the main class which is my gui
 '''
 
 import datetime
+from gettext import gettext as _
 import logging
 import os
 import pickle
@@ -3710,7 +3711,6 @@ def main():
 
 
 if __name__ == "__main__":
-    from gettext import gettext as _
     LOGGER.setLevel(logging.DEBUG)
     LOGGER.warning("dev mode in use - verbose logging")
     LOGGER.debug("Qt Version: %s", QtCore.QT_VERSION_STR)

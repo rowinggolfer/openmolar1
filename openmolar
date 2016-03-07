@@ -21,6 +21,18 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from openmolar import main
+'''
+This executable script simply imports openmolar.main and calls run().
 
+Since openmolar version 0.7 requires python 3 to run, warnings are given if
+this is called with python2.
+'''
+
+import sys
+
+if sys.version < '3.0':
+    sys.exit("This program requires a python3 runtime")
+
+
+from openmolar import main
 main.run()
