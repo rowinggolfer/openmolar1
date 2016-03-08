@@ -85,7 +85,7 @@ class ChildSmileDialog(BaseDialog):
         self.pcde_le = UpperCaseLineEdit()
         self.pcde_le.setText(self.main_ui.pt.pcde)
         self.simd_label = QtGui.QLabel()
-        self.header_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.simd_label.setAlignment(QtCore.Qt.AlignCenter)
 
         self.tbi_checkbox = QtGui.QCheckBox(
             _("ToothBrushing Instruction Given"))
