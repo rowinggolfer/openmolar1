@@ -62,3 +62,6 @@ MED_FORM_QUERY = '''select chk_date from medforms where pt_sno=%s
 order by chk_date desc'''
 
 SYNOPSIS_QUERY = 'SELECT synopsis from clinical_memos where serialno=%s'
+
+DAYBOOK_CHART_QUERY = '''SELECT date, trtid, CONVERT(chart USING ascii)
+FROM daybook WHERE serialno=%s'''

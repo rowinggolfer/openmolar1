@@ -1820,12 +1820,10 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.advise("no patient selected", 1)
             return
         dl = PhraseBookDialog(self)
-        newNotes = ""
         if dl.exec_():
-            for phrase in dl.selectedPhrases:
-                newNotes += phrase + "\n"
-            if newNotes != "":
-                self.addNewNote(newNotes)
+            new_note = "\n".join(dl.selectedPhrases)
+            if new_note != "":
+                self.addNewNote(new_note)
 
     def show_clinician_phrase_book_dialog(self):
         '''
@@ -1835,21 +1833,21 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             self.advise("no patient selected", 1)
             return
         dl = PhraseBookDialog(self, localsettings.clinicianNo)
-        newNotes = ""
         if dl.exec_():
-            for phrase in dl.selectedPhrases:
-                newNotes += phrase + "\n"
-            if newNotes != "":
-                self.addNewNote(newNotes)
+            new_note = "\n".join(dl.selectedPhrases)
+            if new_note != "":
+                self.addNewNote(new_note)
 
-    def addNewNote(self, arg):
+    def addNewNote(self, note):
         '''
         used when I programatically add text to the user textEdit
         '''
         current = self.ui.notesEnter_textEdit.toPlainText()
-        if current != "":
-            current += "\n"
-        self.ui.notesEnter_textEdit.setText(current + arg)
+        pos = self.ui.notesEnter_textEdit.textCursor().position()
+        before = current[:pos]
+        after = current[pos:]
+        self.ui.notesEnter_textEdit.setText("%s\n%s\n%s" % (
+            before.strip("\n"), note.strip("\n"), after.strip("\n")))
 
     def callXrays(self):
         '''

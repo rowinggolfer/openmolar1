@@ -46,7 +46,7 @@ from openmolar.dbtools import records_in_use
 from openmolar.dbtools.queries import (
     PATIENT_QUERY_FIELDS, PATIENT_QUERY, FUTURE_EXAM_QUERY,
     PSN_QUERY, FAMILY_COUNT_QUERY, QUICK_MED_QUERY, SYNOPSIS_QUERY,
-    MED_FORM_QUERY)
+    MED_FORM_QUERY, DAYBOOK_CHART_QUERY)
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -357,8 +357,7 @@ class patient(object):
         if self._dayBookHistory is None:
             db = connect.connect()
             cursor = db.cursor()
-            query = 'select date, trtid, chart from daybook where serialno=%s'
-            cursor.execute(query, (self.serialno,))
+            cursor.execute(DAYBOOK_CHART_QUERY, (self.serialno,))
             self._dayBookHistory = cursor.fetchall()
             cursor.close()
         return self._dayBookHistory

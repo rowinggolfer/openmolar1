@@ -80,11 +80,14 @@ class AlterTodaysNotesDialog(BaseDialog):
 
     def show_phrasebook(self):
         dl = PhraseBookDialog(self)
-        newNotes = ""
         if dl.exec_():
-            for phrase in dl.selectedPhrases:
-                newNotes += phrase + "\n"
-            self.text_edit.append(newNotes)
+            note = "\n".join(dl.selectedPhrases)
+            current = self.text_edit.toPlainText()
+            pos = self.text_edit.textCursor().position()
+            before = current[:pos]
+            after = current[pos:]
+            self.text_edit.setText("%s\n%s\n%s" % (
+                before.strip("\n"), note.strip("\n"), after.strip("\n")))
 
     def get_todays_notes(self):
         try:
