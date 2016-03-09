@@ -379,10 +379,7 @@ def filter_help_text():
 
 if __name__ == "__main__":
     localsettings.initiate()
-
     for combo in (("*ALL*", "NW"), ("NW", "AH"), ("NW", "NW")):
-        r = details(combo[0], combo[1], QDate(
-            2008, 10, 31), QDate(2008, 11, 11))
-        print(r.encode("ascii", "replace"))
-
+        print(details(combo[0], combo[1], QDate(2008, 10, 31),
+                      QDate(2008, 11, 11)))
     print(filter_help_text())

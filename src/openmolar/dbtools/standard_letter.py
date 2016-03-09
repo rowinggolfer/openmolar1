@@ -21,6 +21,7 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
 import logging
 from collections import namedtuple
 
@@ -101,11 +102,9 @@ def get_standard_letters():
 def insert_letter(letter):
     db = connect()
     cursor = db.cursor()
-    result = cursor.execute(
-        INSERT_QUERY,
-        (letter.description, letter.text,
-         letter.footer, letter.text, letter.footer)
-    )
+    result = cursor.execute(INSERT_QUERY, (letter.description,
+                                           letter.text, letter.footer,
+                                           letter.text, letter.footer))
     cursor.close()
     if result == 0:
         LOGGER.error("insert_letter failed!")
@@ -113,14 +112,19 @@ def insert_letter(letter):
         LOGGER.info("insert_letter worked!")
     elif result == 2:
         LOGGER.warning("insert_letter updated an existing letter!")
+    db.commit()
     return result in (1, 2)
 
 
 def delete_letter(letter):
     db = connect()
     cursor = db.cursor()
-    result = cursor.execute(DELETE_QUERY, letter.description)
+    result = cursor.execute(DELETE_QUERY, (letter.description,))
     cursor.close()
+    if result == 0:
+        LOGGER.error("delete_letter failed!")
+    elif result == 1:
+        LOGGER.info("delete_letter worked!")
     return result
 
 
@@ -141,8 +145,12 @@ def _test():
 
 
 def _test2():
-    letter = StandardLetter("test", "test body", "footer")
+    from random import randint
+    nonce = "n".join([str(randint(1, 100)) for i in range(10)])
+    letter = StandardLetter("test %s" % nonce, "test body", "footer")
+    letter2 = StandardLetter("test %s" % nonce, "test body ammended", "footer")
     insert_letter(letter)
+    insert_letter(letter2)  # should update!
     delete_letter(letter)
     for letter in get_standard_letters():
         LOGGER.debug(letter.description)
@@ -150,5 +158,5 @@ def _test2():
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
-    print(_test().encode("ascii", "replace"))
+    print(_test())
     _test2()

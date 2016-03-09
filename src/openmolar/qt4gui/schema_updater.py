@@ -25,6 +25,8 @@
 this module is called when the schema is found to be out of date
 '''
 
+from gettext import gettext as _
+import importlib
 import logging
 import sys
 import time
@@ -34,8 +36,35 @@ from openmolar.settings import localsettings
 from openmolar.dbtools import schema_version
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 from openmolar.backports.advisor import Advisor
+import openmolar.schema_upgrades  # used with importlib
 
 LOGGER = logging.getLogger("openmolar")
+
+UPGRADES_AVAILABLE = (
+    ("1.1", ".schema1_0to1_1"),
+    ("1.2", ".schema1_1to1_2"),
+    ("1.3", ".schema1_2to1_3"),
+    ("1.4", ".schema1_3to1_4"),
+    ("1.5", ".schema1_4to1_5"),
+    ("1.6", ".schema1_5to1_6"),
+    ("1.7", ".schema1_6to1_7"),
+    ("1.8", ".schema1_7to1_8"),
+    ("1.9", ".schema1_8to1_9"),
+    ("2.0", ".schema1_9to2_0"),
+    ("2.1", ".schema2_0to2_1"),
+    ("2.2", ".schema2_1to2_2"),
+    ("2.3", ".schema2_2to2_3"),
+    ("2.4", ".schema2_3to2_4"),
+    ("2.5", ".schema2_4to2_5"),
+    ("2.6", ".schema2_5to2_6"),
+    ("2.7", ".schema2_6to2_7"),
+    ("2.8", ".schema2_7to2_8"),
+    ("2.9", ".schema2_8to2_9"),
+    ("3.0", ".schema2_9to3_0"),
+    ("3.1", ".schema3_0to3_1"),
+    ("3.2", ".schema3_1to3_2"),
+    ("3.3", ".schema3_2to3_3"),
+)
 
 MESSAGE = '''<h3>%s</h3>
 %s<br />%s {OLD}<br />%s {NEW}<br /><br />%s<hr /><b>%s</b>''' % (
@@ -102,9 +131,7 @@ class SchemaUpdater(BaseDialog, Advisor):
                 _("Schema Update Required"),
                 message,
                 QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                QtGui.QMessageBox.No
-        ) == QtGui.QMessageBox.Yes:
-
+                QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
             self.apply_updates()
         else:
             self.hide_brief_message()
@@ -134,17 +161,15 @@ class SchemaUpdater(BaseDialog, Advisor):
             self.dbu.force_stop()
         BaseDialog.reject(self)
         sys.exit("user rejected")
-        # raise UserQuit("user has quit the update")
 
     def updateProgress(self, arg, message):
-        LOGGER.info("%s %s" % (arg, message))
+        LOGGER.debug("%s %s", arg, message)
         self.label.setText(message)
         self.pb.setValue(arg)
         QtGui.QApplication.instance().processEvents()
 
     def apply_update(self):
         QtGui.QApplication.instance().processEvents()
-        time.sleep(2)
         header_message = "%s <b>%s</b> %s <b>%s</b>" % (
             _("Converting Database Schema from version"),
             self.current_version,
@@ -164,21 +189,23 @@ class SchemaUpdater(BaseDialog, Advisor):
             if self.dbu.run():
                 localsettings.DB_SCHEMA_VERSION = self.next_version
                 self._current_version = None
+                return True
             else:
-                self.completed(
-                    False,
-                    _('Conversion to %s failed') % self.next_version)
+                self.completed("%s %s %s" % (_('Conversion to'),
+                                             self.next_version,
+                                             _('failed')))
         except UserQuit:
             LOGGER.warning("user quit the database upgrade")
-            self.completed(False, _("Schema Upgrade Halted"))
+            self.completed(_("Schema Upgrade Halted"))
 
-        except Exception as exc:
+        except Exception:
             LOGGER.exception("unexpected exception")
             # fatal error!
             self.completed(
                 _('Unexpected Error updating the schema '
                   'please file a bug at http:www.openmolar.com')
             )
+        time.sleep(2)
 
     def completed(self, message):
         '''
@@ -188,6 +215,8 @@ class SchemaUpdater(BaseDialog, Advisor):
         self.advise(message)
         time.sleep(2)
         self.pb.hide()
+        self.label.setText(
+            "%s<hr />%s" % (message, _("Openmolar can not run")))
 
     def success(self):
         message = _("All updates successully applied!")
@@ -205,166 +234,17 @@ class SchemaUpdater(BaseDialog, Advisor):
         self.label.setText(message)
 
     def apply_updates(self):
-        # UPDATE TO SCHEMA 1.1 ########################
-        self.next_version = "1.1"
-        if self.current_version < self.next_version:
-            from openmolar.schema_upgrades import schema1_0to1_1 as upmod
-            self.dbu = upmod.DatabaseUpdater(self.pb)
-            self.apply_update()
-
-        # UPDATE TO SCHEMA 1.2 ########################
-        self.next_version = "1.2"
-        if self.current_version < self.next_version:
-            from openmolar.schema_upgrades import schema1_1to1_2 as upmod
-            self.dbu = upmod.DatabaseUpdater(self.pb)
-            self.apply_update()
-
-        # UPDATE TO SCHEMA 1.3 ########################
-        self.next_version = "1.3"
-        if self.current_version < self.next_version:
-            from openmolar.schema_upgrades import schema1_2to1_3 as upmod
-            self.dbu = upmod.DatabaseUpdater(self.pb)
-            self.apply_update()
-
-        # UPDATE TO SCHEMA 1.4 ########################
-        self.next_version = "1.4"
-        if self.current_version < self.next_version:
-            from openmolar.schema_upgrades import schema1_3to1_4 as upmod
-            self.dbu = upmod.DatabaseUpdater(self.pb)
-            self.apply_update()
-
-        # UPDATE TO SCHEMA 1.5 ########################
-        self.next_version = "1.5"
-        if self.current_version < self.next_version:
-            from openmolar.schema_upgrades import schema1_4to1_5 as upmod
-            self.dbu = upmod.DatabaseUpdater(self.pb)
-            self.apply_update()
-
-        # UPDATE TO SCHEMA 1.6 ########################
-        self.next_version = "1.6"
-        if self.current_version < self.next_version:
-            from openmolar.schema_upgrades import schema1_5to1_6 as upmod
-            self.dbu = upmod.DatabaseUpdater(self.pb)
-            self.apply_update()
-
-        # UPDATE TO SCHEMA 1.7 ########################
-        self.next_version = "1.7"
-        if self.current_version < self.next_version:
-            from openmolar.schema_upgrades import schema1_6to1_7 as upmod
-            self.dbu = upmod.DatabaseUpdater(self.pb)
-            self.apply_update()
-
-        # UPDATE TO SCHEMA 1.8 ########################
-        self.next_version = "1.8"
-        if self.current_version < self.next_version:
-            from openmolar.schema_upgrades import schema1_7to1_8 as upmod
-            self.dbu = upmod.DatabaseUpdater(self.pb)
-            self.apply_update()
-
-        # UPDATE TO SCHEMA 1.9 ########################
-        self.next_version = "1.9"
-        if self.current_version < self.next_version:
-            from openmolar.schema_upgrades import schema1_8to1_9 as upmod
-            self.dbu = upmod.DatabaseUpdater(self.pb)
-            self.apply_update()
-
-        # UPDATE TO SCHEMA 2.0 ########################
-        self.next_version = "2.0"
-        if self.current_version < self.next_version:
-            from openmolar.schema_upgrades import schema1_9to2_0 as upmod
-            self.dbu = upmod.DatabaseUpdater(self.pb)
-            self.apply_update()
-
-        # UPDATE TO SCHEMA 2.1 ########################
-        self.next_version = "2.1"
-        if self.current_version < self.next_version:
-            from openmolar.schema_upgrades import schema2_0to2_1 as upmod
-            self.dbu = upmod.DatabaseUpdater(self.pb)
-            self.apply_update()
-
-        # UPDATE TO SCHEMA 2.2 ########################
-        self.next_version = "2.2"
-        if self.current_version < self.next_version:
-            from openmolar.schema_upgrades import schema2_1to2_2 as upmod
-            self.dbu = upmod.DatabaseUpdater(self.pb)
-            self.apply_update()
-
-        # UPDATE TO SCHEMA 2.3 ########################
-        self.next_version = "2.3"
-        if self.current_version < self.next_version:
-            from openmolar.schema_upgrades import schema2_2to2_3 as upmod
-            self.dbu = upmod.DatabaseUpdater(self.pb)
-            self.apply_update()
-
-        # UPDATE TO SCHEMA 2.4 ########################
-        self.next_version = "2.4"
-        if self.current_version < self.next_version:
-            from openmolar.schema_upgrades import schema2_3to2_4 as upmod
-            self.dbu = upmod.DatabaseUpdater(self.pb)
-            self.apply_update()
-
-        # UPDATE TO SCHEMA 2.5 ########################
-        self.next_version = "2.5"
-        if self.current_version < self.next_version:
-            from openmolar.schema_upgrades import schema2_4to2_5 as upmod
-            self.dbu = upmod.DatabaseUpdater(self.pb)
-            self.apply_update()
-
-        # UPDATE TO SCHEMA 2.6 ########################
-        self.next_version = "2.6"
-        if self.current_version < self.next_version:
-            from openmolar.schema_upgrades import schema2_5to2_6 as upmod
-            self.dbu = upmod.DatabaseUpdater(self.pb)
-            self.apply_update()
-
-        # UPDATE TO SCHEMA 2.7 ########################
-        self.next_version = "2.7"
-        if self.current_version < self.next_version:
-            from openmolar.schema_upgrades import schema2_6to2_7 as upmod
-            self.dbu = upmod.DatabaseUpdater(self.pb)
-            self.apply_update()
-
-        # UPDATE TO SCHEMA 2.8 ########################
-        self.next_version = "2.8"
-        if self.current_version < self.next_version:
-            from openmolar.schema_upgrades import schema2_7to2_8 as upmod
-            self.dbu = upmod.DatabaseUpdater(self.pb)
-            self.apply_update()
-
-        # UPDATE TO SCHEMA 2.9 ########################
-        self.next_version = "2.9"
-        if self.current_version < self.next_version:
-            from openmolar.schema_upgrades import schema2_8to2_9 as upmod
-            self.dbu = upmod.DatabaseUpdater(self.pb)
-            self.apply_update()
-
-        # UPDATE TO SCHEMA 3.0 ########################
-        self.next_version = "3.0"
-        if self.current_version < self.next_version:
-            from openmolar.schema_upgrades import schema2_9to3_0 as upmod
-            self.dbu = upmod.DatabaseUpdater(self.pb)
-            self.apply_update()
-
-        # UPDATE TO SCHEMA 3.1 ########################
-        self.next_version = "3.1"
-        if self.current_version < self.next_version:
-            from openmolar.schema_upgrades import schema3_0to3_1 as upmod
-            self.dbu = upmod.DatabaseUpdater(self.pb)
-            self.apply_update()
-
-        # UPDATE TO SCHEMA 3.2 ########################
-        self.next_version = "3.2"
-        if self.current_version < self.next_version:
-            from openmolar.schema_upgrades import schema3_1to3_2 as upmod
-            self.dbu = upmod.DatabaseUpdater(self.pb)
-            self.apply_update()
-
-        # UPDATE TO SCHEMA 3.3 ########################
-        self.next_version = "3.3"
-        if self.current_version < self.next_version:
-            from openmolar.schema_upgrades import schema3_2to3_3 as upmod
-            self.dbu = upmod.DatabaseUpdater(self.pb)
-            self.apply_update()
+        '''
+        applies updates until schema is current
+        '''
+        for version, module in UPGRADES_AVAILABLE:
+            self.next_version = version
+            if self.current_version < self.next_version:
+                upmod = importlib.import_module(module,
+                                                "openmolar.schema_upgrades")
+                self.dbu = upmod.DatabaseUpdater(self.pb)
+                if not self.apply_update():
+                    break
 
         self.dbu = None
         if schema_version.getVersion() == localsettings.CLIENT_SCHEMA_VERSION:

@@ -48,7 +48,7 @@ class TXHash(object):
         return self.hash == other
 
     def __repr__(self):
-        return ("TXHash %s completed=%s" % (self.hash, self.completed))
+        return "TXHash %s completed=%s" % (self.hash, self.completed)
 
 
 class Estimate(object):
@@ -113,7 +113,7 @@ class Estimate(object):
         return self.__str__()
 
     def __str__(self):
-        return "\nEstimate\n        (%s %s %s %s %s %s %s %s %s %s %s %s)" % (
+        return "Estimate (%s %s %s %s %s %s %s %s %s %s %s %s)" % (
             self.ix,
             self.serialno,
             self.courseno,
@@ -125,8 +125,7 @@ class Estimate(object):
             self.description,
             self.csetype,
             self.feescale,
-            self.tx_hashes
-        )
+            self.tx_hashes)
 
     @property
     def log_text(self):
@@ -186,17 +185,16 @@ class Estimate(object):
                 <td>%s</td>
                 <td>%s</td>
             </tr>
-            ''' % (
-            localsettings.ops.get(self.dent),
-            self.number,
-            self.itemcode,
-            self.description,
-            localsettings.formatMoney(self.fee),
-            localsettings.formatMoney(self.ptfee),
-            self.feescale,
-            self.csetype,
-            completed,
-            hash_string)
+            ''' % (localsettings.ops.get(self.dent),
+                   self.number,
+                   self.itemcode,
+                   self.description,
+                   localsettings.formatMoney(self.fee),
+                   localsettings.formatMoney(self.ptfee),
+                   self.feescale,
+                   self.csetype,
+                   completed,
+                   hash_string)
 
     def htmlHeader(self):
         color_string = ' bgcolor="#ffff99"'
@@ -269,14 +267,8 @@ def sorted_estimates(ests):
     '''
     compresses a list of estimates down into number*itemcode
     '''
-    def cmp1(a, b):
-        'define how ests are sorted'
-        return cmp(a.itemcode, b.itemcode)
-
-    sortedEsts = []
-
     def combineEsts(est):
-        for se in sortedEsts:
+        for se in combined_estimates:
             if se.itemcode == est.itemcode:
                 if se.description == strip_curlies(est.description):
                     # don't combine items where description has changed
@@ -284,16 +276,15 @@ def sorted_estimates(ests):
                         se.number += est.number
                     se.fee += est.fee
                     se.ptfee += est.ptfee
-                    # se.type += "|" + est.type
                     return True
+    combined_estimates = []
     for est in ests:
         if not combineEsts(est):
             ce = copy.copy(est)
             ce.description = strip_curlies(ce.description)
-            sortedEsts.append(ce)
-    sortedEsts.sort(cmp1)
+            combined_estimates.append(ce)
 
-    return sortedEsts
+    return sorted(combined_estimates)
 
 
 def apply_exemption(pt, maxCharge=0):
@@ -325,6 +316,11 @@ if __name__ == "__main__":
         serialno = 23664
 
     pt = patient_class.patient(serialno)
+    print("RAW")
     print(str(pt.estimates))
+    print("HTML")
     for estimate in pt.estimates:
-        print(estimate.toHtmlRow().encode("ascii", "replace"))
+        print(estimate.toHtmlRow())
+    print("SORTED")
+    for estimate in sorted_estimates(pt.estimates):
+        print(estimate.toHtmlRow())

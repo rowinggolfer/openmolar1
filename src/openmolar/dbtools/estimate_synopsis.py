@@ -95,4 +95,4 @@ def html(serialno, courseno):
 
 
 if __name__ == "__main__":
-    print(html(41146).encode("ascii", "replace"))
+    print(html(1, 4174))

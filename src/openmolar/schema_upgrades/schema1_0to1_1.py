@@ -113,18 +113,17 @@ class DatabaseUpdater(DatabaseUpdaterThread):
         progress_var = len(rows)
         for row in rows:
             newrow = []
-            for i in range(len(row)):
-                data = row[i]
+            for i, data in enumerate(row):
                 if i == 2:  # split into the new category / type fields
                     try:
                         splitdata = data.split(" ")
                         category = splitdata[0]
-                        type = splitdata[1]
+                        type_ = splitdata[1]
                     except IndexError:
                         category = "unknown"
-                        type = data
+                        type_ = data
                     newrow.append(category)
-                    newrow.append(type)
+                    newrow.append(type_)
                 elif i == 8:
                     newrow.append(row[9])
                 elif i == 9:

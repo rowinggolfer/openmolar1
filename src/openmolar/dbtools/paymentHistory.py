@@ -21,6 +21,7 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
 from openmolar.settings import localsettings
 from openmolar.connect import connect
 
@@ -74,7 +75,7 @@ def summary_details(sno, start_date):
         else:
             retarg += '<tr>'
 
-        #-- a row is  (date,sno,dnt,patient,code,amount)
+        # a row is  (date,sno,dnt,patient,code,amount)
 
         retarg += '<td>%s</td>' % (row[0])
         retarg += '<td>%s</td>' % localsettings.ops.get(row[1])
@@ -129,7 +130,7 @@ def details(sno):
             retarg += '<tr>'
             odd = True
 
-        #-- a row is  (date,sno,dnt,patient,code,amount)
+        # a row is  (date,sno,dnt,patient,code,amount)
 
         retarg += '<td>%s</td>' % (row[0])
         retarg += '<td>%s</td>' % localsettings.ops.get(row[1])
@@ -180,5 +181,6 @@ def details(sno):
 
 
 if __name__ == "__main__":
+    localsettings.initiate()
     from datetime import date
-    print(summary_details(1, date(2000, 1, 1)).encode("ascii", "replace"))
+    print(summary_details(1, date(2000, 1, 1)))

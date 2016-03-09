@@ -120,6 +120,4 @@ def details(sno):
 
 if __name__ == "__main__":
     localsettings.initiate()
-    print('<html><body>')
-    print(details(707).encode("ascii", "replace"))
-    print("</body></html>")
+    print('<html><body>%s</body></html>' % details(707))

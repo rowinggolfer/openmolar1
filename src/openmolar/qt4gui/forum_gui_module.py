@@ -174,7 +174,7 @@ def forumNewTopic(om_gui):
         else:
             return
 
-    post = forum.post()
+    post = forum.ForumPost()
     post.topic = dl.topic_lineEdit.text()
     post.comment = dl.comment_textEdit.toPlainText()
     post.inits = dl.from_comboBox.currentText()
@@ -231,7 +231,7 @@ def forumReply(om_gui):
 
     if Dialog.exec_():
         parentix = int(item.text(1))
-        post = forum.post()
+        post = forum.ForumPost()
         post.parent_ix = parentix
         post.topic = dl.topic_lineEdit.text()
         post.comment = dl.comment_textEdit.toPlainText()

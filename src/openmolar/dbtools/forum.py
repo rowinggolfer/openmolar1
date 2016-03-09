@@ -21,7 +21,7 @@
 # #                                                                         # #
 # ########################################################################### #
 
-import sys
+from gettext import gettext as _
 from openmolar import connect
 from openmolar.settings import localsettings
 
@@ -31,18 +31,16 @@ headers = [_("Subject"), "db_index", _("From"), _("To"),
 HIGHESTID = 0
 
 
-class post():
-
-    def __init__(self):
-        self.ix = None
-        self.parent_ix = None
-        self.inits = ""
-        self.recipient = None
-        self.date = None
-        self.topic = ""
-        self.comment = ""
-        self.briefcomment = ""
-        self.open = True
+class ForumPost(object):
+    ix = None
+    parent_ix = None
+    inits = ""
+    recipient = None
+    date = None
+    topic = ""
+    comment = ""
+    briefcomment = ""
+    open = True
 
 
 def commitPost(post):
@@ -82,25 +80,22 @@ def setParent(ix, parent_ix):
 
 def newPosts():
     result = False
-    try:
-        users = localsettings.operator.split("/")
-        if users == []:
-            return
-        db = connect.connect()
-        cursor = db.cursor()
-        query = '''select max(ix) from forum'''
-        cursor.execute(query)
-        row = cursor.fetchone()
-        query = "select max(id) from forumread where"
-        for user in users:
-            query += " op='%s' or" % user
-        cursor.execute(query.strip("or"))
-        row2 = cursor.fetchone()
-
-        cursor.close()
-        result = row[0] > row2[0]
-    except connect.ProgrammingError as exc:
-        print(exc)
+    users = localsettings.operator.split("/")
+    if users == []:
+        return
+    db = connect.connect()
+    cursor = db.cursor()
+    query = 'select max(ix) from forum'
+    if cursor.execute(query):
+        max_id = cursor.fetchone()[0]
+        query = "select max(id) from forumread where %s" % (
+            " or ".join(["op=%s" for user in users]))
+        if cursor.execute(query, users):
+            max_id2 = cursor.fetchone()[0]
+        else:
+            max_id2 = 0
+        result = max_id > max_id2
+    cursor.close()
     return result
 
 
@@ -131,8 +126,8 @@ def getPosts(user=None, include_closed=False):
     db = connect.connect()
     cursor = db.cursor()
     query = ('SELECT ix, parent_ix, topic, inits, fdate, recipient, comment '
-             'FROM forum where %s ORDER BY parent_ix, ix' %
-            " and ".join(["%s=%%s"%val for val in conditions]))
+             'FROM forum where %s ORDER BY parent_ix, ix' % " and ".join(
+                 ["%s=%%s" % val for val in conditions]))
 
     cursor.execute(query, values)
     rows = cursor.fetchall()
@@ -141,7 +136,7 @@ def getPosts(user=None, include_closed=False):
     retarg = []
     update = False
     for row in rows:
-        newpost = post()
+        newpost = ForumPost()
         newpost.ix = row[0]
         if newpost.ix > HIGHESTID:
             HIGHESTID = newpost.ix
@@ -163,6 +158,6 @@ def getPosts(user=None, include_closed=False):
 
 
 if __name__ == "__main__":
-    posts = getPosts(user="NW")
-    for post in posts:
-        print(post.parent_ix, post.ix, post.topic)
+    forumposts = getPosts(user="NW")
+    for post_ in forumposts:
+        print(post_.parent_ix, post_.ix, post_.topic)

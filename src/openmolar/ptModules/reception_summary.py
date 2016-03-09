@@ -164,5 +164,4 @@ if __name__ == '__main__':
 
     pt = patient(26041)
     html = html(pt)
-    html = html.encode("ascii", "replace")
     print(html)

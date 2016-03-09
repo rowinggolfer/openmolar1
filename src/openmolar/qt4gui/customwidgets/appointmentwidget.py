@@ -243,10 +243,7 @@ class AppointmentWidget(QtGui.QFrame):
         gui can handle it
         '''
         if not self.memo_lineEdit.hasFocus():
-            self.new_memo_signal.emit(
-                self.dentist,
-                str(self.memo_lineEdit.text(), "utf8", "ignore")
-            )
+            self.new_memo_signal.emit(self.dentist, self.memo_lineEdit.text())
 
     def signals(self):
         '''

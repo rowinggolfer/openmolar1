@@ -224,17 +224,15 @@ class DatabaseUpdater(DatabaseUpdaterThread):
             fees = []
             ptfees = []
             for i, col in enumerate(col_names):
-                makeNode = (
-                    col != "ix" and (newNode or not
-                                     col in ("section",
+                makeNode = col != "ix" and (newNode or col not in
+                                            ("section",
                                              "code",
                                              "oldcode",
                                              "USERCODE",
                                              "regulation",
                                              "description",
                                              "hide",
-                                             "pl_cmp")
-                                     ))
+                                             "pl_cmp"))
 
                 if col.startswith("fee") or col.startswith("pt_fee"):
                     makeNode = False
@@ -257,11 +255,7 @@ class DatabaseUpdater(DatabaseUpdaterThread):
                         d.appendChild(dom.createTextNode(val))
                     elif row[i]:
                         d = dom.createElement(col)
-                        try:
-                            val = str(row[i]).encode("ascii", "replace")
-                        except UnicodeEncodeError:
-                            LOGGER.exception("Unicode error from %s", row[i])
-                        # val = val.replace('\xc3\xbe', '3/4')
+                        val = str(row[i])
                         d.appendChild(dom.createTextNode(val))
                     item.appendChild(d)
 

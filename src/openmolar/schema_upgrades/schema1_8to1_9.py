@@ -27,6 +27,7 @@ to schema 1_9
 '''
 
 from collections import OrderedDict
+from gettext import gettext as _
 import logging
 
 from openmolar.schema_upgrades.database_updater_thread import \
@@ -48,17 +49,17 @@ create index newdocsprinted_serialno_index on newdocsprinted(serialno);
 '''
 ]
 
+GET_NOTES_QUERY = 'SELECT line from notes where serialno = %s order by lineno'
 
 class DatabaseUpdater(DatabaseUpdaterThread):
 
     def __init__(self, *args, **kwargs):
-        DatabaseUpdaterThread.__init__(self,  *args, **kwargs)
+        DatabaseUpdaterThread.__init__(self, *args, **kwargs)
         from openmolar.ptModules import notes
         self.decipher_noteline = notes.decipher_noteline
 
     def get_notes(self, sno):
-        self.cursor.execute('''SELECT line from notes where serialno = %s
-        order by lineno''', sno)
+        self.cursor.execute(GET_NOTES_QUERY, (sno,))
         results = self.cursor.fetchall()
 
         notes_dict = OrderedDict()
@@ -66,7 +67,6 @@ class DatabaseUpdater(DatabaseUpdaterThread):
 
         # a line is like ('\x01REC\x0c\x08m\x0c\x08m\n\x08',)
         for line, in results:
-            line = line.encode("ascii", "replace")
             ntype, note, operator, date2 = self.decipher_noteline(line)
             if date2 != "":
                 ndate = date2
@@ -80,7 +80,6 @@ class DatabaseUpdater(DatabaseUpdaterThread):
                 notes_dict[key] = [(ntype, note)]
 
         return notes_dict
-
 
     def transfer(self, sno):
         LOGGER.debug("transferring notes for serialnos %s", sno)
@@ -107,7 +106,6 @@ class DatabaseUpdater(DatabaseUpdaterThread):
         self.cursor.execute("select max(serialno) from notes")
         max_sno = self.cursor.fetchone()[0]
         return max_sno
-
 
     def insertValues(self):
         '''

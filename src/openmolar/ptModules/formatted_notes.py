@@ -140,7 +140,6 @@ def get_rec_summary(op, lines):
     '''
     note_list = []
     for ntype, noteline in lines:
-        LOGGER.debug("%s %s", ntype, noteline)
         if "PRINTED" in ntype:
             note_list.append('  <img src=%s height="12" align="right"> %s' % (
                 localsettings.printer_png, noteline))
@@ -275,9 +274,8 @@ if __name__ == "__main__":
         serialno = int(sys.argv[len(sys.argv) - 1])
     except:
         serialno = 303  # 1
-
     notes_ = notes(patient_class.patient(serialno).notes_dict)
-    print(notes_.encode("ascii", "replace"))
+    print(notes_)
     notes_ = rec_notes(
         patient_class.patient(serialno).notes_dict, datetime.date(2015, 10, 1))
-    print(notes_.encode("ascii", "replace"))
+    print(notes_)

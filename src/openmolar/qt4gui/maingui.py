@@ -1846,8 +1846,10 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         pos = self.ui.notesEnter_textEdit.textCursor().position()
         before = current[:pos]
         after = current[pos:]
-        self.ui.notesEnter_textEdit.setText("%s\n%s\n%s" % (
-            before.strip("\n"), note.strip("\n"), after.strip("\n")))
+        new_notes = "\n".join([s for s in (before.strip("\n"),
+                                           note.strip("\n"),
+                                           after.strip("\n")) if s])
+        self.ui.notesEnter_textEdit.setText(new_notes)
 
     def callXrays(self):
         '''

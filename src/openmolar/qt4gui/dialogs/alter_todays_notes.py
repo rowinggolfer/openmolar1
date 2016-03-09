@@ -86,8 +86,10 @@ class AlterTodaysNotesDialog(BaseDialog):
             pos = self.text_edit.textCursor().position()
             before = current[:pos]
             after = current[pos:]
-            self.text_edit.setText("%s\n%s\n%s" % (
-                before.strip("\n"), note.strip("\n"), after.strip("\n")))
+            new_notes = "\n".join([s for s in (before.strip("\n"),
+                                               note.strip("\n"),
+                                               after.strip("\n")) if s])
+            self.text_edit.setText(new_notes)
 
     def get_todays_notes(self):
         try:

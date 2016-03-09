@@ -354,7 +354,7 @@ def customAdd(om_gui, description=None):
         dl.description_lineEdit.setText(description)
     if Dialog.exec_():
         no = dl.number_spinBox.value()
-        descr = str(dl.description_lineEdit.text(), "ascii", "ignore")
+        descr = dl.description_lineEdit.text()
 
         if descr == "":
             descr = "??"
