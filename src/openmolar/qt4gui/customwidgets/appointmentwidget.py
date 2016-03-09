@@ -583,7 +583,7 @@ class AppointmentCanvas(QtGui.QWidget):
             data = event.mimeData()
             bstream = data.retrieveData("application/x-appointment",
                                         QtCore.QVariant.ByteArray)
-            self.drag_appt = pickle.loads(bstream.toByteArray())
+            self.drag_appt = pickle.loads(bstream)
 
             event.accept()
         else:

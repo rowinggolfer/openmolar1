@@ -79,24 +79,29 @@ def setParent(ix, parent_ix):
 
 
 def newPosts():
-    result = False
+    '''
+    returns a boolean as to whether there have been new posts in the forum
+    since the last visit of the current users.
+    '''
     users = localsettings.operator.split("/")
-    if users == []:
+    if users == []:  # shouldn't happen!!
         return
     db = connect.connect()
     cursor = db.cursor()
     query = 'select max(ix) from forum'
-    if cursor.execute(query):
-        max_id = cursor.fetchone()[0]
-        query = "select max(id) from forumread where %s" % (
-            " or ".join(["op=%s" for user in users]))
-        if cursor.execute(query, users):
-            max_id2 = cursor.fetchone()[0]
-        else:
-            max_id2 = 0
-        result = max_id > max_id2
+    cursor.execute(query)
+    max_id = cursor.fetchone()[0]
+    query = ('select min(id) from '
+             '(select max(id) as id, op from forumread where %s group by op) '
+             'as t' % " or ".join(["op=%s" for user in users]))
+    cursor.execute(query, users)
+    max_id2 = cursor.fetchone()[0]
     cursor.close()
-    return result
+    try:
+        return max_id > max_id2
+    except TypeError:  # max_id2 may be None
+        pass
+    return True
 
 
 def updateReadHistory():

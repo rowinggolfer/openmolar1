@@ -378,7 +378,7 @@ class AppointmentOverviewWidget(QtGui.QWidget):
             data = event.mimeData()
             bstream = data.retrieveData("application/x-appointment",
                                         QtCore.QVariant.ByteArray)
-            appt = pickle.loads(bstream.toByteArray())
+            appt = pickle.loads(bstream)
             if self.date >= localsettings.currentDay():
                 self.drag_appt = appt
                 event.accept()
