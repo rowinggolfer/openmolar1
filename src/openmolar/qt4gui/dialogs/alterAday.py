@@ -77,6 +77,13 @@ class adayData(object):
             self.apptix, self.dent, self.active, self.start,
             self.finish, self.memo)
 
+    def __hash__(self):
+        '''
+        new for python3 as the presence of the __eq__ method renders these
+        instances unhashable.
+        '''
+        return object.__hash__(self)
+
     def __eq__(self, other):
         return (self.active == other.active and
                 self.start == other.start and

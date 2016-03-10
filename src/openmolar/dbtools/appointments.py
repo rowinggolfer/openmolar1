@@ -131,6 +131,13 @@ class FreeSlot(object):
         except AttributeError:
             return False
 
+    def __hash__(self):
+        '''
+        new for python3 as the presence of the __eq__ method renders these
+        instances unhashable.
+        '''
+        return object.__hash__(self)
+
     def __ne__(self, other):
         return self.__dict__ != other.__dict__
 
@@ -256,6 +263,13 @@ class WeekViewAppointment(object):
     def __le__(self, other):
         return self.mpm <= other.mpm
 
+    def __hash__(self):
+        '''
+        new for python3 as the presence of the __eq__ method renders these
+        instances unhashable.
+        '''
+        return object.__hash__(self)
+
     def __eq__(self, other):
         return self.mpm == other.mpm
 
@@ -365,6 +379,13 @@ class APR_Appointment(object):
             % (self.serialno, self.date, not self.unscheduled, self.dent_inits,
                self.trt1, self.length, self.aprix)
 
+    def __hash__(self):
+        '''
+        new for python3 as the presence of the __eq__ method renders these
+        instances unhashable.
+        '''
+        return object.__hash__(self)
+
     def __eq__(self, other):
         try:
             return (self.serialno == other.serialno and
@@ -401,6 +422,18 @@ class DaySummary(object):
         self.memos = {}
         self.appointments = ()
 
+
+class DayAppointmentData(DaySummary):
+
+    '''
+    a data structure to hold all data for a day
+    '''
+    appointments = ()
+    workingDents = ()
+
+    def __init__(self):
+        DaySummary.__init__(self)
+
     def setDate(self, date):
         '''
         update the class with data for date
@@ -427,18 +460,6 @@ class DaySummary(object):
                 if dent.end > self.latest_end:
                     self.latest_end = dent.end
         self.workingDents = tuple(workingDents)
-
-
-class DayAppointmentData(DaySummary):
-
-    '''
-    a data structure to hold all data for a day
-    '''
-    appointments = ()
-    workingDents = ()
-
-    def __init__(self):
-        DaySummary.__init__(self)
 
     def header(self):
         '''
@@ -761,6 +782,13 @@ class Appointment(object):
     def length(self):
         return localsettings.minutesPastMidnight(self.end) - \
             localsettings.minutesPastMidnight(self.start)
+
+    def __hash__(self):
+        '''
+        new for python3 as the presence of the __eq__ method renders these
+        instances unhashable.
+        '''
+        return object.__hash__(self)
 
     def __eq__(self, other):
         try:
@@ -1087,7 +1115,7 @@ def get_appt_note(sno, adate, atime, dentist):
     rows = cursor.fetchall()
     cursor.close()
 
-    if not len(rows) == 1:
+    if len(rows) != 1:
         return ("", False)
     note = rows[0][0]
     return (note, True)
@@ -1354,7 +1382,7 @@ def has_unscheduled(serialno):
     rows = cursor.fetchall()
     cursor.close()
     result = rows[0][0] != 0
-    LOGGER.debug("appointments.has_unscheduled is returning %s" % result)
+    LOGGER.debug("appointments.has_unscheduled is returning %s", result)
     return result
 
 
@@ -1481,8 +1509,8 @@ def make_appt(make_date, apptix, start, end, name, serialno, code0, code1,
     try:
         result = cursor.execute(INSERT_APPT_QUERY, values)
     except OperationalError:
-        LOGGER.exception("couldn't insert into aslot %s %s %s serialno %d" % (
-            make_date, apptix, start, serialno))
+        LOGGER.exception("couldn't insert into aslot %s %s %s serialno %d",
+                         make_date, apptix, start, serialno)
 
     cursor.close()
     return result
@@ -1674,7 +1702,7 @@ def made_appt_to_proposed(appt):
             adate=%s and practix=%s and atime=%s '''
         values = (appt.serialno, appt.date, appt.dent, appt.atime)
         if not cursor.execute(query, values):
-            LOGGER.warning("unable to get aprix from apr for %s" % appt)
+            LOGGER.warning("unable to get aprix from apr for %s", appt)
             return False
         appt.aprix = cursor.fetchone()[0]
 

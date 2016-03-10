@@ -127,6 +127,13 @@ class RecalledPatient(object):
     def __len__(self):
         return 15
 
+    def __hash__(self):
+        '''
+        new for python3 as the presence of the __eq__ method renders these
+        instances unhashable.
+        '''
+        return object.__hash__(self)
+
     def __eq__(self, other):
         '''
         allow comparison based on family number and address line 1

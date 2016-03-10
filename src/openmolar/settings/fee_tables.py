@@ -296,6 +296,13 @@ class FeeTable(object):
         return "FeeTable %s database index %s - has %s feeItems" % (
             self.briefName, self.database_ix, len(self.feesDict))
 
+    def __hash__(self):
+        '''
+        new for python3 as the presence of the __eq__ method renders these
+        instances unhashable.
+        '''
+        return object.__hash__(self)
+
     def __eq__(self, other):
         return self.database_ix == other.database_ix
 

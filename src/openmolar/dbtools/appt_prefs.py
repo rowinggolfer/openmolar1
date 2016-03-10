@@ -23,10 +23,9 @@
 
 import logging
 
-from openmolar import connect
-from openmolar.settings import localsettings
-
 from PyQt4.QtCore import QDate
+
+from openmolar import connect
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -52,11 +51,11 @@ class ApptPrefs(object):
     recall_active = False
     note = ""
 
-    def __init__(self, serialno):
+    def __init__(self, sno):
         '''
         initiate the class with default variables, then load from database
         '''
-        self.serialno = serialno
+        self.serialno = sno
         self.recdent_period = None
         self.recdent = None
         self.rechyg_period = None
@@ -122,6 +121,13 @@ class ApptPrefs(object):
                                             self.note,
                                             self.recall_active)
 
+    def __hash__(self):
+        '''
+        new for python3 as the presence of the __eq__ method renders these
+        instances unhashable.
+        '''
+        return object.__hash__(self)
+
     def __eq__(self, other):
         return str(self) == str(other)
 
@@ -130,10 +136,7 @@ class ApptPrefs(object):
 
 
 if __name__ == "__main__":
-    try:
-        serialno = int(sys.argv[len(sys.argv) - 1])
-    except:
-        serialno = 11956
+    serialno = 1
 
     prefs = ApptPrefs(serialno)
     for att in list(prefs.__dict__.keys()):

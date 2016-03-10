@@ -38,6 +38,13 @@ class TXHash(object):
         self.hash = hash_
         self.completed = completed
 
+    def __hash__(self):
+        '''
+        new for python3 as the presence of the __eq__ method renders these
+        instances unhashable.
+        '''
+        return object.__hash__(self)
+
     def __eq__(self, other):
         '''
         compare the object with another hash
@@ -137,11 +144,18 @@ class Estimate(object):
             self.number, self.itemcode, self.description, self.csetype,
             self.feescale, self.dent, self.fee, self.ptfee)
 
+    def __hash__(self):
+        '''
+        new for python3 as the presence of the __eq__ method renders these
+        instances unhashable.
+        '''
+        return object.__hash__(self)
+
     def __eq__(self, other):
         return str(self) == str(other)
 
     def __ne__(self, other):
-        return not self.__eq__(other)
+        return str(self) != str(other)
 
     def __lt__(self, other):
         try:

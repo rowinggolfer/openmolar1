@@ -234,6 +234,13 @@ class TreatmentCourse(object):
                 message += "   %s,%s\n" % (att, value)
         return message
 
+    def __hash__(self):
+        '''
+        new for python3 as the presence of the __eq__ method renders these
+        instances unhashable.
+        '''
+        return object.__hash__(self)
+
     def __eq__(self, other):
         return str(self) == str(other)
 
