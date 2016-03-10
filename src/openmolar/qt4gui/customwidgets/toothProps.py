@@ -189,38 +189,33 @@ class chartLineEdit(QtGui.QLineEdit):
         '''
         check to see if the user has entered garbage
         '''
-        # print "checking Prop '%s' origs ='%s'"% (prop,
-        # self.originalPropList),
+        LOGGER.debug("checking propAllowed '%s' origs ='%s'", prop,
+                     self.originalPropList)
+        if prop == "":
+            return True
         if prop[:1] == "!":  # comment
             return True
         if prop in self.originalPropList:
             return True
 
-        allowedCode = True
-        if prop != "":
-            if self.om_gui.tooth.isBacktooth:
-                if prop not in allowed.backToothCodes:
-                    allowedCode = False
-            else:
-                if not prop not in allowed.frontToothCodes:
-                    allowedCode = False
-            if not self.om_gui.is_Static:
-                if prop in allowed.treatment_only:
-                    allowedCode = True
-        if not allowedCode:
+        if self.om_gui.tooth.isBacktooth:
+            allowed_prop = prop in allowed.backToothCodes
+        else:
+            allowed_prop = prop in allowed.frontToothCodes
+        if not self.om_gui.is_Static:
+            if prop in allowed.treatment_only:
+                allowed_prop = True
+        if not allowed_prop:
             message = '"%s" %s <br /> %s?' % (
                 prop, _("is not recognised"),
                 _("do you want to accept anyway"))
-            if QtGui.QMessageBox.question(
-                    self, _("Confirm"), message,
-                    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                    QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
-                allowedCode = True
-            else:
-                allowedCode = False
-        if allowedCode:
+            allowed_prop = QtGui.QMessageBox.question(
+                self, _("Confirm"), message,
+                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes
+        if allowed_prop:
             LOGGER.debug("toothProps - accepting new entry '%s'" % prop)
-        return allowedCode
+        return allowed_prop
 
     def specialKeyPressed(self, arg):
         '''
