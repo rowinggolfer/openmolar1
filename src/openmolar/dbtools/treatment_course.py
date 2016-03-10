@@ -286,7 +286,12 @@ class TreatmentCourse(object):
 
     @property
     def newer_course_found(self):
-        return self.max_tx_courseno > self.courseno
+        try:
+            return self.max_tx_courseno > self.courseno
+        except TypeError:  # one or both of these values are NoneType
+            if self.max_tx_courseno:
+                return True
+            return False
 
     @property
     def has_exam(self):

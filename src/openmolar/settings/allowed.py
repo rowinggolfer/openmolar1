@@ -128,10 +128,10 @@ treatment_only = (
 if __name__ == "__main__":
     print("Unique to FrontTeeth")
     for a in frontToothCodes:
-        if not a in backToothCodes:
+        if a not in backToothCodes:
             print(a, end=' ')
 
     print("Unique to BackTeeth")
     for a in backToothCodes:
-        if not a in frontToothCodes:
+        if a not in frontToothCodes:
             print(a, end=' ')
