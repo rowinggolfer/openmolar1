@@ -182,7 +182,7 @@ def get_usage_info(serialno):
     record usage.
     this yields instances of RecordInfo
     '''
-    LOGGER.debug("checking for usage of record %s", serialno)
+    # LOGGER.debug("checking for usage of record %s", serialno)
     values = (serialno, )
     db = connect.connect()
     cursor = db.cursor()

@@ -231,6 +231,8 @@ class DiaryScheduleController(QtGui.QStackedWidget):
     def set_search_mode(self, mode):
         assert mode in (self.NOT_SEARCHING,
                         self.SEARCHING_FORWARDS, self.SEARCHING_BACKWARDS)
+        LOGGER.debug("set search mode = %s",
+                     ("OFF", "FOWARDS", "BACKWARDS")[mode])
         self.search_mode = mode
 
     def cancel_search_mode(self):
@@ -664,10 +666,21 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         '''
         this determines whether it is worth continuing (on a different date)
         '''
-        return (self.is_searching and
-                self.search_mode != self.NOT_SEARCHING and
-                len(self.selectedClinicians) > 0 and
-                len(self.primary_slots) == 0)
+        LOGGER.debug("search again is_searching = %s", self.is_searching)
+        LOGGER.debug("search again forwards = %s",
+                     self.search_mode == self.SEARCHING_FORWARDS)
+        LOGGER.debug("search again backwards = %s",
+                     self.search_mode == self.SEARCHING_BACKWARDS)
+        LOGGER.debug("search again n_clinicians = %s",
+                     len(self.selectedClinicians))
+        LOGGER.debug("search again still have slots = %s",
+                     len(self.primary_slots) == 0)
+        search_again = (self.is_searching and
+                        self.search_mode != self.NOT_SEARCHING and
+                        len(self.selectedClinicians) > 0 and
+                        len(self.primary_slots) == 0)
+        LOGGER.debug("therefore searce again = %s", search_again)
+        return search_again
 
     def find_first_appointment(self):
         LOGGER.debug("find_first_appointment")
@@ -784,6 +797,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         Inform the user
         '''
         assert self.mode == self.SCHEDULE_MODE, "not in schedule mode"
+        LOGGER.debug("=" * 40)
         LOGGER.debug(
             "check_schedule_status %s", self.diary_widget.selected_date())
         if automatic:
@@ -799,21 +813,27 @@ class DiaryScheduleController(QtGui.QStackedWidget):
             date_ = localsettings.currentDay()
 
         if not self.appointment_model.selectedAppts:
+            LOGGER.debug("schedule status - no selected appointments")
             self.advice_signal.emit(
                 _("Please select an appointment to begin scheduling"), 0)
         elif self.app1_is_scheduled:
+            LOGGER.debug("schedule status - appt 1 is scheduled")
             if self.appointment_model.secondaryAppt is None:
                 self.advice_signal.emit(
                     _("appointment is already scheduled"), 0)
             elif self.app2_is_scheduled:
+                LOGGER.debug("schedule status - appt 2 also scheduled")
                 self.advice_signal.emit(_("Joint appointment Scheduled"), 0)
             elif not list(self.chosen_2nd_slots):
+                LOGGER.debug("schedule status - no slots for appt 2")
                 self.advice_signal.emit(
                     _("Joint appointment is not possible with the "
                       "chosen primary appointment"), 1)
         elif self.search_again:
-            LOGGER.debug("automatic searching")
+            LOGGER.debug("schedule status - search again")
             if date_ > localsettings.BOOKEND:
+                LOGGER.debug(
+                    "schedule status - search again has reached bookend")
                 self.advice_signal.emit(
                     '''<b>%s<br />%s</b><hr /><em>(%s)</em>
                     <ul>
@@ -830,20 +850,26 @@ class DiaryScheduleController(QtGui.QStackedWidget):
                 self.cancel_search_mode()
                 self.diary_widget.set_date(localsettings.currentDay())
             elif date_ < localsettings.currentDay():
+                LOGGER.debug(
+                    "schedule status - search again has reached the past")
                 self.advice_signal.emit(
                     _("You can't schedule an appointment in the past"),
                     1)
                 self.diary_widget.set_date(localsettings.currentDay())
             else:
+                LOGGER.debug("schedule status - calling step date")
                 self.diary_widget.step_date(self.searching_future)
         elif date_ > localsettings.BOOKEND:
+            LOGGER.debug("schedule status - beyond bookend")
             self.advice_signal.emit(
                 _("This date is beyond the diary limit."), 1)
         elif date_ < localsettings.currentDay():
+            LOGGER.debug("schedule status - in the past!")
             self.advice_signal.emit(
                 _("You can't schedule an appointment in the past"), 1)
             self.diary_widget.set_date(localsettings.currentDay())
         elif self.chosen_slot is None and not list(self.chosen_2nd_slots):
+            LOGGER.debug("schedule status - no 2nd slots")
             if self.diary_widget:
                 if self.diary_widget.viewing_week:
                     message = "%s %s" % (
@@ -859,6 +885,9 @@ class DiaryScheduleController(QtGui.QStackedWidget):
                 message = ""  # should only happen if __name__ == "__main__"
             message = "%s %s" % (_("No Slots Found"), message)
             self.advice_signal.emit(message, 0)
+        else:
+            LOGGER.debug("schedule status - nothing to do")
+        LOGGER.debug("=" * 40)
 
     @property
     def _dentist_message(self):

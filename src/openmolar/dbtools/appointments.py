@@ -201,7 +201,7 @@ class FreeSlot(object):
             waits.append(0)
 
         # this next debug line creates a LOT of output!
-        LOGGER.debug("%s and %s has waits of %s", self, slot, waits)
+        # LOGGER.debug("%s and %s has waits of %s", self, slot, waits)
         for i in sorted(waits):
             if i >= 0:
                 return i
@@ -1090,7 +1090,7 @@ def setMemos(adate, memos):
     updates the aday table with memos
     useage is setMemos(pydate, ((4, "NW not working"),(5, "BW is")))
     '''
-    print("setting memos", memos)
+    LOGGER.debug("setting memos %s", memos)
     db = connect()
     cursor = db.cursor()
     query = '''insert into aday (memo, adate, apptix, start, end)
@@ -1140,7 +1140,7 @@ def setPubHol(adate, arg):
     updates the aday table with memos
     useage is pubHol(pydate, "Christmas Day")
     '''
-    print("updating pubHol", arg)
+    LOGGER.debug("updating pubHol %s", arg)
     db = connect()
     cursor = db.cursor()
     if arg == "":
@@ -1316,9 +1316,8 @@ def clearEms(cedate):
         values = (cedate, -128, "%Emergency%")
         number = cursor.execute(query, values)
         db.commit()
-    except Exception as ex:
-        print("exception in appointments module, clearEms")
-        print(ex)
+    except Exception:
+        LOGGER("exception in appointments module, clearEms")
 
     cursor.close()
     # db.close()
@@ -1435,8 +1434,8 @@ def add_pt_appt(serialno, practix, length, code0, aprix=-1, code1="", code2="",
 
         db.commit()
         result = aprix
-    except Exception as ex:
-        print("exception in appointments.add_pt_appt ", ex)
+    except Exception:
+        LOGGER.exception("exception in appointments.add_pt_appt ")
         result = False
     cursor.close()
     # db.close()
@@ -1563,7 +1562,8 @@ def fill_appt(bldate, apptix, start, end, bl_start, bl_end, reason, pt):
     name = "%s %s *" % (pt.fname, pt.sname)
     try:
         cset = ord(pt.cset[0])
-    except:
+    except Exception:
+        LOGGER.debug("couldn't get an ordinal from %s", pt.cset)
         cset = 0
 
     make_appt(bldate, apptix, localsettings.pyTimetoWystime(bl_start),
@@ -1617,11 +1617,10 @@ def block_appt(bldate, apptix, start, end, bl_start, bl_end, reason):
         db.commit()
         result = True
     else:
-        print("couldn't insert into aslot %s %s %s" % (
-            bldate, apptix, start))
+        LOGGER.warning("couldn't insert into aslot %s %s %s",
+                       bldate, apptix, start)
         result = False
     cursor.close()
-    # db.close()
     return result
 
 
@@ -1644,10 +1643,9 @@ def modify_aslot_appt(moddate, apptix, start, serialno, code0, code1, code2,
         cursor.execute(query, values)
         db.commit()
         result = True
-    except Exception as ex:
-        print("exception in appointments.modify_aslot_appt ", ex)
-        print("couldn't modify aslot %s %s %s serialno %d" % (
-            moddate, apptix, start, serialno))
+    except Exception:
+        LOGGER.exception("couldn't modify aslot %s %s %s serialno %s",
+                         moddate, apptix, start, serialno)
 
         result = False
     cursor.close()
@@ -1682,8 +1680,8 @@ def delete_appt_from_apr(appt):
     try:
         result = cursor.execute(query, tuple(values))
         db.commit()
-    except Exception as ex:
-        print("exception in appointments.delete_appt_from_apr ", ex)
+    except Exception:
+        LOGGER.exception("exception in appointments.delete_appt_from_apr")
     cursor.close()
 
     return result
@@ -1798,9 +1796,10 @@ if __name__ == "__main__":
             self.fname = "Wallace"
             self.cset = "P"
 
+    LOGGER.setLevel(logging.DEBUG)
     localsettings.initiate()
 
-    testdate = datetime.date(2015, 0o6, 0o1)
+    testdate = datetime.date(2015, 6, 1)
 
     d_a_d = DayAppointmentData()
     d_a_d.setDate(testdate)
@@ -1808,12 +1807,12 @@ if __name__ == "__main__":
     print("RESULTS")
     print("\tWORKING DENTS:\n\t%s" % str(d_a_d.workingDents))
     print("\tAPPOINTMENTS:")
-    for appt in d_a_d.appointments:
-        print("\t\t%s" % str(appt))
+    for appt_ in d_a_d.appointments:
+        print("\t\t%s" % str(appt_))
     print("\tSLOTS:")
-    for slot in d_a_d.slots(30):
-        print("\t\t%s" % slot)
+    for slot_ in d_a_d.slots(30):
+        print("\t\t%s" % slot_)
     print("\tSLOTS (ignoring emergencies):")
-    for slot in d_a_d.slots(15, ignore_emergency=True):
-        print("\t\t%s" % slot)
+    for slot_ in d_a_d.slots(15, ignore_emergency=True):
+        print("\t\t%s" % slot_)
     cancel_emergency_slot(testdate, 4, 1130, 1210)

@@ -307,7 +307,6 @@ class DiaryWidget(Advisor):
     def set_appt_mode(self, mode, update_required=True):
         LOGGER.debug("DiaryWidget.set_appt_mode")
         self.highlighted_appointment = None
-        self.schedule_controller.cancel_search_mode()
         if self.schedule_controller.mode == mode:
             return
         self.schedule_controller.set_mode(mode)

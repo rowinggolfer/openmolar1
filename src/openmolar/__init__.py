@@ -31,14 +31,29 @@ import sys
 import logging
 import gettext
 
+
+class MyFormatter(logging.Formatter):
+    '''
+    A custom formatter to produce a pretty log
+    '''
+
+    def format(self, record):
+        filename = "{%s:%s}" % (record.filename, record.lineno)
+        return "%s\t %s %s - %s" % (record.levelname,
+                                    filename.ljust(25),
+                                    record.funcName[:15].ljust(15),
+                                    record.getMessage())
+
+
 if "neil" in os.path.expanduser("~"):
-    FORMAT = \
-        '%(levelname)s {%(filename)s:%(lineno)d} %(funcName)s\t- %(message)s'
+    formatter = MyFormatter()
+    FORMAT = ('%(levelname)s\t {%(filename)s:%(lineno)d}\t %(funcName)s'
+              '\t- %(message)s')
 else:
     FORMAT = '%(levelname)s - %(message)s'
+    formatter = logging.Formatter(FORMAT)
 
 stream_handler = logging.StreamHandler()
-formatter = logging.Formatter(FORMAT)
 stream_handler.setFormatter(formatter)
 # logging.basicConfig(level = logging.INFO, format=FORMAT)
 
