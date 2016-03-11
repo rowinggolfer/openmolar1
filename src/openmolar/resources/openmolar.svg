@@ -126,16 +126,6 @@
            id="path3641"
            style="fill:#818181;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:31.20000076;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
            sodipodi:type="arc" />
-        <path
-           sodipodi:type="arc"
-           style="opacity:0.18399999;fill:url(#Strips1_1);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:31.20000076;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter5854);enable-background:accumulate"
-           id="path5814"
-           sodipodi:cx="-2672"
-           sodipodi:cy="-659.63782"
-           sodipodi:rx="880"
-           sodipodi:ry="880"
-           d="m -1792,-659.63782 c 0,486.01058 -393.9894,880 -880,880 -486.0106,0 -880,-393.98942 -880,-880 0,-486.01058 393.9894,-879.99998 880,-879.99998 486.0106,0 880,393.9894 880,879.99998 z"
-           transform="matrix(0.1496098,0.08650895,-0.08650895,0.1496098,2939.459,3245.7122)" />
       </g>
       <g
          transform="matrix(1.1144857,0,0,1.1144857,-317.93496,-875.71638)"
