@@ -21,8 +21,22 @@
 # #                                                                         # #
 # ########################################################################### #
 
+import logging
+
 from openmolar import connect
 from openmolar.settings import localsettings
+
+LOGGER = logging.getLogger("openmolar")
+
+PREVIOUS_DOCS_QUERY = '''select DATE_FORMAT(printdate, '%s'), docname,
+docversion,ix from newdocsprinted where serialno=%%s order by ix DESC
+''' % localsettings.OM_DATE_FORMAT.replace("%", "%%")
+
+GET_DATA_QUERY = 'select data, docversion from newdocsprinted where ix=%s'
+
+INSERT_QUERY = '''INSERT INTO newdocsprinted
+(serialno, printdate, docname, docversion, data)
+VALUES (%s, date(NOW()), %s, %s, %s)'''
 
 
 def getData(ix):
@@ -32,8 +46,7 @@ def getData(ix):
     '''
     db = connect.connect()
     cursor = db.cursor()
-    query = '''select data, docversion from newdocsprinted where ix=%d''' % ix
-    cursor.execute(query)
+    cursor.execute(GET_DATA_QUERY, (ix,))
     rows = cursor.fetchone()
     cursor.close()
     return rows
@@ -45,34 +58,26 @@ def previousDocs(sno):
     '''
     db = connect.connect()
     cursor = db.cursor()
-    query = '''select DATE_FORMAT(printdate,'%s'),docname,docversion,ix
-    from newdocsprinted where serialno=%s order by ix DESC ''' % (
-        localsettings.OM_DATE_FORMAT, sno)
-
-    cursor.execute(query)
+    cursor.execute(PREVIOUS_DOCS_QUERY, (sno,))
     rows = cursor.fetchall()
     cursor.close()
-    # db.close()
     return rows
 
 
-def add(sno, docname, object, version=1):
+def add(sno, docname, object_, version=1):
     '''
     add a note in the database of stuff which has been printed
     '''
     db = connect.connect()
     cursor = db.cursor()
-    query = '''INSERT INTO newdocsprinted
-(serialno,printdate,docname,docversion,data)
-VALUES (%s, date(NOW()), %s, %s, %s)'''
-    values = (sno, docname, version, object)
-    print("adding letter to newdocsprinted table")
-    cursor.execute(query, values)
+    values = (sno, docname, version, object_)
+    LOGGER.info("adding letter to newdocsprinted table")
+    cursor.execute(INSERT_QUERY, values)
     db.commit()
     cursor.close()
 
 
 if __name__ == "__main__":
-    #- test function
-    data, version = getData(80982)
-    print(data, version)
+    # test function
+    print(previousDocs(1))
+    print(getData(80982))

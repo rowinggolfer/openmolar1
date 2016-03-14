@@ -1014,7 +1014,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             if result == QtGui.QMessageBox.Yes:
                 html, version = docsprinted.getData(ix)
                 type_ = item.text(1).replace("(html)", "")
-                if om_printing.htmlEditor(self, type_, html, version):
+                if om_printing.htmlEditor(
+                        self, type_, html.decode("utf8"), version):
                     self.docsPrintedInit()
 
         elif "pdf" in item.text(1):
@@ -1037,10 +1038,13 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         else:  # unknown data type... probably plain text.
             LOGGER.info("other type of doc")
             data = docsprinted.getData(ix)[0]
-            if data is None:
-                data = _(
-                    "No information available about this document, sorry")
-            self.advise(data, 1)
+            try:
+                self.advise(data.encode("utf8"), 1)
+            except:
+                LOGGER.warning("unable to decode document")
+                self.advise(
+                    _("No information available about this document, sorry"),
+                    1)
 
     def docsImportedInit(self):
         '''
