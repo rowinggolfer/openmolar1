@@ -86,6 +86,7 @@ from openmolar.qt4gui.dialogs.appt_prefs_dialog import ApptPrefsDialog
 from openmolar.qt4gui.dialogs.cancel_appointment_dialog \
     import CancelAppointmentDialog
 from openmolar.qt4gui.dialogs.bookend_dialog import BookendDialog
+from openmolar.qt4gui.dialogs.check_version_dialog import CheckVersionDialog
 
 __all__ = ['AccountSeverityDialog',
            'AddClinicianDialog',
@@ -99,6 +100,7 @@ __all__ = ['AccountSeverityDialog',
            'BookendDialog',
            'BPE_Dialog',
            'CancelAppointmentDialog',
+           'CheckVersionDialog',
            'ChildSmileDialog',
            'ChooseToothDialog',
            'ClinicianSelectDialog',

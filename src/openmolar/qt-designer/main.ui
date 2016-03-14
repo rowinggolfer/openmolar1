@@ -62,8 +62,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>989</width>
-         <height>594</height>
+         <width>993</width>
+         <height>581</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -463,7 +463,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>494</width>
+                      <width>772</width>
                       <height>646</height>
                      </rect>
                     </property>
@@ -1797,7 +1797,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>444</width>
+                      <width>754</width>
                       <height>421</height>
                      </rect>
                     </property>
@@ -2090,7 +2090,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>491</width>
+                      <width>768</width>
                       <height>465</height>
                      </rect>
                     </property>
@@ -2479,7 +2479,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>755</width>
+                      <width>768</width>
                       <height>457</height>
                      </rect>
                     </property>
@@ -3130,8 +3130,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>98</width>
-                      <height>200</height>
+                      <width>561</width>
+                      <height>357</height>
                      </rect>
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_19"/>
@@ -3160,8 +3160,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>154</width>
-                      <height>216</height>
+                      <width>198</width>
+                      <height>357</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -3280,8 +3280,8 @@ Note - this will not remove items which are currently there. </string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>98</width>
-                      <height>28</height>
+                      <width>785</width>
+                      <height>375</height>
                      </rect>
                     </property>
                    </widget>
@@ -3557,7 +3557,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                      <x>0</x>
                      <y>0</y>
                      <width>118</width>
-                     <height>126</height>
+                     <height>123</height>
                     </rect>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -5095,6 +5095,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
      <string>&amp;Help</string>
     </property>
     <addaction name="action_About"/>
+    <addaction name="actionCheck_for_Updates"/>
     <addaction name="action_About_QT"/>
    </widget>
    <widget class="QMenu" name="menu_Prefences">
@@ -5450,6 +5451,11 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <action name="actionSet_Bookend">
    <property name="text">
     <string>Set Bookend (last day for appointment search)</string>
+   </property>
+  </action>
+  <action name="actionCheck_for_Updates">
+   <property name="text">
+    <string>Check for &amp;Updates</string>
    </property>
   </action>
  </widget>

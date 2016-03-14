@@ -83,6 +83,7 @@ from openmolar.qt4gui.dialogs.dialog_collection import (
     AutoAddressDialog,
     BookendDialog,
     BPE_Dialog,
+    CheckVersionDialog,
     ChildSmileDialog,
     ChooseToothDialog,
     ClinicianSelectDialog,
@@ -279,6 +280,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.records_in_use_timer.timeout.connect(self.check_records_in_use)
         self.set_referral_centres()
         self.diary_widget.initiate()
+        QtCore.QTimer.singleShot(12000, self.check_version)
 
     def check_first_run(self):
         '''
@@ -312,6 +314,15 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                 _("Login by"), localsettings.operator, "accepted"))
             self.check_schema()
             self.initiate()
+
+    def check_version(self):
+        '''
+        ping openmolar.com to see if an application update is available
+        if there is one, inform the user.
+        '''
+        force = self.sender() == self.ui.actionCheck_for_Updates
+        dl = CheckVersionDialog(force_check=force, parent=self)
+        dl.exec_()
 
     def check_schema(self):
         '''
@@ -2933,6 +2944,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.actionSet_Assistant.triggered.connect(self.setAssistant)
         self.ui.actionChange_Language.triggered.connect(self.changeLanguage)
         self.ui.action_About.triggered.connect(self.aboutOM)
+        self.ui.actionCheck_for_Updates.triggered.connect(self.check_version)
         self.ui.action_About_QT.triggered.connect(
             QtGui.QApplication.instance().aboutQt)
         self.ui.action_Quit.triggered.connect(self.quit)
