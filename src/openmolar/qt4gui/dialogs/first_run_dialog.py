@@ -26,9 +26,9 @@ from gettext import gettext as _
 import hashlib
 import logging
 import os
-import MySQLdb
-
 from xml.dom import minidom
+
+import MySQLdb
 
 from PyQt4 import QtGui, QtCore
 
@@ -529,7 +529,7 @@ class PageSeven(_InputPage):
         except Exception:
             self.dialog.wait(False)
             LOGGER.exception("connection attempt failed")
-            self.label.setText("<b>%s</b>" % (
+            self.label.setText("<b>%s</b> %s" % (
                 _("WARNING"),
                 _("Your database is NOT accepting connections!"))
             )
@@ -648,11 +648,10 @@ class FirstRunDialog(BaseDialog):
 
     def finish(self):
         dom = minidom.parseString(XML_TEMPLATE)
-        #  hash the password and save it
-        PSWORD = hashlib.md5(
-            hashlib.sha1(
-                str("diqug_ADD_SALT_3i2some" + self.sys_password)).hexdigest()
-        ).hexdigest()
+        #  hash the password (twice) and save it
+        sha1 = hashlib.sha1(("diqug_ADD_SALT_3i2some%s" %
+                             self.sys_password).encode("utf8")).hexdigest()
+        PSWORD = hashlib.md5(sha1.encode("utf8")).hexdigest()
         dom.getElementsByTagName(
             "system_password")[0].firstChild.replaceWholeText(PSWORD)
         #  server settings
@@ -671,7 +670,7 @@ class FirstRunDialog(BaseDialog):
         # password
         xmlnode.getElementsByTagName(
             "password")[0].firstChild.replaceWholeText(
-            base64.b64encode(self.db_pass))
+            base64.b64encode(self.db_pass.encode("utf8")).decode("utf8"))
         # db name
         xmlnode.getElementsByTagName(
             "dbname")[0].firstChild.replaceWholeText(self.db_name)
