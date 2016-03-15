@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /usr/bin/python3
 
 # ########################################################################### #
 # #                                                                         # #
@@ -32,11 +32,11 @@ import os
 import sys
 import git
 
-from PyQt4 import uic
+from PyQt5 import uic
 
 logging.basicConfig(level=logging.INFO)
 
-LOGGER = logging.getLogger("om_pyuic4")
+LOGGER = logging.getLogger("om_pyuic5")
 
 # can be switched off so generated files are not executable
 MAKE_EX = True
@@ -46,44 +46,22 @@ CHANGED_ONLY = True
 if "ALL" in sys.argv:
     CHANGED_ONLY = False
 
-REMOVALS = [
-    '''
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
-''',
-    '''
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    def _fromUtf8(s):
-        return s
-'''
-]
-
-REPLACEMENT1 = (
-    "import resources_rc",
-    "from openmolar.qt4gui import resources_rc"
+REMOVALS = (
+    "        _translate = QtCore.QCoreApplication.translate\n",
 )
-
-REPLACEMENT2 = (
-    '''if __name__ == "__main__":
-''',
-    '''if __name__ == "__main__":
-    import gettext
-    gettext.install("openmolar")
-''')
+REPLACEMENTS = [
+    ("import resources_rc",
+    "from openmolar.qt4gui import resources_rc"),
+    ('from PyQt5',
+     'from gettext import gettext as _\nfrom PyQt5')
+]
 
 
 def gettext_wrap(match):
     '''
     a callable used form regex substitution
     '''
-    return '_(%s)' % match.groups()[0].strip(" ")
+    return '_(%s)' % match.groups()[1].strip(" ")
 
 
 def de_bracket(match):
@@ -105,10 +83,10 @@ def compile_ui(ui_fname, outdir=""):
     try:
         f = open(pyfile, "w")
         uic.compileUi(ui_fname, f, execute=MAKE_EX)
+        f.close()
     except IOError:  # ui has been removed by git?
         pass
-    finally:
-        f.close()
+
 
     f = open(pyfile, "r")
     data = f.read()
@@ -118,20 +96,11 @@ def compile_ui(ui_fname, outdir=""):
     for removal in REMOVALS:
         newdata = newdata.replace(removal, "")
 
-    newdata = re.sub(r'_translate\(".*?", (".*?"), None\)',
+    newdata = re.sub(r'_translate\((".*?"), (".*?")\)',
                      gettext_wrap, newdata, 0, re.DOTALL)
 
-    newdata = re.sub(r'_fromUtf8(\(".*"\))', de_bracket, newdata)
-
-    orig, new = REPLACEMENT1
-    newdata = newdata.replace(orig, new)
-
-    if MAKE_EX:
-        orig, new = REPLACEMENT2
+    for orig, new in REPLACEMENTS:
         newdata = newdata.replace(orig, new)
-
-    # some hacks for 4.5/4.6 compatibility
-    # newdata = newdata.replace('setShowSortIndicator',"setSortIndicatorShown")
 
     if newdata != data:
         f = open(pyfile, "w")
