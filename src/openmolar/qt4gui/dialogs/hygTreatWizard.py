@@ -137,15 +137,8 @@ class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
                 trts = (("perio", "%s" % self.trt),)
                 manipulate_plan.add_treatments_to_plan(self.om_gui, trts, True)
 
-            newnotes = str(
-                self.om_gui.ui.notesEnter_textEdit.toPlainText())
-            if newnotes != "" and newnotes[-1] != "\n":
-                newnotes += "\n"
-            newnotes += "%s %s %s\n" % (
-                self.trt,
-                _("performed by"),
-                self.dent)
-            self.om_gui.ui.notesEnter_textEdit.setText(newnotes)
+            note = "%s %s %s\n" % (self.trt, _("performed by"), self.dent)
+            self.om_gui.addNewNote(note)
             return True
         else:
             self.om_gui.advise("Hyg Treatment not applied", 2)

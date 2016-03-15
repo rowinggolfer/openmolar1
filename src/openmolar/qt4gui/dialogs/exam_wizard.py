@@ -21,7 +21,9 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
 import logging
+
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
@@ -77,7 +79,7 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
     def check_dent(self, examdent):
         if examdent == localsettings.ops.get(self.pt.dnt1):
             if (self.pt.dnt2 == 0 or
-               self.pt.dnt2 == self.pt.dnt1):  # --no dnt2
+                    self.pt.dnt2 == self.pt.dnt1):  # --no dnt2
                 APPLIED = True
             else:
                 message = '''<p>%s %s<br />%s</p>
@@ -89,10 +91,10 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
                     localsettings.ops.get(self.pt.dnt2))
 
                 if QtGui.QMessageBox.question(
-                    self,
-                    _("Confirm"),
-                    message,
-                    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                        self,
+                        _("Confirm"),
+                        message,
+                        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
                         QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
                     self.pt.dnt2 = 0
                     self.om_gui.updateDetails()
@@ -115,9 +117,9 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
                     _("the registered dentist"))
 
             if QtGui.QMessageBox.question(
-                self,
-                _("Confirm"), message,
-                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                    self,
+                    _("Confirm"), message,
+                    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
                     QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
                 self.pt.dnt2 = localsettings.ops_reverse[examdent]
                 self.om_gui.updateDetails()
@@ -134,7 +136,7 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
         perform an exam
         '''
         if self.pt.serialno == 0:
-            om_gui.advise("no patient selected", 1)
+            self.om_gui.advise(_("No Patient Selected"), 1)
             return
         if self.pt.treatment_course.has_exam:
             message = "<p>%s</p><hr /><p>%s</p>" % (
@@ -179,13 +181,8 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
                 manipulate_plan.add_treatment_to_estimate(
                     self.om_gui, "exam", examtype, dentid, [tx_hash])
 
-                newnotes = str(
-                    self.om_gui.ui.notesEnter_textEdit.toPlainText())
-                if newnotes != "" and newnotes[-1] != "\n":
-                    newnotes += "\n"
-                newnotes += "%s %s %s\n" % (
-                    examtype, _("performed by"), examdent)
-                self.om_gui.ui.notesEnter_textEdit.setText(newnotes)
+                note = "%s %s %s\n" % (examtype, _("performed by"), examdent)
+                self.om_gui.addNewNote(note)
 
         return APPLIED
 
