@@ -133,7 +133,7 @@ class MyConfigParser(configparser.SafeConfigParser, Options):
 
     @property
     def last_check_date(self):
-        if self.update_option in (self.WEEKLY, self.MONTHLY):
+        if self.update_option != self.NEVER:
             try:
                 last_check = self.get("UPDATE", "LAST_CHECK")
                 return parse_isodate(last_check)
@@ -240,14 +240,13 @@ class CheckVersionDialog(ExtendableDialog, Options):
             delta = timedelta(days=30)
         elif self.config.update_option == self.WEEKLY:
             delta = timedelta(days=7)
-        else:
-            delta = timedelta()
-        if not force_check:
-            if self.config.last_check_date + delta < date.today():
-                LOGGER.debug("update check not due yet")
-                return False
-        else:
+        else:  # DAILY
+            delta = timedelta(days=1)
+        if force_check:
             LOGGER.warning("Check Version Dialog Called with force=True")
+        elif self.config.last_check_date + delta > date.today():
+            LOGGER.debug("update check not due yet")
+            return False
         LOGGER.info("polling for updates")
         QtGui.QApplication.instance().processEvents()
         try:
