@@ -63,8 +63,6 @@ class controlCalendar(QtGui.QCalendarWidget):
         self.setVerticalHeaderFormat(QtGui.QCalendarWidget.NoVerticalHeader)
         self.setDateEditEnabled(True)
         self.setSelectedDate(QtCore.QDate.currentDate())
-        # self.connect(self, QtCore.SIGNAL("currentPageChanged (int,int)"),
-        #    self.jumpMonth)
 
     def jumpMonth(self, year, month):
         '''
@@ -106,8 +104,7 @@ class weekCalendar(controlCalendar):
         self.color.setAlpha(64)
 
         self.weekNo = self.selectedDate().weekNumber()
-        self.connect(self, QtCore.SIGNAL("selectionChanged ()"),
-                     self.update_)
+        self.selectionChanged.connect(self.update_)
 
     def update_(self):
         '''
@@ -214,7 +211,7 @@ class monthCalendar(QtGui.QWidget):
         data is a dictionary {"mdd":"New Year's Day" , ...}
         '''
         self.headingdata = data
-        self.setBankHolColWidth
+        self.setBankHolColWidth()
 
     def setBankHolColWidth(self):
         '''
@@ -411,13 +408,13 @@ class monthCalendar(QtGui.QWidget):
             painter.drawRect(rect)
             painter.restore()
             if c_date in (self.selectedDate, self.highlightedDate):
-                painter.setPen(self.palette().color(
-                               self.palette().HighlightedText))
+                painter.setPen(
+                    self.palette().color(self.palette().HighlightedText))
                 painter.drawText(rect, my_text, option)
 
             elif c_date.isoweekday() < 6:
-                painter.setPen(self.palette().color(
-                               self.palette().WindowText))
+                painter.setPen(
+                    self.palette().color(self.palette().WindowText))
                 painter.drawText(rect, my_text, option)
 
             else:
@@ -861,10 +858,8 @@ if __name__ == "__main__":
     wcal = weekCalendar()
     mcal = monthCalendar()
     ycal = yearCalendar()
-    # cal.show()
+    
     wcal.show()
-
-    # cal.selectionChanged.connect(signal_trap)
     wcal.week_changed_signal.connect(week_signal_trap)
 
     if False:

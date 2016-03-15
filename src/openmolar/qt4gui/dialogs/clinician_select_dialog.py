@@ -21,6 +21,8 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
+
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
@@ -58,8 +60,8 @@ class ClinicianSelectDialog(QtGui.QDialog):
         layout.addWidget(self.listwidget)
         layout.addWidget(self.buttonBox)
 
-        self.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), self.accept)
-        self.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), self.reject)
+        self.buttonBox.accepted.connect(self.accept)
+        self.buttonBox.rejected.connect(self.reject)
 
     @property
     def selectedClinician(self):
@@ -78,16 +80,15 @@ class ClinicianSelectDialog(QtGui.QDialog):
             u2 = curr_operator[0]
             if u2 == chosen:
                 u2 = ""
-            if u2:
-                input = QtGui.QMessageBox.question(
-                    self,
-                    _("Confirm"),
-                   _("Set Clinician as") +
-                   " %s?" % chosen,
-                   QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                   QtGui.QMessageBox.Yes)
-                if input == QtGui.QMessageBox.No:
-                    u2 = ""
+            if (u2 and
+                    QtGui.QMessageBox.question(
+                        self,
+                        _("Confirm"),
+                        "%s %s?" % (
+                            _("Set Clinician as"), chosen),
+                        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
+                        QtGui.QMessageBox.Yes) == QtGui.QMessageBox.No):
+                u2 = ""
             localsettings.setOperator(chosen, u2)
             return (change_needed, chosen)
         return (False, None)

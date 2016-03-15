@@ -152,8 +152,8 @@ class DiaryWidget(Advisor):
 
         self.ui.weekView_splitter.setSizes([600, 10])
 
-        self.appt_clinician_selector = dent_hyg_selector.dentHygSelector()
-        self.monthClinicianSelector = dent_hyg_selector.dentHygSelector()
+        self.appt_clinician_selector = dent_hyg_selector.DentHygSelector()
+        self.monthClinicianSelector = dent_hyg_selector.DentHygSelector()
 
         # -customise the appointment widget calendar
         self.ui.dayCalendar = calendars.controlCalendar()

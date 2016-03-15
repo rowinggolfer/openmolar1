@@ -45,7 +45,6 @@ class notificationGB(QtGui.QWidget):
         self.label = QtGui.QLabel()
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setStyleSheet("color: red")
-        # self.label.setWordWrap(True)
 
         icon = QtGui.QIcon.fromTheme(
             "window-close", QtGui.QIcon(":/quit.png"))
@@ -135,26 +134,18 @@ class notificationWidget(QtGui.QWidget):
 
 
 if __name__ == "__main__":
-
-    from openmolar.settings import localsettings
     from functools import partial
-
-    def test(arg=None):
-        print("clicked = ", arg)
 
     app = QtGui.QApplication([])
     form = QtGui.QMainWindow()
     form.setMinimumWidth(300)
 
     nw = notificationWidget(form)
-    QtCore.QObject.connect(nw, QtCore.SIGNAL("clicked()"), test)
 
     for i in range(5):
-        QtCore.QTimer.singleShot(i * 3000,
-                                 partial(
-                                 nw.addMessage, "This is test message %d" %
-                                 (i + 1))
-                                 )
+        QtCore.QTimer.singleShot(
+            i * 3000,
+            partial(nw.addMessage, "This is test message %d" % (i + 1)))
 
     form.setCentralWidget(nw)
     form.show()

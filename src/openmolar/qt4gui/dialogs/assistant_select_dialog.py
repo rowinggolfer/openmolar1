@@ -21,6 +21,8 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
+
 from PyQt4 import QtGui, QtCore
 
 from openmolar.settings import localsettings
@@ -53,8 +55,8 @@ class AssistantSelectDialog(QtGui.QDialog):
         layout.addWidget(self.listwidget)
         layout.addWidget(self.buttonBox)
 
-        self.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), self.accept)
-        self.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), self.reject)
+        self.buttonBox.accepted.connect(self.accept)
+        self.buttonBox.rejected.connect(self.reject)
 
     @property
     def selectedAssistant(self):

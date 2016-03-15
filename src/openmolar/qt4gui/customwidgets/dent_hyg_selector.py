@@ -24,7 +24,8 @@
 from PyQt4 import QtGui, QtCore
 
 
-class dentHygSelector(QtGui.QTreeWidget):
+class DentHygSelector(QtGui.QTreeWidget):
+    selection_changed_signal = QtCore.pyqtSignal()
 
     def __init__(self):
         QtGui.QTreeWidget.__init__(self)
@@ -62,14 +63,9 @@ class dentHygSelector(QtGui.QTreeWidget):
 
     def signals(self, connect):
         if connect:
-            self.connect(self,
-                         QtCore.SIGNAL("itemChanged (QTreeWidgetItem *,int)"),
-                         self.interact)
+            self.itemChanged.connect(self.interact)
         else:
-            self.disconnect(self,
-                            QtCore.SIGNAL(
-                                "itemChanged (QTreeWidgetItem *,int)"),
-                            self.interact)
+            self.itemChanged.disconnect(self.interact)
 
     def checkAll(self, checkstate=QtCore.Qt.Checked,
                  ignoreHygs=False, ignoreDents=False):
@@ -111,7 +107,7 @@ class dentHygSelector(QtGui.QTreeWidget):
         self.root.setCheckState(0, allClinicians)
 
         self.signals(True)
-        self.emit(QtCore.SIGNAL("selectionChanged"))
+        self.selection_changed_signal.emit()
 
     @property
     def selectedDents(self):
@@ -140,7 +136,7 @@ if __name__ == "__main__":
     app = QtGui.QApplication([])
     dents = ["Neil", "Bea", "Helen"]
     hygs = ["Rosie", "Sally", "Ariana"]
-    w = dentHygSelector()
+    w = DentHygSelector()
     w.set_dents(dents)
     w.set_hygs(hygs)
     w.show()

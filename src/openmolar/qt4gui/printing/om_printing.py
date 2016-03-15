@@ -406,8 +406,7 @@ def daylistPrintWizard(om_gui):
     vlayout = QtGui.QGridLayout(dl.scrollArea)
     dl.alldentscheckBox = QtGui.QCheckBox(_("All Books"))
     dl.alldentscheckBox.setChecked(True)
-    dl.alldentscheckBox.connect(dl.alldentscheckBox,
-                                QtCore.SIGNAL("stateChanged(int)"), checkAll)
+    dl.alldentscheckBox.stateChanged.connect(checkAll)
     row = 0
     vlayout.addWidget(dl.alldentscheckBox, row, 0, 1, 2)
     checkBoxes = {}

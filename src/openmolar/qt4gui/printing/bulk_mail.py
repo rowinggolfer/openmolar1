@@ -339,8 +339,7 @@ class bulkMails(object):
         dl = Ui_bulkmail_options.Ui_Dialog()
         dl.setupUi(dialog)
         dl.dateEdit.setDate(localsettings.currentDay())
-        dialog.connect(dl.custDate_radioButton,
-                       QtCore.SIGNAL("toggled (bool)"), enableDate)
+        dl.custDate_radioButton.toggled.connect(enableDate)
         if dialog.exec_():
             if dl.custDate_radioButton.isChecked():
                 self.adate = dl.dateEdit.date().toPyDate()

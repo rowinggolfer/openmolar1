@@ -128,8 +128,8 @@ class PhraseBookDialog(QtGui.QDialog):
         self.buttonBox.setStandardButtons(
             QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setCenterButtons(True)
-        self.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), self.accept)
-        self.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), self.reject)
+        self.buttonBox.accepted.connect(self.accept)
+        self.buttonBox.rejected.connect(self.reject)
 
         layout.addWidget(self.tabWidget)
         layout.addWidget(self.buttonBox)

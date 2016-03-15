@@ -99,10 +99,7 @@ class dentWidget(Ui_activeDentStartFinish.Ui_Form):
 
     def __init__(self, widget):
         self.setupUi(widget)
-
-        QtCore.QObject.connect(self.checkBox,
-                               QtCore.SIGNAL("stateChanged(int)"), self.toggle)
-
+        self.checkBox.stateChanged.connect(self.toggle)
         self.addTimeEdits()
 
     def addTimeEdits(self):
@@ -159,9 +156,7 @@ class alterDayDialog(Ui_aslotEdit.Ui_Dialog):
         self.loadData()
         self.showItems()
 
-        QtCore.QObject.connect(self.copy_pushButton,
-                               QtCore.SIGNAL("clicked()"),
-                               self.copy_to_clipboard)
+        self.copy_pushButton.clicked.connect(self.copy_to_clipboard)
 
         self.pastebutton_orig_text = self.paste_pushButton.text()
         if diary_widget.alterAday_clipboard_date:
@@ -169,8 +164,7 @@ class alterDayDialog(Ui_aslotEdit.Ui_Dialog):
         else:
             self.paste_pushButton.setEnabled(False)
 
-        QtCore.QObject.connect(self.paste_pushButton,
-                               QtCore.SIGNAL("clicked()"), self.paste)
+        self.paste_pushButton.clicked.connect(self.paste)
 
     def setPasteButtonText(self):
         text = self.pastebutton_orig_text

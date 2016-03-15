@@ -123,9 +123,7 @@ class editor(Ui_toothprops_full_edit.Ui_Dialog):
         self.tableWidget.setItem(row, 2, tableItem)
 
     def signals(self):
-        self.tableWidget.connect(self.tableWidget,
-                                 QtCore.SIGNAL("cellPressed (int,int)"),
-                                 self.tableClicked)
+        self.tableWidget.cellPressed.connect(self.tableClicked)
 
     def tableClicked(self, row, column):
         if column == 3:

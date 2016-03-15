@@ -249,8 +249,7 @@ class AppointmentWidget(QtGui.QFrame):
         '''
         set up the widget's signals and slots
         '''
-        self.connect(self.memo_lineEdit,
-                     QtCore.SIGNAL("editingFinished()"), self.newMemo)
+        self.memo_lineEdit.editingFinished.connect(self.newMemo)
 
     def showEvent(self, event=None):
         if self.diary_widget.pt:
@@ -597,8 +596,8 @@ class AppointmentCanvas(QtGui.QWidget):
             self.drag_startrow = int(y // yOffset)
 
             if (self.drag_startrow < self.firstSlot - 1 or
-               self.drag_startrow >= self.lastSlot or
-               self.drag_startrow in self.rows):
+                    self.drag_startrow >= self.lastSlot or
+                    self.drag_startrow in self.rows):
                 allowDrop = False
             else:
                 n_rows = self.drag_appt.length // self.slotDuration
@@ -606,6 +605,7 @@ class AppointmentCanvas(QtGui.QWidget):
                 # see if there's a long enough slot either side of the selected
                 # row
                 allowDrop = True
+                row = None
                 for row in range(self.drag_startrow, self.drag_endrow):
                     if row in self.rows or row >= self.lastSlot:
                         allowDrop = False
@@ -1098,7 +1098,7 @@ class AppointmentCanvas(QtGui.QWidget):
             painter.drawRect(h_rect)
 
     def toggle_blink(self):
-        if not self.pWidget.mode == self.pWidget.SCHEDULING_MODE:
+        if self.pWidget.mode != self.pWidget.SCHEDULING_MODE:
             return
         self.blink_on = self.blink_timer.state
         self.update()
@@ -1126,6 +1126,7 @@ if __name__ == "__main__":
     # from openmolar.qt4gui import maingui
     # parent = maingui.OpenmolarGui()
     parent = QtGui.QFrame()
+    parent.highlighted_appointment = None
     parent.pt = BriefPatient(1)
 
     form = AppointmentWidget("0800", "1500", parent)
@@ -1151,19 +1152,18 @@ if __name__ == "__main__":
 
     dt = datetime.datetime.now()
     for tup in (
-        (5, 915, 930, 'MCDONALD I', 6155, 'EXAM', '', '', '', 1, 73, 0, 0,
-         dt, dt.date()),
-        (5, 1100, 1130, 'EMERGENCY', 0, '', '', '', '', -128, 0, 0, 0,
-         dt, dt.date()),
-        (5, 1300, 1400, 'LUNCH', 0, '', '', '', '', -128, 0, 0, 0,
-         dt, dt.date()),
-        (5, 1400, 1410, 'STAFF MEETING', 0, '', '', '', '', -128, 0, 0, 0,
-         dt, dt.date()),
-        (5, 930, 1005, 'TAYLOR J', 19373, 'FILL', '', '', '', 1, 80, 0, 0,
-         dt, dt.date()),
-        (5, 1210, 1230, 'TAYLOR J', 19373, 'FILL', '', '', '', 1, 80, 0, 0,
-         dt, dt.date()),
-    ):
+            (5, 915, 930, 'MCDONALD I', 6155, 'EXAM', '', '', '', 1, 73, 0, 0,
+             dt, dt.date()),
+            (5, 1100, 1130, 'EMERGENCY', 0, '', '', '', '', -128, 0, 0, 0,
+             dt, dt.date()),
+            (5, 1300, 1400, 'LUNCH', 0, '', '', '', '', -128, 0, 0, 0,
+             dt, dt.date()),
+            (5, 1400, 1410, 'STAFF MEETING', 0, '', '', '', '', -128, 0, 0, 0,
+             dt, dt.date()),
+            (5, 930, 1005, 'TAYLOR J', 19373, 'FILL', '', '', '', 1, 80, 0, 0,
+             dt, dt.date()),
+            (5, 1210, 1230, 'TAYLOR J', 19373, 'FILL', '', '', '', 1, 80, 0, 0,
+             dt, dt.date()),):
         appt = appointments.Appointment(tup)
         form.setAppointment(appt)
 
@@ -1181,7 +1181,7 @@ if __name__ == "__main__":
     form.clear_slot_signal.connect(clicktest)
     form.block_empty_slot_signal.connect(clicktest)
     form.print_me_signal.connect(clicktest)
-    form.connect(form, QtCore.SIGNAL("Appointment_into_EmptySlot"), clicktest)
+    form.appt_empty_slot_signal.connect(clicktest)
 
     form.mode = form.SCHEDULING_MODE
     # form.mode = form.BROWSING_MODE

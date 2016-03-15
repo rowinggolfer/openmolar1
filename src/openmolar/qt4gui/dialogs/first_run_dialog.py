@@ -439,8 +439,7 @@ class PageSix(_InputPage):
                 self.progress_bar.update()
 
         self.timer1 = QtCore.QTimer()
-        self.connect(self.timer1, QtCore.SIGNAL("timeout()"),
-                     updatePB)
+        self.timer1.timeout.connect(updatePB)
 
         try:
             from openmolar import create_db

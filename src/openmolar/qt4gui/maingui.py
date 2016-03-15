@@ -3137,8 +3137,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
     def signals_feesTable(self):
         # feesTable
         # TODO bring this functionality back
-        # QtCore.QObject.connect(self.ui.printFeescale_pushButton,
-        # QtCore.SIGNAL("clicked()"), self.printFeesTable)
+        # self.ui.printFeescale_pushButton.clicked.connect(self.printFeesTable)
         self.ui.feeScales_treeView.clicked.connect(self.feeScale_clicked)
         self.ui.feeScales_treeView.expanded.connect(self.feeScale_expanded)
         self.ui.chooseFeescale_comboBox.currentIndexChanged.connect(
