@@ -93,7 +93,7 @@ class EditReferralCentresDialog(BaseDialog):
 
         left_frame = QtWidgets.QFrame()
         layout = QtWidgets.QGridLayout(left_frame)
-        layout.setMargin(0)
+        # layout.setMargin(0)
         layout.addWidget(self.list_view, 0, 0, 1, 3)
         layout.addWidget(delete_but, 1, 0)
         layout.addWidget(add_but, 1, 1)
@@ -101,7 +101,7 @@ class EditReferralCentresDialog(BaseDialog):
 
         right_frame = QtWidgets.QFrame()
         layout = QtWidgets.QFormLayout(right_frame)
-        layout.setMargin(0)
+        # layout.setMargin(0)
         self.description_line_edit = QtWidgets.QLineEdit()
         self.greeting_line_edit = QtWidgets.QLineEdit()
         self.text_edit = QtWidgets.QTextEdit()

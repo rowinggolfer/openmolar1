@@ -101,7 +101,7 @@ class CompleteTreatmentDialog(ExtendableDialog):
 
         but_frame = QtWidgets.QFrame()
         layout = QtWidgets.QHBoxLayout(but_frame)
-        layout.setMargin(0)
+        # layout.setMargin(0)
         complete_all_but = QtWidgets.QPushButton(
             self.complete_icon, _("Complete All"))
 

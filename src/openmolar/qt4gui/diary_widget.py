@@ -107,8 +107,9 @@ class DiaryWidget(Advisor):
 
         # keep a pointer to this layout as the layout is moved between
         # dayview and weekview
-        self.control_layout = QtWidgets.QVBoxLayout(self.ui.day_view_control_frame)
-        self.control_layout.setMargin(0)
+        self.control_layout = QtWidgets.QVBoxLayout(
+            self.ui.day_view_control_frame)
+        # self.control_layout.setMargin(0)
         self.control_layout.addWidget(self.schedule_controller)
         # self.control_layout.addStretch(0)
         self.control_layout.addWidget(self.view_controller)
@@ -131,7 +132,7 @@ class DiaryWidget(Advisor):
             self.ui.apptoverviews.append(bw)
 
             hlayout = QtWidgets.QHBoxLayout(frame)
-            hlayout.setMargin(0)
+            # hlayout.setMargin(0)
             hlayout.addWidget(bw)
 
         self.ui.apptoverviewControls = []
@@ -145,7 +146,7 @@ class DiaryWidget(Advisor):
                      self.ui.day7_frame
                      ):
             hlayout = QtWidgets.QHBoxLayout(widg)
-            hlayout.setMargin(0)
+            # hlayout.setMargin(0)
             control = aptOVcontrol.control()
             self.ui.apptoverviewControls.append(control)
             hlayout.addWidget(control)
@@ -158,12 +159,12 @@ class DiaryWidget(Advisor):
         # -customise the appointment widget calendar
         self.ui.dayCalendar = calendars.controlCalendar()
         self.calendar_layout = QtWidgets.QHBoxLayout(self.ui.dayCalendar_frame)
-        self.calendar_layout.setMargin(0)
+        # self.calendar_layout.setMargin(0)
         self.calendar_layout.addWidget(self.ui.dayCalendar)
 
         self.ui.weekCalendar = calendars.weekCalendar()
         hlayout = QtWidgets.QHBoxLayout(self.ui.weekCalendar_frame)
-        hlayout.setMargin(0)
+        # hlayout.setMargin(0)
         hlayout.addWidget(self.ui.weekCalendar)
 
         # -add a month view
@@ -175,12 +176,12 @@ class DiaryWidget(Advisor):
         # -add a year view
         self.ui.yearView = calendars.yearCalendar()
         hlayout = QtWidgets.QHBoxLayout(self.ui.yearView_frame)
-        hlayout.setMargin(0)
+        # hlayout.setMargin(0)
         hlayout.addWidget(self.ui.yearView)
 
         self.agenda_widget = QtWidgets.QTextBrowser()
         layout = QtWidgets.QVBoxLayout(self.ui.agenda_frame)
-        layout.setMargin(0)
+        # layout.setMargin(0)
         layout.addWidget(self.agenda_widget)
 
         self.init_signals()

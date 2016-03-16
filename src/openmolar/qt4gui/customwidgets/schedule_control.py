@@ -28,7 +28,7 @@ schedule_control.py provides the DiaryScheduleController class for openmolar.
 from gettext import gettext as _
 import logging
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWebKitWidgets, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.dbtools.brief_patient import BriefPatient
@@ -151,7 +151,7 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
 
         self.appt_controls_frame = QtWidgets.QWidget()
         layout = QtWidgets.QGridLayout(self.appt_controls_frame)
-        layout.setMargin(1)
+        # layout.setMargin(1)
         layout.setSpacing(2)
         layout.addWidget(diary_button, 0, 0, 1, 2)
         layout.addWidget(settings_button, 0, 3, 1, 2)
@@ -165,7 +165,7 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
             QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                               QtWidgets.QSizePolicy.Minimum))
 
-        self.search_criteria_webview = QtWebKit.QWebView(self)
+        self.search_criteria_webview = QtWebKitWidgets.QWebView(self)
         self.search_criteria_webview.setMinimumHeight(100)
         self.search_criteria_webview.setHtml(
             _("No appointment selected for scheduling"))
@@ -173,14 +173,14 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
         # now arrange the stacked widget
 
         # page 0 - Browsing mode
-        self.browsing_webview = QtWebKit.QWebView()
+        self.browsing_webview = QtWebKitWidgets.QWebView()
         self.reset_browsing_webview()
         self.addWidget(self.browsing_webview)
 
         # page 1 -- scheduling mode
         widg = QtWidgets.QWidget()
         layout = QtWidgets.QGridLayout(widg)
-        layout.setMargin(0)
+        # layout.setMargin(0)
         layout.addWidget(self.patient_label, 0, 0)
         layout.addWidget(self.get_patient_button, 0, 1)
         layout.addWidget(self.appt_listView, 2, 0, 1, 2)
@@ -715,7 +715,7 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
         self.selection_changed(
             self.appointment_model.selection_model.selection())
         self.appointment_model.selection_model.emitSelectionChanged(
-            selection, QtGui.QItemSelection())
+            selection, QtCore.QItemSelection())
         slot.is_primary = True
         self.set_chosen_slot(slot)
         self.chosen_slot_changed.emit()

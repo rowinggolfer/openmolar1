@@ -486,7 +486,7 @@ class _TestParent(QtWidgets.QWidget):
         QtWidgets.QWidget.__init__(self, parent)
 
         layout = QtWidgets.QHBoxLayout(self)
-        layout.setMargin(0)
+        # layout.setMargin(0)
 
         widg = EstimateItemWidget(self)
         layout.addWidget(widg.number_label)

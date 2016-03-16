@@ -482,7 +482,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         hlayout.addWidget(self.loadedPatient_label)
         hlayout.addWidget(self.sepline)
         hlayout.addWidget(self.operator_label)
-        hlayout.setMargin(0)
+        # hlayout.setMargin(0)
         self.ui.statusbar.addPermanentWidget(self.statusbar_frame)
 
         # summary chart
@@ -518,13 +518,13 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         # static control panel
         self.ui.static_control_panel = StaticControlPanel()
         hlayout = QtWidgets.QHBoxLayout(self.ui.static_frame)
-        hlayout.setMargin(0)
+        # hlayout.setMargin(0)
         hlayout.addWidget(self.ui.static_control_panel)
 
         # TOOTHPROPS (right hand side on the charts page)
         self.ui.toothPropsWidget = toothProps.ToothPropertyEditingWidget(self)
         hlayout = QtWidgets.QHBoxLayout(self.ui.toothProps_frame)
-        hlayout.setMargin(0)
+        # hlayout.setMargin(0)
         hlayout.addWidget(self.ui.toothPropsWidget)
 
         self.enableEdit(False)
@@ -547,7 +547,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
 
         self.ui.cashbookTextBrowser = cashbook_module.CashBookBrowser(self)
         layout = QtWidgets.QVBoxLayout(self.ui.cashbook_placeholder_widget)
-        layout.setMargin(0)
+        # layout.setMargin(0)
         layout.addWidget(self.ui.cashbookTextBrowser)
 
     def set_referral_centres(self):

@@ -119,7 +119,7 @@ class AppointmentWidget(QtWidgets.QFrame):
         self.apptix = 0
         glay = QtWidgets.QGridLayout(self.header_frame)
         glay.setSpacing(2)
-        glay.setMargin(2)
+        # glay.setMargin(2)
         glay.addWidget(self.printButton, 0, 1)
         glay.addWidget(self.header_label, 0, 0)
         glay.addWidget(self.memo_lineEdit, 1, 0, 1, 2)
@@ -143,7 +143,7 @@ class AppointmentWidget(QtWidgets.QFrame):
 
         lay = QtWidgets.QVBoxLayout(self)
         lay.setSpacing(0)
-        lay.setMargin(2)
+        # lay.setMargin(2)
         lay.addWidget(self.header_frame)
         lay.addWidget(self.OOlabel)
         lay.addWidget(self.scrollArea)
@@ -1054,13 +1054,17 @@ class AppointmentCanvas(QtWidgets.QWidget):
             corner2 = [self.timeWidth, (cellno - 0.5) * self.slotHeight]
             corner3 = [self.timeWidth, (cellno + 0.5) * self.slotHeight]
             triangle = corner1 + corner2 + corner3
-            painter.drawPolygon(QtGui.QPolygon(triangle))
+            polygon = QtGui.QPolygon()
+            polygon.setPoints(triangle)
+            painter.drawPolygon(polygon)
             corner1 = [self.width() - self.timeWidth * 0.4,
                        cellno * self.slotHeight]
             corner2 = [self.width(), (cellno - 0.5) * self.slotHeight]
             corner3 = [self.width(), (cellno + 0.5) * self.slotHeight]
             triangle = corner1 + corner2 + corner3
-            painter.drawPolygon(QtGui.QPolygon(triangle))
+            polygon = QtGui.QPolygon()
+            polygon.setPoints(triangle)
+            painter.drawPolygon(polygon)
 
         if self.dragging:
             painter.setPen(RED_PEN)

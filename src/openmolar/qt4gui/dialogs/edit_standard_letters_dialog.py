@@ -24,7 +24,7 @@
 from gettext import gettext as _
 import logging
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import Qsci, QtCore, QtGui, QtWidgets
 
 from openmolar.dbtools import standard_letter
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
@@ -93,7 +93,7 @@ class EditStandardLettersDialog(BaseDialog):
 
         left_frame = QtWidgets.QFrame()
         layout = QtWidgets.QGridLayout(left_frame)
-        layout.setMargin(0)
+        # layout.setMargin(0)
         layout.addWidget(self.list_view, 0, 0, 1, 3)
         layout.addWidget(delete_but, 1, 0)
         layout.addWidget(add_but, 1, 1)
@@ -101,7 +101,7 @@ class EditStandardLettersDialog(BaseDialog):
 
         right_frame = QtWidgets.QFrame()
         layout = QtWidgets.QFormLayout(right_frame)
-        layout.setMargin(0)
+        # layout.setMargin(0)
         self.description_line_edit = QtWidgets.QLineEdit()
         self.text_edit = Qsci.QsciScintilla()
         self.text_edit.setLexer(Qsci.QsciLexerHTML())

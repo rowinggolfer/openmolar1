@@ -47,7 +47,7 @@ class TxDisplayWidget(QtWidgets.QWidget):
         but.clicked.connect(self._complete_treatments)
 
         layout = QtWidgets.QHBoxLayout(self)
-        layout.setMargin(0)
+        # layout.setMargin(0)
         layout.addWidget(self.pl_lineedit)
         layout.addWidget(but)
         layout.addWidget(self.cmp_lineedit)

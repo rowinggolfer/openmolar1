@@ -22,7 +22,7 @@
 # ########################################################################### #
 
 from gettext import gettext as _
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWebKitWidgets, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
@@ -43,7 +43,7 @@ class PrintRecordDialog(BaseDialog):
 
         patient_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.web_view = QtWebKit.QWebView()
+        self.web_view = QtWebKitWidgets.QWebView()
 
         self.insertWidget(patient_label)
         self.insertWidget(self.web_view)

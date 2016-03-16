@@ -58,7 +58,7 @@ class ColouredItemDelegate(QtWidgets.QItemDelegate):
         QtWidgets.QItemDelegate.paint(self, painter, option, index)
 
 
-class DoubleSelectionModel(QtGui.QItemSelectionModel):
+class DoubleSelectionModel(QtCore.QItemSelectionModel):
 
     '''
     A selection model which allows the selection of a maximum of 2 items.
@@ -70,15 +70,15 @@ class DoubleSelectionModel(QtGui.QItemSelectionModel):
         or a QItemSelection
         '''
         if isinstance(selection, QtCore.QModelIndex):
-            QtGui.QItemSelectionModel.select(self, selection, command)
+            QtCore.QItemSelectionModel.select(self, selection, command)
             return
         if len(selection.indexes()) > 2:
             LOGGER.debug("restricting appointment selection to 2 items")
-            new_selection = QtGui.QItemSelection()
+            new_selection = QtCore.QItemSelection()
             new_selection.append(
-                QtGui.QItemSelectionRange(selection.indexes()[0]))
+                QtCore.QItemSelectionRange(selection.indexes()[0]))
             new_selection.append(
-                QtGui.QItemSelectionRange(selection.last().indexes()[0]))
+                QtCore.QItemSelectionRange(selection.last().indexes()[0]))
             selection = new_selection
 
         # now some openmolar specific code... I want scheduled appointment
@@ -96,16 +96,17 @@ class DoubleSelectionModel(QtGui.QItemSelectionModel):
                 selection.removeAt(1)
 
         # send via base class
-        QtGui.QItemSelectionModel.select(self, selection, command)
+        QtCore.QItemSelectionModel.select(self, selection, command)
 
 
 class SimpleListModel(QtCore.QAbstractListModel):
 
-    def __init__(self, parent=None):
-        super(SimpleListModel, self).__init__(parent)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.unscheduledList = []
         self.scheduledList = []
-        self.setSupportedDragActions(QtCore.Qt.MoveAction)
+        # BROKEN WITH PYQT5 ????
+        #self.setSupportedDragActions(QtCore.Qt.MoveAction)
         self.selection_model = DoubleSelectionModel(self)
 
         self.normal_icon = QtGui.QIcon()
@@ -219,7 +220,7 @@ class SimpleListModel(QtCore.QAbstractListModel):
         programatically make a selection (to sync with other ways of selecting
         an appointment, eg pt_diary)
         '''
-        selection = QtGui.QItemSelection()
+        selection = QtCore.QItemSelection()
         # for app in sorted(selected_apps,
         #                   key=lambda x: x.unscheduled, reverse=True):
         for app in selected_apps:
@@ -227,11 +228,11 @@ class SimpleListModel(QtCore.QAbstractListModel):
             try:
                 row = self.items.index(app)
                 index = self.index(row)
-                selection.append(QtGui.QItemSelectionRange(index))
+                selection.append(QtCore.QItemSelectionRange(index))
             except ValueError:  # app not in list
                 pass
         self.selection_model.select(selection,
-                                    QtGui.QItemSelectionModel.Select)
+                                    QtCore.QItemSelectionModel.Select)
 
     def rowCount(self, parent=QtCore.QModelIndex()):
         return len(self.items)

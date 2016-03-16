@@ -39,17 +39,17 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
         self.om_gui = om_gui
         self.setupUi(Dialog)
         vlayout = QtWidgets.QVBoxLayout(self.blockStart_frame)
-        vlayout.setMargin(0)
+        # vlayout.setMargin(0)
         self.start_timeEdit = fiveminutetimeedit.FiveMinuteTimeEdit()
         vlayout.addWidget(self.start_timeEdit)
 
         vlayout = QtWidgets.QVBoxLayout(self.blockEnd_frame)
-        vlayout.setMargin(0)
+        # vlayout.setMargin(0)
         self.finish_timeEdit = fiveminutetimeedit.FiveMinuteTimeEdit()
         vlayout.addWidget(self.finish_timeEdit)
 
         vlayout = QtWidgets.QVBoxLayout(self.startTime_frame)
-        vlayout.setMargin(0)
+        # vlayout.setMargin(0)
         self.appointment_timeEdit = fiveminutetimeedit.FiveMinuteTimeEdit()
         vlayout.addWidget(self.appointment_timeEdit)
 

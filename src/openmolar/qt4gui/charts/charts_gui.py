@@ -192,7 +192,7 @@ def chartNavigation(om_gui, teeth, callerIsTable=False):
         x = grid[y].index(tooth)
 
         om_gui.ui.chartsTableWidget.setCurrentCell(
-            x + y * 16, 0, QtGui.QItemSelectionModel.Select)
+            x + y * 16, 0, QtCore.QItemSelectionModel.Select)
 
 
 def selectChartedTooth(om_gui, x, y):

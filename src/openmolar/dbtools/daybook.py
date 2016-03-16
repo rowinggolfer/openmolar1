@@ -29,7 +29,7 @@ from gettext import gettext as _
 from collections import namedtuple
 import logging
 
-from PyQt5 import 
+from PyQt5 import QtCore
 
 from openmolar.settings import localsettings
 from openmolar import connect
@@ -142,7 +142,7 @@ def details(regdent, trtdent, startdate, enddate, filters=""):
 
     total, nettotal = 0, 0
 
-    iterDate = QDate(startdate.year(), startdate.month(), 1)
+    iterDate = QtCore.QDate(startdate.year(), startdate.month(), 1)
 
     retarg = '''
     <html><body><h4>%s %s %s %s %s %s %s %s %s</h4>''' % (
@@ -380,6 +380,6 @@ def filter_help_text():
 if __name__ == "__main__":
     localsettings.initiate()
     for combo in (("*ALL*", "NW"), ("NW", "AH"), ("NW", "NW")):
-        print(details(combo[0], combo[1], QDate(2008, 10, 31),
-                      QDate(2008, 11, 11)))
+        print(details(combo[0], combo[1], QtCore.QDate(2008, 10, 31),
+                      QtCore.QDate(2008, 11, 11)))
     print(filter_help_text())

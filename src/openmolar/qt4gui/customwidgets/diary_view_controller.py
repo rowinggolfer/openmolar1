@@ -52,12 +52,12 @@ class DiaryViewController(QtWidgets.QWidget):
 
         mode_frame = QtWidgets.QWidget()
         mode_layout = QtWidgets.QHBoxLayout(mode_frame)
-        mode_layout.setMargin(0)
+        # mode_layout.setMargin(0)
         mode_layout.addWidget(self.mode_label)
         mode_layout.addWidget(mode_but)
 
         layout = QtWidgets.QVBoxLayout(self)
-        layout.setMargin(0)
+        # layout.setMargin(0)
         layout.addWidget(self.clinicianSelection_comboBox)
         layout.addWidget(mode_frame)
 

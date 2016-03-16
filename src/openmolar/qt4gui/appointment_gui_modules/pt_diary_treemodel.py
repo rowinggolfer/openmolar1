@@ -101,7 +101,7 @@ class TreeItem(object):
         return 0
 
 
-class DoubleRowSelectionModel(QtGui.QItemSelectionModel):
+class DoubleRowSelectionModel(QtCore.QItemSelectionModel):
 
     '''
     A selection model which allows the selection of a maximum of 2 rows.
@@ -121,20 +121,20 @@ class DoubleRowSelectionModel(QtGui.QItemSelectionModel):
             LOGGER.debug("Model Index selected")
         elif len(selection.indexes()) >= 2:
             LOGGER.debug("restricting appointment selection to 2 items")
-            new_selection = QtGui.QItemSelection()
+            new_selection = QtCore.QItemSelection()
             index1 = selection.indexes()[0]
             index2 = self.currentIndex()
             if index2.row() == index1.row():
                 index2 = selection.last().indexes()[-1]
                 self.is_reversed = True
-            new_selection.append(QtGui.QItemSelectionRange(index1))
-            new_selection.append(QtGui.QItemSelectionRange(index2))
+            new_selection.append(QtCore.QItemSelectionRange(index1))
+            new_selection.append(QtCore.QItemSelectionRange(index2))
             selection = new_selection
         else:
             for index in selection.indexes():
                 LOGGER.debug("index = %s", index)
 
-        QtGui.QItemSelectionModel.select(self, selection, command)
+        QtCore.QItemSelectionModel.select(self, selection, command)
 
 
 class PatientDiaryTreeModel(QtCore.QAbstractItemModel):
@@ -144,8 +144,8 @@ class PatientDiaryTreeModel(QtCore.QAbstractItemModel):
     '''
     appointments_changed_signal = QtCore.pyqtSignal()
 
-    def __init__(self, parent=None):
-        QtCore.QAbstractItemModel.__init__(self, parent)
+    def __init__(self, parent):
+        super().__init__(parent)
         self.appointments = []
         self.rootItem = TreeItem("Appointments", None, None, None)
         self.parents = {0: self.rootItem}
@@ -171,7 +171,7 @@ class PatientDiaryTreeModel(QtCore.QAbstractItemModel):
         self.rootItem = TreeItem("Appointments", None, None, None)
         self.parents = {0: self.rootItem}
         self.setupModelData()
-        self.reset()
+        # self.reset()
 
     def columnCount(self, parent=None):
         if parent and parent.isValid():

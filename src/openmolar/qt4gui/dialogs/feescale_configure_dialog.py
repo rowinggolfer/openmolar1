@@ -61,7 +61,7 @@ class FeescaleWidget(QtWidgets.QWidget):
         self.up_button.setToolTip(_("Promote the feescale"))
 
         layout = QtWidgets.QHBoxLayout(self)
-        layout.setMargin(0)
+        # layout.setMargin(0)
         layout.addWidget(QtWidgets.QLabel("%02d" % feescale.ix))
         layout.addWidget(self.in_use_checkbox)
         layout.addWidget(self.comment_line_edit)

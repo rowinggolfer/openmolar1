@@ -309,7 +309,7 @@ class ToothPropertyEditingWidget(QtWidgets.QWidget, Ui_toothProps.Ui_Form):
 
         frame = QtWidgets.QFrame()
         vlayout = QtWidgets.QVBoxLayout(frame)
-        vlayout.setMargin(0)
+        # vlayout.setMargin(0)
         vlayout.addWidget(self.fs_but)
         vlayout.addWidget(self.endo_but)
         vlayout.addWidget(self.crown_but)
@@ -824,7 +824,8 @@ class Tooth(QtWidgets.QWidget):
                 0.40  # fronttooth inner rectangle height
         self.innerRect = self.toothRect.adjusted(irw, irh, -irw, -irh)
 
-        self.mesial = QtGui.QPolygon(
+        self.mesial = QtGui.QPolygon()
+        self.mesial.setPoints(
             [0,
              0,
              self.innerRect.topLeft().x(),
@@ -834,7 +835,8 @@ class Tooth(QtWidgets.QWidget):
              self.toothRect.bottomLeft().x(),
              self.toothRect.bottomLeft().y()])
 
-        self.occlusal = QtGui.QPolygon(
+        self.occlusal = QtGui.QPolygon()
+        self.occlusal.setPoints(
             [self.innerRect.topLeft().x(),
              self.innerRect.topLeft().y(),
              self.innerRect.topRight().x(),
@@ -844,7 +846,8 @@ class Tooth(QtWidgets.QWidget):
              self.innerRect.bottomLeft().x(),
              self.innerRect.bottomLeft().y()])
 
-        self.distal = QtGui.QPolygon(
+        self.distal = QtGui.QPolygon()
+        self.distal.setPoints(
             [self.innerRect.topRight().x(),
              self.innerRect.topRight().y(),
              self.toothRect.topRight().x(),
@@ -854,7 +857,8 @@ class Tooth(QtWidgets.QWidget):
              self.innerRect.bottomRight().x(),
              self.innerRect.bottomRight().y()])
 
-        self.buccal = QtGui.QPolygon(
+        self.buccal = QtGui.QPolygon()
+        self.buccal.setPoints(
             [0,
              0,
              self.toothRect.topRight().x(),
@@ -864,7 +868,8 @@ class Tooth(QtWidgets.QWidget):
              self.innerRect.topLeft().x(),
              self.innerRect.topLeft().y()])
 
-        self.palatal = QtGui.QPolygon(
+        self.palatal = QtGui.QPolygon()
+        self.palatal.setPoints(
             [self.toothRect.bottomLeft().x(),
              self.toothRect.bottomLeft().y(),
              self.innerRect.bottomLeft().x(),

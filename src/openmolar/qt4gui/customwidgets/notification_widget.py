@@ -37,7 +37,7 @@ class notificationGB(QtWidgets.QWidget):
         self.counter = None
 
         self.layout = QtWidgets.QGridLayout(self)
-        self.layout.setMargin(0)
+        # self.layout.setMargin(0)
 
         self.t_label = QtWidgets.QLabel()
         self.t_label.setAlignment(QtCore.Qt.AlignCenter)
@@ -99,7 +99,7 @@ class notificationWidget(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super(notificationWidget, self).__init__(parent)
         self.layout = QtWidgets.QVBoxLayout(self)
-        self.layout.setMargin(0)
+        # self.layout.setMargin(0)
         self.widgets = []
 
     def addMessage(self, message):

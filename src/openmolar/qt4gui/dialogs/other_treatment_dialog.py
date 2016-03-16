@@ -45,7 +45,7 @@ class _TreatmentItemWidget(QtWidgets.QWidget):
         self.spinbox = QtWidgets.QSpinBox()
         self.spinbox.setFixedWidth(80)
         self.label = QtWidgets.QLabel(description)
-        layout.setMargin(0)
+        # layout.setMargin(0)
         layout.addWidget(self.spinbox)
         layout.addWidget(self.label)
 
