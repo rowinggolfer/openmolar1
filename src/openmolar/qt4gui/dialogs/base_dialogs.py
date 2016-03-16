@@ -27,9 +27,11 @@ These are backported from openmolar2
 '''
 
 from gettext import gettext as _
+import logging
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+LOGGER = logging.getLogger("openmolar")
 
 class BaseDialog(QtWidgets.QDialog):
 
@@ -192,16 +194,14 @@ class ExtendableDialog(BaseDialog):
         #: a pointer to the Advanced button
         self.more_but = QtWidgets.QPushButton(icon, "&Advanced")
         self.more_but.setFlat(True)
-
         self.more_but.setCheckable(True)
         self.more_but.setFocusPolicy(QtCore.Qt.NoFocus)
         self.button_box.addButton(self.more_but, self.button_box.HelpRole)
 
-        self.setOrientation(QtCore.Qt.Vertical)
-
-        frame = QtWidgets.QFrame(self)
-        layout = QtWidgets.QVBoxLayout(frame)
-        self.setExtension(frame)
+        self.extension_frame = QtWidgets.QFrame(self)
+        QtWidgets.QVBoxLayout(self.extension_frame)
+        self.layout().addWidget(self.extension_frame)
+        self.extension_frame.hide()
 
     def set_advanced_but_text(self, txt):
         self.more_but.setText(txt)
@@ -212,16 +212,18 @@ class ExtendableDialog(BaseDialog):
         checking to see if addvanced panel is to be displayed.
         '''
         if but == self.more_but:
-            self.showExtension(but.isChecked())
+            self.show_extension(but.isChecked())
+            but.setChecked(not but.isChecked())
             return
         BaseDialog._clicked(self, but)
 
     def add_advanced_widget(self, widg):
-        self.extension().layout().addWidget(widg)
+        self.extension_frame.layout().addWidget(widg)
 
-    def hide_extension(self):
-        self.more_but.setChecked(False)
-        self.showExtension(False)
+    def show_extension(self, show):
+        LOGGER.debug("show extenssion, show=%s", show)
+        self.more_but.setChecked(not show)
+        self.extension_frame.setVisible(show)
 
 
 if __name__ == "__main__":
