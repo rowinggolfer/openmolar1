@@ -22,7 +22,7 @@
 # ########################################################################### #
 
 import logging
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.ptModules.course_checker import get_course_checker
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
@@ -37,25 +37,25 @@ class CourseConsistencyDialog(ExtendableDialog):
         self.serialno = serialno
         self.courseno = courseno
 
-        header_label = QtGui.QLabel("<b>%s %s</b>" % (
+        header_label = QtWidgets.QLabel("<b>%s %s</b>" % (
             _("Course Daybook Estimate Checker"), self.courseno))
         header_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.polling_label = QtGui.QLabel(_("Polling Database"))
+        self.polling_label = QtWidgets.QLabel(_("Polling Database"))
 
-        self.trt_widget = QtGui.QTextBrowser()
-        self.day_trt_widget = QtGui.QTextBrowser()
+        self.trt_widget = QtWidgets.QTextBrowser()
+        self.day_trt_widget = QtWidgets.QTextBrowser()
 
         self.insertWidget(header_label)
         self.insertWidget(self.polling_label)
 
-        self.adv_widget = QtGui.QLabel(_("No advanced options available"))
+        self.adv_widget = QtWidgets.QLabel(_("No advanced options available"))
         self.add_advanced_widget(self.adv_widget)
 
         QtCore.QTimer.singleShot(100, self.get_data)
 
     def advise(self, message):
-        QtGui.QMessageBox.information(self, _("message"), message)
+        QtWidgets.QMessageBox.information(self, _("message"), message)
 
     def sizeHint(self):
         return QtCore.QSize(800, 600)
@@ -66,9 +66,9 @@ class CourseConsistencyDialog(ExtendableDialog):
         html1c = self.course_checker.course.to_html(completed_only = True)
         html2 = self.course_checker.daybook_course.to_html()
         self.polling_label.hide()
-        self.insertWidget(QtGui.QLabel("course"))
+        self.insertWidget(QtWidgets.QLabel("course"))
         self.insertWidget(self.trt_widget)
-        self.insertWidget(QtGui.QLabel("daybook course"))
+        self.insertWidget(QtWidgets.QLabel("daybook course"))
         self.insertWidget(self.day_trt_widget)
 
         self.trt_widget.setText(html1)
@@ -84,7 +84,7 @@ class CourseConsistencyDialog(ExtendableDialog):
         #f.close()
 
         match = "<b>%s</b>" % ("match!" if html1c == html2 else "differs")
-        self.insertWidget(QtGui.QLabel(match))
+        self.insertWidget(QtWidgets.QLabel(match))
 
     def update_db(self):
         '''
@@ -95,7 +95,7 @@ class CourseConsistencyDialog(ExtendableDialog):
 
 if __name__ == "__main__":
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     LOGGER.setLevel(logging.DEBUG)
     serialno = 14469
     coursenos = (9568, 11394, 14016, 15946, 16161, 16433, 17677, 20644, 21411,

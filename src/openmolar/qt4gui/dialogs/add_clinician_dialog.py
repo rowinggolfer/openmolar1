@@ -25,7 +25,7 @@ from collections import namedtuple
 from gettext import gettext as _
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
@@ -52,35 +52,35 @@ class AddClinicianDialog(ExtendableDialog):
 
         self.top_label = WarningLabel(_('Add a new clinician to the system?'))
 
-        self.user_id_comboBox = QtGui.QComboBox()
-        but = QtGui.QPushButton(_("Add New Login"))
+        self.user_id_comboBox = QtWidgets.QComboBox()
+        but = QtWidgets.QPushButton(_("Add New Login"))
 
-        self.name_lineedit = QtGui.QLineEdit()
-        self.f_name_lineedit = QtGui.QLineEdit()
-        self.quals_lineedit = QtGui.QLineEdit()
-        self.type_comboBox = QtGui.QComboBox()
+        self.name_lineedit = QtWidgets.QLineEdit()
+        self.f_name_lineedit = QtWidgets.QLineEdit()
+        self.quals_lineedit = QtWidgets.QLineEdit()
+        self.type_comboBox = QtWidgets.QComboBox()
         self.type_comboBox.addItems([
             _("Dentist"),
             _("Hygienist"),
             _("Therapist")
             ])
-        self.speciality_lineedit = QtGui.QLineEdit()
-        self.date_edit = QtGui.QDateEdit()
+        self.speciality_lineedit = QtWidgets.QLineEdit()
+        self.date_edit = QtWidgets.QDateEdit()
         self.date_edit.setDate(localsettings.currentDay())
-        self.data_lineedit = QtGui.QLineEdit()
-        self.new_diary_checkbox = QtGui.QCheckBox(
+        self.data_lineedit = QtWidgets.QLineEdit()
+        self.new_diary_checkbox = QtWidgets.QCheckBox(
             _("Create a new diary for this clinician "
               "(uncheck to map to an existing diary)"))
         self.new_diary_checkbox.setChecked(True)
 
-        row1 = QtGui.QWidget()
-        layout = QtGui.QHBoxLayout(row1)
+        row1 = QtWidgets.QWidget()
+        layout = QtWidgets.QHBoxLayout(row1)
         layout.setMargin(0)
         layout.addWidget(self.user_id_comboBox)
         layout.addWidget(but)
 
-        frame = QtGui.QFrame(self)
-        layout = QtGui.QFormLayout(frame)
+        frame = QtWidgets.QFrame(self)
+        layout = QtWidgets.QFormLayout(frame)
         layout.addRow(_("Initials/Nickname (must be an existing Login)"), row1)
         layout.addRow(_("Name eg. Fred Smith"), self.name_lineedit)
         layout.addRow(_("Formal Name eg. Dr.F. Smith"), self.f_name_lineedit)
@@ -97,7 +97,7 @@ class AddClinicianDialog(ExtendableDialog):
             le.textChanged.connect(self._check_enable)
         self.name_lineedit.setFocus()
 
-        list_widget = QtGui.QListWidget()
+        list_widget = QtWidgets.QListWidget()
         list_widget.addItems(
             [str(val) for val in sorted(localsettings.dentDict.values())])
         self.add_advanced_widget(list_widget)
@@ -197,7 +197,7 @@ class AddClinicianDialog(ExtendableDialog):
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     localsettings.initiateUsers()
     localsettings.initiate()
 

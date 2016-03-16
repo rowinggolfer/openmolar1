@@ -21,7 +21,7 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
@@ -48,13 +48,13 @@ class SaveDiscardCancelDialog(ExtendableDialog):
         self.insertWidget(label)
 
         self.discard_but = self.button_box.addButton(
-            QtGui.QDialogButtonBox.Discard)
+            QtWidgets.QDialogButtonBox.Discard)
         self.discard_but.setToolTip(_("Discard All Changes"))
 
         self.cancel_but.setToolTip(_("Cancel and Continue Editing"))
 
         self.changes = changes
-        self.changes_list_widget = QtGui.QListWidget()
+        self.changes_list_widget = QtWidgets.QListWidget()
         self.add_advanced_widget(self.changes_list_widget)
 
         self.result = self.SAVE
@@ -69,12 +69,12 @@ class SaveDiscardCancelDialog(ExtendableDialog):
         ExtendableDialog._clicked(self, but)
 
     def discard(self):
-        if QtGui.QMessageBox.question(
+        if QtWidgets.QMessageBox.question(
             self,
             _("Confirm"),
             _("Are you sure you want to discard these changes?"),
-            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
+            QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes:
             self.result = self.DISCARD
             self.accept()
 
@@ -86,14 +86,14 @@ class SaveDiscardCancelDialog(ExtendableDialog):
 
     def reject(self):
         self.result = self.CANCEL
-        QtGui.QDialog.reject(self)
+        QtWidgets.QDialog.reject(self)
 
 
 if __name__ == "__main__":
     from gettext import gettext as _
     changes = ["Sname", "Fname"]
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     message = "You have unsaved changes"
 
     dl = SaveDiscardCancelDialog(message, changes)

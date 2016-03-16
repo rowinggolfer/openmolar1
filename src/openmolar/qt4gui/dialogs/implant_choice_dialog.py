@@ -24,7 +24,7 @@
 from collections import namedtuple
 from functools import partial
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
@@ -54,11 +54,11 @@ class ImplantChoiceDialog(ExtendableDialog):
         self.om_gui = parent
         self.chosen_shortcut = None
 
-        scroll_area = QtGui.QScrollArea()
-        frame = QtGui.QFrame()
+        scroll_area = QtWidgets.QScrollArea()
+        frame = QtWidgets.QFrame()
         scroll_area.setWidget(frame)
         scroll_area.setWidgetResizable(True)
-        self.but_layout = QtGui.QVBoxLayout(frame)
+        self.but_layout = QtWidgets.QVBoxLayout(frame)
         self.insertWidget(scroll_area)
 
         self.apply_but.hide()
@@ -77,7 +77,7 @@ class ImplantChoiceDialog(ExtendableDialog):
             widget_item.widget().setParent(None)
 
         for implant_button in implant_chart_buttons:
-            but = QtGui.QPushButton(implant_button.description)
+            but = QtWidgets.QPushButton(implant_button.description)
             but.setToolTip(implant_button.tooltip)
             but.clicked.connect(
                 partial(self.but_clicked,
@@ -94,8 +94,8 @@ if __name__ == "__main__":
     from gettext import gettext as _
     from openmolar.dbtools.patient_class import patient
 
-    app = QtGui.QApplication([])
-    mw = QtGui.QWidget()
+    app = QtWidgets.QApplication([])
+    mw = QtWidgets.QWidget()
     mw.pt = patient(11956)
     dl = ImplantChoiceDialog(True, mw)
     if dl.exec_():

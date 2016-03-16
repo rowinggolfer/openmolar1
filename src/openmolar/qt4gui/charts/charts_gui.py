@@ -29,7 +29,7 @@ import copy
 import logging
 import re
 
-from PyQt4 import QtGui
+from PyQt5 import QtGui, QtWidgets
 from openmolar.settings import localsettings
 
 LOGGER = logging.getLogger("openmolar")
@@ -261,10 +261,10 @@ def chartsTable(om_gui):
                   'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8',
                   "lr8", "lr7", "lr6", "lr5", 'lr4', 'lr3', 'lr2', 'lr1',
                   'll1', 'll2', 'll3', 'll4', 'll5', 'll6', 'll7', 'll8'):
-        item1 = QtGui.QTableWidgetItem(tooth)
+        item1 = QtWidgets.QTableWidgetItem(tooth)
         static_text = om_gui.pt.__dict__[tooth + "st"]
-        staticitem = QtGui.QTableWidgetItem(static_text)
-        decidousitem = QtGui.QTableWidgetItem(om_gui.pt.chartgrid[tooth])
+        staticitem = QtWidgets.QTableWidgetItem(static_text)
+        decidousitem = QtWidgets.QTableWidgetItem(om_gui.pt.chartgrid[tooth])
         om_gui.ui.chartsTableWidget.setRowHeight(row, 15)
         om_gui.ui.chartsTableWidget.setItem(row, 0, item1)
         om_gui.ui.chartsTableWidget.setItem(row, 1, decidousitem)
@@ -274,8 +274,8 @@ def chartsTable(om_gui):
         om_gui.ui.staticChartWidget.setToothProps(tooth, static_text)
         pItem = om_gui.pt.treatment_course.__dict__[tooth + "pl"]
         cItem = om_gui.pt.treatment_course.__dict__[tooth + "cmp"]
-        planitem = QtGui.QTableWidgetItem(pItem)
-        cmpitem = QtGui.QTableWidgetItem(cItem)
+        planitem = QtWidgets.QTableWidgetItem(pItem)
+        cmpitem = QtWidgets.QTableWidgetItem(cItem)
         om_gui.ui.chartsTableWidget.setItem(row, 3, planitem)
         om_gui.ui.chartsTableWidget.setItem(row, 4, cmpitem)
         om_gui.ui.planChartWidget.setToothProps(tooth, pItem.lower())

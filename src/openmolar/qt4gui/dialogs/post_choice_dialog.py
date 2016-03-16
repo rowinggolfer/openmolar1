@@ -24,7 +24,7 @@
 from collections import namedtuple
 from functools import partial
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
@@ -50,11 +50,11 @@ class PostChoiceDialog(ExtendableDialog):
         self.om_gui = parent
         self.chosen_shortcut = None
 
-        scroll_area = QtGui.QScrollArea()
-        frame = QtGui.QFrame()
+        scroll_area = QtWidgets.QScrollArea()
+        frame = QtWidgets.QFrame()
         scroll_area.setWidget(frame)
         scroll_area.setWidgetResizable(True)
-        self.but_layout = QtGui.QGridLayout(frame)
+        self.but_layout = QtWidgets.QGridLayout(frame)
         self.insertWidget(scroll_area)
 
         self.apply_but.hide()
@@ -63,7 +63,7 @@ class PostChoiceDialog(ExtendableDialog):
             self.more_but.hide()
             self.add_buttons(STATIC_LIST)
         else:
-            all_posts_but = QtGui.QPushButton(
+            all_posts_but = QtWidgets.QPushButton(
                 _("Show Post types from all feescales"))
             all_posts_but.clicked.connect(self._show_all_posts)
             self.add_advanced_widget(all_posts_but)
@@ -80,7 +80,7 @@ class PostChoiceDialog(ExtendableDialog):
             widget_item.widget().setParent(None)
         row = 0
         for row, post_button in enumerate(post_chart_buttons):
-            but = QtGui.QPushButton(post_button.description)
+            but = QtWidgets.QPushButton(post_button.description)
             but.setToolTip(post_button.tooltip)
             but.clicked.connect(
                 partial(self.but_clicked, post_button.shortcut))
@@ -100,8 +100,8 @@ if __name__ == "__main__":
     from gettext import gettext as _
     from openmolar.dbtools.patient_class import patient
 
-    app = QtGui.QApplication([])
-    mw = QtGui.QWidget()
+    app = QtWidgets.QApplication([])
+    mw = QtWidgets.QWidget()
     mw.pt = patient(11956)
     dl = PostChoiceDialog(True, mw)
     if dl.exec_():

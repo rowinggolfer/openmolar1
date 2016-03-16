@@ -24,7 +24,7 @@
 from gettext import gettext as _
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.dbtools import db_settings
@@ -42,7 +42,7 @@ class BookendDialog(BaseDialog):
 
         label = WarningLabel(
             _("Change the last date where appointments are searched for?"))
-        self.date_edit = QtGui.QDateEdit()
+        self.date_edit = QtWidgets.QDateEdit()
         self.date_edit.setDate(localsettings.BOOKEND)
         self.date_edit.setCalendarPopup(True)
 
@@ -69,7 +69,7 @@ class BookendDialog(BaseDialog):
 if __name__ == "__main__":
 
     LOGGER.setLevel(logging.DEBUG)
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     dl = BookendDialog()
     if dl.exec_():

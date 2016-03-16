@@ -28,8 +28,8 @@ import os
 import re
 from xml.dom import minidom
 
-from PyQt4 import QtCore
-from PyQt4.QtXmlPatterns import (
+from PyQt5 import QtCore
+from PyQt5.QtXmlPatterns import (
     QXmlSchemaValidator,
     QXmlSchema,
     QAbstractMessageHandler)

@@ -23,7 +23,7 @@
 
 from gettext import gettext as _
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.dbtools.medhist import get_mh
@@ -592,10 +592,10 @@ if __name__ == "__main__":
     os.chdir(os.path.expanduser("~"))
 
     localsettings.initiate()
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     from openmolar.dbtools.patient_class import patient
 
-    mw = QtGui.QWidget()
+    mw = QtWidgets.QWidget()
     mw.include_mh = True
     pt = patient(29833)
 

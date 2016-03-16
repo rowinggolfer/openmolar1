@@ -32,7 +32,7 @@ import logging
 
 from functools import partial
 
-from PyQt4 import QtGui
+from PyQt5 import QtGui, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.ptModules.estimates import TXHash, Estimate
@@ -138,7 +138,7 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
                 continue
             alt_code = alt_table.getToothCode(att, shortcut)
             if alt_code != "-----":
-                if QtGui.QMessageBox.question(
+                if QtWidgets.QMessageBox.question(
                     om_gui,
                     _("Confirm"),
                     "<p><b>%s %s</b> %s.</p><p>%s <em>%s</em></p><hr />%s" % (
@@ -149,8 +149,8 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
                             "It is matched in another feescale -"),
                         alt_table.briefName,
                         _("Shall we add this item from this feescale?")),
-                    QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                        QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                        QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes:
                     return alt_code, alt_table
 
         return itemcode, table
@@ -165,7 +165,7 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
                 continue
             alt_code = alt_table.getItemCodeFromUserCode(usercode)
             if alt_code != "-----":
-                if QtGui.QMessageBox.question(
+                if QtWidgets.QMessageBox.question(
                         om_gui, _("Confirm"),
                         "<p><b>%s</b> %s.</p><p>%s <em>%s</em></p><hr />%s" % (
                             usercode,
@@ -174,8 +174,8 @@ def add_treatment_to_estimate(om_gui, att, shortcut, dentid, tx_hashes,
                             _("It is matched in another feescale -"),
                             alt_table.briefName,
                             _("Shall we add this item from this feescale?")),
-                        QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                        QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+                        QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                        QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes:
                     return alt_code, alt_table
         return itemcode, table
 
@@ -280,14 +280,14 @@ def xrayAdd(om_gui, complete=False):
         return
 
     if not complete:
-        input = QtGui.QMessageBox.question(
+        input = QtWidgets.QMessageBox.question(
             om_gui,
             _("question"),
             _("Were these xrays taken today?"),
-            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-            QtGui.QMessageBox.No
+            QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+            QtWidgets.QMessageBox.No
         )
-        if input == QtGui.QMessageBox.Yes:
+        if input == QtWidgets.QMessageBox.Yes:
             complete = True
 
     completed_planned_warning_required = False
@@ -347,7 +347,7 @@ def customAdd(om_gui, description=None):
 
     pt = om_gui.pt
     courseno = pt.treatment_course.courseno
-    Dialog = QtGui.QDialog(om_gui)
+    Dialog = QtWidgets.QDialog(om_gui)
     dl = Ui_customTreatment.Ui_Dialog()
     dl.setupUi(Dialog)
     if description:
@@ -396,19 +396,19 @@ def plan_viewer_context_menu(om_gui, att, values, point):
         complete_txs(om_gui, treatments, confirm_multiples=True)
         return
 
-    qmenu = QtGui.QMenu(om_gui)
+    qmenu = QtWidgets.QMenu(om_gui)
     value = values[0]
     message = "%s %s %s" % (_("Complete"), att, value)
-    complete_action = QtGui.QAction(message, om_gui)
+    complete_action = QtWidgets.QAction(message, om_gui)
     complete_action.triggered.connect(
         partial(complete_txs, om_gui, ((att, value),)))
 
     message = "%s %s %s" % (_("Delete"), att, value)
-    delete_action = QtGui.QAction(message, om_gui)
+    delete_action = QtWidgets.QAction(message, om_gui)
     delete_action.triggered.connect(
         partial(remove_treatments_from_plan_and_est, om_gui, ((att, value),)))
 
-    cancel_action = QtGui.QAction(_("Cancel"), om_gui)
+    cancel_action = QtWidgets.QAction(_("Cancel"), om_gui)
     # not connected to anything.. f clicked menu will simply die!
 
     qmenu.addAction(complete_action)
@@ -435,7 +435,7 @@ def cmp_viewer_context_menu(om_gui, att, values, point):
         reverse_txs(om_gui, treatments, confirm_multiples=True)
         return
 
-    qmenu = QtGui.QMenu(om_gui)
+    qmenu = QtWidgets.QMenu(om_gui)
     value = values[0]
 
     if att == "exam":
@@ -447,17 +447,17 @@ def cmp_viewer_context_menu(om_gui, att, values, point):
     else:
         rev_func = partial(reverse_txs, om_gui, ((att, value),))
         message = "%s %s %s" % (_("Reverse and Delete"), att, value)
-        delete_action = QtGui.QAction(message, qmenu)
+        delete_action = QtWidgets.QAction(message, qmenu)
         delete_action.triggered.connect(
             partial(remove_treatments_from_plan_and_est,
                     om_gui, ((att, value), ), True)
         )
 
     message = "%s %s %s" % (_("Reverse"), att, value)
-    reverse_action = QtGui.QAction(message, qmenu)
+    reverse_action = QtWidgets.QAction(message, qmenu)
     reverse_action.triggered.connect(rev_func)
 
-    cancel_action = QtGui.QAction(_("Cancel"), qmenu)
+    cancel_action = QtWidgets.QAction(_("Cancel"), qmenu)
     # not connected to anything.. f clicked menu will simply die!
 
     qmenu.addAction(reverse_action)
@@ -544,7 +544,7 @@ def fromFeeTable(om_gui, fee_item, sub_index):
             _("Use Feescale Method"), _("to overide this behaviour"),
             _("Cancel to abandon this addition entirely"))
 
-        QtGui.QMessageBox.information(mb, _("Help"), message)
+        QtWidgets.QMessageBox.information(mb, _("Help"), message)
 
     def confirm_selected_table():
         '''
@@ -561,13 +561,13 @@ def fromFeeTable(om_gui, fee_item, sub_index):
             _("for this item"),
             _("The patient's default table is"),
             table.briefName)
-        if QtGui.QMessageBox.question(
+        if QtWidgets.QMessageBox.question(
             om_gui,
             _("Confirm"),
             message,
-            QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
-            QtGui.QMessageBox.Ok
-        ) == QtGui.QMessageBox.Ok:
+            QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel,
+            QtWidgets.QMessageBox.Ok
+        ) == QtWidgets.QMessageBox.Ok:
             return fee_item.table
 
     LOGGER.debug("fee_item %s, sub_index %s" % (fee_item, sub_index))
@@ -600,7 +600,7 @@ def fromFeeTable(om_gui, fee_item, sub_index):
             _("Would you like to do this now?")
         )
 
-        mb = QtGui.QMessageBox(None)
+        mb = QtWidgets.QMessageBox(None)
         mb.setWindowTitle(_("Confirm"))
         mb.setText(message)
         mb.setIcon(mb.Question)
@@ -1305,7 +1305,7 @@ if __name__ == "__main__":
     from openmolar.qt4gui import maingui
     LOGGER.setLevel(logging.DEBUG)
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     mw = maingui.OpenmolarGui()
     mw.getrecord(11956)
     # disable the functions called

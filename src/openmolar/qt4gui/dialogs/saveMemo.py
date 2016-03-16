@@ -21,20 +21,20 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 from openmolar.qt4gui.compiled_uis import Ui_saveMemo
 from openmolar.settings import localsettings
 from openmolar.dbtools import memos
 
 
-class SaveMemoDialog(Ui_saveMemo.Ui_Dialog, QtGui.QDialog):
+class SaveMemoDialog(Ui_saveMemo.Ui_Dialog, QtWidgets.QDialog):
 
     '''
     raise a dialog, accept text etc, and save input to the memos table.
     '''
 
     def __init__(self, sno, parent=None):
-        QtGui.QDialog.__init__(self, parent)
+        QtWidgets.QDialog.__init__(self, parent)
         self.setupUi(self)
         self.dateEdit.setDate(QtCore.QDate().currentDate())
         items = sorted(localsettings.allowed_logins)
@@ -76,6 +76,6 @@ class SaveMemoDialog(Ui_saveMemo.Ui_Dialog, QtGui.QDialog):
 if __name__ == "__main__":
     localsettings.initiateUsers()
     localsettings.initiate()
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     dl = SaveMemoDialog(11956)
     print(dl.getInput())

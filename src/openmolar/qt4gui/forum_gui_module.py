@@ -27,7 +27,7 @@ provides the logic to manipulate the forum.
 
 import datetime
 from gettext import gettext as _
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.dbtools import forum
@@ -67,7 +67,7 @@ def loadForum(om_gui):
             parentItem = parentItems.get(post.parent_ix, twidg)
         else:
             parentItem = twidg
-        item = QtGui.QTreeWidgetItem(parentItem)
+        item = QtWidgets.QTreeWidgetItem(parentItem)
         item.setText(0, post.topic)
         item.setData(1, QtCore.Qt.DisplayRole, post.ix)
         item.setText(2, post.inits)
@@ -157,7 +157,7 @@ def forumNewTopic(om_gui):
     '''
     create a new post
     '''
-    Dialog = QtGui.QDialog(om_gui)
+    Dialog = QtWidgets.QDialog(om_gui)
     dl = Ui_forumPost.Ui_Dialog()
     dl.setupUi(Dialog)
     dl.from_comboBox.addItems([localsettings.operator, "Anon"] +
@@ -191,23 +191,23 @@ def forumDeleteItem(om_gui):
     items = om_gui.ui.forum_treeWidget.selectedItems()
     number = len(items)
     if number > 1:
-        if QtGui.QMessageBox.question(
+        if QtWidgets.QMessageBox.question(
                 om_gui, _("Confirm"),
                 "%s %d %s?" % (_("Delete"), number, _(" Posts")),
-                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+                QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes:
             for item in items:
                 ix = int(item.text(1))
                 forum.deletePost(ix)
     else:
         item = om_gui.ui.forum_treeWidget.currentItem()
         heading = item.text(0)
-        if QtGui.QMessageBox.question(
+        if QtWidgets.QMessageBox.question(
                 om_gui, _("Confirm"),
                 _("Delete selected Post?") +
                 "<br />'%s'" % heading,
-                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+                QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes:
             ix = int(item.text(1))
             forum.deletePost(ix)
     loadForum(om_gui)
@@ -221,7 +221,7 @@ def forumReply(om_gui):
     heading = item.text(0)
     if heading[:2] != "re":
         heading = "re. " + heading
-    Dialog = QtGui.QDialog(om_gui)
+    Dialog = QtWidgets.QDialog(om_gui)
     dl = Ui_forumPost.Ui_Dialog()
     dl.setupUi(Dialog)
     dl.topic_lineEdit.setText(heading)

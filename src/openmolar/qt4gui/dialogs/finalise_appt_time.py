@@ -23,13 +23,13 @@
 
 from gettext import gettext as _
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 from openmolar.qt4gui.compiled_uis import Ui_finalise_appt_time
 from openmolar.settings import localsettings
 
 
-class ftDialog(Ui_finalise_appt_time.Ui_Dialog, QtGui.QDialog):
+class ftDialog(Ui_finalise_appt_time.Ui_Dialog, QtWidgets.QDialog):
 
     '''
     a custom dialog,
@@ -73,7 +73,7 @@ class ftDialog(Ui_finalise_appt_time.Ui_Dialog, QtGui.QDialog):
 if __name__ == "__main__":
     import datetime
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     Dialog = ftDialog(datetime.time(8, 30), 60, 15)
     if Dialog.exec_():
         print("accepted - selected appointment is (%s, %d)" % (

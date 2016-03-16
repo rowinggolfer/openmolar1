@@ -27,7 +27,7 @@ has one class, a custom widget which inherits from QWidget
 
 import re
 import sys
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.qt4gui import colours
 from openmolar.settings import images
@@ -40,7 +40,7 @@ GRID = (
 )
 
 
-class SimpleChartWidg(QtGui.QWidget):
+class SimpleChartWidg(QtWidgets.QWidget):
 
     '''
     a custom widget to show a standard UK dental chart
@@ -48,10 +48,10 @@ class SimpleChartWidg(QtGui.QWidget):
     '''
 
     def __init__(self, parent=None, auto_ctrl_key=False):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
-        self.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,
-                                             QtGui.QSizePolicy.Expanding))
+        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                             QtWidgets.QSizePolicy.Expanding))
 
         self.grid = GRID
 
@@ -283,7 +283,7 @@ class SimpleChartWidg(QtGui.QWidget):
 
 if __name__ == "__main__":
     from gettext import gettext as _
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     form = SimpleChartWidg()
     # form.disable_lowers()
     # form.disable_uppers()

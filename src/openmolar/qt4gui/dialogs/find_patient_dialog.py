@@ -28,7 +28,7 @@ find_patient_dialog.py
 import datetime
 from gettext import gettext as _
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 
@@ -38,7 +38,7 @@ from openmolar.qt4gui.compiled_uis import Ui_patient_finder
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 
 
-class FindPatientDialog(QtGui.QDialog, Ui_patient_finder.Ui_Dialog):
+class FindPatientDialog(QtWidgets.QDialog, Ui_patient_finder.Ui_Dialog):
 
     '''
     A dialog to gather parameters for searching the database
@@ -47,7 +47,7 @@ class FindPatientDialog(QtGui.QDialog, Ui_patient_finder.Ui_Dialog):
     chosen_sno = None
 
     def __init__(self, parent=None):
-        QtGui.QDialog.__init__(self, parent)
+        QtWidgets.QDialog.__init__(self, parent)
         self.setupUi(self)
 
         self.sname.setFocus()
@@ -64,12 +64,12 @@ class FindPatientDialog(QtGui.QDialog, Ui_patient_finder.Ui_Dialog):
 
     def exec_(self):
         if localsettings.PT_COUNT == 0:
-            QtGui.QMessageBox.warning(
+            QtWidgets.QMessageBox.warning(
                 self.parent(),
                 _("warning"),
                 _("You have no patients in your database"))
             return False
-        if localsettings.PT_COUNT < 5 or QtGui.QDialog.exec_(self):
+        if localsettings.PT_COUNT < 5 or QtWidgets.QDialog.exec_(self):
             dob = self.dateEdit.date().toPyDate()
             addr = str(self.addr1.text())
             tel = str(self.tel.text())
@@ -93,7 +93,7 @@ class FindPatientDialog(QtGui.QDialog, Ui_patient_finder.Ui_Dialog):
                 )
 
                 if candidates == () and localsettings.PT_COUNT > 5:
-                    QtGui.QMessageBox.warning(self.parent(), "warning",
+                    QtWidgets.QMessageBox.warning(self.parent(), "warning",
                                               _("no match found"))
                     return False
                 else:
@@ -116,10 +116,10 @@ class FinalChoiceDialog(ExtendableDialog):
 
     def __init__(self, candidates, parent=None):
         ExtendableDialog.__init__(self, parent, remove_stretch=True)
-        self.table_widget = QtGui.QTableWidget()
+        self.table_widget = QtWidgets.QTableWidget()
         self.table_widget.setAlternatingRowColors(True)
         self.table_widget.setSelectionBehavior(
-            QtGui.QAbstractItemView.SelectRows)
+            QtWidgets.QAbstractItemView.SelectRows)
         self.insertWidget(self.table_widget)
 
         self.headers = (_('Serialno'),
@@ -143,7 +143,7 @@ class FinalChoiceDialog(ExtendableDialog):
         self.enableApply(True)
         self.apply_but.setText(_("Load the Selected Patient"))
         self.setMinimumWidth(
-            QtGui.QApplication.desktop().screenGeometry().width() - 20)
+            QtWidgets.QApplication.desktop().screenGeometry().width() - 20)
 
     def _screened_candidates(self):
         self.hidden_count = 0
@@ -171,10 +171,10 @@ class FinalChoiceDialog(ExtendableDialog):
         for row, candidate in enumerate(self.candidates):
             for col, attr in enumerate(candidate):
                 if isinstance(attr, datetime.date):
-                    item = QtGui.QTableWidgetItem(
+                    item = QtWidgets.QTableWidgetItem(
                         localsettings.formatDate(attr))
                 else:
-                    item = QtGui.QTableWidgetItem(str(attr))
+                    item = QtWidgets.QTableWidgetItem(str(attr))
                 self.table_widget.setItem(row, col, item)
 
         self.table_widget.setSortingEnabled(True)
@@ -217,7 +217,7 @@ class FinalChoiceDialog(ExtendableDialog):
         ExtendableDialog._clicked(self, but)
 
     def exec_(self):
-        if QtGui.QDialog.exec_(self):
+        if QtWidgets.QDialog.exec_(self):
             row = self.table_widget.currentRow()
             result = self.table_widget.item(row, 0).text()
             self.chosen_sno = int(result)
@@ -228,7 +228,7 @@ class FinalChoiceDialog(ExtendableDialog):
 if __name__ == "__main__":
 
     localsettings.initiate()
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     dl = FindPatientDialog()
     if dl.exec_():

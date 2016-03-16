@@ -21,7 +21,7 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt4 import QtGui
+from PyQt5 import QtGui, QtWidgets
 
 
 class letter():
@@ -43,7 +43,7 @@ class letter():
 
 if __name__ == "__main__":
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     form = letter('''<html><body>
 <h1>This is a Test of referralprint.py</h1>
 <p>I trust it worked?</p></body></html>''')

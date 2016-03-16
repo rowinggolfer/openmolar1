@@ -27,7 +27,7 @@ This dialog allows the user to specify a few options when making appointments.
 
 from gettext import gettext as _
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
@@ -50,7 +50,7 @@ class ApptSettingsResetDialog(BaseDialog):
             _("Would You like to reset these now?")))
         self.insertWidget(label)
         self.show_dialog_but = self.button_box.addButton(
-            QtGui.QDialogButtonBox.Apply)
+            QtWidgets.QDialogButtonBox.Apply)
         self.show_dialog_but.setText(_("Show Settings Dialog"))
         self.cancel_but.setText(_("Keep Custom Settings"))
         self.apply_but.setText(_("Yes"))
@@ -81,20 +81,20 @@ class ApptSettingsDialog(BaseDialog):
         BaseDialog.__init__(self, parent)
         self.setWindowTitle(_("Appointment Settings Dialog"))
 
-        label = QtGui.QLabel(
+        label = QtWidgets.QLabel(
             "<b>%s</b>" % _("Please set criteria for making appointments"))
         label.setAlignment(QtCore.Qt.AlignCenter)
 
         # DENTIST POLICY
-        dentist_frame = QtGui.QFrame()
-        c_label = QtGui.QLabel("<b>%s</b>" % _("Dentist selection policy"))
+        dentist_frame = QtWidgets.QFrame()
+        c_label = QtWidgets.QLabel("<b>%s</b>" % _("Dentist selection policy"))
         c_label.setAlignment(QtCore.Qt.AlignCenter)
-        layout = QtGui.QGridLayout(dentist_frame)
+        layout = QtWidgets.QGridLayout(dentist_frame)
 
-        self.specified_clinician_radiobut = QtGui.QRadioButton(
+        self.specified_clinician_radiobut = QtWidgets.QRadioButton(
             _("Specified Clinician"))
-        self.any_dentist_radiobut = QtGui.QRadioButton(_("Any Dentist"))
-        self.any_clinician_radiobut = QtGui.QRadioButton(_("Any Clinician"))
+        self.any_dentist_radiobut = QtWidgets.QRadioButton(_("Any Dentist"))
+        self.any_clinician_radiobut = QtWidgets.QRadioButton(_("Any Clinician"))
 
         layout.addWidget(c_label, 0, 0, 1, 2)
         layout.addWidget(self.specified_clinician_radiobut, 1, 0)
@@ -102,15 +102,15 @@ class ApptSettingsDialog(BaseDialog):
         layout.addWidget(self.any_clinician_radiobut, 2, 1)
 
         # HYGIENIST POLICY
-        hygienist_frame = QtGui.QFrame()
-        c_label = QtGui.QLabel("<b>%s</b>" % _("Hygienist selection policy"))
+        hygienist_frame = QtWidgets.QFrame()
+        c_label = QtWidgets.QLabel("<b>%s</b>" % _("Hygienist selection policy"))
         c_label.setAlignment(QtCore.Qt.AlignCenter)
-        layout = QtGui.QGridLayout(hygienist_frame)
+        layout = QtWidgets.QGridLayout(hygienist_frame)
 
-        self.hyg_specified_clinician_radiobut = QtGui.QRadioButton(
+        self.hyg_specified_clinician_radiobut = QtWidgets.QRadioButton(
             _("Specified Hygienist"))
-        self.any_hygienist_radiobut = QtGui.QRadioButton(_("Any Hygienist"))
-        self.hyg_any_clinician_radiobut = QtGui.QRadioButton(
+        self.any_hygienist_radiobut = QtWidgets.QRadioButton(_("Any Hygienist"))
+        self.hyg_any_clinician_radiobut = QtWidgets.QRadioButton(
             _("Any Clinician"))
 
         layout.addWidget(c_label, 0, 0, 1, 2)
@@ -118,11 +118,11 @@ class ApptSettingsDialog(BaseDialog):
         layout.addWidget(self.any_hygienist_radiobut, 2, 0)
         layout.addWidget(self.hyg_any_clinician_radiobut, 2, 1)
 
-        ignore_emergencies_frame = QtGui.QFrame()
-        layout = QtGui.QVBoxLayout(ignore_emergencies_frame)
-        emergency_label = QtGui.QLabel(
+        ignore_emergencies_frame = QtWidgets.QFrame()
+        layout = QtWidgets.QVBoxLayout(ignore_emergencies_frame)
+        emergency_label = QtWidgets.QLabel(
             "<b>%s</b>" % _("Emergency time management"))
-        self.ignore_emergency_checkbox = QtGui.QCheckBox(
+        self.ignore_emergency_checkbox = QtWidgets.QCheckBox(
             _("Ignore Emergency Spaces"))
         self.ignore_emergency_checkbox.setChecked(self.ignore_emergency_spaces)
         layout.addWidget(emergency_label)
@@ -130,14 +130,14 @@ class ApptSettingsDialog(BaseDialog):
 
         # DAY OF WEEK
         self.dow_checkboxes = []
-        dow_frame = QtGui.QFrame()
-        dow_label = QtGui.QLabel("<b>%s</b>" %
+        dow_frame = QtWidgets.QFrame()
+        dow_label = QtWidgets.QLabel("<b>%s</b>" %
                                  _("Look for appointments on these days"))
         dow_label.setAlignment(QtCore.Qt.AlignCenter)
-        layout = QtGui.QGridLayout(dow_frame)
+        layout = QtWidgets.QGridLayout(dow_frame)
         layout.addWidget(dow_label, 0, 0, 1, 7)
 
-        self.all_days_but = QtGui.QPushButton(_("Clear all"))
+        self.all_days_but = QtWidgets.QPushButton(_("Clear all"))
         self.all_days_but.setCheckable(True)
         self.all_days_but.clicked.connect(self.all_days_but_clicked)
         self.add_dow_checkboxes(layout)
@@ -155,7 +155,7 @@ class ApptSettingsDialog(BaseDialog):
 
     def add_dow_checkboxes(self, layout):
         for i in range(7):
-            cb = QtGui.QCheckBox(QtCore.QDate.shortDayName(i + 1))
+            cb = QtWidgets.QCheckBox(QtCore.QDate.shortDayName(i + 1))
             cb.setChecked(i + 1 not in self.excluded_days)
             layout.addWidget(cb, i // 5 + 1, i % 5)
             self.dow_checkboxes.append(cb)
@@ -235,7 +235,7 @@ class ApptSettingsDialog(BaseDialog):
 
 
 if __name__ == "__main__":
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     dl = ApptSettingsDialog()
     if dl.exec_():

@@ -23,7 +23,7 @@
 
 import logging
 import re
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.qt4gui.customwidgets.upper_case_line_edit import \
     UpperCaseLineEdit
@@ -45,17 +45,17 @@ VALID_INPUTS = (
 )
 
 
-class _OptionPage(QtGui.QWidget):
+class _OptionPage(QtWidgets.QWidget):
     finished_signal = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         self.dialog = parent
-        self.label = QtGui.QLabel(_("Choose from the following options"))
+        self.label = QtWidgets.QLabel(_("Choose from the following options"))
         self.label.setWordWrap(True)
-        self.frame = QtGui.QFrame()
+        self.frame = QtWidgets.QFrame()
 
-        layout = QtGui.QVBoxLayout(self)
+        layout = QtWidgets.QVBoxLayout(self)
         layout.addWidget(self.label)
         layout.addWidget(self.frame)
         layout.addStretch(100)
@@ -93,10 +93,10 @@ class PageTwo(_OptionPage):
 
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
-        layout = QtGui.QVBoxLayout(self.frame)
-        self.full_radioButton = QtGui.QRadioButton(
+        layout = QtWidgets.QVBoxLayout(self.frame)
+        self.full_radioButton = QtWidgets.QRadioButton(
             _("Complete Denture"))
-        self.partial_radioButton = QtGui.QRadioButton(
+        self.partial_radioButton = QtWidgets.QRadioButton(
             _("Partial Denture"))
 
         layout.addWidget(self.full_radioButton)
@@ -134,15 +134,15 @@ class PageZero(_OptionPage):
         self._chosen_arch = "upper"
         self._return_text = ""
 
-        upper_but = QtGui.QPushButton(_("New UPPER Denture"))
+        upper_but = QtWidgets.QPushButton(_("New UPPER Denture"))
         upper_but.setMinimumSize(QtCore.QSize(150, 150))
-        lower_but = QtGui.QPushButton(_("New LOWER Denture"))
+        lower_but = QtWidgets.QPushButton(_("New LOWER Denture"))
         lower_but.setMinimumSize(QtCore.QSize(150, 150))
-        full_fulls_but = QtGui.QPushButton(
+        full_fulls_but = QtWidgets.QPushButton(
             _("Complete Upper AND Lower Acrylic Dentures"))
         full_fulls_but.setMinimumSize(QtCore.QSize(150, 150))
 
-        layout = QtGui.QGridLayout(self.frame)
+        layout = QtWidgets.QGridLayout(self.frame)
         layout.addWidget(upper_but, 0, 0)
         layout.addWidget(lower_but, 0, 1)
         layout.addWidget(full_fulls_but, 1, 0, 1, 2)
@@ -186,11 +186,11 @@ class PageOne(_OptionPage):
 
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
-        self.acrylic_radioButton = QtGui.QRadioButton(_("Acrylic Denture"))
-        self.metal_radioButton = QtGui.QRadioButton(_("Chrome Denture"))
-        self.flexible_radioButton = QtGui.QRadioButton(_("Flexible Denture"))
+        self.acrylic_radioButton = QtWidgets.QRadioButton(_("Acrylic Denture"))
+        self.metal_radioButton = QtWidgets.QRadioButton(_("Chrome Denture"))
+        self.flexible_radioButton = QtWidgets.QRadioButton(_("Flexible Denture"))
 
-        layout = QtGui.QVBoxLayout(self.frame)
+        layout = QtWidgets.QVBoxLayout(self.frame)
         layout.addWidget(self.acrylic_radioButton)
         layout.addWidget(self.metal_radioButton)
         layout.addWidget(self.flexible_radioButton)
@@ -219,7 +219,7 @@ class PageThree(_OptionPage):
         self.label.setText(
             _("Please select teeth which this denture is to replace"))
         self.chartwidg = SimpleChartWidg(self, auto_ctrl_key=True)
-        layout = QtGui.QVBoxLayout(self.frame)
+        layout = QtWidgets.QVBoxLayout(self.frame)
         layout.addWidget(self.chartwidg)
 
     def showEvent(self, event=None):
@@ -261,10 +261,10 @@ class PageFour(_OptionPage):
         self.label.setText(
             _("You may wish to add the following optional items"))
 
-        self.st_checkBox = QtGui.QCheckBox(_("Special Tray"))
-        self.sl_checkBox = QtGui.QCheckBox(_("Soft Lining"))
+        self.st_checkBox = QtWidgets.QCheckBox(_("Special Tray"))
+        self.sl_checkBox = QtWidgets.QCheckBox(_("Soft Lining"))
 
-        layout = QtGui.QVBoxLayout(self.frame)
+        layout = QtWidgets.QVBoxLayout(self.frame)
         layout.addWidget(self.st_checkBox)
         layout.addWidget(self.sl_checkBox)
 
@@ -302,7 +302,7 @@ class NewDentureDialog(ExtendableDialog):
         self.om_gui = om_gui
         message = (_("Add A New Denture To The Treatment Plan"))
         self.setWindowTitle(message)
-        self.header_label = QtGui.QLabel(message)
+        self.header_label = QtWidgets.QLabel(message)
         self.header_label.setAlignment(QtCore.Qt.AlignCenter)
 
         self.ndu_le = UpperCaseLineEdit()
@@ -310,7 +310,7 @@ class NewDentureDialog(ExtendableDialog):
 
         self.set_default_lineedit(self.ndl_le)
 
-        self.wizard_widget = QtGui.QStackedWidget()
+        self.wizard_widget = QtWidgets.QStackedWidget()
 
         page0 = PageZero(self)
         page0.finished_signal.connect(self.next_widget)
@@ -330,8 +330,8 @@ class NewDentureDialog(ExtendableDialog):
         self.insertWidget(self.header_label)
         self.insertWidget(self.wizard_widget)
 
-        frame = QtGui.QFrame()
-        layout = QtGui.QFormLayout(frame)
+        frame = QtWidgets.QFrame()
+        layout = QtWidgets.QFormLayout(frame)
         layout.addRow(_("Upper Denture"), self.ndu_le)
         layout.addRow(_("Lower Denture"), self.ndl_le)
 
@@ -358,7 +358,7 @@ class NewDentureDialog(ExtendableDialog):
 
     def next_widget(self):
         if not self.current_page.is_completed:
-            QtGui.QMessageBox.information(self, _("Whoops"),
+            QtWidgets.QMessageBox.information(self, _("Whoops"),
                                           self.current_page.error_message)
             return
 
@@ -415,7 +415,7 @@ class NewDentureDialog(ExtendableDialog):
                 if re.match(input_, ndu):
                     matched = True
             if not matched:
-                QtGui.QMessageBox.warning(
+                QtWidgets.QMessageBox.warning(
                     self,
                     _("Warning"),
                     _("Your upper denture input is invalid"))
@@ -427,7 +427,7 @@ class NewDentureDialog(ExtendableDialog):
                 if re.match(input_, ndl):
                     matched = True
             if not matched:
-                QtGui.QMessageBox.warning(
+                QtWidgets.QMessageBox.warning(
                     self,
                     ("Warning"),
                     _("Your lower denture input is invalid"))
@@ -467,7 +467,7 @@ class NewDentureDialog(ExtendableDialog):
 
 if __name__ == "__main__":
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     LOGGER.setLevel(logging.DEBUG)
     dl = NewDentureDialog(None)
     if dl.exec_():

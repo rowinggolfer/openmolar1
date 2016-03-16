@@ -23,7 +23,7 @@
 
 from gettext import gettext as _
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 from openmolar.settings import localsettings
 from openmolar.dbtools.patient_class import mouth, decidmouth
 from openmolar.dbtools.treatment_course import CURRTRT_NON_TOOTH_ATTS
@@ -87,10 +87,10 @@ class AdultAttributeModel(DeciduousAttributeModel):
         self.attributes = ADULTMOUTH
 
 
-class FeescaleTestingDialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
+class FeescaleTestingDialog(Ui_codeChecker.Ui_Dialog, QtWidgets.QDialog):
 
     def __init__(self, parent=None):
-        QtGui.QDialog.__init__(self, parent)
+        QtWidgets.QDialog.__init__(self, parent)
         self.setupUi(self)
         self.table_list = []
         self.load_feescales()
@@ -113,10 +113,10 @@ class FeescaleTestingDialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
         self.quit_pushButton.clicked.connect(self.accept)
 
         self.line_edits = {}
-        form_layout = QtGui.QFormLayout(self.frame)
+        form_layout = QtWidgets.QFormLayout(self.frame)
 
         for att in CURRTRT_NON_TOOTH_ATTS:
-            widg = QtGui.QLineEdit()
+            widg = QtWidgets.QLineEdit()
             self.line_edits[att] = widg
             form_layout.addRow(att, widg)
 
@@ -162,7 +162,7 @@ class FeescaleTestingDialog(Ui_codeChecker.Ui_Dialog, QtGui.QDialog):
                     complex_matches.append(att)
 
         if complex_matches != []:
-            QtGui.QMessageBox.information(
+            QtWidgets.QMessageBox.information(
                 self, _("Information"),
                 "%s '%s' %s<hr />%s" % (
                     _("This feescale handles"), tx,
@@ -184,7 +184,7 @@ if __name__ == "__main__":
     localsettings.initiate()
     localsettings.loadFeeTables()
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     dl = FeescaleTestingDialog()
     dl.exec_()
     app.closeAllWindows()

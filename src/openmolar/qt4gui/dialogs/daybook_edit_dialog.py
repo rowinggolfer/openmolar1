@@ -23,7 +23,7 @@
 
 from gettext import gettext as _
 import logging
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.dbtools import daybook
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
@@ -40,17 +40,17 @@ class DaybookEditDialog(ExtendableDialog):
         self.daybook_id = daybook_id
         self.orig_values = []
 
-        header_label = QtGui.QLabel(
+        header_label = QtWidgets.QLabel(
             "<b>%s %s</b>" % (_("Inspecting daybook row"), self.daybook_id))
         header_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        frame = QtGui.QFrame()
-        form = QtGui.QFormLayout(frame)
+        frame = QtWidgets.QFrame()
+        form = QtWidgets.QFormLayout(frame)
         self.line_edits = {}
         for key in KEYS:
-            self.line_edits[key] = QtGui.QLineEdit()
+            self.line_edits[key] = QtWidgets.QLineEdit()
 
-        self.chart_edit = QtGui.QTextEdit()
+        self.chart_edit = QtWidgets.QTextEdit()
         self.chart_edit.setWordWrapMode(QtGui.QTextOption.NoWrap)
 
         form.addRow(_("Diagnosis"), self.line_edits[KEYS[0]])
@@ -67,14 +67,14 @@ class DaybookEditDialog(ExtendableDialog):
         self.insertWidget(header_label)
         self.insertWidget(frame)
 
-        self.adv_widget = QtGui.QLabel(_("No advanced options available"))
+        self.adv_widget = QtWidgets.QLabel(_("No advanced options available"))
         self.add_advanced_widget(self.adv_widget)
         # self.remove_spacer()
 
         QtCore.QTimer.singleShot(100, self.get_data)
 
     def advise(self, message):
-        QtGui.QMessageBox.information(self, _("message"), message)
+        QtWidgets.QMessageBox.information(self, _("message"), message)
 
     def sizeHint(self):
         return QtCore.QSize(400, 400)
@@ -123,7 +123,7 @@ class DaybookEditDialog(ExtendableDialog):
 
 if __name__ == "__main__":
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     LOGGER.setLevel(logging.DEBUG)
     dl = DaybookEditDialog(337646)
     if dl.exec_():

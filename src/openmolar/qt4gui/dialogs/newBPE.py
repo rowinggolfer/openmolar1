@@ -21,15 +21,15 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtWidgets
 from openmolar.qt4gui.compiled_uis import Ui_newBPE
 from openmolar.settings import localsettings
 
 
-class BPE_Dialog(QtGui.QDialog, Ui_newBPE.Ui_Dialog):
+class BPE_Dialog(QtWidgets.QDialog, Ui_newBPE.Ui_Dialog):
 
     def __init__(self, parent=None):
-        QtGui.QDialog.__init__(self, parent)
+        QtWidgets.QDialog.__init__(self, parent)
         self.setupUi(self)
         for cb in (self.bpe_comboBox,
         self.bpe2_comboBox,
@@ -40,7 +40,7 @@ class BPE_Dialog(QtGui.QDialog, Ui_newBPE.Ui_Dialog):
             cb.setCurrentIndex(-1)
 
     def getInput(self):
-        if QtGui.QDialog.exec_(self):
+        if QtWidgets.QDialog.exec_(self):
             return (True, self.getBPE())
         else:
             return (False, None)
@@ -63,6 +63,6 @@ class BPE_Dialog(QtGui.QDialog, Ui_newBPE.Ui_Dialog):
 
 
 if __name__ == "__main__":
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     dl = BPE_Dialog()
     print(dl.getInput())

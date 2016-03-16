@@ -21,7 +21,7 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtWidgets
 from openmolar.settings import localsettings
 
 from openmolar.qt4gui.compiled_uis import Ui_addTreatment
@@ -46,14 +46,14 @@ class itemWidget(Ui_treatmentItemWidget.Ui_Form):
         self.label.setText("%s (%s)" % (self.description, self.itemcode))
 
 
-class AddTreatmentDialog(QtGui.QDialog, Ui_addTreatment.Ui_Dialog):
+class AddTreatmentDialog(QtWidgets.QDialog, Ui_addTreatment.Ui_Dialog):
 
     '''
     a custom dialog to offer a range of treatments for selection
     '''
 
     def __init__(self, usercodes, pt, parent=None):
-        QtGui.QDialog.__init__(self, parent)
+        QtWidgets.QDialog.__init__(self, parent)
         self.setupUi(self)
         self.items = []
         feetable = pt.fee_table
@@ -74,9 +74,9 @@ class AddTreatmentDialog(QtGui.QDialog, Ui_addTreatment.Ui_Dialog):
 
     def showItems(self):
         self.itemWidgets = []
-        vlayout = QtGui.QVBoxLayout()
+        vlayout = QtWidgets.QVBoxLayout()
         for item, item_description, usercode in self.items:
-            iw = QtGui.QWidget()
+            iw = QtWidgets.QWidget()
             itemW = itemWidget(self, iw)
             itemW.setItem(item)
             itemW.usercode = usercode
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     import sys
     localsettings.initiate()
     localsettings.loadFeeTables()
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
 
     from openmolar.dbtools import patient_class
     pt = patient_class.patient(11956)

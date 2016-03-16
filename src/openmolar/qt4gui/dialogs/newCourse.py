@@ -23,7 +23,7 @@
 
 from gettext import gettext as _
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 from openmolar.qt4gui.compiled_uis import Ui_newCourse
 from openmolar.settings import localsettings
 
@@ -69,7 +69,7 @@ class NewCourseDialog(Ui_newCourse.Ui_Dialog):
                 cset = str(self.cseType_comboBox.currentText())
                 retarg = (dnt1, dnt2, cset, self.dateEdit.date())
                 if "" in retarg:
-                    QtGui.QMessageBox.information(
+                    QtWidgets.QMessageBox.information(
                         self.dialog,
                         _("Error"), _("Some fields are missing, please check"))
                 else:
@@ -81,7 +81,7 @@ class NewCourseDialog(Ui_newCourse.Ui_Dialog):
 if __name__ == "__main__":
     import sys
     localsettings.initiate()
-    app = QtGui.QApplication(sys.argv)
-    dl = QtGui.QDialog()
+    app = QtWidgets.QApplication(sys.argv)
+    dl = QtWidgets.QDialog()
     ui = NewCourseDialog(dl, "BW", "AH", "")
     print(ui.getInput())

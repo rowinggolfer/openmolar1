@@ -24,7 +24,7 @@
 import logging
 import os
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings, urls
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
@@ -38,11 +38,11 @@ def _null_func():
     return None
 
 
-class _FileListWidget(QtGui.QScrollArea):
+class _FileListWidget(QtWidgets.QScrollArea):
 
     def __init__(self, files, parent=None):
         assert files != [], "no files passed to FileListWidget"
-        QtGui.QScrollArea.__init__(self, parent)
+        QtWidgets.QScrollArea.__init__(self, parent)
         self.files = files
         self.labels = files
         self.radio_buts = []
@@ -50,12 +50,12 @@ class _FileListWidget(QtGui.QScrollArea):
         self.radio_buts[0].setChecked(True)
 
     def layout_widgets(self):
-        frame = QtGui.QFrame(self)
-        layout = QtGui.QVBoxLayout(frame)
+        frame = QtWidgets.QFrame(self)
+        layout = QtWidgets.QVBoxLayout(frame)
         self.setWidget(frame)
         self.setWidgetResizable(True)
         for label in self.labels:
-            rb = QtGui.QRadioButton(label)
+            rb = QtWidgets.QRadioButton(label)
             layout.addWidget(rb)
             self.radio_buts.append(rb)
 
@@ -71,7 +71,7 @@ class _FileListWidget(QtGui.QScrollArea):
 class _LabelledFileListWidget(_FileListWidget):
 
     def __init__(self, nodelist, parent=None):
-        QtGui.QScrollArea.__init__(self, parent)
+        QtWidgets.QScrollArea.__init__(self, parent)
         self.files = []
         self.labels = []
         self.radio_buts = []
@@ -89,7 +89,7 @@ class DocumentDialog(ExtendableDialog):
 
         title = _("Openmolar Documents Dialog")
         self.setWindowTitle(title)
-        label = QtGui.QLabel(
+        label = QtWidgets.QLabel(
             "<b>%s</b>" %
             _("Please choose a document to open"))
         label.setAlignment(QtCore.Qt.AlignCenter)
@@ -100,14 +100,14 @@ class DocumentDialog(ExtendableDialog):
             _("For help configuring this feature, see"),
             urls.DOCUMENT_HELP, urls.DOCUMENT_HELP)
 
-        advanced_label = QtGui.QLabel(message)
+        advanced_label = QtWidgets.QLabel(message)
         advanced_label.setOpenExternalLinks(True)
         self.add_advanced_widget(advanced_label)
 
         files = os.listdir(localsettings.DOCS_DIRECTORY)
 
         if files == []:
-            widg = QtGui.QLabel("<p>%s %s</p><hr />%s" % (
+            widg = QtWidgets.QLabel("<p>%s %s</p><hr />%s" % (
                                 _("You have no documents stored in"),
                                 localsettings.DOCS_DIRECTORY, message))
             widg.setAlignment(QtCore.Qt.AlignCenter)
@@ -121,7 +121,7 @@ class DocumentDialog(ExtendableDialog):
                     localsettings.DOCS_DIRECTORY, "docs.xml")
                 dom = minidom.parse(control_f)
                 doc_node = dom.getElementsByTagName("documents")[0]
-                widg = QtGui.QTabWidget()
+                widg = QtWidgets.QTabWidget()
                 for group in doc_node.getElementsByTagName("group"):
                     docs = group.getElementsByTagName("document")
                     group_widg = _LabelledFileListWidget(docs)
@@ -132,7 +132,7 @@ class DocumentDialog(ExtendableDialog):
                 widg.selected_file = widg.currentWidget().selected_file
             except:
                 LOGGER.exception("unable to parse '%s'" % control_f)
-                widg = QtGui.QLabel(_("docs.xml is not parseable"))
+                widg = QtWidgets.QLabel(_("docs.xml is not parseable"))
 
         else:
             # self.remove_spacer()
@@ -178,11 +178,11 @@ class DocumentDialog(ExtendableDialog):
 
 
 if __name__ == "__main__":
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     def advise(message, severity):
-        QtGui.QMessageBox.information(dl, "message", message)
+        QtWidgets.QMessageBox.information(dl, "message", message)
 
-    mw = QtGui.QWidget()
+    mw = QtWidgets.QWidget()
     dl = DocumentDialog(mw)
     dl.exec_()

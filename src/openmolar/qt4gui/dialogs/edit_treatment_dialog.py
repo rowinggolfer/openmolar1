@@ -23,7 +23,7 @@
 
 import re
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.dbtools import treatment_course
 
@@ -41,13 +41,13 @@ class EditTreatmentDialog(ExtendableDialog):
         self.serialno = serialno
         self.courseno = courseno
 
-        planning = QtGui.QMessageBox.question(self, _("Option"),
+        planning = QtWidgets.QMessageBox.question(self, _("Option"),
             "%s<hr /><em>%s</em>" %(
                 _("Edit Completed items?"),
                 _("Choosing 'NO' will offer edit of planned items")
                 ),
-            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
-            QtGui.QMessageBox.Yes) == QtGui.QMessageBox.No
+            QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No,
+            QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.No
 
 
         if planning:
@@ -61,10 +61,10 @@ class EditTreatmentDialog(ExtendableDialog):
         self.widgets = {}
         self.orig_values = {}
 
-        frame = QtGui.QFrame()
-        form_layout = QtGui.QFormLayout(frame)
+        frame = QtWidgets.QFrame()
+        form_layout = QtWidgets.QFormLayout(frame)
 
-        header_label = QtGui.QLabel(header)
+        header_label = QtWidgets.QLabel(header)
         header_label.setAlignment(QtCore.Qt.AlignCenter)
 
         tooth_atts = []
@@ -79,14 +79,14 @@ class EditTreatmentDialog(ExtendableDialog):
         for att in sorted(tooth_atts):
             form_layout.addRow(att.upper(), self.widgets[att])
 
-        scroll_area = QtGui.QScrollArea()
+        scroll_area = QtWidgets.QScrollArea()
         scroll_area.setWidget(frame)
         scroll_area.setWidgetResizable(True)
 
         self.insertWidget(header_label)
         self.insertWidget(scroll_area)
 
-        self.add_advanced_widget(QtGui.QLabel(_("No Advanced Options")))
+        self.add_advanced_widget(QtWidgets.QLabel(_("No Advanced Options")))
         QtCore.QTimer.singleShot(100, self.load_values)
 
     @property
@@ -135,7 +135,7 @@ class EditTreatmentDialog(ExtendableDialog):
 if __name__ == "__main__":
     from gettext import gettext as _
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     serialno, courseno = (14469, 45869)
     dl = EditTreatmentDialog(serialno, courseno)
     if dl.exec_():

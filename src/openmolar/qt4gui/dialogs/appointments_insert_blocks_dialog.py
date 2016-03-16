@@ -24,7 +24,7 @@
 from functools import partial
 from gettext import gettext as _
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 from openmolar.qt4gui.customwidgets.fiveminutetimeedit \
@@ -48,11 +48,11 @@ class InsertBlocksDialog(BaseDialog):
     def __init__(self, parent=None):
         BaseDialog.__init__(self, parent)
         label = WarningLabel(_("Insert a number of blocks to various books"))
-        clinicians_groupbox = QtGui.QGroupBox(self)
+        clinicians_groupbox = QtWidgets.QGroupBox(self)
         clinicians_groupbox.setTitle(_("Clinicians"))
-        layout = QtGui.QHBoxLayout(clinicians_groupbox)
+        layout = QtWidgets.QHBoxLayout(clinicians_groupbox)
         for initials in localsettings.activedents + localsettings.activehygs:
-            cb = QtGui.QCheckBox(initials)
+            cb = QtWidgets.QCheckBox(initials)
             layout.addWidget(cb)
             try:
                 cb.setChecked(self.CLINICIAN_DICT[initials])
@@ -60,11 +60,11 @@ class InsertBlocksDialog(BaseDialog):
                 self.CLINICIAN_DICT[initials] = False
             cb.toggled.connect(partial(self.update_clinician_dict, initials))
 
-        days_groupbox = QtGui.QGroupBox(self)
+        days_groupbox = QtWidgets.QGroupBox(self)
         days_groupbox.setTitle(_("Days to Apply"))
-        g_layout = QtGui.QGridLayout(days_groupbox)
+        g_layout = QtWidgets.QGridLayout(days_groupbox)
         for day in range(7):
-            cb = QtGui.QCheckBox(localsettings.DAYNAMES[day])
+            cb = QtWidgets.QCheckBox(localsettings.DAYNAMES[day])
             row = 0 if day < 4 else 1
             g_layout.addWidget(cb, row, day % 4)
             try:
@@ -75,14 +75,14 @@ class InsertBlocksDialog(BaseDialog):
 
         if self.START_DATE is None:
             self.START_DATE = QtCore.QDate.currentDate()
-        self.start_dateedit = QtGui.QDateEdit()
+        self.start_dateedit = QtWidgets.QDateEdit()
         self.start_dateedit.setDate(self.START_DATE)
         self.start_dateedit.setCalendarPopup(True)
         self.start_dateedit.dateChanged.connect(self.new_start_date)
 
         if self.END_DATE is None:
             self.END_DATE = localsettings.BOOKEND
-        self.end_dateedit = QtGui.QDateEdit()
+        self.end_dateedit = QtWidgets.QDateEdit()
         self.end_dateedit.setCalendarPopup(True)
         self.end_dateedit.setDate(self.END_DATE)
         self.end_dateedit.dateChanged.connect(self.new_end_date)
@@ -93,16 +93,16 @@ class InsertBlocksDialog(BaseDialog):
         self.time_edit.setTime(self.TIME)
         self.time_edit.time_changed_signal.connect(self.new_time)
 
-        self.duration_spinbox = QtGui.QSpinBox()
+        self.duration_spinbox = QtWidgets.QSpinBox()
         self.duration_spinbox.setMaximum(300)
         self.duration_spinbox.setSingleStep(5)
         self.duration_spinbox.setSuffix(" " + _("Minutes"))
         self.duration_spinbox.setValue(60)
 
-        self.combo_box = QtGui.QComboBox()
+        self.combo_box = QtWidgets.QComboBox()
 
-        frame = QtGui.QFrame()
-        flayout = QtGui.QFormLayout(frame)
+        frame = QtWidgets.QFrame()
+        flayout = QtWidgets.QFormLayout(frame)
         flayout.addRow(_("Start Date"), self.start_dateedit)
         flayout.addRow(_("End Date"), self.end_dateedit)
         flayout.addRow(_("What time does this recurr?"), self.time_edit)
@@ -133,7 +133,7 @@ class InsertBlocksDialog(BaseDialog):
 
     def check_reason(self, i):
         if self.combo_box.currentText() == _("Other"):
-            reason, result = QtGui.QInputDialog.getText(
+            reason, result = QtWidgets.QInputDialog.getText(
                 self,
                 _("reason"),
                 _("Please enter the text to use for this block"))
@@ -204,7 +204,7 @@ class InsertBlocksDialog(BaseDialog):
             localsettings.minutesPastMidnight(start) +
             self.duration_spinbox.value())
 
-        p_dl = QtGui.QProgressDialog(self)
+        p_dl = QtWidgets.QProgressDialog(self)
         p_dl.show()
         days = list(self.chosen_days)
         n_attempts, n_inserted = 0, 0
@@ -223,7 +223,7 @@ class InsertBlocksDialog(BaseDialog):
                         start, end, self.block_text,
                         0, "", "", "", "", -128, 0, 0, 0)
                 dt = dt.addDays(1)
-                QtGui.QApplication.instance().processEvents()
+                QtWidgets.QApplication.instance().processEvents()
 
         message = "%d/%d %s" % (n_inserted,
                                 n_attempts,
@@ -234,7 +234,7 @@ class InsertBlocksDialog(BaseDialog):
                 "<hr /><b>%s</b>" % _(
                     "Some were rejected by the database as they clashed"
                     " with existing appointments or blocks")
-        QtGui.QMessageBox.information(self, _("Information"), message)
+        QtWidgets.QMessageBox.information(self, _("Information"), message)
 
     def exec_(self):
         while BaseDialog.exec_(self):
@@ -243,7 +243,7 @@ class InsertBlocksDialog(BaseDialog):
                 self.accept()
                 return True
             else:
-                QtGui.QMessageBox.warning(
+                QtWidgets.QMessageBox.warning(
                     self,
                     _("Bad Input"),
                     "<ul><li>%s</li></ul>" % "</li><li>".join(warnings))
@@ -252,7 +252,7 @@ class InsertBlocksDialog(BaseDialog):
 
 if __name__ == "__main__":
     localsettings.initiate()
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     dl = InsertBlocksDialog()
     if dl.exec_():
         dl.apply()

@@ -37,7 +37,7 @@ import webbrowser  # for email
 
 from functools import partial
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.connect import params
 from openmolar.settings import localsettings, utilities
@@ -176,7 +176,7 @@ from openmolar.backports.advisor import Advisor
 LOGGER = logging.getLogger("openmolar")
 
 
-class OpenmolarGui(QtGui.QMainWindow, Advisor):
+class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
 
     '''
     the main gui class for openmolar
@@ -190,7 +190,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
     notes_loaded = False
 
     def __init__(self, parent=None):
-        QtGui.QMainWindow.__init__(self, parent)
+        QtWidgets.QMainWindow.__init__(self, parent)
         Advisor.__init__(self, parent)
         self.ui = Ui_main.Ui_MainWindow()
         self.ui.setupUi(self)
@@ -294,7 +294,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         if not cf_found or localsettings.FORCE_FIRST_RUN:
             dl = FirstRunDialog(self)
             if not dl.exec_():
-                QtGui.QApplication.instance().closeAllWindows()
+                QtWidgets.QApplication.instance().closeAllWindows()
                 return
             params.reload()
         self.login()
@@ -305,7 +305,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         '''
         dl = LoginDialog(self)
         if not dl.exec_():
-            app = QtGui.QApplication.instance()
+            app = QtWidgets.QApplication.instance()
             QtCore.QTimer.singleShot(4000, app.closeAllWindows)
             self.advise(_("Login Cancelled- Closing Application"), 2)
             app.closeAllWindows()
@@ -345,7 +345,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
             from openmolar.qt4gui.schema_updater import SchemaUpdater
             schema_updater = SchemaUpdater()
             if not schema_updater.exec_():
-                QtGui.QApplication.instance().closeAllWindows()
+                QtWidgets.QApplication.instance().closeAllWindows()
 
         elif localsettings.CLIENT_SCHEMA_VERSION < sv:
             LOGGER.warning("client is out of date")
@@ -361,7 +361,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                     _('but your database is at'),
                     sv,
                     _('Please Update openMolar now')), 2)
-                QtGui.QApplication.instance().closeAllWindows()
+                QtWidgets.QApplication.instance().closeAllWindows()
             else:
                 message = '''<p>%s</p><p>%s %s %s %s</p>
                 <p>%s<br />%s</p><hr />%s''' % (
@@ -376,20 +376,20 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                     _('It would still be wise to update this client ASAP'),
                     _('Do you wish to continue?'))
 
-                if (QtGui.QMessageBox.question(
+                if (QtWidgets.QMessageBox.question(
                         self,
                         _("Proceed without upgrade?"),
                         message,
-                        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                        QtGui.QMessageBox.Yes) == QtGui.QMessageBox.No):
-                    QtGui.QApplication.instance().closeAllWindows()
+                        QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                        QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.No):
+                    QtWidgets.QApplication.instance().closeAllWindows()
 
     def resizeEvent(self, event):
         '''
         this function is overwritten so that the advisor popup can be
         put in the correct place
         '''
-        QtGui.QMainWindow.resizeEvent(self, event)
+        QtWidgets.QMainWindow.resizeEvent(self, event)
         self.setBriefMessageLocation()
 
     def setBriefMessageLocation(self):
@@ -406,10 +406,10 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
     def wait(self, waiting=True):
         if waiting:
-            QtGui.QApplication.instance().setOverrideCursor(
+            QtWidgets.QApplication.instance().setOverrideCursor(
                 QtCore.Qt.WaitCursor)
         else:
-            QtGui.QApplication.instance().restoreOverrideCursor()
+            QtWidgets.QApplication.instance().restoreOverrideCursor()
 
     def notify(self, message):
         '''
@@ -421,7 +421,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         '''
         function called by the quit button in the menu
         '''
-        QtGui.QApplication.instance().closeAllWindows()
+        QtWidgets.QApplication.instance().closeAllWindows()
 
     def closeEvent(self, event=None):
         '''
@@ -471,14 +471,14 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         already
         '''
         # statusbar
-        self.statusbar_frame = QtGui.QFrame()
-        self.operator_label = QtGui.QLabel()
-        self.loadedPatient_label = QtGui.QLabel()
+        self.statusbar_frame = QtWidgets.QFrame()
+        self.operator_label = QtWidgets.QLabel()
+        self.loadedPatient_label = QtWidgets.QLabel()
         self.loadedPatient_label.setMinimumWidth(450)
-        self.sepline = QtGui.QFrame(self.statusbar_frame)
-        self.sepline.setFrameShape(QtGui.QFrame.VLine)
-        self.sepline.setFrameShadow(QtGui.QFrame.Sunken)
-        hlayout = QtGui.QHBoxLayout(self.statusbar_frame)
+        self.sepline = QtWidgets.QFrame(self.statusbar_frame)
+        self.sepline.setFrameShape(QtWidgets.QFrame.VLine)
+        self.sepline.setFrameShadow(QtWidgets.QFrame.Sunken)
+        hlayout = QtWidgets.QHBoxLayout(self.statusbar_frame)
         hlayout.addWidget(self.loadedPatient_label)
         hlayout.addWidget(self.sepline)
         hlayout.addWidget(self.operator_label)
@@ -489,13 +489,13 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.summaryChartWidget = chartwidget.chartWidget()
         self.ui.summaryChartWidget.setShowSelected(False)
         self.ui.summaryChartWidget.setFocusPolicy(QtCore.Qt.StrongFocus)
-        hlayout = QtGui.QHBoxLayout(self.ui.staticSummaryPanel)
+        hlayout = QtWidgets.QHBoxLayout(self.ui.staticSummaryPanel)
         hlayout.addWidget(self.ui.summaryChartWidget)
 
         # static chart
         self.ui.staticChartWidget = chartwidget.chartWidget()
         self.ui.staticChartWidget.setFocusPolicy(QtCore.Qt.StrongFocus)
-        hlayout = QtGui.QHBoxLayout(self.ui.static_groupBox)
+        hlayout = QtWidgets.QHBoxLayout(self.ui.static_groupBox)
         hlayout.addWidget(self.ui.staticChartWidget)
         self.ui.static_groupBox.setStyleSheet("border: 1px solid gray;")
 
@@ -505,25 +505,25 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.planChartWidget.isStaticChart = False
         self.ui.planChartWidget.isPlanChart = True
         self.ui.plan_groupBox.setStyleSheet("border: 1px solid gray;")
-        hlayout = QtGui.QHBoxLayout(self.ui.plan_groupBox)
+        hlayout = QtWidgets.QHBoxLayout(self.ui.plan_groupBox)
         hlayout.addWidget(self.ui.planChartWidget)
 
         # completed chart
         self.ui.completedChartWidget = chartwidget.chartWidget()
         self.ui.completedChartWidget.isStaticChart = False
-        hlayout = QtGui.QHBoxLayout(self.ui.completed_groupBox)
+        hlayout = QtWidgets.QHBoxLayout(self.ui.completed_groupBox)
         hlayout.addWidget(self.ui.completedChartWidget)
         self.ui.completed_groupBox.setStyleSheet("border: 1px solid gray;")
 
         # static control panel
         self.ui.static_control_panel = StaticControlPanel()
-        hlayout = QtGui.QHBoxLayout(self.ui.static_frame)
+        hlayout = QtWidgets.QHBoxLayout(self.ui.static_frame)
         hlayout.setMargin(0)
         hlayout.addWidget(self.ui.static_control_panel)
 
         # TOOTHPROPS (right hand side on the charts page)
         self.ui.toothPropsWidget = toothProps.ToothPropertyEditingWidget(self)
-        hlayout = QtGui.QHBoxLayout(self.ui.toothProps_frame)
+        hlayout = QtWidgets.QHBoxLayout(self.ui.toothProps_frame)
         hlayout.setMargin(0)
         hlayout.addWidget(self.ui.toothPropsWidget)
 
@@ -546,7 +546,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         # cashbook browser
 
         self.ui.cashbookTextBrowser = cashbook_module.CashBookBrowser(self)
-        layout = QtGui.QVBoxLayout(self.ui.cashbook_placeholder_widget)
+        layout = QtWidgets.QVBoxLayout(self.ui.cashbook_placeholder_widget)
         layout.setMargin(0)
         layout.addWidget(self.ui.cashbookTextBrowser)
 
@@ -653,7 +653,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         menu
         '''
         cb = self.ui.toothPropsWidget.comments_comboBox
-        comment, result = QtGui.QInputDialog.getItem(
+        comment, result = QtWidgets.QInputDialog.getItem(
             self,
             _("Add comment"),
             "%s %s" % (_("Add a comment to tooth"), tooth.upper()),
@@ -1002,7 +1002,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         docs = docsprinted.previousDocs(self.pt.serialno)
         for d in docs:
             doc = [str(d[0]), str(d[1]), str(d[2]), str(d[3])]
-            i = QtGui.QTreeWidgetItem(
+            i = QtWidgets.QTreeWidgetItem(
                 self.ui.prevCorres_treeWidget, doc)
         self.ui.prevCorres_treeWidget.expandAll()
         for i in range(self.ui.prevCorres_treeWidget.columnCount()):
@@ -1016,13 +1016,13 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         '''
         ix = int(item.text(3))
         if "(html)" in item.text(1):
-            result = QtGui.QMessageBox.question(
+            result = QtWidgets.QMessageBox.question(
                 self,
                 _("Re-open"),
                 _("Do you want to review and/or reprint this item?"),
-                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                QtGui.QMessageBox.Yes)
-            if result == QtGui.QMessageBox.Yes:
+                QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                QtWidgets.QMessageBox.Yes)
+            if result == QtWidgets.QMessageBox.Yes:
                 html, version = docsprinted.getData(ix)
                 type_ = item.text(1).replace("(html)", "")
                 if om_printing.htmlEditor(
@@ -1030,13 +1030,13 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                     self.docsPrintedInit()
 
         elif "pdf" in item.text(1):
-            result = QtGui.QMessageBox.question(
+            result = QtWidgets.QMessageBox.question(
                 self,
                 _("Re-open"),
                 _("Do you want to review and/or reprint this item?"),
-                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                QtGui.QMessageBox.Yes)
-            if result == QtGui.QMessageBox.Yes:
+                QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                QtWidgets.QMessageBox.Yes)
+            if result == QtWidgets.QMessageBox.Yes:
                 try:
                     data, version = docsprinted.getData(ix)
                     f = open(localsettings.TEMP_PDF, "wb")
@@ -1072,7 +1072,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
         docs = docsimported.storedDocs(self.pt.serialno)
         for doc in docs:
-            i = QtGui.QTreeWidgetItem(self.ui.importDoc_treeWidget, doc)
+            i = QtWidgets.QTreeWidgetItem(self.ui.importDoc_treeWidget, doc)
         self.ui.importDoc_treeWidget.expandAll()
         for i in range(self.ui.importDoc_treeWidget.columnCount()):
             self.ui.importDoc_treeWidget.resizeColumnToContents(i)
@@ -1083,7 +1083,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         '''
         import a document and store into the database
         '''
-        filename = QtGui.QFileDialog.getOpenFileName()
+        filename = QtWidgets.QFileDialog.getOpenFileName()
         if filename != '':
             self.advise(_("opening") + " %s" % filename)
             try:
@@ -1100,13 +1100,13 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         '''
         ix = int(item.text(4))
         LOGGER.debug("opening file index %s", ix)
-        result = QtGui.QMessageBox.question(
+        result = QtWidgets.QMessageBox.question(
             self,
             _("Re-open"),
             _("Do you want to open a copy of this document?"),
-            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-            QtGui.QMessageBox.Yes)
-        if result == QtGui.QMessageBox.Yes:
+            QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+            QtWidgets.QMessageBox.Yes)
+        if result == QtWidgets.QMessageBox.Yes:
             try:
                 fpath = os.path.join(localsettings.localFileDirectory,
                                      "import_temp")
@@ -1492,7 +1492,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         except ValueError:
             if not newPatientReload:
                 message = _("Please set a Valid Course Type for this patient")
-                QtGui.QMessageBox.information(self, _("Advisory"), message)
+                QtWidgets.QMessageBox.information(self, _("Advisory"), message)
 
             pos = -1
         self.ui.cseType_comboBox.setCurrentIndex(pos)
@@ -1532,7 +1532,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                 localsettings.formatDate(umemo.mdate),
                 umemo.message)
 
-            Dialog = QtGui.QDialog(self)
+            Dialog = QtWidgets.QDialog(self)
             dl = Ui_showMemo.Ui_Dialog()
             dl.setupUi(Dialog)
             dl.message_label.setText(message)
@@ -1680,7 +1680,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.main_tabWidget.setCurrentIndex(0)
         self.ui.tabWidget.setCurrentIndex(0)
         self.diary_widget.reset()
-        c_list = QtGui.QCompleter([_("Mr"), _("Mrs"), _("Ms"), _("Miss"),
+        c_list = QtWidgets.QCompleter([_("Mr"), _("Mrs"), _("Ms"), _("Miss"),
                                    _("Master"), _("Dr"), _("Professor")])
         self.ui.titleEdit.setCompleter(c_list)
 
@@ -1711,7 +1711,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.addHistoryMenu()
 
         self.ui.perio_scrollArea.setWidget(
-            QtGui.QLabel("perio interface is being rewritten"))
+            QtWidgets.QLabel("perio interface is being rewritten"))
 
     def addHistoryMenu(self):
         '''
@@ -1719,7 +1719,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         for old data about the patient
         '''
 
-        self.debugMenu = QtGui.QMenu()
+        self.debugMenu = QtWidgets.QMenu()
         self.debugMenu.addAction("Patient table data")
         self.debugMenu.addAction("Treatment table data")
         self.debugMenu.addAction("HDP table data")
@@ -1749,7 +1749,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         save to file is really just a development feature
         '''
         try:
-            filepath = QtGui.QFileDialog.getSaveFileName()
+            filepath = QtWidgets.QFileDialog.getSaveFileName()
             if filepath != '':
                 f = open(filepath, "w")
                 f.write(pickle.dumps(self.pt))
@@ -1768,7 +1768,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         if not self.okToLeaveRecord():
             self.advise(_("Not loading patient"))
             return
-        filename = QtGui.QFileDialog.getOpenFileName()
+        filename = QtWidgets.QFileDialog.getOpenFileName()
         if filename != '':
             self.advise(_("opening patient file"))
             try:
@@ -2128,7 +2128,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         '''
         user is asking for a different font on the appointment book
         '''
-        i, result = QtGui.QInputDialog.getInteger(
+        i, result = QtWidgets.QInputDialog.getInteger(
             self,
             _("FontSize"),
             _("Enter your preferred font size for appointment book"),
@@ -2951,7 +2951,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         self.ui.action_About.triggered.connect(self.aboutOM)
         self.ui.actionCheck_for_Updates.triggered.connect(self.check_version)
         self.ui.action_About_QT.triggered.connect(
-            QtGui.QApplication.instance().aboutQt)
+            QtWidgets.QApplication.instance().aboutQt)
         self.ui.action_Quit.triggered.connect(self.quit)
         self.ui.actionFull_Screen_Mode_Ctrl_Alt_F.triggered.connect(
             self.fullscreen)
@@ -3271,7 +3271,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                           "used on closed courses"), 1)
             if not permissions.granted(self):
                 return
-        if QtGui.QMessageBox.question(
+        if QtWidgets.QMessageBox.question(
             self,
             _("Confirm"),
             "%s<hr /><i>(%s)</i>" % (
@@ -3279,8 +3279,8 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
                 _("Custom items and items added using feescale "
                   "method will be unaffected")
             ),
-            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
+            QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.No:
             return
 
         if manipulate_plan.recalculate_estimate(self):
@@ -3291,14 +3291,14 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
         '''
         applies a max fee chargeable
         '''
-        if QtGui.QMessageBox.question(
+        if QtWidgets.QMessageBox.question(
             self,
             _("Confirm"),
             _("apply an exemption to the NHS items on this estimate?"),
-            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
+            QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.No:
             return
-        max_, result = QtGui.QInputDialog.getInteger(
+        max_, result = QtWidgets.QInputDialog.getInteger(
             self,
             _("input needed"),
             "%s <br />%s" % (_("maximum charge for the patient"),
@@ -3481,7 +3481,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
     def set_surgery_number(self):
         LOGGER.debug("setting surgery number")
-        dialog = QtGui.QDialog(self)
+        dialog = QtWidgets.QDialog(self)
         dl = Ui_surgeryNumber.Ui_Dialog()
         dl.setupUi(dialog)
         if dialog.exec_():
@@ -3706,7 +3706,7 @@ class OpenmolarGui(QtGui.QMainWindow, Advisor):
 
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''
-        PyQt4 prints unhandled exceptions to stdout and carries on regardless
+        PyQt5 prints unhandled exceptions to stdout and carries on regardless
         I don't want this to happen.
         so sys.excepthook is passed to this
         '''
@@ -3722,7 +3722,7 @@ def main():
     the entry point for the app
     '''
     os.chdir(os.path.expanduser("~"))
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     mainWindow = OpenmolarGui()
     sys.excepthook = mainWindow.excepthook
     mainWindow.show()

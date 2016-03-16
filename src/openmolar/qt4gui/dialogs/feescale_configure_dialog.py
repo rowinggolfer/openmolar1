@@ -24,7 +24,7 @@
 from gettext import gettext as _
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.dbtools.feescales import FeescaleConfigurer
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
@@ -32,7 +32,7 @@ from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 LOGGER = logging.getLogger("openmolar")
 
 
-class FeescaleWidget(QtGui.QWidget):
+class FeescaleWidget(QtWidgets.QWidget):
     '''
     a widget to allow user interaction for the FeescaleConfigDialog
     '''
@@ -42,27 +42,27 @@ class FeescaleWidget(QtGui.QWidget):
     check_required_signal = QtCore.pyqtSignal()
 
     def __init__(self, feescale, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         self.feescale = feescale
 
-        self.in_use_checkbox = QtGui.QCheckBox(_("In use"))
+        self.in_use_checkbox = QtWidgets.QCheckBox(_("In use"))
         self.in_use_checkbox.setChecked(feescale.in_use)
 
-        self.comment_line_edit = QtGui.QLineEdit()
+        self.comment_line_edit = QtWidgets.QLineEdit()
         message = feescale.comment if feescale.comment else feescale.name
         self.comment_line_edit.setText(message)
 
         p_map = QtGui.QPixmap(QtGui.QPixmap(":/down.png"))
-        self.down_button = QtGui.QPushButton(QtGui.QIcon(p_map), "")
+        self.down_button = QtWidgets.QPushButton(QtGui.QIcon(p_map), "")
         self.down_button.setToolTip(_("Demote the feescale"))
 
         p_map = QtGui.QPixmap(QtGui.QPixmap(":/up.png"))
-        self.up_button = QtGui.QPushButton(QtGui.QIcon(p_map), "")
+        self.up_button = QtWidgets.QPushButton(QtGui.QIcon(p_map), "")
         self.up_button.setToolTip(_("Promote the feescale"))
 
-        layout = QtGui.QHBoxLayout(self)
+        layout = QtWidgets.QHBoxLayout(self)
         layout.setMargin(0)
-        layout.addWidget(QtGui.QLabel("%02d" % feescale.ix))
+        layout.addWidget(QtWidgets.QLabel("%02d" % feescale.ix))
         layout.addWidget(self.in_use_checkbox)
         layout.addWidget(self.comment_line_edit)
         layout.addWidget(self.down_button)
@@ -110,7 +110,7 @@ class FeescaleConfigDialog(ExtendableDialog):
 
         title = _("Confgure Feescales Dialog")
         self.setWindowTitle(title)
-        label = QtGui.QLabel("%s<hr />%s" % (_(
+        label = QtWidgets.QLabel("%s<hr />%s" % (_(
             "This dialog enables you to modify the metadata which determines "
             "the order feescales are loaded."), _(
             "You can also archive a feescale by unchecking 'in use'.")))
@@ -120,8 +120,8 @@ class FeescaleConfigDialog(ExtendableDialog):
         LOGGER.debug("Feescales to config\n%s", "\n".join(
             ["  %s" % f for f in self.configurer.feescales]))
 
-        frame = QtGui.QFrame()
-        self.fs_layout = QtGui.QVBoxLayout(frame)
+        frame = QtWidgets.QFrame()
+        self.fs_layout = QtWidgets.QVBoxLayout(frame)
         self.fs_layout.setSpacing(1)
         for feescale in self.configurer.feescales:
             widg = FeescaleWidget(feescale)
@@ -130,7 +130,7 @@ class FeescaleConfigDialog(ExtendableDialog):
             widg.check_required_signal.connect(self.check_enable)
             self.fs_layout.addWidget(widg)
 
-        scroll_area = QtGui.QScrollArea(self)
+        scroll_area = QtWidgets.QScrollArea(self)
         scroll_area.setWidget(frame)
         scroll_area.setWidgetResizable(True)
         self.insertWidget(scroll_area)
@@ -206,7 +206,7 @@ if __name__ == "__main__":
     logging.basicConfig()
     LOGGER.setLevel(logging.DEBUG)
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     dl = FeescaleConfigDialog()
     if dl.exec_():

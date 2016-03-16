@@ -30,7 +30,7 @@ found under the reception tab
 from gettext import gettext as _
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 from openmolar.settings import localsettings
 from openmolar.qt4gui import colours
 
@@ -360,7 +360,7 @@ class PatientDiaryTreeModel(QtCore.QAbstractItemModel):
             return None
 
 
-class ColouredItemDelegate(QtGui.QItemDelegate):
+class ColouredItemDelegate(QtWidgets.QItemDelegate):
 
     '''
     A custom delete allows for a change in the behaviour of QListView
@@ -372,7 +372,7 @@ class ColouredItemDelegate(QtGui.QItemDelegate):
     brush2 = (QtGui.QBrush(colours.APPTCOLORS["SLOT2"]))
 
     def __init__(self, parent=None):
-        QtGui.QItemDelegate.__init__(self, parent)
+        QtWidgets.QItemDelegate.__init__(self, parent)
 
     def paint(self, painter, option, index):
         app = index.data(QtCore.Qt.UserRole)
@@ -385,7 +385,7 @@ class ColouredItemDelegate(QtGui.QItemDelegate):
         elif app == model.appt_2:  # app == model.secondaryAppt:
             pal.setBrush(pal.Highlight, self.brush2)
             pal.setBrush(pal.HighlightedText, self.dark_brush)
-        QtGui.QItemDelegate.paint(self, painter, option, index)
+        QtWidgets.QItemDelegate.paint(self, painter, option, index)
 
 
 def _test():
@@ -427,13 +427,13 @@ def _test():
 
     model = PatientDiaryTreeModel()
     model.addAppointments(appts)
-    mw = QtGui.QMainWindow()
+    mw = QtWidgets.QMainWindow()
 
     mw.setMinimumSize(800, 300)
-    frame = QtGui.QFrame(mw)
-    layout = QtGui.QVBoxLayout(frame)
+    frame = QtWidgets.QFrame(mw)
+    layout = QtWidgets.QVBoxLayout(frame)
 
-    tv = QtGui.QTreeView()
+    tv = QtWidgets.QTreeView()
     tv.setModel(model)
     tv.setAlternatingRowColors(True)
     tv.setSelectionMode(tv.ContiguousSelection)
@@ -442,10 +442,10 @@ def _test():
     tv.expandAll()
 
     buts = []
-    but_frame = QtGui.QFrame()
-    layout2 = QtGui.QHBoxLayout(but_frame)
+    but_frame = QtWidgets.QFrame()
+    layout2 = QtWidgets.QHBoxLayout(but_frame)
     for appt in sorted(appts, key=lambda a: a.aprix)[-20:]:
-        but = QtGui.QPushButton(str(appt.aprix), mw)
+        but = QtWidgets.QPushButton(str(appt.aprix), mw)
         buts.append(but)
         layout2.addWidget(but)
         but.clicked.connect(but_clicked)
@@ -460,7 +460,7 @@ def _test():
     tv.expanded.connect(resize)
     tv.clicked.connect(appt_clicked)
 
-    but = QtGui.QPushButton("Clear Selection")
+    but = QtWidgets.QPushButton("Clear Selection")
     layout.addWidget(but)
     but.clicked.connect(tv.clearSelection)
 
@@ -470,6 +470,6 @@ def _test():
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     _test()
     app.exec_()

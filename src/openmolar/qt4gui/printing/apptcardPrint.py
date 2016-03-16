@@ -23,7 +23,7 @@
 
 import datetime
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.settings import localsettings
 
@@ -102,7 +102,7 @@ class Card(object):
 if __name__ == "__main__":
     import sys
     localsettings.initiate(False)
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     mycard = Card()
     print(mycard.printer.getPageMargins(QtGui.QPrinter.Millimeter))
     from openmolar.dbtools import patient_class

@@ -27,8 +27,6 @@ this module provides read/write tools for the est_logger database table
 
 import logging
 
-from PyQt4.QtCore import QDate
-
 from openmolar.settings import localsettings
 from openmolar.connect import connect
 

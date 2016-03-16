@@ -29,7 +29,7 @@ from gettext import gettext as _
 import os
 import shutil
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings.localsettings import resources_location
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
@@ -78,7 +78,7 @@ class NewFeescaleDialog(BaseDialog):
 
 
 if __name__ == "__main__":
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     dl = NewFeescaleDialog()
     if dl.exec_():

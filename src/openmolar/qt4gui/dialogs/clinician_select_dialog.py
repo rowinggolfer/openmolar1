@@ -23,23 +23,23 @@
 
 from gettext import gettext as _
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 
 
-class ClinicianSelectDialog(QtGui.QDialog):
+class ClinicianSelectDialog(QtWidgets.QDialog):
 
     def __init__(self, parent=None):
-        QtGui.QDialog.__init__(self, parent)
+        QtWidgets.QDialog.__init__(self, parent)
         self.setWindowTitle(_("Select a Clinician"))
 
-        layout = QtGui.QVBoxLayout(self)
-        self.listwidget = QtGui.QListWidget()
+        layout = QtWidgets.QVBoxLayout(self)
+        self.listwidget = QtWidgets.QListWidget()
         self.listwidget.setSelectionBehavior(
-            QtGui.QAbstractItemView.SelectRows)
+            QtWidgets.QAbstractItemView.SelectRows)
         self.listwidget.setSelectionMode(
-            QtGui.QAbstractItemView.SingleSelection)
+            QtWidgets.QAbstractItemView.SingleSelection)
 
         clinicians = [_("NONE")] + list(localsettings.activedents) + \
             list(localsettings.activehygs)
@@ -51,10 +51,10 @@ class ClinicianSelectDialog(QtGui.QDialog):
             i = 0
         self.listwidget.setCurrentRow(i)
 
-        self.buttonBox = QtGui.QDialogButtonBox(self)
+        self.buttonBox = QtWidgets.QDialogButtonBox(self)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(
-            QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok)
+            QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setCenterButtons(True)
 
         layout.addWidget(self.listwidget)
@@ -81,13 +81,13 @@ class ClinicianSelectDialog(QtGui.QDialog):
             if u2 == chosen:
                 u2 = ""
             if (u2 and
-                    QtGui.QMessageBox.question(
+                    QtWidgets.QMessageBox.question(
                         self,
                         _("Confirm"),
                         "%s %s?" % (
                             _("Set Clinician as"), chosen),
-                        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                        QtGui.QMessageBox.Yes) == QtGui.QMessageBox.No):
+                        QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                        QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.No):
                 u2 = ""
             localsettings.setOperator(chosen, u2)
             return (change_needed, chosen)
@@ -96,7 +96,7 @@ class ClinicianSelectDialog(QtGui.QDialog):
 
 if __name__ == "__main__":
     localsettings.initiate()
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     dl = ClinicianSelectDialog()
     print(dl.result())
     app.closeAllWindows()

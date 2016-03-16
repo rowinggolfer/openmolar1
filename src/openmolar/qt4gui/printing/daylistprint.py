@@ -23,7 +23,7 @@
 
 from gettext import gettext as _
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 from openmolar.settings import localsettings
 
 
@@ -157,7 +157,7 @@ if __name__ == "__main__":
 
     localsettings.initiate()
     os.chdir(os.path.expanduser("~"))
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     d = datetime.date.today()
     apps = appointments.printableDaylistData(d, 4)
 

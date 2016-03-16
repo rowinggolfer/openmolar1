@@ -21,19 +21,19 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 
 
-class RecallDialog(QtGui.QDialog):
+class RecallDialog(QtWidgets.QDialog):
 
     '''
     generates SQL and values to be used to select patients to recall
     '''
 
     def __init__(self, parent=None):
-        QtGui.QDialog.__init__(self, parent)
+        QtWidgets.QDialog.__init__(self, parent)
         self.dent_cbs = []
 
         self.setWindowTitle("Set Recall Conditions")
@@ -41,35 +41,35 @@ class RecallDialog(QtGui.QDialog):
         start = QtCore.QDate(today.year(), today.month(), 1)
         end = QtCore.QDate(today.year(), today.month() + 1, 1).addDays(-1)
 
-        start_label = QtGui.QLabel(_("start date (inclusive)"))
-        self.start_date = QtGui.QDateEdit()
+        start_label = QtWidgets.QLabel(_("start date (inclusive)"))
+        self.start_date = QtWidgets.QDateEdit()
         self.start_date.setDate(start)
         self.start_date.setCalendarPopup(True)
 
-        end_label = QtGui.QLabel(_("end date (inclusive)"))
-        self.end_date = QtGui.QDateEdit()
+        end_label = QtWidgets.QLabel(_("end date (inclusive)"))
+        self.end_date = QtWidgets.QDateEdit()
         self.end_date.setDate(end)
         self.end_date.setCalendarPopup(True)
 
-        self.dent_gb = QtGui.QGroupBox(
+        self.dent_gb = QtWidgets.QGroupBox(
             _("Dentist choice (leave unchecked for all)"))
         self.dent_gb.setCheckable(True)
         self.dent_gb.setChecked(False)
-        layout = QtGui.QVBoxLayout(self.dent_gb)
+        layout = QtWidgets.QVBoxLayout(self.dent_gb)
 
         for i, dent in enumerate(localsettings.activedents):
-            cb = QtGui.QCheckBox()
+            cb = QtWidgets.QCheckBox()
             cb.setChecked(True)
             cb.setText(dent)
             cb.dent = localsettings.activedent_ixs[i]
             layout.addWidget(cb)
             self.dent_cbs.append(cb)
 
-        but_box = QtGui.QDialogButtonBox(self)
+        but_box = QtWidgets.QDialogButtonBox(self)
         but_box.addButton(but_box.Ok).clicked.connect(self.accept)
         but_box.addButton(but_box.Cancel).clicked.connect(self.reject)
 
-        layout = QtGui.QGridLayout(self)
+        layout = QtWidgets.QGridLayout(self)
         layout.addWidget(start_label, 1, 0)
         layout.addWidget(self.start_date, 1, 1)
         layout.addWidget(end_label, 2, 0)
@@ -101,7 +101,7 @@ class RecallDialog(QtGui.QDialog):
 if __name__ == "__main__":
     from gettext import gettext as _
     localsettings.initiate()
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     dl = RecallDialog()
     if dl.exec_():
         print(dl.conditions)

@@ -24,7 +24,7 @@
 from gettext import gettext as _
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.dbtools import referral
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
@@ -74,43 +74,43 @@ class EditReferralCentresDialog(BaseDialog):
         self._referral_centres = None
         self.deleted_centres = []
 
-        header_label = QtGui.QLabel("<b>%s</b>" % message)
+        header_label = QtWidgets.QLabel("<b>%s</b>" % message)
 
         self.list_model = ListModel()
 
-        self.list_view = QtGui.QListView()
+        self.list_view = QtWidgets.QListView()
         self.list_view.setModel(self.list_model)
 
         icon = QtGui.QIcon(":/eraser.png")
-        delete_but = QtGui.QPushButton(icon, "")
+        delete_but = QtWidgets.QPushButton(icon, "")
         delete_but.setToolTip(_("Delete the currently selected Centre"))
         delete_but.setMaximumWidth(80)
 
         icon = QtGui.QIcon(":/add_user.png")
-        add_but = QtGui.QPushButton(icon, "")
+        add_but = QtWidgets.QPushButton(icon, "")
         add_but.setToolTip(_("Add a New Centre"))
         add_but.setMaximumWidth(80)
 
-        left_frame = QtGui.QFrame()
-        layout = QtGui.QGridLayout(left_frame)
+        left_frame = QtWidgets.QFrame()
+        layout = QtWidgets.QGridLayout(left_frame)
         layout.setMargin(0)
         layout.addWidget(self.list_view, 0, 0, 1, 3)
         layout.addWidget(delete_but, 1, 0)
         layout.addWidget(add_but, 1, 1)
         left_frame.setMaximumWidth(250)
 
-        right_frame = QtGui.QFrame()
-        layout = QtGui.QFormLayout(right_frame)
+        right_frame = QtWidgets.QFrame()
+        layout = QtWidgets.QFormLayout(right_frame)
         layout.setMargin(0)
-        self.description_line_edit = QtGui.QLineEdit()
-        self.greeting_line_edit = QtGui.QLineEdit()
-        self.text_edit = QtGui.QTextEdit()
+        self.description_line_edit = QtWidgets.QLineEdit()
+        self.greeting_line_edit = QtWidgets.QLineEdit()
+        self.text_edit = QtWidgets.QTextEdit()
 
         layout.addRow(_("Description"), self.description_line_edit)
         layout.addRow(_("Greeting"), self.greeting_line_edit)
         layout.addRow(_("Address"), self.text_edit)
 
-        splitter = QtGui.QSplitter()
+        splitter = QtWidgets.QSplitter()
         splitter.addWidget(left_frame)
         splitter.addWidget(right_frame)
         splitter.setSizes([1, 10])
@@ -237,7 +237,7 @@ class EditReferralCentresDialog(BaseDialog):
 
     def remove_centre(self):
         if len(self.referral_centres) < 2:
-            QtGui.QMessageBox.warning(
+            QtWidgets.QMessageBox.warning(
                 self, _("Warning"),
                 _("You should have at least one referral centre "
                   "in the database"))
@@ -297,7 +297,7 @@ class EditReferralCentresDialog(BaseDialog):
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     dl = EditReferralCentresDialog()
     dl.exec_()

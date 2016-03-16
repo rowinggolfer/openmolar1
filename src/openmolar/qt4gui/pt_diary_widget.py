@@ -24,7 +24,7 @@
 from gettext import gettext as _
 import logging
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 
@@ -45,7 +45,7 @@ from openmolar.qt4gui.dialogs.dialog_collection import CancelAppointmentDialog
 LOGGER = logging.getLogger("openmolar")
 
 
-class PtDiaryWidget(QtGui.QWidget):
+class PtDiaryWidget(QtWidgets.QWidget):
     _pt = None
 
     start_scheduling = QtCore.pyqtSignal()
@@ -53,7 +53,7 @@ class PtDiaryWidget(QtGui.QWidget):
     # also inherits a signal from the model "appointments_changed_signal"
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         self.om_gui = parent
         self.ui = Ui_patient_diary.Ui_Form()
         self.ui.setupUi(self)
@@ -63,15 +63,15 @@ class PtDiaryWidget(QtGui.QWidget):
         self.ui.pt_diary_treeView.setContextMenuPolicy(
             QtCore.Qt.CustomContextMenu)
         self.ui.pt_diary_treeView.setSelectionMode(
-            QtGui.QTreeView.ContiguousSelection)
+            QtWidgets.QTreeView.ContiguousSelection)
         self.ui.pt_diary_treeView.setSelectionModel(
             self.diary_model.selection_model)
         item_delegate = ColouredItemDelegate(self)
         self.ui.pt_diary_treeView.setItemDelegate(item_delegate)
         self.signals()
         self.setSizePolicy(
-            QtGui.QSizePolicy(
-                QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+            QtWidgets.QSizePolicy(
+                QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         )
         self.appointments_changed_signal = \
             self.diary_model.appointments_changed_signal
@@ -174,7 +174,7 @@ class PtDiaryWidget(QtGui.QWidget):
         this is called from within the a dialog when the appointment lengths
         offered aren't enough!!
         '''
-        Dialog = QtGui.QDialog(self)
+        Dialog = QtWidgets.QDialog(self)
         dl = Ui_appointment_length.Ui_Dialog()
         dl.setupUi(Dialog)
         if Dialog.exec_():
@@ -210,7 +210,7 @@ class PtDiaryWidget(QtGui.QWidget):
                         oddLength)
 
         # -initiate a custom dialog
-        Dialog = QtGui.QDialog(self)
+        Dialog = QtWidgets.QDialog(self)
         dl = Ui_specify_appointment.Ui_Dialog()
         dl.setupUi(Dialog)
         # -add an attribute to the dialog
@@ -393,7 +393,7 @@ class PtDiaryWidget(QtGui.QWidget):
             self.advise(_("No appointment selected"), 1)
         else:
             appt = self.diary_model.appt_1
-            Dialog = QtGui.QDialog(self)
+            Dialog = QtWidgets.QDialog(self)
             dl = Ui_specify_appointment.Ui_Dialog()
             dl.setupUi(Dialog)
             dl.makeNow = False
@@ -509,32 +509,32 @@ class PtDiaryWidget(QtGui.QWidget):
         appt = self.diary_model.data(index, QtCore.Qt.UserRole)
         if appt == None:
             return
-        qmenu = QtGui.QMenu(self)
-        modify_action = QtGui.QAction(_("Modify Appointment"), self)
+        qmenu = QtWidgets.QMenu(self)
+        modify_action = QtWidgets.QAction(_("Modify Appointment"), self)
         modify_action.triggered.connect(self.modifyAppt_clicked)
         if self.diary_model.appt_2 is not None:
-            action = QtGui.QAction(_("Schedule these appointments"), self)
+            action = QtWidgets.QAction(_("Schedule these appointments"), self)
             action.triggered.connect(self.scheduleAppt_pushButton_clicked)
             qmenu.addAction(action)
         else:
             if appt.date is None:
-                action = QtGui.QAction(_("Schedule this appointment"), self)
+                action = QtWidgets.QAction(_("Schedule this appointment"), self)
                 action.triggered.connect(self.scheduleAppt_pushButton_clicked)
                 qmenu.addAction(action)
                 qmenu.addAction(modify_action)
                 qmenu.addSeparator()
-                action = QtGui.QAction(
+                action = QtWidgets.QAction(
                     _("Delete this (unscheduled) appointment"), self)
                 action.triggered.connect(self.clearApptButton_clicked)
                 qmenu.addAction(action)
             else:
-                action = QtGui.QAction(_("Show in Book"), self)
+                action = QtWidgets.QAction(_("Show in Book"), self)
                 action.triggered.connect(self.findApptButton_clicked)
                 qmenu.addAction(action)
                 qmenu.addSeparator()
                 if appt.date >= localsettings.currentDay():
                     qmenu.addAction(modify_action)
-                    action = QtGui.QAction(_("Cancel this appointment"), self)
+                    action = QtWidgets.QAction(_("Cancel this appointment"), self)
                     action.triggered.connect(self.clearApptButton_clicked)
                     qmenu.addAction(action)
 
@@ -557,12 +557,12 @@ class PtDiaryWidget(QtGui.QWidget):
             self.pt_diary_treeview_doubleclicked)
 
 
-class _TestMainWindow(QtGui.QMainWindow):
+class _TestMainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
-        QtGui.QMainWindow.__init__(self, parent)
+        QtWidgets.QMainWindow.__init__(self, parent)
 
         self.dw = PtDiaryWidget(self)
-        self.browser = QtGui.QTextBrowser()
+        self.browser = QtWidgets.QTextBrowser()
 
         pt = BriefPatient(1)
         self.dw.set_patient(pt)
@@ -572,8 +572,8 @@ class _TestMainWindow(QtGui.QMainWindow):
         self.dw.ui.pt_diary_treeView.clicked.connect(self.selection_changed)
         self.dw.find_appt.connect(self.find_appt)
 
-        frame = QtGui.QFrame()
-        layout = QtGui.QVBoxLayout(frame)
+        frame = QtWidgets.QFrame()
+        layout = QtWidgets.QVBoxLayout(frame)
         layout.addWidget(self.dw)
         layout.addWidget(self.browser)
         self.setCentralWidget(frame)
@@ -603,7 +603,7 @@ if __name__ == "__main__":
 
     localsettings.initiate()
     LOGGER.setLevel(logging.DEBUG)
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     mw = _TestMainWindow()
     mw.show()
     app.exec_()

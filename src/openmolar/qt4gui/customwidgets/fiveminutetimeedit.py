@@ -21,10 +21,10 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 
-class FiveMinuteTimeEdit(QtGui.QTimeEdit):
+class FiveMinuteTimeEdit(QtWidgets.QTimeEdit):
 
     '''
     A custom timeEdit which enforces only 5 minutes
@@ -43,9 +43,9 @@ class FiveMinuteTimeEdit(QtGui.QTimeEdit):
         isn't foolproof - 55 minutes + 5 steps == 59 :(
         '''
         if self.currentSection() == self.MinuteSection:
-            QtGui.QTimeEdit.stepBy(self, steps * 5)
+            QtWidgets.QTimeEdit.stepBy(self, steps * 5)
         else:
-            QtGui.QTimeEdit.stepBy(self, steps)
+            QtWidgets.QTimeEdit.stepBy(self, steps)
 
     def time_changed(self, t):
         min = self.time().minute()
@@ -60,7 +60,7 @@ if __name__ == "__main__":
         print("signal received", t)
 
     import sys
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     te = FiveMinuteTimeEdit()
     te.time_changed_signal.connect(test)
     te.show()

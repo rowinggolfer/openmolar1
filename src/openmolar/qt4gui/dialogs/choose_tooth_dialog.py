@@ -21,20 +21,20 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtWidgets
 
 from openmolar.qt4gui.compiled_uis import Ui_choose_tooth
 from openmolar.qt4gui.customwidgets.simple_chartwidget import SimpleChartWidg
 
 
-class ChooseToothDialog(QtGui.QDialog, Ui_choose_tooth.Ui_Dialog):
+class ChooseToothDialog(QtWidgets.QDialog, Ui_choose_tooth.Ui_Dialog):
 
     def __init__(self, parent=None):
-        QtGui.QDialog.__init__(self, parent)
+        QtWidgets.QDialog.__init__(self, parent)
         self.setupUi(self)
         self.chartwidg = SimpleChartWidg(self)
 
-        layout = QtGui.QHBoxLayout(self.frame)
+        layout = QtWidgets.QHBoxLayout(self.frame)
         layout.addWidget(self.chartwidg)
 
     def getInput(self):
@@ -45,6 +45,6 @@ class ChooseToothDialog(QtGui.QDialog, Ui_choose_tooth.Ui_Dialog):
 
 
 if __name__ == "__main__":
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     dl = ChooseToothDialog()
     dl.getInput()

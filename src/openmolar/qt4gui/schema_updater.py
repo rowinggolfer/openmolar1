@@ -31,7 +31,7 @@ import logging
 import sys
 import time
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 from openmolar.settings import localsettings
 from openmolar.dbtools import schema_version
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
@@ -100,10 +100,10 @@ class SchemaUpdater(BaseDialog, Advisor):
         BaseDialog.__init__(self, parent, remove_stretch=True)
         self.setWindowTitle("openMolar")
 
-        self.header_label = QtGui.QLabel(_("Updating Database"))
+        self.header_label = QtWidgets.QLabel(_("Updating Database"))
         self.header_label.setStyleSheet("font-weight:bold;")
-        self.label = QtGui.QLabel("")
-        self.pb = QtGui.QProgressBar()
+        self.label = QtWidgets.QLabel("")
+        self.pb = QtWidgets.QProgressBar()
 
         self.insertWidget(self.header_label)
         self.insertWidget(self.label)
@@ -126,12 +126,12 @@ class SchemaUpdater(BaseDialog, Advisor):
         message = MESSAGE.replace("{OLD}", self.current_version)
         message = message.replace("{NEW}", localsettings.CLIENT_SCHEMA_VERSION)
 
-        if QtGui.QMessageBox.question(
+        if QtWidgets.QMessageBox.question(
                 self,
                 _("Schema Update Required"),
                 message,
-                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
+                QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes:
             self.apply_updates()
         else:
             self.hide_brief_message()
@@ -148,7 +148,7 @@ class SchemaUpdater(BaseDialog, Advisor):
         this function is overwritten so that the advisor popup can be
         put in the correct place
         '''
-        QtGui.QDialog.resizeEvent(self, event)
+        QtWidgets.QDialog.resizeEvent(self, event)
         widg = self.header_label
         brief_pos_x = widg.pos().x() + widg.width()
         brief_pos_y = widg.pos().y()
@@ -166,10 +166,10 @@ class SchemaUpdater(BaseDialog, Advisor):
         LOGGER.debug("%s %s", arg, message)
         self.label.setText(message)
         self.pb.setValue(arg)
-        QtGui.QApplication.instance().processEvents()
+        QtWidgets.QApplication.instance().processEvents()
 
     def apply_update(self):
-        QtGui.QApplication.instance().processEvents()
+        QtWidgets.QApplication.instance().processEvents()
         header_message = "%s <b>%s</b> %s <b>%s</b>" % (
             _("Converting Database Schema from version"),
             self.current_version,
@@ -184,7 +184,7 @@ class SchemaUpdater(BaseDialog, Advisor):
 
         self.dbu.progress_signal.connect(self.updateProgress)
         self.dbu.completed_signal.connect(self.completed)
-        QtGui.QApplication.instance().processEvents()
+        QtWidgets.QApplication.instance().processEvents()
         try:
             if self.dbu.run():
                 localsettings.DB_SCHEMA_VERSION = self.next_version
@@ -211,7 +211,7 @@ class SchemaUpdater(BaseDialog, Advisor):
         '''
         called by DatabaseUpdaterThread when completed
         '''
-        QtGui.QApplication.instance().processEvents()
+        QtWidgets.QApplication.instance().processEvents()
         self.advise(message)
         time.sleep(2)
         self.pb.hide()
@@ -277,6 +277,6 @@ if __name__ == "__main__":
     wkdir = determine_path()
     sys.path.append(os.path.dirname(wkdir))
 
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     schema_updater = SchemaUpdater()
     print(schema_updater.exec_())

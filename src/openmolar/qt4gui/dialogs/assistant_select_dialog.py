@@ -23,33 +23,33 @@
 
 from gettext import gettext as _
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 
 
-class AssistantSelectDialog(QtGui.QDialog):
+class AssistantSelectDialog(QtWidgets.QDialog):
 
     def __init__(self, parent=None):
-        QtGui.QDialog.__init__(self, parent)
+        QtWidgets.QDialog.__init__(self, parent)
         self.setWindowTitle(_("Select an Assitant"))
 
-        layout = QtGui.QVBoxLayout(self)
-        self.listwidget = QtGui.QListWidget()
+        layout = QtWidgets.QVBoxLayout(self)
+        self.listwidget = QtWidgets.QListWidget()
         self.listwidget.setSelectionBehavior(
-            QtGui.QAbstractItemView.SelectRows)
+            QtWidgets.QAbstractItemView.SelectRows)
         self.listwidget.setSelectionMode(
-            QtGui.QAbstractItemView.SingleSelection)
+            QtWidgets.QAbstractItemView.SingleSelection)
 
         assistants = [_("No Assistant")] + localsettings.allowed_logins
         self.listwidget.addItems(assistants)
 
         self.listwidget.setCurrentRow(0)
 
-        self.buttonBox = QtGui.QDialogButtonBox(self)
+        self.buttonBox = QtWidgets.QDialogButtonBox(self)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(
-            QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok)
+            QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setCenterButtons(True)
 
         layout.addWidget(self.listwidget)
@@ -74,7 +74,7 @@ class AssistantSelectDialog(QtGui.QDialog):
 
 if __name__ == "__main__":
     localsettings.initiateUsers()
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     dl = AssistantSelectDialog()
     print(dl.result())
     app.closeAllWindows()

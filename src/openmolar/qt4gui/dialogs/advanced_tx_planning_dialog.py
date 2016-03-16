@@ -23,7 +23,7 @@
 
 import re
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.dbtools.treatment_course import CURRTRT_ROOT_ATTS
 from openmolar.qt4gui.customwidgets.upper_case_line_edit \
@@ -31,22 +31,22 @@ from openmolar.qt4gui.customwidgets.upper_case_line_edit \
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 
 
-class TxDisplayWidget(QtGui.QWidget):
+class TxDisplayWidget(QtWidgets.QWidget):
     text_edited = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
         self.pl_lineedit = UpperCaseLineEdit()
         self.cmp_lineedit = UpperCaseLineEdit()
 
         icon = QtGui.QIcon(":forward.png")
-        but = QtGui.QPushButton()
+        but = QtWidgets.QPushButton()
         but.setIcon(icon)
         but.setMaximumWidth(30)
         but.clicked.connect(self._complete_treatments)
 
-        layout = QtGui.QHBoxLayout(self)
+        layout = QtWidgets.QHBoxLayout(self)
         layout.setMargin(0)
         layout.addWidget(self.pl_lineedit)
         layout.addWidget(but)
@@ -101,16 +101,16 @@ class AdvancedTxPlanningDialog(ExtendableDialog):
         self.om_gui = parent
         self.pt = self.om_gui.pt
         self.widgets = {}
-        frame = QtGui.QFrame()
-        form_layout = QtGui.QFormLayout(frame)
+        frame = QtWidgets.QFrame()
+        form_layout = QtWidgets.QFormLayout(frame)
 
-        plan_header_label = QtGui.QLabel(_("Planned Text"))
+        plan_header_label = QtWidgets.QLabel(_("Planned Text"))
         plan_header_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        cmp_header_label = QtGui.QLabel(_("Completed Text"))
+        cmp_header_label = QtWidgets.QLabel(_("Completed Text"))
         cmp_header_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        layout = QtGui.QHBoxLayout()
+        layout = QtWidgets.QHBoxLayout()
         layout.addWidget(plan_header_label)
         layout.addWidget(cmp_header_label)
         form_layout.addRow(_("Field"), layout)
@@ -125,16 +125,16 @@ class AdvancedTxPlanningDialog(ExtendableDialog):
                 self.widgets[att] = widg
                 form_layout.addRow(att, widg)
 
-        chart_frame = QtGui.QFrame()
-        form_layout2 = QtGui.QFormLayout(chart_frame)
+        chart_frame = QtWidgets.QFrame()
+        form_layout2 = QtWidgets.QFormLayout(chart_frame)
 
-        plan_header_label = QtGui.QLabel(_("Planned Text"))
+        plan_header_label = QtWidgets.QLabel(_("Planned Text"))
         plan_header_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        cmp_header_label = QtGui.QLabel(_("Completed Text"))
+        cmp_header_label = QtWidgets.QLabel(_("Completed Text"))
         cmp_header_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        layout = QtGui.QHBoxLayout()
+        layout = QtWidgets.QHBoxLayout()
         layout.addWidget(plan_header_label)
         layout.addWidget(cmp_header_label)
         form_layout2.addRow(_("Field"), layout)
@@ -144,16 +144,16 @@ class AdvancedTxPlanningDialog(ExtendableDialog):
             self.widgets[att] = widg
             form_layout2.addRow(att, widg)
 
-        left_scroll_area = QtGui.QScrollArea()
+        left_scroll_area = QtWidgets.QScrollArea()
         left_scroll_area.setWidget(frame)
         left_scroll_area.setWidgetResizable(True)
 
-        self.chart_scroll_area = QtGui.QScrollArea()
+        self.chart_scroll_area = QtWidgets.QScrollArea()
         self.chart_scroll_area.setWidget(chart_frame)
         self.chart_scroll_area.setWidgetResizable(True)
 
-        upper_frame = QtGui.QFrame()
-        layout = QtGui.QHBoxLayout(upper_frame)
+        upper_frame = QtWidgets.QFrame()
+        layout = QtWidgets.QHBoxLayout(upper_frame)
         layout.addWidget(left_scroll_area)
         layout.addWidget(self.chart_scroll_area)
 
@@ -166,7 +166,7 @@ class AdvancedTxPlanningDialog(ExtendableDialog):
 
         self.load_values()
 
-        self.chart_but = QtGui.QPushButton(_("Show Chart Items"))
+        self.chart_but = QtWidgets.QPushButton(_("Show Chart Items"))
         self.chart_but.clicked.connect(self._show_chart)
         self.add_advanced_widget(self.chart_but)
         self.chart_scroll_area.setVisible(self.SHOW_CHART_ITEMS)
@@ -315,8 +315,8 @@ if __name__ == "__main__":
     from gettext import gettext as _
     from openmolar.dbtools.patient_class import patient
 
-    app = QtGui.QApplication([])
-    mw = QtGui.QWidget()
+    app = QtWidgets.QApplication([])
+    mw = QtWidgets.QWidget()
     mw.pt = patient(11956)
     dl = AdvancedTxPlanningDialog(mw)
     if dl.exec_():

@@ -22,7 +22,7 @@
 # ########################################################################### #
 
 import re
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 
 class TreatmentListModel(QtCore.QAbstractListModel):
@@ -94,13 +94,13 @@ class CompletedTreatmentListModel(TreatmentListModel):
 
 
 if __name__ == "__main__":
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     model = TreatmentListModel()
 
-    mw = QtGui.QMainWindow()
+    mw = QtWidgets.QMainWindow()
 
-    list_view = QtGui.QListView()
+    list_view = QtWidgets.QListView()
     list_view.setModel(model)
     mw.setCentralWidget(list_view)
     mw.show()

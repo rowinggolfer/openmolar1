@@ -24,7 +24,7 @@
 import logging
 from gettext import gettext as _
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.dbtools import writeNewPatient, families
@@ -36,13 +36,13 @@ def check_use_family(om_gui):
     if localsettings.LAST_ADDRESS == localsettings.BLANK_ADDRESS:
         LOGGER.warning("New Patient - No previous record details found")
         return
-    if QtGui.QMessageBox.question(
+    if QtWidgets.QMessageBox.question(
             om_gui,
             _("Question"),
             _(
             "Use details from the previous record?"),
-            QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-            QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+            QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes:
         dup_tup = localsettings.LAST_ADDRESS
         om_gui.ui.addr1Edit.setText(dup_tup[1])
         om_gui.ui.addr2Edit.setText(dup_tup[2])
@@ -56,23 +56,23 @@ def check_use_family(om_gui):
         return
 
     if localsettings.last_family_no in (None, 0):
-        if QtGui.QMessageBox.question(
+        if QtWidgets.QMessageBox.question(
                 om_gui,
                 _("Question"),
                 _("Start a new family group?"),
-                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes:
             om_gui.pt.familyno = families.new_group(
                 localsettings.previous_sno())
             LOGGER.info("starting new family group %s", om_gui.pt.familyno)
     else:
-        if QtGui.QMessageBox.question(
+        if QtWidgets.QMessageBox.question(
             om_gui,
             _("Question"),
             _(
                 "Add the new patient to this family group?"),
-            QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes:
             om_gui.pt.familyno = localsettings.last_family_no
 
 
@@ -181,12 +181,12 @@ def abortNewPatientEntry(om_gui):
     '''
     om_gui.ui.main_tabWidget.setCurrentIndex(0)
 
-    if QtGui.QMessageBox.question(
+    if QtWidgets.QMessageBox.question(
             om_gui,
             _("Confirm"),
             "%s<hr /><em>%s</em>" % (_("New Patient not saved."),
                                      _("Abandon Changes?")),
-            QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
-            QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok:
+            QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel,
+            QtWidgets.QMessageBox.Cancel) == QtWidgets.QMessageBox.Ok:
         finishedNewPatientInput(om_gui)
         return True

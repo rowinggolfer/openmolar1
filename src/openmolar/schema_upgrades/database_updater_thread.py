@@ -23,7 +23,7 @@
 
 import logging
 
-from PyQt4 import QtCore
+from PyQt5 import QtCore
 from openmolar import connect
 from openmolar.dbtools import schema_version
 

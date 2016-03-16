@@ -22,10 +22,10 @@
 # ########################################################################### #
 
 import re
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 
 
-class MoneyLineEdit(QtGui.QLineEdit):
+class MoneyLineEdit(QtWidgets.QLineEdit):
 
     '''
     interestingly, for the input of money values, and having experimented
@@ -35,7 +35,7 @@ class MoneyLineEdit(QtGui.QLineEdit):
     '''
 
     def __init__(self, parent=None):
-        QtGui.QLineEdit.__init__(self, parent)
+        QtWidgets.QLineEdit.__init__(self, parent)
         self.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
 
     @property
@@ -79,7 +79,7 @@ class MoneyLineEdit(QtGui.QLineEdit):
                            QtCore.Qt.Key_Left,
                            QtCore.Qt.Key_Delete
                            ):
-            QtGui.QLineEdit.keyPressEvent(self, event)
+            QtWidgets.QLineEdit.keyPressEvent(self, event)
             self.check_val()
             return
 
@@ -98,7 +98,7 @@ class MoneyLineEdit(QtGui.QLineEdit):
         pos = self.cursorPosition()
 
         if pos != len(current_txt):
-            QtGui.QLineEdit.keyPressEvent(self, event)
+            QtWidgets.QLineEdit.keyPressEvent(self, event)
             self.check_val()
             return
 
@@ -118,7 +118,7 @@ class MoneyLineEdit(QtGui.QLineEdit):
 
 if __name__ == "__main__":
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     mle = MoneyLineEdit()
     mle.show()
     app.exec_()

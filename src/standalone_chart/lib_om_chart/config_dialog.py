@@ -28,33 +28,33 @@ has one class, a dialog to write the config
 import logging
 import sys
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from lib_om_chart import config
 
 LOGGER = logging.getLogger("om_chart")
 
 
-class ConfigDialog(QtGui.QDialog):
+class ConfigDialog(QtWidgets.QDialog):
 
     def __init__(self, parent=None):
-        QtGui.QDialog.__init__(self, parent)
+        QtWidgets.QDialog.__init__(self, parent)
 
-        label = QtGui.QLabel("<b>%s</b>" % _(
+        label = QtWidgets.QLabel("<b>%s</b>" % _(
             "Please complete the following form"))
         label.setAlignment(QtCore.Qt.AlignCenter)
-        frame = QtGui.QFrame()
-        form_layout = QtGui.QFormLayout(frame)
+        frame = QtWidgets.QFrame()
+        form_layout = QtWidgets.QFormLayout(frame)
 
-        self.host_le = QtGui.QLineEdit()
-        self.port_le = QtGui.QLineEdit()
+        self.host_le = QtWidgets.QLineEdit()
+        self.port_le = QtWidgets.QLineEdit()
         val = QtGui.QIntValidator(1, 65535, self)
         self.port_le.setValidator(val)
-        self.database_le = QtGui.QLineEdit()
-        self.user_le = QtGui.QLineEdit()
-        self.password_le = QtGui.QLineEdit()
-        self.password_le.setEchoMode(QtGui.QLineEdit.Password)
-        self.surgery_sb = QtGui.QSpinBox()
+        self.database_le = QtWidgets.QLineEdit()
+        self.user_le = QtWidgets.QLineEdit()
+        self.password_le = QtWidgets.QLineEdit()
+        self.password_le.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.surgery_sb = QtWidgets.QSpinBox()
 
         form_layout.addRow(_("host"), self.host_le)
         form_layout.addRow(_("port"), self.port_le)
@@ -63,13 +63,13 @@ class ConfigDialog(QtGui.QDialog):
         form_layout.addRow(_("password"), self.password_le)
         form_layout.addRow(_("Surgery number"), self.surgery_sb)
 
-        self.button_box = QtGui.QDialogButtonBox(self)
+        self.button_box = QtWidgets.QDialogButtonBox(self)
         self.button_box.setOrientation(QtCore.Qt.Horizontal)
         self.button_box.setStandardButtons(
             self.button_box.Cancel | self.button_box.Apply)
         self.button_box.setCenterButtons(True)
 
-        layout = QtGui.QVBoxLayout(self)
+        layout = QtWidgets.QVBoxLayout(self)
         layout.addWidget(label)
         layout.addWidget(frame)
         layout.addStretch()
@@ -129,7 +129,7 @@ class ConfigDialog(QtGui.QDialog):
     def exec_(self, reconfigure=False):
         result = True
         while (result and not self.has_acceptable_values) or reconfigure:
-            result = QtGui.QDialog.exec_(self)
+            result = QtWidgets.QDialog.exec_(self)
             reconfigure = False
         return result
 
@@ -156,7 +156,7 @@ class ConfigDialog(QtGui.QDialog):
 
 if __name__ == "__main__":
     from gettext import gettext as _
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     dl = ConfigDialog()
     if dl.exec_():
         dl.write_config()

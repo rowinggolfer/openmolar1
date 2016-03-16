@@ -26,7 +26,7 @@ Provides a Class for printing on an A4 Sheet
 '''
 
 import logging
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.settings import localsettings
 
@@ -156,7 +156,7 @@ if __name__ == "__main__":
     import os
     os.chdir(os.path.expanduser("~"))  # for print to file
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     form = PrintedForm()
     form.testing_mode = True
 

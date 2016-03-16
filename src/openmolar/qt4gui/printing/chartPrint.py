@@ -23,7 +23,7 @@
 
 import math
 import sys
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtGui, QtWidgets
 
 
 class printChart():
@@ -65,7 +65,7 @@ class printChart():
 
 
 if __name__ == "__main__":
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     chart = QtGui.QPixmap("images/testchart.png")
     form = printChart(chart)
     form.printpage(True)  # show a dialog for testing purposes

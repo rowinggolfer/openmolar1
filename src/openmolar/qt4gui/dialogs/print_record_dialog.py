@@ -22,7 +22,7 @@
 # ########################################################################### #
 
 from gettext import gettext as _
-from PyQt4 import QtGui, QtCore, QtWebKit
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
@@ -38,7 +38,7 @@ class PrintRecordDialog(BaseDialog):
         self.pt = patient
 
         self.main_ui = parent
-        patient_label = QtGui.QLabel(
+        patient_label = QtWidgets.QLabel(
             "%s<br /><b>%s</b>" % (_("Print the record of"), patient.name_id))
 
         patient_label.setAlignment(QtCore.Qt.AlignCenter)
@@ -77,7 +77,7 @@ if __name__ == "__main__":
     from openmolar.dbtools import patient_class
     pt = patient_class.patient(10781)
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     dl = PrintRecordDialog(pt, "file:///home/neil/chart.png", None)
     dl.exec_()

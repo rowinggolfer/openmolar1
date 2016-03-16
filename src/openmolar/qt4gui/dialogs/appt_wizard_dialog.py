@@ -21,16 +21,16 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 from openmolar.settings import localsettings, appointment_shortcuts
 from openmolar.qt4gui.compiled_uis import Ui_apptWizard
 from openmolar.qt4gui.compiled_uis import Ui_apptWizardItem
 
 
-class apptWidget(QtGui.QWidget, Ui_apptWizardItem.Ui_Form):
+class apptWidget(QtWidgets.QWidget, Ui_apptWizardItem.Ui_Form):
 
     def __init__(self, parent_dialog):
-        QtGui.QWidget.__init__(self, parent_dialog)
+        QtWidgets.QWidget.__init__(self, parent_dialog)
         self.dl = parent_dialog
         self.setupUi(self)
         self.signals()
@@ -73,12 +73,12 @@ class apptWidget(QtGui.QWidget, Ui_apptWizardItem.Ui_Form):
         self.dl.accept()
 
 
-class apptWizard(QtGui.QDialog, Ui_apptWizard.Ui_Dialog):
+class apptWizard(QtWidgets.QDialog, Ui_apptWizard.Ui_Dialog):
 
     add_appointments_signal = QtCore.pyqtSignal(object)
 
     def __init__(self, om_gui=None):
-        QtGui.QDialog.__init__(self, om_gui)
+        QtWidgets.QDialog.__init__(self, om_gui)
         self.setupUi(self)
         self.items = []
         self.om_gui = om_gui
@@ -90,15 +90,15 @@ class apptWizard(QtGui.QDialog, Ui_apptWizard.Ui_Dialog):
 
     def showAppts(self):
         self.apptWidgets = []
-        vlayout = QtGui.QVBoxLayout(self.frame)
+        vlayout = QtWidgets.QVBoxLayout(self.frame)
         for shortcut in self.shortcuts:
             i = apptWidget(self)
             i.setLabelText(shortcut.get("description"))
             i.addAppointments(shortcut.get("appointments"))
             self.apptWidgets.append(i)
             vlayout.addWidget(i)
-        spacerItem = QtGui.QSpacerItem(1, 20, QtGui.QSizePolicy.Minimum,
-                                       QtGui.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(1, 20, QtWidgets.QSizePolicy.Minimum,
+                                       QtWidgets.QSizePolicy.Expanding)
 
         vlayout.addItem(spacerItem)
 
@@ -107,17 +107,17 @@ if __name__ == "__main__":
     import sys
     from openmolar.dbtools import patient_class
 
-    class TestGui(QtGui.QWidget):
+    class TestGui(QtWidgets.QWidget):
 
         def __init__(self, parent=None):
-            QtGui.QWidget.__init__(self, parent)
+            QtWidgets.QWidget.__init__(self, parent)
             self.pt = patient_class.patient(3)
 
     def test(*args):
         print("signal caught", args)
 
     localsettings.initiate()
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     main_ui = TestGui()
     dl = apptWizard(main_ui)
     dl.add_appointments_signal.connect(test)

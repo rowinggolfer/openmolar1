@@ -23,7 +23,7 @@
 
 from gettext import gettext as _
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 from openmolar.dbtools import appointments
 from openmolar.settings import localsettings
 
@@ -96,23 +96,23 @@ if __name__ == "__main__":
         for d_day in model.clinician_list(
                 cb.currentIndex(), cal.date().toPyDate()):
             message += "%s <br />" % d_day
-        QtGui.QMessageBox.information(mw, "result", message)
+        QtWidgets.QMessageBox.information(mw, "result", message)
 
     localsettings.initiate()
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     model = ClinicianSelectModel()
 
-    mw = QtGui.QMainWindow()
-    frame = QtGui.QWidget()
-    cb = QtGui.QComboBox()
+    mw = QtWidgets.QMainWindow()
+    frame = QtWidgets.QWidget()
+    cb = QtWidgets.QComboBox()
     cb.setModel(model)
-    cal = QtGui.QDateEdit()
+    cal = QtWidgets.QDateEdit()
     cal.setDate(QtCore.QDate(2013, 2, 1))
-    button = QtGui.QPushButton("who's chosen?")
+    button = QtWidgets.QPushButton("who's chosen?")
     button.clicked.connect(but_clicked)
 
-    layout = QtGui.QVBoxLayout(frame)
+    layout = QtWidgets.QVBoxLayout(frame)
     layout.addWidget(cb)
     layout.addWidget(cal)
     layout.addWidget(button)

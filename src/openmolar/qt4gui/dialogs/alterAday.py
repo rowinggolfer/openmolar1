@@ -22,7 +22,7 @@
 # ########################################################################### #
 
 from gettext import gettext as _
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 from openmolar.qt4gui.compiled_uis import Ui_activeDentStartFinish
 from openmolar.qt4gui.compiled_uis import Ui_aslotEdit
 from openmolar.qt4gui.customwidgets import fiveminutetimeedit
@@ -106,13 +106,13 @@ class dentWidget(Ui_activeDentStartFinish.Ui_Form):
         self.start_timeEdit = \
             fiveminutetimeedit.FiveMinuteTimeEdit(self.widget)
 
-        l = QtGui.QVBoxLayout(self.widget)
+        l = QtWidgets.QVBoxLayout(self.widget)
         l.addWidget(self.start_timeEdit)
 
         self.finish_timeEdit = \
             fiveminutetimeedit.FiveMinuteTimeEdit(self.widget_2)
 
-        l = QtGui.QVBoxLayout(self.widget_2)
+        l = QtWidgets.QVBoxLayout(self.widget_2)
         l.addWidget(self.finish_timeEdit)
 
         self.start_timeEdit.setMinimumTime(localsettings.earliestStart)
@@ -146,7 +146,7 @@ class alterDayDialog(Ui_aslotEdit.Ui_Dialog):
 
     def __init__(self, diary_widget, date):
         # date passed in is a QDate
-        self.dialog = QtGui.QDialog(diary_widget)
+        self.dialog = QtWidgets.QDialog(diary_widget)
         self.diary_widget = diary_widget
         self.setupUi(self.dialog)
         self.data_list = []
@@ -195,10 +195,10 @@ class alterDayDialog(Ui_aslotEdit.Ui_Dialog):
         load the dentWidgets into the gui
         '''
         self.dentWidgets = []
-        vlayout = QtGui.QVBoxLayout(self.frame_2)
+        vlayout = QtWidgets.QVBoxLayout(self.frame_2)
         vlayout.setSpacing(0)
         for clinician in self.data_list:
-            iw = QtGui.QWidget()
+            iw = QtWidgets.QWidget()
             dw = dentWidget(iw)
             dw.setData(clinician)
             self.dentWidgets.append(dw)
@@ -262,7 +262,7 @@ class alterDayDialog(Ui_aslotEdit.Ui_Dialog):
 if __name__ == "__main__":
     import sys
     localsettings.initiate()
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     from openmolar.qt4gui.diary_widget import DiaryWidget
     d_widg = DiaryWidget()
     dl = alterDayDialog(d_widg, QtCore.QDate.currentDate())

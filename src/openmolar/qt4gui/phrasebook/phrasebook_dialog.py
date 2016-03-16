@@ -26,21 +26,21 @@ from gettext import gettext as _
 import types
 from xml.dom import minidom
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 from openmolar.dbtools.phrasebook import PHRASEBOOKS
 
 
-class shadePicker(QtGui.QFrame):
+class shadePicker(QtWidgets.QFrame):
 
     def __init__(self, parent=None):
         super(shadePicker, self).__init__(parent)
 
-        layout = QtGui.QHBoxLayout(self)
+        layout = QtWidgets.QHBoxLayout(self)
 
-        self.cb = QtGui.QCheckBox(self)
+        self.cb = QtWidgets.QCheckBox(self)
         self.cb.setText(_("Shade"))
 
-        self.comboBox = QtGui.QComboBox(self)
+        self.comboBox = QtWidgets.QComboBox(self)
         self.comboBox.addItems(
             ["A1", "A2", "A3", "A3.5", "A4", "B1", "B2", "B3", "B4",
              "C1", "C2", "C3", "C4", "D1", "D2", "D3", "D4"])
@@ -48,8 +48,8 @@ class shadePicker(QtGui.QFrame):
 
         layout.addWidget(self.cb)
         layout.addWidget(self.comboBox)
-        spacerItem = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding,
-                                       QtGui.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Expanding,
+                                       QtWidgets.QSizePolicy.Minimum)
         layout.addItem(spacerItem)
 
         self.comboBox.currentIndexChanged.connect(self.slot)
@@ -90,15 +90,15 @@ class ListModel(QtCore.QAbstractListModel):
         self.endResetModel()
 
 
-class MockTabWidget(QtGui.QWidget):
+class MockTabWidget(QtWidgets.QWidget):
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
-        self.stacked_widget = QtGui.QStackedWidget()
-        self.list_view = QtGui.QListView()
+        QtWidgets.QWidget.__init__(self, parent)
+        self.stacked_widget = QtWidgets.QStackedWidget()
+        self.list_view = QtWidgets.QListView()
         self.list_model = ListModel()
         self.list_view.setModel(self.list_model)
-        layout = QtGui.QHBoxLayout(self)
+        layout = QtWidgets.QHBoxLayout(self)
         layout.addWidget(self.list_view)
         layout.addWidget(self.stacked_widget)
         self.list_view.pressed.connect(self.select_tab)
@@ -114,19 +114,19 @@ class MockTabWidget(QtGui.QWidget):
             self.list_view.setCurrentIndex(index)
 
 
-class PhraseBookDialog(QtGui.QDialog):
+class PhraseBookDialog(QtWidgets.QDialog):
 
     def __init__(self, parent=None, id=0):
-        QtGui.QDialog.__init__(self, parent)
+        QtWidgets.QDialog.__init__(self, parent)
         self.setWindowTitle(_("Phrase Book"))
 
-        layout = QtGui.QVBoxLayout(self)
+        layout = QtWidgets.QVBoxLayout(self)
         self.tabWidget = MockTabWidget()
 
-        self.buttonBox = QtGui.QDialogButtonBox(self)
+        self.buttonBox = QtWidgets.QDialogButtonBox(self)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(
-            QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok)
+            QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setCenterButtons(True)
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
@@ -147,8 +147,8 @@ class PhraseBookDialog(QtGui.QDialog):
                 icon = QtGui.QIcon(icon_loc)
             else:
                 icon = QtGui.QIcon(":icons/pencil.png")
-            page = QtGui.QWidget(self)
-            layout = QtGui.QVBoxLayout(page)
+            page = QtWidgets.QWidget(self)
+            layout = QtWidgets.QVBoxLayout(page)
             phrases = section.getElementsByTagName("phrase")
             for phrase in phrases:
 
@@ -156,11 +156,11 @@ class PhraseBookDialog(QtGui.QDialog):
                     layout.addStretch()
                 elif phrase.hasAttribute("sub_heading"):
                     text = phrase.firstChild.data
-                    label = QtGui.QLabel("<b>%s</b>" % text)
+                    label = QtWidgets.QLabel("<b>%s</b>" % text)
                     layout.addWidget(label)
                 else:
                     text = phrase.firstChild.data
-                    cb = QtGui.QCheckBox(page)
+                    cb = QtWidgets.QCheckBox(page)
                     cb.setText(text)
                     layout.addWidget(cb)
                     self.dict[cb] = text
@@ -171,8 +171,8 @@ class PhraseBookDialog(QtGui.QDialog):
                     layout.addWidget(sp)
                     self.dict[sp.cb] = sp.result
 
-            spacerItem = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum,
-                                           QtGui.QSizePolicy.Expanding)
+            spacerItem = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Minimum,
+                                           QtWidgets.QSizePolicy.Expanding)
             layout.addItem(spacerItem)
 
             self.tabWidget.addTab(page, icon, header_text)
@@ -194,7 +194,7 @@ class PhraseBookDialog(QtGui.QDialog):
 
 
 if __name__ == "__main__":
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     dl = PhraseBookDialog()
     if dl.exec_():
         print(dl.selectedPhrases)

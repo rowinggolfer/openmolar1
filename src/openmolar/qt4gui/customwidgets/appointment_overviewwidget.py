@@ -30,7 +30,7 @@ from gettext import gettext as _
 import logging
 import pickle
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 from openmolar.settings import localsettings
 from openmolar.dbtools import appointments
 from openmolar.qt4gui import colours
@@ -80,7 +80,7 @@ class BlinkTimer(QtCore.QTimer):
         self.state = not self.state
 
 
-class AppointmentOverviewWidget(QtGui.QWidget):
+class AppointmentOverviewWidget(QtWidgets.QWidget):
 
     '''
     a custom widget to provide a week view for a dental appointment book
@@ -114,8 +114,8 @@ class AppointmentOverviewWidget(QtGui.QWidget):
         self.diary_widget = diary_widget
         self.setMinimumSize(self.minimumSizeHint())
 
-        self.setSizePolicy(QtGui.QSizePolicy(
-            QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
+        self.setSizePolicy(QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding))
 
         self.font = QtGui.QFont()
         self.font.setPointSize(10)
@@ -229,7 +229,7 @@ class AppointmentOverviewWidget(QtGui.QWidget):
             rect = QtCore.QRectF(leftx, 0, columnWidth, self.headingHeight)
             if rect.contains(event.pos()):
                 self.selected_rect = rect
-                QtGui.QToolTip.showText(event.globalPos(), dent.memo)
+                QtWidgets.QToolTip.showText(event.globalPos(), dent.memo)
                 return
 
             for slot in self.freeslots.get(dent.ix, []):
@@ -253,7 +253,7 @@ class AppointmentOverviewWidget(QtGui.QWidget):
                         _("with"),
                         dent.initials)
 
-                    QtGui.QToolTip.showText(event.globalPos(), feedback)
+                    QtWidgets.QToolTip.showText(event.globalPos(), feedback)
                     self.update()
                     return
 
@@ -790,7 +790,7 @@ class AppointmentOverviewWidget(QtGui.QWidget):
 
 if __name__ == "__main__":
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     form = AppointmentOverviewWidget("0800", "1900", 15, 2, None)
 
     form.show()

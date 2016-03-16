@@ -29,7 +29,7 @@ script, concerning fees, accounts and graphical feescale display.
 from gettext import gettext as _
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 
@@ -225,12 +225,12 @@ def configure_feescales(om_gui):
     LOGGER.debug("configure feescales")
     dl = FeescaleConfigDialog(om_gui)
     if (dl.exec_() and
-            QtGui.QMessageBox.question(
+            QtWidgets.QMessageBox.question(
                 om_gui,
                 _("Question"),
                 _("Reload feescales now?"),
-                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes):
+                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes):
         om_gui.reload_feescales()
 
 
@@ -256,7 +256,7 @@ def table_clicked(om_gui, index):
         else:
             om_gui.advise("%s %s" % (arg.text(), _("not yet available")), 1)
 
-    menu = QtGui.QMenu(om_gui)
+    menu = QtWidgets.QMenu(om_gui)
     ptno = om_gui.pt.serialno
     if ptno != 0:
         menu.addAction(_("Add to tx plan of patient") + " %d" % ptno)
@@ -364,12 +364,12 @@ def makeBadDebt(om_gui):
     '''
     write off the debt (stops cluttering up the accounts table)
     '''
-    if QtGui.QMessageBox.question(
+    if QtWidgets.QMessageBox.question(
             om_gui,
             _("Confirm"),
             _("Move this patient to Bad Debt Status?"),
-            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-            QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+            QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+            QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes:
         # what is owed
         om_gui.pt.money11 = om_gui.pt.fees
         om_gui.pt.force_money_changes = True
@@ -405,7 +405,7 @@ def populateAccountsTable(om_gui):
         for col in range(len(row)):
             d = row[col]
             if d is not None or col == 11:
-                item = QtGui.QTableWidgetItem()
+                item = QtWidgets.QTableWidgetItem()
                 if col == 0:
                     item.setText(localsettings.ops.get(d))
                 elif col in (5, 7, 8):
@@ -427,7 +427,7 @@ def populateAccountsTable(om_gui):
                     item.setText(str(d).title())
                 om_gui.ui.accounts_tableWidget.setItem(rowno, col, item)
         for col in range(13, 16):
-            item = QtGui.QTableWidgetItem()
+            item = QtWidgets.QTableWidgetItem()
             item.setCheckState(QtCore.Qt.Unchecked)
             om_gui.ui.accounts_tableWidget.setItem(rowno, col, item)
         rowno += 1

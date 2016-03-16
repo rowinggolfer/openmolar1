@@ -29,7 +29,7 @@ from gettext import gettext as _
 import logging
 import tempfile
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.settings import localsettings, utilities
 
@@ -400,18 +400,18 @@ def daylistPrintWizard(om_gui):
     def checkAll(arg):
         for cb in list(checkBoxes.values()):
             cb.setChecked(arg)
-    Dialog = QtGui.QDialog(om_gui)
+    Dialog = QtWidgets.QDialog(om_gui)
     dl = Ui_daylist_print.Ui_Dialog()
     dl.setupUi(Dialog)
-    vlayout = QtGui.QGridLayout(dl.scrollArea)
-    dl.alldentscheckBox = QtGui.QCheckBox(_("All Books"))
+    vlayout = QtWidgets.QGridLayout(dl.scrollArea)
+    dl.alldentscheckBox = QtWidgets.QCheckBox(_("All Books"))
     dl.alldentscheckBox.setChecked(True)
     dl.alldentscheckBox.stateChanged.connect(checkAll)
     row = 0
     vlayout.addWidget(dl.alldentscheckBox, row, 0, 1, 2)
     checkBoxes = {}
     for dent in localsettings.activedents + localsettings.activehygs:
-        cb = QtGui.QCheckBox(dent)
+        cb = QtWidgets.QCheckBox(dent)
         cb.setChecked(True)
         checkBoxes[localsettings.apptix[dent]] = cb
         row += 1
@@ -549,7 +549,7 @@ def historyPrint(om_gui):
 if __name__ == "__main__":
     import os
     os.chdir(os.path.expanduser("~"))  # for printing to pdf
-    app = QtGui.QApplication([])
-    widg = QtGui.QWidget()
+    app = QtWidgets.QApplication([])
+    widg = QtWidgets.QWidget()
     widg.pt = patient_class.patient(1)
     printLetter(widg)

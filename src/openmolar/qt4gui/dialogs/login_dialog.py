@@ -28,7 +28,7 @@ import os
 import sys
 from xml.dom import minidom
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
@@ -40,17 +40,17 @@ from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 LOGGER = logging.getLogger("openmolar")
 
 
-class AlternateServersWidget(QtGui.QWidget):
+class AlternateServersWidget(QtWidgets.QWidget):
     chosen = 0
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         self.radio_buttons = []
-        layout = QtGui.QVBoxLayout(self)
+        layout = QtWidgets.QVBoxLayout(self)
         for i, server in enumerate(localsettings.server_names):
             if i == 0:
                 server = "%s (%s)" % (server, _("Default"))
-            radio_button = (QtGui.QRadioButton(server, self))
+            radio_button = (QtWidgets.QRadioButton(server, self))
             radio_button.setChecked(i == 0)
 
             self.radio_buttons.append(radio_button)
@@ -75,12 +75,12 @@ class AlternateServersWidget(QtGui.QWidget):
             return
         self.chosen = self.radio_buttons.index(self.sender())
         if self.chosen != 0:
-            if QtGui.QMessageBox.question(
+            if QtWidgets.QMessageBox.question(
                 self,
                 _("confirm"),
                 self.confirm_message,
-                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                    QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
+                QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                    QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.No:
                 self.radio_buttons[0].setChecked(True)
         LOGGER.warning("chosen server = %s", self.chosen)
 
@@ -97,26 +97,26 @@ class LoginDialog(ExtendableDialog):
 
         header_label = WarningLabel(_('Login Required'))
 
-        self.password_lineEdit = QtGui.QLineEdit()
-        self.password_lineEdit.setEchoMode(QtGui.QLineEdit.Password)
+        self.password_lineEdit = QtWidgets.QLineEdit()
+        self.password_lineEdit.setEchoMode(QtWidgets.QLineEdit.Password)
         self.user1_lineEdit = UpperCaseLineEdit()
         self.user1_lineEdit.setMaximumWidth(50)
         self.user2_lineEdit = UpperCaseLineEdit()
         self.user2_lineEdit.setMaximumWidth(50)
 
-        self.reception_radioButton = QtGui.QRadioButton(_("Reception Machine"))
-        self.surgery_radioButton = QtGui.QRadioButton(_("Surgery Machine"))
+        self.reception_radioButton = QtWidgets.QRadioButton(_("Reception Machine"))
+        self.surgery_radioButton = QtWidgets.QRadioButton(_("Surgery Machine"))
         self.surgery_radioButton.setChecked(True)
 
-        frame = QtGui.QFrame()
-        form_layout = QtGui.QFormLayout(frame)
+        frame = QtWidgets.QFrame()
+        form_layout = QtWidgets.QFormLayout(frame)
 
         form_layout.addRow(_("System Password"), self.password_lineEdit)
 
         form_layout.addRow(_("User 1 (Required)"), self.user1_lineEdit)
         form_layout.addRow(_("User 2 (Optional)"), self.user2_lineEdit)
 
-        but_group = QtGui.QButtonGroup(self)
+        but_group = QtWidgets.QButtonGroup(self)
         but_group.addButton(self.surgery_radioButton)
         but_group.addButton(self.reception_radioButton)
 
@@ -178,12 +178,12 @@ class LoginDialog(ExtendableDialog):
 
         except IOError:
             LOGGER.warning("still no settings file. quitting politely")
-            QtGui.QMessageBox.information(
+            QtWidgets.QMessageBox.information(
                 None,
                 _("Unable to Run OpenMolar"),
                 _("Good Bye!"))
 
-            QtGui.QApplication.instance().closeAllWindows()
+            QtWidgets.QApplication.instance().closeAllWindows()
             sys.exit("unable to run - openMolar couldn't find a settings file")
 
     def autoreception(self, user):
@@ -297,7 +297,7 @@ class LoginDialog(ExtendableDialog):
                 # LOGGER.debug("passwords ok %s", self.password_ok)
                 # LOGGER.debug("user1 ok %s", self.user1_ok)
                 # LOGGER.debug("user2 ok %s", self.user2_ok)
-                QtGui.QMessageBox.warning(
+                QtWidgets.QMessageBox.warning(
                     self.parent(),
                     _("Login Error"),
                     '<h2>%s %s</h2><em>%s</em>' % (
@@ -311,7 +311,7 @@ class LoginDialog(ExtendableDialog):
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     dl = LoginDialog()
     print(dl.exec_())

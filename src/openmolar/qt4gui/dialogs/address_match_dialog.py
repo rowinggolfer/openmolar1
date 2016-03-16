@@ -23,7 +23,7 @@
 
 import datetime
 import re
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.connect import connect
@@ -47,9 +47,9 @@ class AddressMatchDialog(BaseDialog):
         title = _("Address Matches")
         self.setWindowTitle(title)
 
-        self.table_widget = QtGui.QTableWidget()
+        self.table_widget = QtWidgets.QTableWidget()
         self.table_widget.setSelectionBehavior(
-            QtGui.QAbstractItemView.SelectRows)
+            QtWidgets.QAbstractItemView.SelectRows)
         self.table_widget.setAlternatingRowColors(True)
         self.table_widget.setSortingEnabled(True)
 
@@ -79,7 +79,7 @@ class AddressMatchDialog(BaseDialog):
         message = "<b>%s<b><hr />%s" % (
             _("Top 12 address matches for"), addr)
 
-        label = QtGui.QLabel()
+        label = QtWidgets.QLabel()
         label.setText(message)
 
         self.insertWidget(label)
@@ -108,14 +108,14 @@ class AddressMatchDialog(BaseDialog):
                 if field is None:
                     continue
                 if col == 5:
-                    item = QtGui.QTableWidgetItem(
+                    item = QtWidgets.QTableWidgetItem(
                         localsettings.formatDate(field))
                 elif col == 0:  # match
-                    item = QtGui.QTableWidgetItem("%04d" % field)
+                    item = QtWidgets.QTableWidgetItem("%04d" % field)
                 elif col == 1:  # serialno
-                    item = QtGui.QTableWidgetItem("%d" % field)
+                    item = QtWidgets.QTableWidgetItem("%d" % field)
                 else:
-                    item = QtGui.QTableWidgetItem(field)
+                    item = QtWidgets.QTableWidgetItem(field)
                 self.table_widget.setItem(row, col, item)
 
         self.table_widget.resizeColumnsToContents()
@@ -143,11 +143,11 @@ class AddressMatchDialog(BaseDialog):
 if __name__ == "__main__":
 
     localsettings.initiate()
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     from .family_manage_dialog import _DuckPatient
 
-    mw = QtGui.QWidget()
+    mw = QtWidgets.QWidget()
     mw.pt = _DuckPatient((1, "", "", "", "The Gables",
                           "Craggiemore Daviot", "Inverness", "", "",
                           "IV2 5XQ", "", "active", ""))

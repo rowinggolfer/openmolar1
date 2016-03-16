@@ -22,7 +22,7 @@
 # ########################################################################### #
 
 import logging
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.dbtools import treatment_course
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
@@ -36,29 +36,29 @@ class CourseEditDialog(ExtendableDialog):
         ExtendableDialog.__init__(self, parent)
         self.courseno = courseno
 
-        header_label = QtGui.QLabel(
+        header_label = QtWidgets.QLabel(
             "<b>%s %s</b>" % (_("Edit Treatment Course"), self.courseno))
         header_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.accd_date_edit = QtGui.QDateEdit()
+        self.accd_date_edit = QtWidgets.QDateEdit()
         self.accd_date_edit.setCalendarPopup(True)
-        self.cmpd_date_edit = QtGui.QDateEdit()
+        self.cmpd_date_edit = QtWidgets.QDateEdit()
         self.cmpd_date_edit.setCalendarPopup(True)
-        self.examd_date_edit = QtGui.QDateEdit()
+        self.examd_date_edit = QtWidgets.QDateEdit()
         self.examd_date_edit.setEnabled(False)
 
-        self.polling_label = QtGui.QLabel(_("Polling Database"))
+        self.polling_label = QtWidgets.QLabel(_("Polling Database"))
         self.insertWidget(header_label)
 
         self.insertWidget(self.polling_label)
 
-        self.adv_widget = QtGui.QLabel(_("No advanced options available"))
+        self.adv_widget = QtWidgets.QLabel(_("No advanced options available"))
         self.add_advanced_widget(self.adv_widget)
 
         QtCore.QTimer.singleShot(100, self.get_data)
 
     def advise(self, message):
-        QtGui.QMessageBox.information(self, _("message"), message)
+        QtWidgets.QMessageBox.information(self, _("message"), message)
 
     def sizeHint(self):
         return QtCore.QSize(400, 400)
@@ -87,8 +87,8 @@ class CourseEditDialog(ExtendableDialog):
         self.cmpd_db = cmpd
         self.examd_db = examd
 
-        frame = QtGui.QFrame()
-        form_layout = QtGui.QFormLayout(frame)
+        frame = QtWidgets.QFrame()
+        form_layout = QtWidgets.QFormLayout(frame)
         self.insertWidget(frame)
 
         self.accd_date_edit.setDate(accd)
@@ -97,19 +97,19 @@ class CourseEditDialog(ExtendableDialog):
             self.cmpd_date_edit.setDate(cmpd)
             form_layout.addRow(_("completion date"), self.cmpd_date_edit)
             if cmpd != accd:
-                sync_but = QtGui.QPushButton(
+                sync_but = QtWidgets.QPushButton(
                     _("Set completion date to match Acceptance date"))
                 sync_but.clicked.connect(self.sync_dates)
                 self.insertWidget(sync_but)
         else:
-            but = QtGui.QPushButton(_("Add Completion Date"))
+            but = QtWidgets.QPushButton(_("Add Completion Date"))
             form_layout.addRow(but)
             but.clicked.connect(self.add_a_completion_date)
         if examd:
             self.examd_date_edit.setDate(examd)
             form_layout.addRow(_("exam date"), self.examd_date_edit)
         else:
-            form_layout.addRow(QtGui.QLabel(_("No Exam Date on this course")))
+            form_layout.addRow(QtWidgets.QLabel(_("No Exam Date on this course")))
         self.accd_date_edit.dateChanged.connect(self._check_applicable)
         self.cmpd_date_edit.dateChanged.connect(self._check_applicable)
 
@@ -136,7 +136,7 @@ class CourseEditDialog(ExtendableDialog):
 
 if __name__ == "__main__":
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     LOGGER.setLevel(logging.DEBUG)
     dl = CourseEditDialog(17437)
     if dl.exec_():

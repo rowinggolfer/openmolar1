@@ -28,10 +28,10 @@ These are backported from openmolar2
 
 from gettext import gettext as _
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class BaseDialog(QtGui.QDialog):
+class BaseDialog(QtWidgets.QDialog):
 
     '''
     A base class for all my dialogs
@@ -41,10 +41,10 @@ class BaseDialog(QtGui.QDialog):
     '''
 
     def __init__(self, parent=None, remove_stretch=False):
-        QtGui.QDialog.__init__(self, parent)
+        QtWidgets.QDialog.__init__(self, parent)
         self.setWindowTitle("OpenMolar")
 
-        self.button_box = QtGui.QDialogButtonBox(self)
+        self.button_box = QtWidgets.QDialogButtonBox(self)
         self.button_box.setOrientation(QtCore.Qt.Horizontal)
         self.button_box.setStandardButtons(
             self.button_box.Cancel | self.button_box.Apply)
@@ -54,7 +54,7 @@ class BaseDialog(QtGui.QDialog):
 
         self.button_box.setCenterButtons(True)
 
-        self.layout_ = QtGui.QVBoxLayout(self)
+        self.layout_ = QtWidgets.QVBoxLayout(self)
 
         self.button_box.clicked.connect(self._clicked)
 
@@ -63,9 +63,9 @@ class BaseDialog(QtGui.QDialog):
         self.enableApply(False)
 
         if not remove_stretch:
-            self.spacer = QtGui.QSpacerItem(
-                0, 50, QtGui.QSizePolicy.Expanding,
-                QtGui.QSizePolicy.Expanding)
+            self.spacer = QtWidgets.QSpacerItem(
+                0, 50, QtWidgets.QSizePolicy.Expanding,
+                QtWidgets.QSizePolicy.Expanding)
             self.layout_.addItem(self.spacer)
             self.insertpoint_offset = 2
         else:
@@ -132,20 +132,20 @@ class BaseDialog(QtGui.QDialog):
         "private" function called when button box is clicked
         '''
         role = self.button_box.buttonRole(but)
-        if role == QtGui.QDialogButtonBox.ApplyRole:
+        if role == QtWidgets.QDialogButtonBox.ApplyRole:
             self.accept()
         else:
             self.reject()
 
     def reject(self):
         if not (self.check_before_reject_if_dirty and self.dirty):
-            QtGui.QDialog.reject(self)
+            QtWidgets.QDialog.reject(self)
         else:
-            if QtGui.QMessageBox.question(self,
+            if QtWidgets.QMessageBox.question(self,
                _("Confirm"), self.abandon_message,
-                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                    QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
-                QtGui.QDialog.reject(self)
+                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                    QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes:
+                QtWidgets.QDialog.reject(self)
 
     def enableApply(self, enable=True):
         '''
@@ -159,19 +159,19 @@ class BaseDialog(QtGui.QDialog):
         a convenience function to raise a dialog for confirmation of an action
         '''
         if accept == "ok":
-            accept_but = QtGui.QMessageBox.Ok
+            accept_but = QtWidgets.QMessageBox.Ok
         elif accept == "yes":
-            accept_but = QtGui.QMessageBox.Yes
+            accept_but = QtWidgets.QMessageBox.Yes
 
         if reject == "cancel":
-            reject_but = QtGui.QMessageBox.Cancel
+            reject_but = QtWidgets.QMessageBox.Cancel
         elif reject == "no":
-            reject_but = QtGui.QMessageBox.No
+            reject_but = QtWidgets.QMessageBox.No
 
         buttons = accept_but | reject_but
         default_but = accept_but if default == "accept" else reject_but
 
-        return QtGui.QMessageBox.question(
+        return QtWidgets.QMessageBox.question(
             self,  _("Confirm"),
             message, buttons, default_but) == accept_but
 
@@ -190,7 +190,7 @@ class ExtendableDialog(BaseDialog):
 
         icon = QtGui.QIcon.fromTheme("go-down")
         #: a pointer to the Advanced button
-        self.more_but = QtGui.QPushButton(icon, "&Advanced")
+        self.more_but = QtWidgets.QPushButton(icon, "&Advanced")
         self.more_but.setFlat(True)
 
         self.more_but.setCheckable(True)
@@ -199,8 +199,8 @@ class ExtendableDialog(BaseDialog):
 
         self.setOrientation(QtCore.Qt.Vertical)
 
-        frame = QtGui.QFrame(self)
-        layout = QtGui.QVBoxLayout(frame)
+        frame = QtWidgets.QFrame(self)
+        layout = QtWidgets.QVBoxLayout(frame)
         self.setExtension(frame)
 
     def set_advanced_but_text(self, txt):
@@ -225,7 +225,7 @@ class ExtendableDialog(BaseDialog):
 
 
 if __name__ == "__main__":
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     dl = BaseDialog()
     QtCore.QTimer.singleShot(1000, dl.accept)

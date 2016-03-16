@@ -31,13 +31,13 @@ import os
 import logging
 from gettext import gettext as _
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 from openmolar.qt4gui.compiled_uis import Ui_choose_language
 
 LOGGER = logging.getLogger("openmolar")
 
 
-class LanguageDialog(Ui_choose_language.Ui_Dialog, QtGui.QDialog):
+class LanguageDialog(Ui_choose_language.Ui_Dialog, QtWidgets.QDialog):
 
     '''
     A dialog to allow user selection from available translations
@@ -46,12 +46,12 @@ class LanguageDialog(Ui_choose_language.Ui_Dialog, QtGui.QDialog):
     _curr_lang = None
 
     def __init__(self, parent=None):
-        QtGui.QDialog.__init__(self, parent)
+        QtWidgets.QDialog.__init__(self, parent)
         self.setupUi(self)
         self.radioboxes = []
-        vbox = QtGui.QVBoxLayout(self.frame)
+        vbox = QtWidgets.QVBoxLayout(self.frame)
         for language in self.available_languages:
-            rb = QtGui.QRadioButton(language)
+            rb = QtWidgets.QRadioButton(language)
             if self.current_language in language.split(" - "):
                 rb.setChecked(True)
             self.radioboxes.append(rb)
@@ -122,14 +122,14 @@ class LanguageDialog(Ui_choose_language.Ui_Dialog, QtGui.QDialog):
                 else:
                     message = "%s %s" % (
                         _("no translation file found for"), lang)
-        QtGui.QMessageBox.information(self, _("Advisory"), message)
+        QtWidgets.QMessageBox.information(self, _("Advisory"), message)
         return result
 
 
 if __name__ == "__main__":
     logging.basicConfig()
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     gettext.install('openmolar')
     dl = LanguageDialog()
     dl.getInput()

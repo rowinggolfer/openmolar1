@@ -21,11 +21,11 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 from openmolar.qt4gui import resources_rc
 
 
-class ChainLabel(QtGui.QLabel):
+class ChainLabel(QtWidgets.QLabel):
 
     '''
     a custom label with a chain link
@@ -33,7 +33,7 @@ class ChainLabel(QtGui.QLabel):
     toggled = QtCore.pyqtSignal(object)
 
     def __init__(self, parent=None):
-        QtGui.QLabel.__init__(self, parent)
+        QtWidgets.QLabel.__init__(self, parent)
         self.chainpic = QtGui.QPixmap(":/icons/chain.png")
         self.unchainpic = QtGui.QPixmap(":/icons/chain-broken.png")
         self.setFixedWidth(30)
@@ -61,7 +61,7 @@ if __name__ == "__main__":
         print(("chained = %s" % arg))
 
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     widg = ChainLabel()
     widg.setMinimumSize(QtCore.QSize(100, 100))
     widg.toggled.connect(test)

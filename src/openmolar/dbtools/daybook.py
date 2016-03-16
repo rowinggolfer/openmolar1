@@ -29,7 +29,7 @@ from gettext import gettext as _
 from collections import namedtuple
 import logging
 
-from PyQt4.QtCore import QDate
+from PyQt5 import 
 
 from openmolar.settings import localsettings
 from openmolar import connect

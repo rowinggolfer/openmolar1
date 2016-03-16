@@ -28,7 +28,7 @@ module provides one class - ChoiceDialog
 from functools import partial
 from gettext import gettext as _
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
@@ -43,13 +43,13 @@ class ChoiceDialog(BaseDialog):
         self.setWindowTitle(_("Feescale Choice Dialog"))
         self.chosen_index = None
 
-        label = QtGui.QLabel(message)
+        label = QtWidgets.QLabel(message)
 
-        scroll_area = QtGui.QScrollArea()
-        frame = QtGui.QFrame()
+        scroll_area = QtWidgets.QScrollArea()
+        frame = QtWidgets.QFrame()
         scroll_area.setWidget(frame)
         scroll_area.setWidgetResizable(True)
-        self.but_layout = QtGui.QVBoxLayout(frame)
+        self.but_layout = QtWidgets.QVBoxLayout(frame)
 
         self.insertWidget(label)
         self.insertWidget(scroll_area)
@@ -62,7 +62,7 @@ class ChoiceDialog(BaseDialog):
 
     def add_buttons(self, choices):
         for i, choice in enumerate(choices):
-            but = QtGui.QPushButton(choice)
+            but = QtWidgets.QPushButton(choice)
             but.clicked.connect(partial(self.but_clicked, i))
             self.but_layout.addWidget(but)
         self.but_layout.addStretch(100)
@@ -73,7 +73,7 @@ class ChoiceDialog(BaseDialog):
 
 
 if __name__ == "__main__":
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     dl = ChoiceDialog("Make a choice", ["A", "B", "C"])
     if dl.exec_():
         print(dl.chosen_index)

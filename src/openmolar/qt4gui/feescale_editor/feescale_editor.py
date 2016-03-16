@@ -42,20 +42,20 @@ import sys
 from gettext import gettext as _
 from xml.dom import minidom
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 LOGGER = logging.getLogger("openmolar")
 
 
-class ControlPanel(QtGui.QTabWidget):
+class ControlPanel(QtWidgets.QTabWidget):
     item_selected = QtCore.pyqtSignal(object)
     shortcut_selected = QtCore.pyqtSignal(object)
     compare_item_signal = QtCore.pyqtSignal(object)
 
     def __init__(self, parent=None):
-        QtGui.QTabWidget.__init__(self, parent)
-        self.items_list_view = QtGui.QListView()
-        self.complex_shortcuts_list_view = QtGui.QListView()
+        QtWidgets.QTabWidget.__init__(self, parent)
+        self.items_list_view = QtWidgets.QListView()
+        self.complex_shortcuts_list_view = QtWidgets.QListView()
 
         self.addTab(self.items_list_view, "Items")
         self.addTab(self.complex_shortcuts_list_view, "Complex Shortcuts")
@@ -81,15 +81,15 @@ class ControlPanel(QtGui.QTabWidget):
 
     def show_item_context_menu(self, index):
         id = self.items_list_view.model().id_from_index(index)
-        qmenu = QtGui.QMenu(self)
+        qmenu = QtWidgets.QMenu(self)
 
-        compare_action = QtGui.QAction(
+        compare_action = QtWidgets.QAction(
             "%s %s %s" % (_("Compare"),
                           id,
                           _("with similar ids in other feescales")
                           ),
             self)
-        cancel_action = QtGui.QAction(_("Cancel"), self)
+        cancel_action = QtWidgets.QAction(_("Cancel"), self)
         # not connected to anything.. f clicked menu will simply die!
 
         compare_action.triggered.connect(
@@ -106,7 +106,7 @@ class ControlPanel(QtGui.QTabWidget):
         qmenu.exec_(point)
 
 
-class FeescaleEditor(QtGui.QMainWindow):
+class FeescaleEditor(QtWidgets.QMainWindow):
     _checking_files = False
     _known_deleted_parsers = []
     _compare_items_dockwidget = None
@@ -114,12 +114,12 @@ class FeescaleEditor(QtGui.QMainWindow):
     closed_signal = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
-        QtGui.QMainWindow.__init__(self, parent)
+        QtWidgets.QMainWindow.__init__(self, parent)
         self.window_title = _("Feescale Editor")
         self.setWindowTitle(self.window_title)
         self.is_loading = True
 
-        statusbar = QtGui.QStatusBar()
+        statusbar = QtWidgets.QStatusBar()
         self.setStatusBar(statusbar)
 
         self.control_panel = ControlPanel()
@@ -130,18 +130,18 @@ class FeescaleEditor(QtGui.QMainWindow):
         self.list_view = self.control_panel.items_list_view
 
         #: a pointer to the label in the statusbar
-        self.cursor_pos_label = QtGui.QLabel("Line 0, Column 0")
+        self.cursor_pos_label = QtWidgets.QLabel("Line 0, Column 0")
         statusbar.addPermanentWidget(self.cursor_pos_label)
 
-        self.main_toolbar = QtGui.QToolBar()
+        self.main_toolbar = QtWidgets.QToolBar()
         self.main_toolbar.setObjectName("Main Toolbar")
         self.main_toolbar.toggleViewAction().setText(_("Toolbar"))
 
-        self.prefs_toolbar = QtGui.QToolBar()
+        self.prefs_toolbar = QtWidgets.QToolBar()
         self.prefs_toolbar.setObjectName("Prefs Toolbar")
         self.prefs_toolbar.toggleViewAction().setText(_("Preferences Toolbar"))
 
-        self.diffs_toolbar = QtGui.QToolBar()
+        self.diffs_toolbar = QtWidgets.QToolBar()
         self.diffs_toolbar.setObjectName("Diffs Toolbar")
         self.diffs_toolbar.toggleViewAction().setText(_("Diffs Toolbar"))
 
@@ -149,12 +149,12 @@ class FeescaleEditor(QtGui.QMainWindow):
         self.addToolBar(QtCore.Qt.TopToolBarArea, self.prefs_toolbar)
         self.addToolBar(QtCore.Qt.TopToolBarArea, self.diffs_toolbar)
 
-        menu_file = QtGui.QMenu(_("&File"), self)
-        menu_edit = QtGui.QMenu(_("&Edit"), self)
-        menu_database = QtGui.QMenu(_("&Database"), self)
-        menu_tools = QtGui.QMenu(_("&Tools"), self)
-        menu_preferences = QtGui.QMenu(_("&Preferences"), self)
-        menu_diffs = QtGui.QMenu(_("Diffs"), self)
+        menu_file = QtWidgets.QMenu(_("&File"), self)
+        menu_edit = QtWidgets.QMenu(_("&Edit"), self)
+        menu_database = QtWidgets.QMenu(_("&Database"), self)
+        menu_tools = QtWidgets.QMenu(_("&Tools"), self)
+        menu_preferences = QtWidgets.QMenu(_("&Preferences"), self)
+        menu_diffs = QtWidgets.QMenu(_("Diffs"), self)
 
         self.menuBar().addMenu(menu_file)
         self.menuBar().addMenu(menu_edit)
@@ -164,69 +164,69 @@ class FeescaleEditor(QtGui.QMainWindow):
         self.menuBar().addMenu(menu_preferences)
 
         icon = QtGui.QIcon(":database.png")
-        action_pull = QtGui.QAction(icon, _("Pull"), self)
+        action_pull = QtWidgets.QAction(icon, _("Pull"), self)
         action_pull.setToolTip(
             _("generate local files containing the database feescales"))
 
         icon = QtGui.QIcon(":database.png")
-        action_commit = QtGui.QAction(icon, _("Commit"), self)
+        action_commit = QtWidgets.QAction(icon, _("Commit"), self)
         action_commit.setToolTip(_("Commit changes to database"))
 
         icon = QtGui.QIcon.fromTheme("document-new")
-        action_new = QtGui.QAction(icon, _("New Feescale"), self)
+        action_new = QtWidgets.QAction(icon, _("New Feescale"), self)
         action_new.setToolTip(_("Create a Feescale"))
 
         icon = QtGui.QIcon.fromTheme("document-save")
-        action_save = QtGui.QAction(icon, _("Save File"), self)
+        action_save = QtWidgets.QAction(icon, _("Save File"), self)
         action_save.setShortcut("Ctrl+S")
         action_save.setToolTip(_("Save Current File"))
 
         icon = QtGui.QIcon.fromTheme("document-save-as")
-        action_save_as = QtGui.QAction(icon, _("Save File As"), self)
+        action_save_as = QtWidgets.QAction(icon, _("Save File As"), self)
         action_save_as.setToolTip(_("Save Current File to a new location"))
 
         icon = QtGui.QIcon.fromTheme("document-save")
-        action_save_all = QtGui.QAction(icon, _("Save All Files"), self)
+        action_save_all = QtWidgets.QAction(icon, _("Save All Files"), self)
         action_save_all.setToolTip(_("Save All Local Files"))
 
         icon = QtGui.QIcon.fromTheme("view-refresh")
-        action_refresh = QtGui.QAction(icon, _("Refresh"), self)
+        action_refresh = QtWidgets.QAction(icon, _("Refresh"), self)
         action_refresh.setToolTip(_("refresh local files"))
 
         icon = QtGui.QIcon.fromTheme("document-find")
-        action_find = QtGui.QAction(icon, _("Find"), self)
+        action_find = QtWidgets.QAction(icon, _("Find"), self)
         action_find.setShortcut("Ctrl+F")
         action_find.setToolTip(
             _("Search current file for first forward match of entered text"))
 
-        action_find_again = QtGui.QAction(icon, _("Find Again"), self)
+        action_find_again = QtWidgets.QAction(icon, _("Find Again"), self)
         action_find_again.setShortcut("Ctrl+G")
         action_find_again.setToolTip(_("Search current file again for text"))
 
-        action_increment = QtGui.QAction(_("Increase/decrease fees"), self)
+        action_increment = QtWidgets.QAction(_("Increase/decrease fees"), self)
         action_increment.setToolTip(_("Apply a percentage"))
 
-        action_roundup = QtGui.QAction(_("Round fees up/down"), self)
+        action_roundup = QtWidgets.QAction(_("Round fees up/down"), self)
         action_roundup.setToolTip(
             _("Round fees up or down to a specified accuracy"))
 
-        action_charges = QtGui.QAction(
+        action_charges = QtWidgets.QAction(
             _("Relate charges to fees by percentage"), self)
 
-        action_zero_charges = QtGui.QAction(
+        action_zero_charges = QtWidgets.QAction(
             _("Zero Patient Contributions"), self)
         action_zero_charges.setToolTip(
             _("Set all patient charges to Zero in the current feescale"))
 
         icon = QtGui.QIcon.fromTheme("application-exit")
-        action_quit = QtGui.QAction(icon, _("Quit"), self)
+        action_quit = QtWidgets.QAction(icon, _("Quit"), self)
 
-        action_diff = QtGui.QAction(_("Show Database Diff"), self)
+        action_diff = QtWidgets.QAction(_("Show Database Diff"), self)
         action_diff.setToolTip(
             _("Show the diff between the current file and the "
               "corresponding file stored in the database"))
 
-        action_compare = QtGui.QAction(_("Compare 2 Feescales"), self)
+        action_compare = QtWidgets.QAction(_("Compare 2 Feescales"), self)
         action_compare.setToolTip(
             _("Show the diff between the current file and a selected other"))
 
@@ -264,20 +264,20 @@ class FeescaleEditor(QtGui.QMainWindow):
         menu_diffs.addAction(action_diff)
         menu_diffs.addAction(action_compare)
 
-        self.tab_widget = QtGui.QTabWidget()
+        self.tab_widget = QtWidgets.QTabWidget()
 
         self.feescale_parsers = OrderedDict()
         self.text_editors = []
         self.feescale_handler = feescale_handler
         self.feescale_handler.check_dir()
-        self.action_refactor = QtGui.QAction(_("XML tidy"), self)
+        self.action_refactor = QtWidgets.QAction(_("XML tidy"), self)
         self.action_refactor.triggered.connect(self.refactor)
 
-        self.action_check_parseable = QtGui.QAction(
+        self.action_check_parseable = QtWidgets.QAction(
             _("Check Well Formed"), self)
         self.action_check_parseable.triggered.connect(self.check_parseable)
 
-        self.action_check_validity = QtGui.QAction(_("Check Validity"), self)
+        self.action_check_validity = QtWidgets.QAction(_("Check Validity"), self)
         self.action_check_validity.triggered.connect(self.check_validity)
 
         menu_preferences.addAction(self.action_refactor)
@@ -291,7 +291,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         self.diffs_toolbar.addAction(action_diff)
         self.diffs_toolbar.addAction(action_compare)
 
-        splitter = QtGui.QSplitter()
+        splitter = QtWidgets.QSplitter()
         splitter.addWidget(self.control_panel)
         splitter.addWidget(self.tab_widget)
         splitter.setSizes([150, 650])
@@ -321,10 +321,10 @@ class FeescaleEditor(QtGui.QMainWindow):
 
         QtCore.QTimer.singleShot(1000, self.start_)
 
-        QtGui.QApplication.instance().focusChanged.connect(
+        QtWidgets.QApplication.instance().focusChanged.connect(
             self._focus_changed)
         action_quit.triggered.connect(
-            QtGui.QApplication.instance().closeAllWindows)
+            QtWidgets.QApplication.instance().closeAllWindows)
 
     def advise(self, message, importance=0):
         '''
@@ -332,20 +332,20 @@ class FeescaleEditor(QtGui.QMainWindow):
         '''
         if importance is 0:
             LOGGER.debug(message)
-            m = QtGui.QMessageBox(self)
+            m = QtWidgets.QMessageBox(self)
             m.setText(message)
             m.setIcon(m.Information)
-            m.setStandardButtons(QtGui.QMessageBox.NoButton)
+            m.setStandardButtons(QtWidgets.QMessageBox.NoButton)
             m.setWindowTitle(_("advisory"))
             m.setModal(False)
             QtCore.QTimer.singleShot(3 * 1000, m.accept)
             m.show()
         elif importance == 1:
             LOGGER.info(message)
-            QtGui.QMessageBox.information(self, _("Advisory"), message)
+            QtWidgets.QMessageBox.information(self, _("Advisory"), message)
         else:
             LOGGER.warning(message)
-            QtGui.QMessageBox.warning(self, _("Error"), message)
+            QtWidgets.QMessageBox.warning(self, _("Error"), message)
 
     def sizeHint(self):
         return QtCore.QSize(800, 500)
@@ -359,12 +359,12 @@ class FeescaleEditor(QtGui.QMainWindow):
                 _("WARNING - you have unsaved changes!"),
                 _("Are you sure you want to quit?"))
 
-            if QtGui.QMessageBox.question(
+            if QtWidgets.QMessageBox.question(
                     self,
                     _("Confirm"),
                     message,
-                    QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
-                    QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+                    QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel,
+                    QtWidgets.QMessageBox.Cancel) == QtWidgets.QMessageBox.Cancel:
                 event.ignore()
                 return
         self.closed_signal.emit()
@@ -385,12 +385,12 @@ class FeescaleEditor(QtGui.QMainWindow):
                     parser.filepath,
                     _("has been deleted!"),
                     _("Save now?"))
-                if QtGui.QMessageBox.question(
+                if QtWidgets.QMessageBox.question(
                         self,
                         _("Question"),
                         message,
-                        QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                        QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+                        QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                        QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes:
                     self.feescale_handler.save_xml(parser.ix, parser.text)
                     self.advise(_("File Saved"), 1)
                 else:
@@ -403,12 +403,12 @@ class FeescaleEditor(QtGui.QMainWindow):
                     _("Do you want to reload now and lose current changes?")
                     if parser.is_dirty else _("Do you want to reload now?"))
 
-                if QtGui.QMessageBox.question(
+                if QtWidgets.QMessageBox.question(
                         self,
                         _("Question"),
                         message,
-                        QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                        QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+                        QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                        QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes:
                     LOGGER.debug("reloading externally modified %s",
                                  parser.filepath)
                     parser.refresh()
@@ -477,7 +477,7 @@ class FeescaleEditor(QtGui.QMainWindow):
                              self.current_parser.description))
             self.update_index()
         else:
-            QtGui.QMessageBox.information(
+            QtWidgets.QMessageBox.information(
                 self,
                 _("Information"),
                 _("You appear to have no feescales installed in your database")
@@ -503,7 +503,7 @@ class FeescaleEditor(QtGui.QMainWindow):
                 _("differs from the database version"),
                 _("Do you wish to overwrite it with the stored data?"))
 
-            mb = QtGui.QMessageBox(None)
+            mb = QtWidgets.QMessageBox(None)
             mb.setWindowTitle(_("Confirm"))
             mb.setText(message)
             mb.setIcon(mb.Question)
@@ -621,10 +621,10 @@ class FeescaleEditor(QtGui.QMainWindow):
                 count_ += 1
 
     def find_text(self):
-        self.search_text, result = QtGui.QInputDialog.getText(
+        self.search_text, result = QtWidgets.QInputDialog.getText(
             self, _("Find Text"),
             _("Please enter the text you wish to search for"),
-            QtGui.QLineEdit.Normal, self.search_text)
+            QtWidgets.QLineEdit.Normal, self.search_text)
         if result:
             self.find_again()
 
@@ -664,22 +664,22 @@ class FeescaleEditor(QtGui.QMainWindow):
             self.advise(dl.message, 1)
 
     def zero_charges(self):
-        if QtGui.QMessageBox.question(
+        if QtWidgets.QMessageBox.question(
                 self,
                 _("Confirm"),
                 _("Zero all patient charges in the current feescale?"),
-                QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
-                QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok:
+                QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel,
+                QtWidgets.QMessageBox.Cancel) == QtWidgets.QMessageBox.Ok:
             self.current_parser.zero_charges()
             self.text_edit.setText(self.current_parser.text)
 
     def save_files(self):
-        if QtGui.QMessageBox.question(
+        if QtWidgets.QMessageBox.question(
                 self,
                 _("confirm"),
                 _("Save all files?"),
-                QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel) == \
-                QtGui.QMessageBox.Cancel:
+                QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel) == \
+                QtWidgets.QMessageBox.Cancel:
             return
 
         i = 0
@@ -715,7 +715,7 @@ class FeescaleEditor(QtGui.QMainWindow):
         try:
             if filepath is None:
                 filepath = str(
-                    QtGui.QFileDialog.getSaveFileName(
+                    QtWidgets.QFileDialog.getSaveFileName(
                         self,
                         _("save as"),
                         parser.filepath,
@@ -744,15 +744,15 @@ class FeescaleEditor(QtGui.QMainWindow):
 
     def refresh_files(self):
         if self.is_dirty and (
-                QtGui.QMessageBox.question(
+                QtWidgets.QMessageBox.question(
                     self,
                     _("confirm"),
                     "<b>%s</b><hr />%s" % (
                         _("Warning - you have unsaved changes, "
                           "if you refresh now, these will be lost"),
                         _("Refresh anyway?")),
-                    QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel) ==
-                QtGui.QMessageBox.Cancel):
+                    QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel) ==
+                QtWidgets.QMessageBox.Cancel):
             return
 
         self.tab_widget.clear()
@@ -763,13 +763,13 @@ class FeescaleEditor(QtGui.QMainWindow):
             self.advise(
                 _("Please save local files before pushing to database"), 1)
             return
-        if QtGui.QMessageBox.question(
+        if QtWidgets.QMessageBox.question(
                 self,
                 _("confirm"),
                 _("update all existing feescales with data from "
                   "the local files?"),
-                QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel) == \
-                QtGui.QMessageBox.Cancel:
+                QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel) == \
+                QtWidgets.QMessageBox.Cancel:
             return
 
         message, insert_ids = self.feescale_handler.update_db_all()
@@ -778,14 +778,14 @@ class FeescaleEditor(QtGui.QMainWindow):
 
         mappings = {}
         for ins_id in insert_ids:
-            if QtGui.QMessageBox.question(
+            if QtWidgets.QMessageBox.question(
                     self,
                     _("confirm"),
                     "%s %s?" % (
                         _("Insert new Feescale"),
                         self.feescale_handler.index_to_local_filepath(ins_id)),
-                    QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel) == \
-                    QtGui.QMessageBox.Ok:
+                    QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel) == \
+                    QtWidgets.QMessageBox.Ok:
                 mappings[ins_id] = self.feescale_handler.insert_db(ins_id)
 
         move_required = False
@@ -836,7 +836,7 @@ class FeescaleEditor(QtGui.QMainWindow):
                 options.append(self.tab_widget.tabText(i))
 
         if len(options) == 1:
-            QtGui.QMessageBox.information(
+            QtWidgets.QMessageBox.information(
                 self,
                 _("whoops"),
                 _("you have no other files available for comparison"))
@@ -873,7 +873,7 @@ class FeescaleEditor(QtGui.QMainWindow):
 if __name__ == "__main__":
     from openmolar.qt4gui import resources_rc
     LOGGER.setLevel(logging.DEBUG)
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     mw = FeescaleEditor()
     mw.show()
     app.exec_()

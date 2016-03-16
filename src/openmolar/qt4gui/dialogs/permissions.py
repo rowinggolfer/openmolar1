@@ -25,7 +25,7 @@ import datetime
 import hashlib
 import logging
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.dbtools import db_settings
@@ -50,10 +50,10 @@ class RaisePermissionsDialog(BaseDialog):
             _("Please enter the supervisor password"))
         )
 
-        frame = QtGui.QFrame()
-        self.form_layout = QtGui.QFormLayout(frame)
-        self.line_edit = QtGui.QLineEdit()
-        self.line_edit.setEchoMode(QtGui.QLineEdit.Password)
+        frame = QtWidgets.QFrame()
+        self.form_layout = QtWidgets.QFormLayout(frame)
+        self.line_edit = QtWidgets.QLineEdit()
+        self.line_edit.setEchoMode(QtWidgets.QLineEdit.Password)
         self.form_layout.addRow(_("Supervisor Password"), self.line_edit)
 
         self.insertWidget(label)
@@ -74,7 +74,7 @@ class RaisePermissionsDialog(BaseDialog):
             resetExpireTime()
             return True
         else:
-            QtGui.QMessageBox.information(self,
+            QtWidgets.QMessageBox.information(self,
                                           _("whoops"),
                                           _("incorrect supervisor password")
                                           )
@@ -86,11 +86,11 @@ class ResetSupervisorPasswordDialog(RaisePermissionsDialog):
     def __init__(self, parent=None):
         RaisePermissionsDialog.__init__(self, parent)
 
-        self.new_password_line_edit = QtGui.QLineEdit()
-        self.confirm_password_line_edit = QtGui.QLineEdit()
+        self.new_password_line_edit = QtWidgets.QLineEdit()
+        self.confirm_password_line_edit = QtWidgets.QLineEdit()
 
-        self.new_password_line_edit.setEchoMode(QtGui.QLineEdit.Password)
-        self.confirm_password_line_edit.setEchoMode(QtGui.QLineEdit.Password)
+        self.new_password_line_edit.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.confirm_password_line_edit.setEchoMode(QtWidgets.QLineEdit.Password)
 
         self.form_layout.addRow(_("New Password"), self.new_password_line_edit)
         self.form_layout.addRow(_("Confirm New Password"),
@@ -104,7 +104,7 @@ class ResetSupervisorPasswordDialog(RaisePermissionsDialog):
         if self._new_password == \
                 self.confirm_password_line_edit.text():
             return True
-        QtGui.QMessageBox.warning(self, _("error"),
+        QtWidgets.QMessageBox.warning(self, _("error"),
                                   _("new passwords didn't match"))
 
     def exec_(self):
@@ -116,7 +116,7 @@ class ResetSupervisorPasswordDialog(RaisePermissionsDialog):
             message = _("password changed successfully")
         else:
             message = _("Password unchanged")
-        QtGui.QMessageBox.information(self, _("information"), message)
+        QtWidgets.QMessageBox.information(self, _("information"), message)
 
 
 def granted(parent=None):
@@ -138,7 +138,7 @@ def resetExpireTime():
 
 if __name__ == "__main__":
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     print(granted())
     dl = ResetSupervisorPasswordDialog()
     dl.exec_()

@@ -21,10 +21,10 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class notificationGB(QtGui.QWidget):
+class notificationGB(QtWidgets.QWidget):
 
     '''
     a customised groupBox
@@ -32,28 +32,28 @@ class notificationGB(QtGui.QWidget):
     acknowledged = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
         self.counter = None
 
-        self.layout = QtGui.QGridLayout(self)
+        self.layout = QtWidgets.QGridLayout(self)
         self.layout.setMargin(0)
 
-        self.t_label = QtGui.QLabel()
+        self.t_label = QtWidgets.QLabel()
         self.t_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.label = QtGui.QLabel()
+        self.label = QtWidgets.QLabel()
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setStyleSheet("color: red")
 
         icon = QtGui.QIcon.fromTheme(
             "window-close", QtGui.QIcon(":/quit.png"))
-        self.but = QtGui.QPushButton(icon, "")
+        self.but = QtWidgets.QPushButton(icon, "")
         self.but.setMaximumWidth(40)
 
-        self.line = QtGui.QFrame()
-        self.line.setFrameShape(QtGui.QFrame.HLine)
-        self.line.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line = QtWidgets.QFrame()
+        self.line.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
 
         self.layout.addWidget(self.t_label, 0, 0)
         self.layout.addWidget(self.label, 1, 0)
@@ -90,7 +90,7 @@ class notificationGB(QtGui.QWidget):
         self.acknowledged.emit()
 
 
-class notificationWidget(QtGui.QWidget):
+class notificationWidget(QtWidgets.QWidget):
 
     '''
     a custom widget which contains children which come and go
@@ -98,7 +98,7 @@ class notificationWidget(QtGui.QWidget):
 
     def __init__(self, parent=None):
         super(notificationWidget, self).__init__(parent)
-        self.layout = QtGui.QVBoxLayout(self)
+        self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.setMargin(0)
         self.widgets = []
 
@@ -136,8 +136,8 @@ class notificationWidget(QtGui.QWidget):
 if __name__ == "__main__":
     from functools import partial
 
-    app = QtGui.QApplication([])
-    form = QtGui.QMainWindow()
+    app = QtWidgets.QApplication([])
+    form = QtWidgets.QMainWindow()
     form.setMinimumWidth(300)
 
     nw = notificationWidget(form)

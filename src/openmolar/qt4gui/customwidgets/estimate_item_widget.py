@@ -23,7 +23,7 @@
 
 from gettext import gettext as _
 import logging
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.customwidgets.chainLabel import ChainLabel
@@ -34,7 +34,7 @@ from openmolar.qt4gui.customwidgets.confirming_check_box \
 LOGGER = logging.getLogger("openmolar")
 
 
-class EstimateItemWidget(QtGui.QWidget):
+class EstimateItemWidget(QtWidgets.QWidget):
 
     '''
     a class to show one specific item of treatment
@@ -48,21 +48,21 @@ class EstimateItemWidget(QtGui.QWidget):
     edited_signal = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
         self.est_widget = parent
 
-        self.number_label = QtGui.QLabel()
+        self.number_label = QtWidgets.QLabel()
         self.number_label.setFixedWidth(40)
-        self.itemCode_label = QtGui.QLabel()
-        self.description_lineEdit = QtGui.QLineEdit()
-        self.cset_lineEdit = QtGui.QLineEdit()
+        self.itemCode_label = QtWidgets.QLabel()
+        self.description_lineEdit = QtWidgets.QLineEdit()
+        self.cset_lineEdit = QtWidgets.QLineEdit()
         self.cset_lineEdit.setFixedWidth(40)
-        self.fee_lineEdit = QtGui.QLineEdit()
+        self.fee_lineEdit = QtWidgets.QLineEdit()
         self.fee_lineEdit.setFixedWidth(self.MONEY_WIDTH)
         self.fee_lineEdit.setAlignment(QtCore.Qt.AlignRight)
         self.chain = ChainLabel()
-        self.ptFee_lineEdit = QtGui.QLineEdit()
+        self.ptFee_lineEdit = QtWidgets.QLineEdit()
         self.ptFee_lineEdit.setFixedWidth(self.MONEY_WIDTH)
         self.ptFee_lineEdit.setAlignment(QtCore.Qt.AlignRight)
         self.completed_checkBox = ConfirmingCheckBox(self)
@@ -72,7 +72,7 @@ class EstimateItemWidget(QtGui.QWidget):
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/eraser.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.delete_pushButton = QtGui.QPushButton()
+        self.delete_pushButton = QtWidgets.QPushButton()
         self.delete_pushButton.setMaximumWidth(30)
         self.delete_pushButton.setIcon(icon)
         self.delete_pushButton.setFlat(True)
@@ -80,12 +80,12 @@ class EstimateItemWidget(QtGui.QWidget):
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":icons/expand.svg"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.expand_pushButton = QtGui.QPushButton()
+        self.expand_pushButton = QtWidgets.QPushButton()
         self.expand_pushButton.setIcon(icon)
         self.expand_pushButton.setMaximumWidth(30)
         self.expand_pushButton.setFlat(True)
-        self.expand_pushButton.setSizePolicy(QtGui.QSizePolicy(
-            QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.expand_pushButton.setSizePolicy(QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         )
 
         self.examine_icon = QtGui.QIcon()
@@ -404,7 +404,7 @@ class EstimateItemWidget(QtGui.QWidget):
             list_,
             _("All must be completed for the full charge to be applied"))
 
-        QtGui.QMessageBox.information(self, _("information"), message)
+        QtWidgets.QMessageBox.information(self, _("information"), message)
 
     @property
     def has_no_treatments(self):
@@ -421,7 +421,7 @@ class EstimateItemWidget(QtGui.QWidget):
         LOGGER.debug("EstimateItemWidget.check_first")
 
         if localsettings.clinicianNo == 0:
-            QtGui.QMessageBox.warning(
+            QtWidgets.QMessageBox.warning(
                 self,
                 _("Not Allowed"),
                 _("You have no clinician login. "
@@ -429,14 +429,14 @@ class EstimateItemWidget(QtGui.QWidget):
             return
 
         if self.est_items[0].is_exam:
-            if QtGui.QMessageBox.question(
+            if QtWidgets.QMessageBox.question(
                 self,
                 _("confirm"),
                 _("Delete examination from this "
                   "treatment plan and estimate?"),
-                QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
-                QtGui.QMessageBox.Cancel
-            ) == QtGui.QMessageBox.Ok:
+                QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel,
+                QtWidgets.QMessageBox.Cancel
+            ) == QtWidgets.QMessageBox.Ok:
                 self.deleteItem()
             return
 
@@ -480,12 +480,12 @@ class EstimateItemWidget(QtGui.QWidget):
         self.edited_signal.emit()
 
 
-class _TestParent(QtGui.QWidget):
+class _TestParent(QtWidgets.QWidget):
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
-        layout = QtGui.QHBoxLayout(self)
+        layout = QtWidgets.QHBoxLayout(self)
         layout.setMargin(0)
 
         widg = EstimateItemWidget(self)
@@ -517,9 +517,9 @@ if __name__ == "__main__":
 
     import sys
 
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
 
-    form = QtGui.QMainWindow()
+    form = QtWidgets.QMainWindow()
 
     widg = _TestParent()
 

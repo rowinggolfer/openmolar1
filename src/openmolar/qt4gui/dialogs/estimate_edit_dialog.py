@@ -24,7 +24,7 @@
 import copy
 from gettext import gettext as _
 import logging
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.dbtools import estimates
 
@@ -66,7 +66,7 @@ class EstimateEditDialog(ExtendableDialog):
         ExtendableDialog.__init__(self, parent)
         self.patient = _Patient(serialno, courseno)
 
-        header_label = QtGui.QLabel("<b>%s %s</b>" % (
+        header_label = QtWidgets.QLabel("<b>%s %s</b>" % (
             _("Inspecting estimate for Course Number"), courseno))
         header_label.setAlignment(QtCore.Qt.AlignCenter)
 
@@ -75,7 +75,7 @@ class EstimateEditDialog(ExtendableDialog):
         self.insertWidget(header_label)
         self.insertWidget(self.est_widget)
 
-        self.adv_widget = QtGui.QLabel(_("No advanced options available"))
+        self.adv_widget = QtWidgets.QLabel(_("No advanced options available"))
         self.add_advanced_widget(self.adv_widget)
         # self.remove_spacer()
 
@@ -85,7 +85,7 @@ class EstimateEditDialog(ExtendableDialog):
         QtCore.QTimer.singleShot(100, self.get_data)
 
     def advise(self, message, severity=None):
-        QtGui.QMessageBox.information(self, _("message"), message)
+        QtWidgets.QMessageBox.information(self, _("message"), message)
 
     def sizeHint(self):
         return QtCore.QSize(400, 400)
@@ -113,13 +113,13 @@ class EstimateEditDialog(ExtendableDialog):
         overwrite BaseDialog method
         '''
         role = self.button_box.buttonRole(but)
-        if (role == QtGui.QDialogButtonBox.ApplyRole and
-                QtGui.QMessageBox.question(
+        if (role == QtWidgets.QDialogButtonBox.ApplyRole and
+                QtWidgets.QMessageBox.question(
                     self,
                     _("Confirm"),
                     _("Apply Changes?"),
-                    QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
-                    QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel):
+                    QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel,
+                    QtWidgets.QMessageBox.Cancel) == QtWidgets.QMessageBox.Cancel):
             return
         ExtendableDialog._clicked(self, but)
 
@@ -130,7 +130,7 @@ class EstimateEditDialog(ExtendableDialog):
 
 if __name__ == "__main__":
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     LOGGER.setLevel(logging.DEBUG)
     dl = EstimateEditDialog(11956, 29749)
     if dl.exec_():

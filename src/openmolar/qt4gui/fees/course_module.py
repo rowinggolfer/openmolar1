@@ -27,7 +27,7 @@ functions to open a course, close a course, or check if one is needed.
 import datetime
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.dbtools import writeNewCourse
@@ -98,7 +98,7 @@ def setupNewCourse(om_gui):
     else:
         cdnt = om_gui.pt.dnt2
 
-    dialog = QtGui.QDialog(om_gui)
+    dialog = QtWidgets.QDialog(om_gui)
 
     dl = NewCourseDialog(dialog,
                          localsettings.ops.get(om_gui.pt.dnt1),
@@ -107,7 +107,7 @@ def setupNewCourse(om_gui):
 
     result, atts = dl.getInput()
 
-    #-- (True, ['BW', 'AH', '', PyQt4.QtCore.QDate(2009, 5, 3)])
+    #-- (True, ['BW', 'AH', '', PyQt5.QtCore.QDate(2009, 5, 3)])
 
     if result:
         dnt1 = localsettings.ops_reverse.get(atts[0])
@@ -249,12 +249,12 @@ def course_should_be_resumed(om_gui):
     else:
         message = _("A course was closed less than a week ago.")
 
-    if QtGui.QMessageBox.question(
+    if QtWidgets.QMessageBox.question(
         om_gui,
         _("Question"),
         "%s<hr />%s" % (message, _("Would you like to resume this course?")),
-        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-            QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
+        QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+            QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes:
             return resumeCourse(om_gui)
     return False
 
@@ -263,12 +263,12 @@ def resumeCourse(om_gui):
     '''
     resume the previous treatment course
     '''
-    if QtGui.QMessageBox.question(
+    if QtWidgets.QMessageBox.question(
         om_gui,
         _("Confirm"),
         _("Are you sure you wish to Resume the previous course of treatment?"),
-        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-            QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+        QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+            QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes:
 
         om_gui.pt.treatment_course.cmpd = None
         om_gui.pt.treatment_course.ftr = False
@@ -296,12 +296,12 @@ def fix_zombied_course(om_gui):
                 "in the currtrtmt2 table)")
     question = _("Do you wish to recover this row now?")
 
-    if QtGui.QMessageBox.question(
+    if QtWidgets.QMessageBox.question(
         om_gui,
         _("question"),
         "%s<hr /><b>%s</b>" % (message, question),
-        QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-            QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
+        QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+            QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes:
 
         cno = om_gui.pt.max_tx_courseno
         apply_new_courseno(om_gui, cno)

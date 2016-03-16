@@ -24,7 +24,7 @@
 from gettext import gettext as _
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.compiled_uis import Ui_toothprops_full_edit
@@ -42,7 +42,7 @@ class editor(Ui_toothprops_full_edit.Ui_Dialog):
         self.chart = chart
         self.setLabel()
         self.lineEdit = lineEdit
-        hlayout = QtGui.QHBoxLayout(self.frame)
+        hlayout = QtWidgets.QHBoxLayout(self.frame)
         hlayout.setContentsMargins(0, 0, 0, 0)
         hlayout.addWidget(self.lineEdit)
         self.setData()
@@ -85,10 +85,10 @@ class editor(Ui_toothprops_full_edit.Ui_Dialog):
         '''
         just puts "comment" into column 1 for now... might add an icon?
         '''
-        item = QtGui.QTableWidgetItem("!")
+        item = QtWidgets.QTableWidgetItem("!")
         self.tableWidget.setItem(row, 0, item)
 
-        item = QtGui.QTableWidgetItem(prop)
+        item = QtWidgets.QTableWidgetItem(prop)
         self.tableWidget.setItem(row, 1, item)
 
     def drawProp(self, prop, row):
@@ -96,13 +96,13 @@ class editor(Ui_toothprops_full_edit.Ui_Dialog):
         adds a graphical representation of the "property" to the table
         '''
         tooth = ToothImage(self.tooth, [str(prop).lower()])
-        icon_tableitem = QtGui.QTableWidgetItem()
+        icon_tableitem = QtWidgets.QTableWidgetItem()
         image = tooth.image.scaled(40, 40)
         icon_tableitem.setData(QtCore.Qt.DecorationRole, image)
         icon_tableitem.setToolTip(_("click to edit Item - ") + prop)
 
         self.tableWidget.setItem(row, 0, icon_tableitem)
-        prop_tableitem = QtGui.QTableWidgetItem(prop)
+        prop_tableitem = QtWidgets.QTableWidgetItem(prop)
         self.tableWidget.setItem(row, 1, prop_tableitem)
 
     def addEraseButton(self, prop, row):
@@ -110,14 +110,14 @@ class editor(Ui_toothprops_full_edit.Ui_Dialog):
         adds a pushbutton to the tableWidget
         '''
         p_map = QtGui.QPixmap(":/eraser.png").scaled(24, 24)
-        tableItem = QtGui.QTableWidgetItem()
+        tableItem = QtWidgets.QTableWidgetItem()
         tableItem.setData(QtCore.Qt.DecorationRole, p_map)
         tableItem.setToolTip(_("click to delete item - ") + prop)
         self.tableWidget.setItem(row, 3, tableItem)
 
     def addDownArrow(self, prop, row):
         p_map = QtGui.QPixmap(QtGui.QPixmap(":/down.png")).scaled(24, 24)
-        tableItem = QtGui.QTableWidgetItem()
+        tableItem = QtWidgets.QTableWidgetItem()
         tableItem.setData(QtCore.Qt.DecorationRole, p_map)
         tableItem.setToolTip(_("click to promote Item - ") + prop)
         self.tableWidget.setItem(row, 2, tableItem)
@@ -159,10 +159,10 @@ class editor(Ui_toothprops_full_edit.Ui_Dialog):
 if __name__ == "__main__":
     localsettings.initiate()
     LOGGER.setLevel(logging.DEBUG)
-    app = QtGui.QApplication([])
-    Dialog = QtGui.QDialog()
+    app = QtWidgets.QApplication([])
+    Dialog = QtWidgets.QDialog()
 
-    le = QtGui.QLineEdit()
+    le = QtWidgets.QLineEdit()
     le.setText("IM/TIT MOD RT CR,GO !KUO")
     dl = editor("ul7", "st", le, Dialog)
     dl.exec_()

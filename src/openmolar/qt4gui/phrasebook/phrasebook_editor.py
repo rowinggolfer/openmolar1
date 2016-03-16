@@ -29,8 +29,8 @@ import os
 import sys
 from xml.dom import minidom
 
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtXmlPatterns import QXmlSchemaValidator, QXmlSchema
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.settings import localsettings
 
@@ -46,11 +46,11 @@ STYLESHEET = os.path.join(
     localsettings.resources_location, "phrasebook", "phrasebook.xsd")
 
 
-class ControlPanel(QtGui.QListView):
+class ControlPanel(QtWidgets.QListView):
     phrase_selected = QtCore.pyqtSignal(object)
 
     def __init__(self, parent=None):
-        QtGui.QListView.__init__(self, parent)
+        QtWidgets.QListView.__init__(self, parent)
         self.list_model = PhrasesListModel()
 
     def set_xml(self, xml):
@@ -62,7 +62,7 @@ class ControlPanel(QtGui.QListView):
         self.phrase_selected.emit(new_index)
 
 
-class PhrasebookEditor(QtGui.QMainWindow):
+class PhrasebookEditor(QtWidgets.QMainWindow):
     _checking_files = False
     _known_deleted_parsers = []
     _compare_phrases_dockwidget = None
@@ -70,55 +70,55 @@ class PhrasebookEditor(QtGui.QMainWindow):
     closed_signal = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
-        QtGui.QMainWindow.__init__(self, parent)
+        QtWidgets.QMainWindow.__init__(self, parent)
         self.window_title = _("Phrasebook Editor")
         self.setWindowTitle(self.window_title)
         self.loading = True
 
-        statusbar = QtGui.QStatusBar()
+        statusbar = QtWidgets.QStatusBar()
         self.setStatusBar(statusbar)
 
         self.control_panel = ControlPanel()
         self.control_panel.phrase_selected.connect(self.find_phrase)
 
         #: a pointer to the label in the statusbar
-        self.cursor_pos_label = QtGui.QLabel("Line 0, Column 0")
+        self.cursor_pos_label = QtWidgets.QLabel("Line 0, Column 0")
         statusbar.addPermanentWidget(self.cursor_pos_label)
 
-        self.main_toolbar = QtGui.QToolBar()
+        self.main_toolbar = QtWidgets.QToolBar()
         self.main_toolbar.setObjectName("Main Toolbar")
         self.main_toolbar.toggleViewAction().setText(_("Toolbar"))
 
-        self.prefs_toolbar = QtGui.QToolBar()
+        self.prefs_toolbar = QtWidgets.QToolBar()
         self.prefs_toolbar.setObjectName("Prefs Toolbar")
         self.prefs_toolbar.toggleViewAction().setText(_("Preferences Toolbar"))
 
         self.addToolBar(QtCore.Qt.TopToolBarArea, self.main_toolbar)
         self.addToolBar(QtCore.Qt.TopToolBarArea, self.prefs_toolbar)
 
-        menu_file = QtGui.QMenu(_("&File"), self)
-        menu_edit = QtGui.QMenu(_("&Edit"), self)
-        menu_tools = QtGui.QMenu(_("&Tools"), self)
+        menu_file = QtWidgets.QMenu(_("&File"), self)
+        menu_edit = QtWidgets.QMenu(_("&Edit"), self)
+        menu_tools = QtWidgets.QMenu(_("&Tools"), self)
 
         self.menuBar().addMenu(menu_file)
         self.menuBar().addMenu(menu_edit)
         self.menuBar().addMenu(menu_tools)
 
         icon = QtGui.QIcon.fromTheme("document-new")
-        action_new = QtGui.QAction(icon, _("New Phrasebook"), self)
+        action_new = QtWidgets.QAction(icon, _("New Phrasebook"), self)
         action_new.setToolTip(_("Create a new clinician phrasebook"))
 
         icon = QtGui.QIcon(":database.png")
-        action_commit = QtGui.QAction(icon, _("Commit to Database"), self)
+        action_commit = QtWidgets.QAction(icon, _("Commit to Database"), self)
         action_commit.setToolTip(_("Commit changes to database"))
 
         icon = QtGui.QIcon.fromTheme("document-find")
-        action_find = QtGui.QAction(icon, _("Find"), self)
+        action_find = QtWidgets.QAction(icon, _("Find"), self)
         action_find.setShortcut("Ctrl+F")
         action_find.setToolTip(
             _("Search current file for first forward match of entered text"))
 
-        action_find_again = QtGui.QAction(icon, _("Find Again"), self)
+        action_find_again = QtWidgets.QAction(icon, _("Find Again"), self)
         action_find_again.setShortcut("Ctrl+G")
         action_find_again.setToolTip(_("Search current file again for text"))
 
@@ -131,19 +131,19 @@ class PhrasebookEditor(QtGui.QMainWindow):
         menu_file.addAction(action_new)
         menu_file.addAction(action_commit)
 
-        self.tab_widget = QtGui.QTabWidget()
+        self.tab_widget = QtWidgets.QTabWidget()
 
         self.phrasebook_parsers = OrderedDict()
         self.text_editors = []
 
-        self.action_refactor = QtGui.QAction(_("XML tidy"), self)
+        self.action_refactor = QtWidgets.QAction(_("XML tidy"), self)
         self.action_refactor.triggered.connect(self.refactor)
 
-        self.action_check_parseable = QtGui.QAction(
+        self.action_check_parseable = QtWidgets.QAction(
             _("Check Well Formed"), self)
         self.action_check_parseable.triggered.connect(self.check_parseable)
 
-        self.action_check_validity = QtGui.QAction(_("Check Validity"), self)
+        self.action_check_validity = QtWidgets.QAction(_("Check Validity"), self)
         self.action_check_validity.triggered.connect(self.check_validity)
 
         menu_tools.addAction(self.action_refactor)
@@ -154,7 +154,7 @@ class PhrasebookEditor(QtGui.QMainWindow):
         self.prefs_toolbar.addAction(self.action_check_parseable)
         self.prefs_toolbar.addAction(self.action_check_validity)
 
-        splitter = QtGui.QSplitter()
+        splitter = QtWidgets.QSplitter()
         splitter.addWidget(self.control_panel)
         splitter.addWidget(self.tab_widget)
         splitter.setSizes([150, 650])
@@ -176,20 +176,20 @@ class PhrasebookEditor(QtGui.QMainWindow):
         '''
         if importance is 0:
             LOGGER.debug(message)
-            m = QtGui.QMessageBox(self)
+            m = QtWidgets.QMessageBox(self)
             m.setText(message)
             m.setIcon(m.Information)
-            m.setStandardButtons(QtGui.QMessageBox.NoButton)
+            m.setStandardButtons(QtWidgets.QMessageBox.NoButton)
             m.setWindowTitle(_("advisory"))
             m.setModal(False)
             QtCore.QTimer.singleShot(3 * 1000, m.accept)
             m.show()
         elif importance == 1:
             LOGGER.info(message)
-            QtGui.QMessageBox.information(self, _("Advisory"), message)
+            QtWidgets.QMessageBox.information(self, _("Advisory"), message)
         else:
             LOGGER.warning(message)
-            QtGui.QMessageBox.warning(self, _("Error"), message)
+            QtWidgets.QMessageBox.warning(self, _("Error"), message)
 
     def sizeHint(self):
         return QtCore.QSize(800, 500)
@@ -203,11 +203,11 @@ class PhrasebookEditor(QtGui.QMainWindow):
                 _("WARNING - you have unsaved changes!"),
                 _("Are you sure you want to quit?"))
 
-            if QtGui.QMessageBox.question(
+            if QtWidgets.QMessageBox.question(
                     self, _("Confirm"),
                     message,
-                    QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
-                    QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+                    QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel,
+                    QtWidgets.QMessageBox.Cancel) == QtWidgets.QMessageBox.Cancel:
                 event.ignore()
                 return
         self.closed_signal.emit()
@@ -252,7 +252,7 @@ class PhrasebookEditor(QtGui.QMainWindow):
                 "%s - %s" % (self.window_title, ix))
             self.update_index()
         else:
-            QtGui.QMessageBox.information(
+            QtWidgets.QMessageBox.information(
                 self, _("Information"),
                 _("You appear to have no phrasebooks "
                   "installed in your database"))
@@ -327,10 +327,10 @@ class PhrasebookEditor(QtGui.QMainWindow):
             self.compare_phrase(id)
 
     def find_text(self):
-        self.search_text, result = QtGui.QInputDialog.getText(
+        self.search_text, result = QtWidgets.QInputDialog.getText(
             self, _("Find Text"),
             _("Please enter the text you wish to search for"),
-            QtGui.QLineEdit.Normal, self.search_text)
+            QtWidgets.QLineEdit.Normal, self.search_text)
         if result:
             self.find_again()
 
@@ -347,7 +347,7 @@ class PhrasebookEditor(QtGui.QMainWindow):
         if offer_list == []:
             self.advise(_("Everyone has a phrasebook already!"), 2)
             return
-        dl = QtGui.QInputDialog(self)
+        dl = QtWidgets.QInputDialog(self)
         choice, result = dl.getItem(
             self, _("Choose"),
             _("A phrasebook for which clinician?"), sorted(offer_list))
@@ -357,11 +357,11 @@ class PhrasebookEditor(QtGui.QMainWindow):
             self.load_phrasebooks()
 
     def apply_changes(self):
-        if QtGui.QMessageBox.question(
+        if QtWidgets.QMessageBox.question(
                 self, _("confirm"),
                 _("commit all local files to database?"),
-                QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel
-                ) == QtGui.QMessageBox.Ok:
+                QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel
+                ) == QtWidgets.QMessageBox.Ok:
             no_ = 0
             for te in self.text_editors:
                 if not te.is_dirty:
@@ -401,7 +401,7 @@ class PhrasebookEditor(QtGui.QMainWindow):
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
     localsettings.initiate()
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     mw = PhrasebookEditor()
     mw.show()
     app.exec_()

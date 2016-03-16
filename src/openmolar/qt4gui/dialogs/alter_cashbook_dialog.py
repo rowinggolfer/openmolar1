@@ -21,7 +21,7 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.connect import connect
@@ -44,20 +44,20 @@ class AlterCashbookDialog(ExtendableDialog):
         self.ix = ix
         title = _("Alter Cashbook Entry")
         self.setWindowTitle(title)
-        label = QtGui.QLabel("<b>%s</b>" % title)
+        label = QtWidgets.QLabel("<b>%s</b>" % title)
         label.setAlignment(QtCore.Qt.AlignCenter)
 
-        frame = QtGui.QFrame()
-        form_layout = QtGui.QFormLayout(frame)
+        frame = QtWidgets.QFrame()
+        form_layout = QtWidgets.QFormLayout(frame)
 
-        self.serialno_le = QtGui.QLineEdit()
-        self.patient_le = QtGui.QLineEdit()
-        self.date_edit = QtGui.QDateEdit()
-        self.dentist_cb = QtGui.QComboBox()
+        self.serialno_le = QtWidgets.QLineEdit()
+        self.patient_le = QtWidgets.QLineEdit()
+        self.date_edit = QtWidgets.QDateEdit()
+        self.dentist_cb = QtWidgets.QComboBox()
         self.dentist_cb.addItems(localsettings.activedents)
 
-        self.code_cb = QtGui.QComboBox()
-        self.amount_sb = QtGui.QDoubleSpinBox()
+        self.code_cb = QtWidgets.QComboBox()
+        self.amount_sb = QtWidgets.QDoubleSpinBox()
         self.amount_sb.setRange(0, 10000)
 
         self.codestrings = list(localsettings.cashbookCodesDict.values())
@@ -81,7 +81,7 @@ class AlterCashbookDialog(ExtendableDialog):
 
         self.load_values()
 
-        adv_button = QtGui.QPushButton(_("Enable Full Edit"))
+        adv_button = QtWidgets.QPushButton(_("Enable Full Edit"))
         self.add_advanced_widget(adv_button)
         adv_button.clicked.connect(self.enable_all)
 
@@ -165,7 +165,7 @@ class AlterCashbookDialog(ExtendableDialog):
 if __name__ == "__main__":
 
     localsettings.initiate()
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     dl = AlterCashbookDialog(152039)
 

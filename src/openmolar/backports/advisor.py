@@ -21,10 +21,10 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class MessagePopup(QtGui.QWidget):
+class MessagePopup(QtWidgets.QWidget):
 
     '''
     A custom Widget which can be used as a brief non-modal message box.
@@ -161,7 +161,7 @@ class MessagePopup(QtGui.QWidget):
             painter.drawText(self.text_rectf, self.doc.toPlainText(), option)
 
 
-class Advisor(QtGui.QWidget):
+class Advisor(QtWidgets.QWidget):
 
     '''
     provides various notifications to the user
@@ -171,7 +171,7 @@ class Advisor(QtGui.QWidget):
         '''
         Advisor.__init__(self, parent=None)
         '''
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         self.brief_messages = []
         self.briefMessagePosition = QtCore.QPoint(10, 10)
 
@@ -235,7 +235,7 @@ class Advisor(QtGui.QWidget):
             else:
                 pos = self.briefMessagePosition
             self.brief_message_box.move(pos)
-            app = QtGui.QApplication.instance()
+            app = QtWidgets.QApplication.instance()
             if app:
                 app.processEvents()
 
@@ -260,13 +260,13 @@ class Advisor(QtGui.QWidget):
                 pass
 
         elif warning_level == 1:
-            QtGui.QMessageBox.information(self, _("Advisory"), message)
+            QtWidgets.QMessageBox.information(self, _("Advisory"), message)
 
         elif warning_level == 2:
-            QtGui.QMessageBox.warning(self, _("Error"), message)
+            QtWidgets.QMessageBox.warning(self, _("Error"), message)
 
     def wait(self, waiting=True):
-        app = QtGui.QApplication.instance()
+        app = QtWidgets.QApplication.instance()
         if waiting:
             app.setOverrideCursor(QtCore.Qt.WaitCursor)
         else:
@@ -277,7 +277,7 @@ if __name__ == "__main__":
     import gettext
     gettext.install("")
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     advisor = Advisor()
     advisor.show()

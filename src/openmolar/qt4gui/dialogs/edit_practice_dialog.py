@@ -23,7 +23,7 @@
 
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
@@ -45,16 +45,16 @@ class EditPracticeDialog(BaseDialog):
             _("This information is used on receipts and appointment slips."),
         ))
 
-        self.practice_line_edit = QtGui.QLineEdit()
+        self.practice_line_edit = QtWidgets.QLineEdit()
         self.practice_line_edit.setText(localsettings.PRACTICE_NAME)
 
-        frame = QtGui.QFrame(self)
-        layout = QtGui.QFormLayout(frame)
+        frame = QtWidgets.QFrame(self)
+        layout = QtWidgets.QFormLayout(frame)
         layout.addRow(_("Practice Name"), self.practice_line_edit)
 
         self.addr_line_edits = []
         for i in range(7):
-            le = QtGui.QLineEdit()
+            le = QtWidgets.QLineEdit()
             self.addr_line_edits.append(le)
             layout.addRow("%s %d" % (_("Address Line"), i + 1), le)
 
@@ -107,7 +107,7 @@ class EditPracticeDialog(BaseDialog):
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     localsettings.initiate()
 
     dl = EditPracticeDialog()

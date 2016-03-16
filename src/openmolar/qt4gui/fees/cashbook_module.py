@@ -25,7 +25,7 @@
 cashbook is an html table implementation currently.
 '''
 import re
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 from openmolar.dbtools import cashbook
 from openmolar.qt4gui.printing import bookprint
@@ -34,11 +34,11 @@ from openmolar.qt4gui.dialogs import permissions
 from openmolar.qt4gui.dialogs.alter_cashbook_dialog import AlterCashbookDialog
 
 
-class CashBookBrowser(QtGui.QTextBrowser):
+class CashBookBrowser(QtWidgets.QTextBrowser):
 
     def __init__(self, parent=None):
         self.om_gui = parent
-        QtGui.QTextBrowser.__init__(self, parent)
+        QtWidgets.QTextBrowser.__init__(self, parent)
 
     def setSource(self, url):
         '''

@@ -22,10 +22,10 @@
 # ########################################################################### #
 
 import sys
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 
-class RestorableApplication(QtGui.QApplication):
+class RestorableApplication(QtWidgets.QApplication):
 
     '''
     A subclass which play ball if app state is to be remembered by an X11
@@ -38,7 +38,7 @@ class RestorableApplication(QtGui.QApplication):
         the name given here is important as is used in saving the settings
         '''
         # super(RestorableApplication, self).__init__(sys.argv)
-        QtGui.QApplication.__init__(self, sys.argv)
+        QtWidgets.QApplication.__init__(self, sys.argv)
         self.setOrganizationName(name)
         self.setApplicationName(name)
 

@@ -24,7 +24,7 @@
 import datetime
 from gettext import gettext as _
 import logging
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
@@ -94,9 +94,9 @@ class _ConfirmDialog(BaseDialog):
 
     def __init__(self, serialno, parent=None):
         BaseDialog.__init__(self, parent)
-        self.browser = QtGui.QTextBrowser()
+        self.browser = QtWidgets.QTextBrowser()
 
-        label = QtGui.QLabel("%s %s %s" % (_("Add Record"), serialno,
+        label = QtWidgets.QLabel("%s %s %s" % (_("Add Record"), serialno,
                                            _("to this family group?")))
 
         self.insertWidget(label)
@@ -117,10 +117,10 @@ class _ChooseAddressDialog(BaseDialog):
         BaseDialog.__init__(self, parent)
 
         self.addresses = list(addresses)
-        label = QtGui.QLabel(_("Which address should be used?"))
-        self.table_widget = QtGui.QTableWidget()
+        label = QtWidgets.QLabel(_("Which address should be used?"))
+        self.table_widget = QtWidgets.QTableWidget()
         self.table_widget.setSelectionBehavior(
-            QtGui.QAbstractItemView.SelectRows)
+            QtWidgets.QAbstractItemView.SelectRows)
         self.table_widget.setAlternatingRowColors(True)
 
         self.table_widget.setRowCount(len(addresses))
@@ -132,7 +132,7 @@ class _ChooseAddressDialog(BaseDialog):
             for col, field in enumerate(fields):
                 if field is None:
                     continue
-                item = QtGui.QTableWidgetItem(field)
+                item = QtWidgets.QTableWidgetItem(field)
                 self.table_widget.setItem(row, col, item)
 
         self.insertWidget(label)
@@ -149,39 +149,39 @@ class _ChooseAddressDialog(BaseDialog):
         return self.addresses[self.table_widget.currentIndex().row()]
 
 
-class _AdvancedWidget(QtGui.QWidget):
+class _AdvancedWidget(QtWidgets.QWidget):
     sync_address_signal = QtCore.pyqtSignal()
     add_member_signal = QtCore.pyqtSignal()
     find_others_signal = QtCore.pyqtSignal()
     delete_group_signal = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
         icon = QtGui.QIcon(":/agt_reload.png")
-        sync_address_but = QtGui.QPushButton(icon, _("Synchronise Addresses"))
+        sync_address_but = QtWidgets.QPushButton(icon, _("Synchronise Addresses"))
         sync_address_but.clicked.connect(self.sync_address_signal.emit)
 
         icon = QtGui.QIcon(":/search.png")
-        add_member_but = QtGui.QPushButton(icon, _("Standard Search"))
+        add_member_but = QtWidgets.QPushButton(icon, _("Standard Search"))
         add_member_but.clicked.connect(self.add_member_signal.emit)
 
-        find_address_but = QtGui.QPushButton(icon, _("Address Search"))
+        find_address_but = QtWidgets.QPushButton(icon, _("Address Search"))
         find_address_but.clicked.connect(self.find_others_signal.emit)
 
         icon = QtGui.QIcon(":/eraser.png")
-        delete_group_but = QtGui.QPushButton(icon, _("Delete this group"))
+        delete_group_but = QtWidgets.QPushButton(icon, _("Delete this group"))
         delete_group_but.clicked.connect(self.delete_group_signal.emit)
 
-        layout = QtGui.QHBoxLayout(self)
+        layout = QtWidgets.QHBoxLayout(self)
 
-        add_groupbox = QtGui.QGroupBox(_("Add members"))
-        add_layout = QtGui.QVBoxLayout(add_groupbox)
+        add_groupbox = QtWidgets.QGroupBox(_("Add members"))
+        add_layout = QtWidgets.QVBoxLayout(add_groupbox)
         add_layout.addWidget(add_member_but)
         add_layout.addWidget(find_address_but)
 
-        manage_groupbox = QtGui.QGroupBox(_("Manage Group"))
-        manage_layout = QtGui.QVBoxLayout(manage_groupbox)
+        manage_groupbox = QtWidgets.QGroupBox(_("Manage Group"))
+        manage_layout = QtWidgets.QVBoxLayout(manage_groupbox)
         manage_layout.addWidget(sync_address_but)
         manage_layout.addWidget(delete_group_but)
 
@@ -198,13 +198,13 @@ class FamilyManageDialog(ExtendableDialog):
 
         title = _("Manage Family Group")
         self.setWindowTitle(title)
-        label = QtGui.QLabel("<b>%s</b>" % title)
+        label = QtWidgets.QLabel("<b>%s</b>" % title)
         label.setAlignment(QtCore.Qt.AlignCenter)
 
-        frame = QtGui.QFrame()
-        self.frame_layout = QtGui.QGridLayout(frame)
+        frame = QtWidgets.QFrame()
+        self.frame_layout = QtWidgets.QGridLayout(frame)
 
-        scroll_area = QtGui.QScrollArea()
+        scroll_area = QtWidgets.QScrollArea()
         scroll_area.setWidget(frame)
         scroll_area.setWidgetResizable(True)
 
@@ -240,7 +240,7 @@ class FamilyManageDialog(ExtendableDialog):
         for i, member in enumerate(members):
             pt = _DuckPatient(member)
 
-            browser = QtGui.QTextBrowser()
+            browser = QtWidgets.QTextBrowser()
             details = patientDetails.header(pt)
             details = details.replace("<h1>DECEASED</h1>", "<h4>Deceased</h4>")
             browser.setText(details)
@@ -253,7 +253,7 @@ class FamilyManageDialog(ExtendableDialog):
                 icon = QtGui.QIcon(":/eraser.png")
             else:
                 icon = QtGui.QIcon(":/logo.png")
-            member_but = QtGui.QPushButton(icon, message)
+            member_but = QtWidgets.QPushButton(icon, message)
             self.frame_layout.addWidget(member_but, row + 1, column)
 
             self.member_dict[member_but] = pt
@@ -263,13 +263,13 @@ class FamilyManageDialog(ExtendableDialog):
             self.widgets.append(browser)
 
         if len(members) == 0:
-            label = QtGui.QLabel(
+            label = QtWidgets.QLabel(
                 _("This patient does not belong to any family group."))
             label.setAlignment(QtCore.Qt.AlignRight)
-            but = QtGui.QPushButton(_("Create a New Family Group"))
+            but = QtWidgets.QPushButton(_("Create a New Family Group"))
             but.clicked.connect(self.new_family_group)
 
-            but2 = QtGui.QPushButton(_("Show similar addresses"))
+            but2 = QtWidgets.QPushButton(_("Show similar addresses"))
             but2.clicked.connect(self.show_addresses)
 
             self.widgets.append(label)
@@ -284,12 +284,12 @@ class FamilyManageDialog(ExtendableDialog):
 
     def member_but_clicked(self):
         pt = self.member_dict[self.sender()]
-        if QtGui.QMessageBox.question(
+        if QtWidgets.QMessageBox.question(
                 self, _("Confirm"),
                 "%s %s %s %s %s" % (_("Remove"), pt.title, pt.fname, pt.sname,
                                     _("from this family group?")),
-                QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
-                QtGui.QMessageBox.Ok) == QtGui.QMessageBox.Cancel:
+                QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel,
+                QtWidgets.QMessageBox.Ok) == QtWidgets.QMessageBox.Cancel:
             return
         families.remove_member(pt.serialno)
         self.load_values()
@@ -325,7 +325,7 @@ class FamilyManageDialog(ExtendableDialog):
             address_set.add(address_tup)
 
         if len(address_set) == 1:
-            QtGui.QMessageBox.information(
+            QtWidgets.QMessageBox.information(
                 self, _("Information"),
                 _("Addresses are all identical - nothing to do!"))
             return
@@ -333,7 +333,7 @@ class FamilyManageDialog(ExtendableDialog):
         dl = _ChooseAddressDialog(address_set, self)
         if dl.exec_():
             count = families.sync_addresses(self.family_no, dl.chosen_address)
-            QtGui.QMessageBox.information(
+            QtWidgets.QMessageBox.information(
                 self, _("Information"),
                 "%d %s" % (count, _("Address(es) updated")))
             self.load_values()
@@ -347,7 +347,7 @@ class FamilyManageDialog(ExtendableDialog):
     def show_addresses(self):
         dl = AddressMatchDialog(self.om_gui)
         dl.table_widget.setSelectionMode(
-            QtGui.QAbstractItemView.NoSelection)
+            QtWidgets.QAbstractItemView.NoSelection)
 
         dl.exec_()
 
@@ -356,10 +356,10 @@ class FamilyManageDialog(ExtendableDialog):
         self.load_values()
 
     def delete_group(self):
-        if QtGui.QMessageBox.question(
+        if QtWidgets.QMessageBox.question(
                 self, _("Confirm"), _("Delete this family group?"),
-                QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
-                QtGui.QMessageBox.Ok) == QtGui.QMessageBox.Cancel:
+                QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel,
+                QtWidgets.QMessageBox.Ok) == QtWidgets.QMessageBox.Cancel:
             return
         families.delete_group(self.family_no)
         self.load_values()
@@ -380,9 +380,9 @@ class LoadRelativesDialog(FamilyManageDialog):
 if __name__ == "__main__":
 
     localsettings.initiate()
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
-    mw = QtGui.QWidget()
+    mw = QtWidgets.QWidget()
     mw.pt = _DuckPatient((1, "", "", "", "The Gables",
                           "Craggiemore Daviot", "Inverness", "", "",
                           "IV2 5XQ", "", "active", ""))

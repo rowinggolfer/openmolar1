@@ -22,7 +22,7 @@
 # ########################################################################### #
 
 import logging
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
@@ -36,46 +36,46 @@ class AutoAddressDialog(BaseDialog):
         self.om_gui = om_gui
         title = _("Apply Saved Address")
         self.setWindowTitle(title)
-        label = QtGui.QLabel("<b>%s</b>" % title)
+        label = QtWidgets.QLabel("<b>%s</b>" % title)
         label.setAlignment(QtCore.Qt.AlignCenter)
 
-        frame = QtGui.QFrame()
-        layout = QtGui.QGridLayout(frame)
+        frame = QtWidgets.QFrame()
+        layout = QtWidgets.QGridLayout(frame)
 
-        label_1 = QtGui.QLabel(_("Address 1"))
-        label_2 = QtGui.QLabel(_("Address 2"))
-        label_3 = QtGui.QLabel(_("Address 1"))
-        label_4 = QtGui.QLabel(_("Town"))
-        label_5 = QtGui.QLabel(_("County"))
-        label_6 = QtGui.QLabel(_("Post Code"))
-        label_7 = QtGui.QLabel(_("Home Telephone"))
+        label_1 = QtWidgets.QLabel(_("Address 1"))
+        label_2 = QtWidgets.QLabel(_("Address 2"))
+        label_3 = QtWidgets.QLabel(_("Address 1"))
+        label_4 = QtWidgets.QLabel(_("Town"))
+        label_5 = QtWidgets.QLabel(_("County"))
+        label_6 = QtWidgets.QLabel(_("Post Code"))
+        label_7 = QtWidgets.QLabel(_("Home Telephone"))
 
-        self.old_addr1_le = QtGui.QLineEdit()
-        self.old_addr2_le = QtGui.QLineEdit()
-        self.old_addr3_le = QtGui.QLineEdit()
-        self.old_town_le = QtGui.QLineEdit()
-        self.old_county_le = QtGui.QLineEdit()
-        self.old_pcde_le = QtGui.QLineEdit()
-        self.old_tel1_le = QtGui.QLineEdit()
+        self.old_addr1_le = QtWidgets.QLineEdit()
+        self.old_addr2_le = QtWidgets.QLineEdit()
+        self.old_addr3_le = QtWidgets.QLineEdit()
+        self.old_town_le = QtWidgets.QLineEdit()
+        self.old_county_le = QtWidgets.QLineEdit()
+        self.old_pcde_le = QtWidgets.QLineEdit()
+        self.old_tel1_le = QtWidgets.QLineEdit()
 
-        self.addr1_le = QtGui.QLineEdit()
-        self.addr2_le = QtGui.QLineEdit()
-        self.addr3_le = QtGui.QLineEdit()
-        self.town_le = QtGui.QLineEdit()
-        self.county_le = QtGui.QLineEdit()
-        self.pcde_le = QtGui.QLineEdit()
-        self.tel1_le = QtGui.QLineEdit()
+        self.addr1_le = QtWidgets.QLineEdit()
+        self.addr2_le = QtWidgets.QLineEdit()
+        self.addr3_le = QtWidgets.QLineEdit()
+        self.town_le = QtWidgets.QLineEdit()
+        self.county_le = QtWidgets.QLineEdit()
+        self.pcde_le = QtWidgets.QLineEdit()
+        self.tel1_le = QtWidgets.QLineEdit()
 
-        self.addr1_cb = QtGui.QCheckBox()
-        self.addr2_cb = QtGui.QCheckBox()
-        self.addr3_cb = QtGui.QCheckBox()
-        self.town_cb = QtGui.QCheckBox()
-        self.county_cb = QtGui.QCheckBox()
-        self.pcde_cb = QtGui.QCheckBox()
-        self.tel1_cb = QtGui.QCheckBox()
+        self.addr1_cb = QtWidgets.QCheckBox()
+        self.addr2_cb = QtWidgets.QCheckBox()
+        self.addr3_cb = QtWidgets.QCheckBox()
+        self.town_cb = QtWidgets.QCheckBox()
+        self.county_cb = QtWidgets.QCheckBox()
+        self.pcde_cb = QtWidgets.QCheckBox()
+        self.tel1_cb = QtWidgets.QCheckBox()
 
-        self.old_header_label = QtGui.QLabel("%s" % _("Existing"))
-        new_header_label = QtGui.QLabel("%s" % _("New"))
+        self.old_header_label = QtWidgets.QLabel("%s" % _("Existing"))
+        new_header_label = QtWidgets.QLabel("%s" % _("New"))
 
         rows = (
             (label_1, self.old_addr1_le, self.addr1_le, self.addr1_cb),
@@ -158,9 +158,9 @@ class AutoAddressDialog(BaseDialog):
 if __name__ == "__main__":
 
     localsettings.initiate()
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
-    mw = QtGui.QWidget()
+    mw = QtWidgets.QWidget()
 
     dl = AutoAddressDialog(mw)
 

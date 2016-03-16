@@ -24,7 +24,7 @@
 import logging
 from gettext import gettext as _
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.dbtools import medhist
@@ -53,7 +53,7 @@ class SelectNoteDialog(BaseDialog):
         for note in (_("Updated Medical Notes"),
                      _("Corrected Medical Notes"),
                      self.NO_NOTE):
-            rb = QtGui.QRadioButton(note)
+            rb = QtWidgets.QRadioButton(note)
             self.rbs.append(rb)
             self.insertWidget(rb)
 
@@ -127,58 +127,58 @@ class MedicalHistoryDialog(BaseDialog):
         BaseDialog.__init__(self, parent, remove_stretch=True)
         self.pt = pt
         self.meds_text_edit = DrugTextEdit()
-        patient_label = QtGui.QLabel(
+        patient_label = QtWidgets.QLabel(
             "%s<br /><b>%s</b>" % (_("Medical History for"),
                                    pt.name_id)
         )
         patient_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.meds_line_edit = QtGui.QLineEdit()
+        self.meds_line_edit = QtWidgets.QLineEdit()
         self.meds_line_edit.setMaxLength(200)
-        self.warning_line_edit = QtGui.QLineEdit()
+        self.warning_line_edit = QtWidgets.QLineEdit()
         self.warning_line_edit.setMaxLength(60)
-        self.allergies_line_edit = QtGui.QLineEdit()
+        self.allergies_line_edit = QtWidgets.QLineEdit()
         self.allergies_line_edit.setMaxLength(60)
-        self.respiratory_line_edit = QtGui.QLineEdit()
+        self.respiratory_line_edit = QtWidgets.QLineEdit()
         self.respiratory_line_edit.setMaxLength(60)
-        self.heart_line_edit = QtGui.QLineEdit()
+        self.heart_line_edit = QtWidgets.QLineEdit()
         self.heart_line_edit.setMaxLength(60)
-        self.bleeding_line_edit = QtGui.QLineEdit()
+        self.bleeding_line_edit = QtWidgets.QLineEdit()
         self.bleeding_line_edit.setMaxLength(60)
-        self.arthritis_line_edit = QtGui.QLineEdit()
+        self.arthritis_line_edit = QtWidgets.QLineEdit()
         self.arthritis_line_edit.setMaxLength(60)
-        self.diabetes_line_edit = QtGui.QLineEdit()
+        self.diabetes_line_edit = QtWidgets.QLineEdit()
         self.diabetes_line_edit.setMaxLength(60)
-        self.infection_line_edit = QtGui.QLineEdit()
+        self.infection_line_edit = QtWidgets.QLineEdit()
         self.infection_line_edit.setMaxLength(60)
-        self.endocarditis_line_edit = QtGui.QLineEdit()
+        self.endocarditis_line_edit = QtWidgets.QLineEdit()
         self.endocarditis_line_edit.setMaxLength(60)
-        self.liver_line_edit = QtGui.QLineEdit()
+        self.liver_line_edit = QtWidgets.QLineEdit()
         self.liver_line_edit.setMaxLength(60)
-        self.anaesthetic_line_edit = QtGui.QLineEdit()
+        self.anaesthetic_line_edit = QtWidgets.QLineEdit()
         self.anaesthetic_line_edit.setMaxLength(60)
-        self.joint_line_edit = QtGui.QLineEdit()
+        self.joint_line_edit = QtWidgets.QLineEdit()
         self.joint_line_edit.setMaxLength(60)
-        self.heart_surgery_line_edit = QtGui.QLineEdit()
+        self.heart_surgery_line_edit = QtWidgets.QLineEdit()
         self.heart_surgery_line_edit.setMaxLength(60)
-        self.brain_surgery_line_edit = QtGui.QLineEdit()
+        self.brain_surgery_line_edit = QtWidgets.QLineEdit()
         self.brain_surgery_line_edit.setMaxLength(60)
-        self.hospitalised_line_edit = QtGui.QLineEdit()
+        self.hospitalised_line_edit = QtWidgets.QLineEdit()
         self.hospitalised_line_edit.setMaxLength(60)
-        self.cjd_line_edit = QtGui.QLineEdit()
+        self.cjd_line_edit = QtWidgets.QLineEdit()
         self.cjd_line_edit.setMaxLength(60)
-        self.other_text_edit = QtGui.QTextEdit()
+        self.other_text_edit = QtWidgets.QTextEdit()
         self.other_text_edit.setMaximumHeight(120)
-        self.med_alert_cb = QtGui.QCheckBox(_("Medical Alert"))
+        self.med_alert_cb = QtWidgets.QCheckBox(_("Medical Alert"))
 
-        meds_frame = QtGui.QFrame()
+        meds_frame = QtWidgets.QFrame()
         meds_frame.setMaximumHeight(150)
-        layout = QtGui.QFormLayout(meds_frame)
+        layout = QtWidgets.QFormLayout(meds_frame)
         layout.addRow(_("Medications"), self.meds_text_edit)
         layout.addRow(_("Medication Comments"), self.meds_line_edit)
 
-        l_frame = QtGui.QFrame()
-        layout = QtGui.QFormLayout(l_frame)
+        l_frame = QtWidgets.QFrame()
+        layout = QtWidgets.QFormLayout(l_frame)
         layout.addRow(_("Warning Card"), self.warning_line_edit)
         layout.addRow(_("Allergies"), self.allergies_line_edit)
         layout.addRow(_("Respiratory"), self.respiratory_line_edit)
@@ -190,8 +190,8 @@ class MedicalHistoryDialog(BaseDialog):
         layout.addRow(_("Endocarditis"), self.endocarditis_line_edit)
         layout.addRow(_("Mark as Medical Alert"), self.med_alert_cb)
 
-        r_frame = QtGui.QFrame()
-        layout = QtGui.QFormLayout(r_frame)
+        r_frame = QtWidgets.QFrame()
+        layout = QtWidgets.QFormLayout(r_frame)
         layout.addRow(_("Liver"), self.liver_line_edit)
         layout.addRow(_("Anaesthetic"), self.anaesthetic_line_edit)
         layout.addRow(_("Joint Replacement"), self.joint_line_edit)
@@ -201,13 +201,13 @@ class MedicalHistoryDialog(BaseDialog):
         layout.addRow(_("CJD"), self.cjd_line_edit)
         layout.addRow(_("Other"), self.other_text_edit)
 
-        frame = QtGui.QFrame()
-        vlayout = QtGui.QHBoxLayout(frame)
+        frame = QtWidgets.QFrame()
+        vlayout = QtWidgets.QHBoxLayout(frame)
         vlayout.setMargin(0)
         vlayout.addWidget(l_frame)
         vlayout.addWidget(r_frame)
 
-        scroll_area = QtGui.QScrollArea()
+        scroll_area = QtWidgets.QScrollArea()
         scroll_area.setWidgetResizable(True)
         scroll_area.setWidget(frame)
 
@@ -220,9 +220,9 @@ class MedicalHistoryDialog(BaseDialog):
         self.checked_only = False
 
         self.setMinimumWidth(
-            QtGui.QApplication.desktop().screenGeometry().width() - 20)
+            QtWidgets.QApplication.desktop().screenGeometry().width() - 20)
         self.setMinimumHeight(
-            QtGui.QApplication.desktop().screenGeometry().height() * .6)
+            QtWidgets.QApplication.desktop().screenGeometry().height() * .6)
 
         QtCore.QTimer.singleShot(10, self.load_mh)
         self.enableApply()
@@ -267,7 +267,7 @@ class MedicalHistoryDialog(BaseDialog):
         return self.mh.ix is None
 
     def advise(self, message):
-        QtGui.QMessageBox.information(self, _("message"), message)
+        QtWidgets.QMessageBox.information(self, _("message"), message)
 
     def sizeHint(self):
         return QtCore.QSize(1100, 700)
@@ -286,7 +286,7 @@ class MedicalHistoryDialog(BaseDialog):
     def check_new_meds(self):
         for med in self.unknown_meds:
             LOGGER.debug("unknown medication found %s", med)
-            result = QtGui.QMessageBox.question(
+            result = QtWidgets.QMessageBox.question(
                 self,
                 _("question"),
                 "<b>'%s'</b> %s<hr />%s" % (
@@ -294,13 +294,13 @@ class MedicalHistoryDialog(BaseDialog):
                     _("is not a known drug on the system"),
                     _("Would you like to add it?")
                 ),
-                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                QtGui.QMessageBox.No)
-            if result == QtGui.QMessageBox.Yes:
+                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                QtWidgets.QMessageBox.No)
+            if result == QtWidgets.QMessageBox.Yes:
                 medhist.insert_medication(med)
                 self.meds_text_edit.add_new_drug(med)
             else:
-                if QtGui.QMessageBox.question(
+                if QtWidgets.QMessageBox.question(
                     self,
                     _("question"),
                     "%s <b>'%s'</b> %s" % (
@@ -308,8 +308,8 @@ class MedicalHistoryDialog(BaseDialog):
                         med,
                         _("from your input?")
                     ),
-                    QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                        QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
+                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                        QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.No:
                     return False
                 else:
                     self.meds_text_edit.remove_med(med)
@@ -387,23 +387,23 @@ class MedicalHistoryDialog(BaseDialog):
         if not self.get_new_mh():
             return
         if not self.has_edits and self.mh.chkdate != self.new_mh.chkdate:
-            if QtGui.QMessageBox.question(
+            if QtWidgets.QMessageBox.question(
                 self,
                 _("question"),
                 _("No changes - mark as checked today?"),
-                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                    QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
+                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                    QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes:
                 self.checked_only = True
             else:
                 BaseDialog.reject(self)
                 return
         elif self.is_new_mh and not self.has_edits:
-            if QtGui.QMessageBox.question(
+            if QtWidgets.QMessageBox.question(
                 self,
                 _("question"),
                 _("Blank Medical History Entered - mark as checked today?"),
-                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                    QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
+                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                    QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.No:
                 BaseDialog.reject(self)
                 return
         BaseDialog.accept(self)
@@ -426,12 +426,12 @@ class MedicalHistoryDialog(BaseDialog):
     def reject(self):
         self.get_new_mh(rejecting=True)
         if self.has_edits:
-            if QtGui.QMessageBox.question(
+            if QtWidgets.QMessageBox.question(
                     self,
                     _("Confirm"),
                     _("Abandon your changes?"),
-                    QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                    QtGui.QMessageBox.No) == QtGui.QMessageBox.No:
+                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                    QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.No:
                 return
         BaseDialog.reject(self)
 
@@ -454,7 +454,7 @@ class MedicalHistoryDialog(BaseDialog):
 
 if __name__ == "__main__":
     import sys
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     from openmolar.dbtools import patient_class
 
     LOGGER.setLevel(logging.DEBUG)

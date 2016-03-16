@@ -28,7 +28,7 @@ this module provides a model class so that feescales can be displayed
 
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 from openmolar.settings import localsettings
 
 HIDE_RARE_CODES = 1  # fee items can be flagged as "obscure" in the XML
@@ -289,17 +289,17 @@ if __name__ == "__main__":
 
     LOGGER.setLevel(logging.DEBUG)
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     localsettings.initiate()
     localsettings.loadFeeTables()
     model = treeModel(localsettings.FEETABLES.tables[0])
 
-    dialog = QtGui.QDialog()
+    dialog = QtWidgets.QDialog()
 
     dialog.setMinimumSize(800, 300)
-    layout = QtGui.QHBoxLayout(dialog)
+    layout = QtWidgets.QHBoxLayout(dialog)
 
-    tv = QtGui.QTreeView(dialog)
+    tv = QtWidgets.QTreeView(dialog)
     tv.setModel(model)
     tv.setAlternatingRowColors(True)
     tv.resizeColumnToContents(0)

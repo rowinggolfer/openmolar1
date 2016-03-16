@@ -30,7 +30,7 @@ from gettext import gettext as _
 import logging
 import time
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 
@@ -107,7 +107,7 @@ class DiaryWidget(Advisor):
 
         # keep a pointer to this layout as the layout is moved between
         # dayview and weekview
-        self.control_layout = QtGui.QVBoxLayout(self.ui.day_view_control_frame)
+        self.control_layout = QtWidgets.QVBoxLayout(self.ui.day_view_control_frame)
         self.control_layout.setMargin(0)
         self.control_layout.addWidget(self.schedule_controller)
         # self.control_layout.addStretch(0)
@@ -130,7 +130,7 @@ class DiaryWidget(Advisor):
             bw = AppointmentOverviewWidget("0820", "1910", 10, 3, self)
             self.ui.apptoverviews.append(bw)
 
-            hlayout = QtGui.QHBoxLayout(frame)
+            hlayout = QtWidgets.QHBoxLayout(frame)
             hlayout.setMargin(0)
             hlayout.addWidget(bw)
 
@@ -144,7 +144,7 @@ class DiaryWidget(Advisor):
                      self.ui.day6_frame,
                      self.ui.day7_frame
                      ):
-            hlayout = QtGui.QHBoxLayout(widg)
+            hlayout = QtWidgets.QHBoxLayout(widg)
             hlayout.setMargin(0)
             control = aptOVcontrol.control()
             self.ui.apptoverviewControls.append(control)
@@ -157,29 +157,29 @@ class DiaryWidget(Advisor):
 
         # -customise the appointment widget calendar
         self.ui.dayCalendar = calendars.controlCalendar()
-        self.calendar_layout = QtGui.QHBoxLayout(self.ui.dayCalendar_frame)
+        self.calendar_layout = QtWidgets.QHBoxLayout(self.ui.dayCalendar_frame)
         self.calendar_layout.setMargin(0)
         self.calendar_layout.addWidget(self.ui.dayCalendar)
 
         self.ui.weekCalendar = calendars.weekCalendar()
-        hlayout = QtGui.QHBoxLayout(self.ui.weekCalendar_frame)
+        hlayout = QtWidgets.QHBoxLayout(self.ui.weekCalendar_frame)
         hlayout.setMargin(0)
         hlayout.addWidget(self.ui.weekCalendar)
 
         # -add a month view
         self.ui.monthView = calendars.monthCalendar()
-        # hlayout=QtGui.QHBoxLayout(self.ui.monthView_frame)
+        # hlayout=QtWidgets.QHBoxLayout(self.ui.monthView_frame)
         # hlayout.setMargin(0)
         # hlayout.addWidget(self.ui.monthView)
         self.ui.monthView_scrollArea.setWidget(self.ui.monthView)
         # -add a year view
         self.ui.yearView = calendars.yearCalendar()
-        hlayout = QtGui.QHBoxLayout(self.ui.yearView_frame)
+        hlayout = QtWidgets.QHBoxLayout(self.ui.yearView_frame)
         hlayout.setMargin(0)
         hlayout.addWidget(self.ui.yearView)
 
-        self.agenda_widget = QtGui.QTextBrowser()
-        layout = QtGui.QVBoxLayout(self.ui.agenda_frame)
+        self.agenda_widget = QtWidgets.QTextBrowser()
+        layout = QtWidgets.QVBoxLayout(self.ui.agenda_frame)
         layout.setMargin(0)
         layout.addWidget(self.agenda_widget)
 
@@ -208,7 +208,7 @@ class DiaryWidget(Advisor):
         this function is overwritten so that the advisor popup can be
         put in the correct place
         '''
-        QtGui.QMainWindow.resizeEvent(self, event)
+        QtWidgets.QMainWindow.resizeEvent(self, event)
         self.setBriefMessageLocation()
 
     def setBriefMessageLocation(self):
@@ -444,12 +444,12 @@ class DiaryWidget(Advisor):
                 localsettings.apptix_reverse[selectedDent],
                 _("Is this correct?"))
 
-            result = QtGui.QMessageBox.question(
+            result = QtWidgets.QMessageBox.question(
                 self, _("Confirm"), message,
-                QtGui.QMessageBox.Yes,
-                QtGui.QMessageBox.No)
+                QtWidgets.QMessageBox.Yes,
+                QtWidgets.QMessageBox.No)
 
-            if result == QtGui.QMessageBox.No:
+            if result == QtWidgets.QMessageBox.No:
                 # dialog rejected
                 return
 
@@ -478,11 +478,11 @@ class DiaryWidget(Advisor):
                 localsettings.apptix_reverse.get(selectedDent, "??"))
 
             # -get final confirmation
-            result = QtGui.QMessageBox.question(
+            result = QtWidgets.QMessageBox.question(
                 self, _("Confirm"), message,
-                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                QtGui.QMessageBox.Yes)
-            if result == QtGui.QMessageBox.No:
+                QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                QtWidgets.QMessageBox.Yes)
+            if result == QtWidgets.QMessageBox.No:
                 # dialog rejected
                 for widg in self.ui.apptoverviews:
                     widg.update()
@@ -552,13 +552,13 @@ class DiaryWidget(Advisor):
         # TODO - this function does nothing!
 
     def offer_appointment_card(self):
-        result = QtGui.QMessageBox.question(
+        result = QtWidgets.QMessageBox.question(
             self,
             _("Confirm"),
             _("Print Appointment Card?"),
-            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-            QtGui.QMessageBox.Yes)
-        if result == QtGui.QMessageBox.Yes:
+            QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+            QtWidgets.QMessageBox.Yes)
+        if result == QtWidgets.QMessageBox.Yes:
             dl = appointment_card_dialog.AppointmentCardDialog(self.pt, self)
             dl.exec_()
 
@@ -647,13 +647,13 @@ class DiaryWidget(Advisor):
         clears emergency slots for today
         '''
         # - raise a dialog to check
-        result = QtGui.QMessageBox.question(
+        result = QtWidgets.QMessageBox.question(
             self, "Confirm",
             "Clear today's emergency slots?",
-            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-            QtGui.QMessageBox.Yes
+            QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+            QtWidgets.QMessageBox.Yes
         )
-        if result == QtGui.QMessageBox.Yes:
+        if result == QtWidgets.QMessageBox.Yes:
             number_cleared = appointments.clearEms(localsettings.currentDay())
             self.advise("Cleared %d emergency slots" % number_cleared, 1)
             self.layout_diary()
@@ -1162,7 +1162,7 @@ class DiaryWidget(Advisor):
         if not result:
             self.advise(_("unable to locate appointment memo, sorry"), 2)
         else:
-            new_note, result = QtGui.QInputDialog.getText(
+            new_note, result = QtWidgets.QInputDialog.getText(
                 self,
                 _("New Memo"),
                 _("Please enter Memo for this appointment"),
@@ -1213,12 +1213,12 @@ class DiaryWidget(Advisor):
         message += "%s<br />" % localsettings.readableDate(adate)
         message += "with %s?" % localsettings.ops.get(dent)
 
-        if QtGui.QMessageBox.question(
+        if QtWidgets.QMessageBox.question(
                 self,
                 _("Confirm"),
                 message,
-                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+                QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes:
             appt = appointments.APR_Appointment()
             appt.atime = localsettings.humanTimetoWystime(start)
             appt.date = adate
@@ -1413,11 +1413,11 @@ class DiaryWidget(Advisor):
         '''
         LOGGER.debug("edit pub hol for %s", date_)
         current = appointments.getBankHol(date_)
-        new, result = QtGui.QInputDialog.getText(
+        new, result = QtWidgets.QInputDialog.getText(
             self,
             _("Public Holidays"),
             _("Enter the information for ") + localsettings.longDate(date_),
-            QtGui.QLineEdit.Normal,
+            QtWidgets.QLineEdit.Normal,
             current)
         new_value = str(new)
         if result and current != new_value:
@@ -1558,10 +1558,10 @@ class DiaryWidget(Advisor):
             control.edit_memo_signal.connect(self.memo_dialog)
 
 
-class _testDiary(QtGui.QMainWindow):
+class _testDiary(QtWidgets.QMainWindow):
 
     def __init__(self, parent=None):
-        QtGui.QMainWindow.__init__(self, parent)
+        QtWidgets.QMainWindow.__init__(self, parent)
 
         dw = DiaryWidget()
         dw.initiate()
@@ -1573,10 +1573,10 @@ class _testDiary(QtGui.QMainWindow):
 
         self.setCentralWidget(dw)
 
-        action1 = QtGui.QAction("clear emergency slots", self)
+        action1 = QtWidgets.QAction("clear emergency slots", self)
         action1.triggered.connect(dw.clearTodaysEmergencyTime)
 
-        action2 = QtGui.QAction("insert regular blocks", self)
+        action2 = QtWidgets.QAction("insert regular blocks", self)
         action2.triggered.connect(dw.insert_regular_blocks)
 
         self.menuBar().addAction(action1)
@@ -1593,7 +1593,7 @@ if __name__ == "__main__":
 
     localsettings.initiate()
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     mw = _testDiary()
     mw.show()
 

@@ -23,7 +23,7 @@
 
 from gettext import gettext as _
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
@@ -39,14 +39,14 @@ class AppointmentCardDialog(BaseDialog):
         self.pt = patient
 
         self.main_ui = parent
-        patient_label = QtGui.QLabel(
+        patient_label = QtWidgets.QLabel(
             "%s<br /><b>%s</b>" % (_("Appointment Card for"), patient.name_id))
 
         patient_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.appointments_label = QtGui.QLabel()
+        self.appointments_label = QtWidgets.QLabel()
 
-        self.check_box = QtGui.QCheckBox(_("Include Today's appointments?"))
+        self.check_box = QtWidgets.QCheckBox(_("Include Today's appointments?"))
         self.check_box.setChecked(True)
 
         icon = QtGui.QIcon(":/ps.png")
@@ -83,7 +83,7 @@ class AppointmentCardDialog(BaseDialog):
         self.set_label_text()
 
         if self.appts == []:
-            QtGui.QMessageBox.information(self, "warning",
+            QtWidgets.QMessageBox.information(self, "warning",
                                           _("No appointments to print!"))
             self.reject()
 
@@ -119,7 +119,7 @@ if __name__ == "__main__":
     from openmolar.dbtools import patient_class
     pt = patient_class.patient(20862)
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     dl = AppointmentCardDialog(pt, None)
     dl.exec_()

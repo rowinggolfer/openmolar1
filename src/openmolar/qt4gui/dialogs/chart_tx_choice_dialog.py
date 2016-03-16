@@ -25,7 +25,7 @@ from collections import namedtuple
 from functools import partial
 from gettext import gettext as _
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 
@@ -61,11 +61,11 @@ class ChartTxChoiceDialog(ExtendableDialog):
         self.om_gui = parent
         self.chosen_shortcut = None
 
-        scroll_area = QtGui.QScrollArea()
-        frame = QtGui.QFrame()
+        scroll_area = QtWidgets.QScrollArea()
+        frame = QtWidgets.QFrame()
         scroll_area.setWidget(frame)
         scroll_area.setWidgetResizable(True)
-        self.but_layout = QtGui.QVBoxLayout(frame)
+        self.but_layout = QtWidgets.QVBoxLayout(frame)
         self.insertWidget(scroll_area)
 
         self.apply_but.hide()
@@ -73,7 +73,7 @@ class ChartTxChoiceDialog(ExtendableDialog):
         if static:
             self.more_but.hide()
         else:
-            all_tx_but = QtGui.QPushButton(
+            all_tx_but = QtWidgets.QPushButton(
                 _("Show Treatments from all feescales"))
             all_tx_but.clicked.connect(self._show_all_txs)
             self.add_advanced_widget(all_tx_but)
@@ -102,13 +102,13 @@ class ChartTxChoiceDialog(ExtendableDialog):
                 pass
 
         if chart_buttons == []:
-            label = QtGui.QLabel(
+            label = QtWidgets.QLabel(
                 _("No Matching items to show. "
                   "Perhaps this is due to the feescale for this patient?"))
             label.setWordWrap(True)
             self.but_layout.addWidget(label)
         for button in chart_buttons:
-            but = QtGui.QPushButton(button.description)
+            but = QtWidgets.QPushButton(button.description)
             but.setToolTip(button.tooltip)
             but.clicked.connect(
                 partial(self.but_clicked, button.shortcut))
@@ -121,7 +121,7 @@ class ChartTxChoiceDialog(ExtendableDialog):
 
     def _show_all_txs(self):
         if self.all_tx_buttons == []:
-            QtGui.QMessageBox.information(
+            QtWidgets.QMessageBox.information(
                 self, _("Error"),
                 _("No items of this type have found in any feescale"))
         self.add_buttons(self.all_tx_buttons)
@@ -131,8 +131,8 @@ class ChartTxChoiceDialog(ExtendableDialog):
 if __name__ == "__main__":
     from openmolar.dbtools.patient_class import patient
 
-    app = QtGui.QApplication([])
-    mw = QtGui.QWidget()
+    app = QtWidgets.QApplication([])
+    mw = QtWidgets.QWidget()
     mw.pt = patient(11956)
     dl = ChartTxChoiceDialog(True, mw)
     dl.set_items(dl.FS_ITEMS)

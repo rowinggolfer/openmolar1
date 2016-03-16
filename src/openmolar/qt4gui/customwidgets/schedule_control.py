@@ -28,7 +28,7 @@ schedule_control.py provides the DiaryScheduleController class for openmolar.
 from gettext import gettext as _
 import logging
 
-from PyQt4 import QtGui, QtCore, QtWebKit
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.dbtools.brief_patient import BriefPatient
@@ -62,7 +62,7 @@ FEEDBACK = '''<html>
 <ol><li class="trt">%%s</li></ol>''' % localsettings.stylesheet
 
 
-class DiaryScheduleController(QtGui.QStackedWidget):
+class DiaryScheduleController(QtWidgets.QStackedWidget):
 
     '''
     This widget lives down the left side of the diary widget.
@@ -98,12 +98,12 @@ class DiaryScheduleController(QtGui.QStackedWidget):
     finding_joint_appointments = False
 
     def __init__(self, parent=None):
-        QtGui.QStackedWidget.__init__(self, parent)
+        QtWidgets.QStackedWidget.__init__(self, parent)
         self.diary_widget = parent
-        self.patient_label = QtGui.QLabel()
+        self.patient_label = QtWidgets.QLabel()
 
         icon = QtGui.QIcon(":/search.png")
-        self.get_patient_button = QtGui.QPushButton(icon, "")
+        self.get_patient_button = QtWidgets.QPushButton(icon, "")
         self.get_patient_button.setMaximumWidth(40)
 
         self.appt_listView = DraggableList(self)
@@ -116,41 +116,41 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         self.appt_listView.setSelectionModel(
             self.appointment_model.selection_model)
         self.appt_listView.setSelectionMode(
-            QtGui.QListView.ContiguousSelection)
+            QtWidgets.QListView.ContiguousSelection)
 
         block_model = BlockListModel(self)
         self.block_listView.setModel(block_model)
 
         icon = QtGui.QIcon(":vcalendar.png")
-        diary_button = QtGui.QPushButton(icon, _("Diary"))
+        diary_button = QtWidgets.QPushButton(icon, _("Diary"))
         diary_button.setToolTip(_("Open the patient's diary"))
 
         icon = QtGui.QIcon(":settings.png")
-        settings_button = QtGui.QPushButton(icon, _("Options"))
+        settings_button = QtWidgets.QPushButton(icon, _("Options"))
         settings_button.setToolTip(_("Appointment Settings"))
 
         icon = QtGui.QIcon(":back.png")
-        self.prev_appt_button = QtGui.QPushButton(icon, "")
+        self.prev_appt_button = QtWidgets.QPushButton(icon, "")
         self.prev_appt_button.setToolTip(_("Previous appointment"))
 
         icon = QtGui.QIcon(":forward.png")
-        self.next_appt_button = QtGui.QPushButton(icon, "")
+        self.next_appt_button = QtWidgets.QPushButton(icon, "")
         self.next_appt_button.setToolTip(_("Next available appointment"))
 
         icon = QtGui.QIcon(":forward.png")
-        self.next_day_button = QtGui.QPushButton(icon, "")
+        self.next_day_button = QtWidgets.QPushButton(icon, "")
         self.next_day_button.setToolTip(_("Next Day or Week"))
 
         icon = QtGui.QIcon(":back.png")
-        self.prev_day_button = QtGui.QPushButton(icon, "")
+        self.prev_day_button = QtWidgets.QPushButton(icon, "")
         self.prev_day_button.setToolTip(_("Previous Day or Week"))
 
         icon = QtGui.QIcon(":first.png")
-        self.first_appt_button = QtGui.QPushButton(icon, "")
+        self.first_appt_button = QtWidgets.QPushButton(icon, "")
         self.first_appt_button.setToolTip(_("First available appointment"))
 
-        self.appt_controls_frame = QtGui.QWidget()
-        layout = QtGui.QGridLayout(self.appt_controls_frame)
+        self.appt_controls_frame = QtWidgets.QWidget()
+        layout = QtWidgets.QGridLayout(self.appt_controls_frame)
         layout.setMargin(1)
         layout.setSpacing(2)
         layout.addWidget(diary_button, 0, 0, 1, 2)
@@ -162,8 +162,8 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         layout.addWidget(self.next_day_button, 1, 4)
 
         self.appt_controls_frame.setSizePolicy(
-            QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
-                              QtGui.QSizePolicy.Minimum))
+            QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                              QtWidgets.QSizePolicy.Minimum))
 
         self.search_criteria_webview = QtWebKit.QWebView(self)
         self.search_criteria_webview.setMinimumHeight(100)
@@ -178,8 +178,8 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         self.addWidget(self.browsing_webview)
 
         # page 1 -- scheduling mode
-        widg = QtGui.QWidget()
-        layout = QtGui.QGridLayout(widg)
+        widg = QtWidgets.QWidget()
+        layout = QtWidgets.QGridLayout(widg)
         layout.setMargin(0)
         layout.addWidget(self.patient_label, 0, 0)
         layout.addWidget(self.get_patient_button, 0, 1)
@@ -189,13 +189,13 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         self.addWidget(widg)
 
         # page 2 -- blocking mode
-        widg = QtGui.QWidget()
-        layout = QtGui.QVBoxLayout(widg)
+        widg = QtWidgets.QWidget()
+        layout = QtWidgets.QVBoxLayout(widg)
         layout.addWidget(self.block_listView)
         self.addWidget(widg)
 
         # page 4 -- notes mode
-        self.notes_label = QtGui.QLabel(_("Select a patient to edit notes"))
+        self.notes_label = QtWidgets.QLabel(_("Select a patient to edit notes"))
         self.addWidget(self.notes_label)
 
         # connect signals
@@ -726,7 +726,7 @@ class DiaryScheduleController(QtGui.QStackedWidget):
 
     def show_pt_diary(self):
         if self.pt is None:
-            QtGui.QMessageBox.information(self, _("error"),
+            QtWidgets.QMessageBox.information(self, _("error"),
                                           _("No patient selected"))
             return
 
@@ -748,12 +748,12 @@ class DiaryScheduleController(QtGui.QStackedWidget):
 
         pt_diary_widget.set_patient(self.pt)
 
-        dl = QtGui.QDialog(self)
-        but_box = QtGui.QDialogButtonBox(dl)
+        dl = QtWidgets.QDialog(self)
+        but_box = QtWidgets.QDialogButtonBox(dl)
         but = but_box.addButton(_("Close"), but_box.AcceptRole)
         but.clicked.connect(dl.accept)
 
-        layout = QtGui.QVBoxLayout(dl)
+        layout = QtWidgets.QVBoxLayout(dl)
         layout.addWidget(pt_diary_widget)
         layout.addStretch()
         layout.addWidget(but_box)
@@ -1016,23 +1016,23 @@ class DiaryScheduleController(QtGui.QStackedWidget):
         self.browsing_webview.setHtml(feedback)
 
 
-class TestWindow(QtGui.QMainWindow):
+class TestWindow(QtWidgets.QMainWindow):
     MODES = ("Browse", "Schedule", "Block", "Notes")
 
     def __init__(self, parent=None):
-        QtGui.QMainWindow.__init__(self, parent)
+        QtWidgets.QMainWindow.__init__(self, parent)
         self.schedule_controller = DiaryScheduleController()
         pt = BriefPatient(1)
         self.schedule_controller.set_patient(pt)
 
-        self.but = QtGui.QPushButton()
+        self.but = QtWidgets.QPushButton()
         self.but.clicked.connect(self.change_mode)
-        self.text_browser = QtGui.QTextBrowser()
+        self.text_browser = QtWidgets.QTextBrowser()
 
         self.mode = self.schedule_controller.BROWSE_MODE
 
-        frame = QtGui.QFrame()
-        layout = QtGui.QGridLayout(frame)
+        frame = QtWidgets.QFrame()
+        layout = QtWidgets.QGridLayout(frame)
         layout.addWidget(self.schedule_controller, 0, 0, 2, 1)
         layout.addWidget(self.but, 1, 1)
         layout.addWidget(self.text_browser, 0, 1)
@@ -1103,7 +1103,7 @@ if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
     localsettings.initiate()
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     obj = TestWindow()
     obj.show()
     app.exec_()

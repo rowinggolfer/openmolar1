@@ -21,7 +21,7 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 
 if __name__ == "__main__":
@@ -46,7 +46,7 @@ class ApptModeDialog(BaseDialog):
 
         self.setWindowTitle(_("User choice"))
 
-        label = QtGui.QLabel(_("Set the Appointment Viewing Mode"))
+        label = QtWidgets.QLabel(_("Set the Appointment Viewing Mode"))
         self.insertWidget(label)
 
         for mode, description, value in (
@@ -70,7 +70,7 @@ class ApptModeDialog(BaseDialog):
                 self.NOTES_MODE),
         ):
 
-            but = QtGui.QPushButton(mode)
+            but = QtWidgets.QPushButton(mode)
             but.setToolTip(description)
 
             but.appt_mode = value
@@ -89,7 +89,7 @@ class ApptModeDialog(BaseDialog):
 
 if __name__ == "__main__":
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     dl = ApptModeDialog()
     if dl.exec_():

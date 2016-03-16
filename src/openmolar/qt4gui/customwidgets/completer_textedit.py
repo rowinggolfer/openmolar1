@@ -21,15 +21,15 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class CompletionTextEdit(QtGui.QTextEdit):
+class CompletionTextEdit(QtWidgets.QTextEdit):
     '''
     This is a text edit which helps user complete words.
     '''
     def __init__(self, parent=None):
-        QtGui.QTextEdit.__init__(self, parent)
+        QtWidgets.QTextEdit.__init__(self, parent)
         self.setMinimumWidth(400)
         self.completer = None
         self.setTabChangesFocus(True)
@@ -38,9 +38,9 @@ class CompletionTextEdit(QtGui.QTextEdit):
         if self.completer:
             self.completer.activated.disconnect(self.insertCompletion)
 
-        completer = QtGui.QCompleter(sorted(words), self)
+        completer = QtWidgets.QCompleter(sorted(words), self)
         completer.setWidget(self)
-        completer.setCompletionMode(QtGui.QCompleter.PopupCompletion)
+        completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
         completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
         self.completer = completer
         self.completer.activated.connect(self.insertCompletion)
@@ -60,11 +60,11 @@ class CompletionTextEdit(QtGui.QTextEdit):
     def focusInEvent(self, event):
         if self.completer:
             self.completer.setWidget(self)
-        QtGui.QTextEdit.focusInEvent(self, event)
+        QtWidgets.QTextEdit.focusInEvent(self, event)
 
     def keyPressEvent(self, event):
         if self.completer is None:
-            QtGui.QTextEdit.keyPressEvent(self, event)
+            QtWidgets.QTextEdit.keyPressEvent(self, event)
             return
         if self.completer and self.completer.popup().isVisible():
             if event.key() in (QtCore.Qt.Key_Enter,
@@ -79,7 +79,7 @@ class CompletionTextEdit(QtGui.QTextEdit):
         isShortcut = (event.modifiers() == QtCore.Qt.ControlModifier and
                       event.key() == QtCore.Qt.Key_E)
         if not isShortcut:
-            QtGui.QTextEdit.keyPressEvent(self, event)
+            QtWidgets.QTextEdit.keyPressEvent(self, event)
             # return
 
         # ctrl or shift key on it's own??
@@ -116,7 +116,7 @@ class CompletionTextEdit(QtGui.QTextEdit):
 
 
 if __name__ == "__main__":
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     te = CompletionTextEdit()
     te.set_wordset(["Nevertheless", "Neverending", "Never"])
     te.show()

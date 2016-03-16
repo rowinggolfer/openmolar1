@@ -24,7 +24,7 @@
 from gettext import gettext as _
 import logging
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
@@ -44,10 +44,10 @@ class InitialCheckDialog(ExtendableDialog):
         top_label = WarningLabel(
             _('OpenMolar has found the following issues with your database.'))
 
-        frame = QtGui.QFrame(self)
-        self.form_layout = QtGui.QFormLayout(frame)
+        frame = QtWidgets.QFrame(self)
+        self.form_layout = QtWidgets.QFormLayout(frame)
 
-        self.add_advanced_widget(QtGui.QLabel(_("No Advanced options")))
+        self.add_advanced_widget(QtWidgets.QLabel(_("No Advanced options")))
         self.enableApply(True)
 
         self.insertWidget(top_label)
@@ -57,7 +57,7 @@ class InitialCheckDialog(ExtendableDialog):
         self.cancel_but.hide()
 
     def advise(self, message):
-        QtGui.QMessageBox.information(self.parent(), _("Information"),
+        QtWidgets.QMessageBox.information(self.parent(), _("Information"),
                                       message)
 
     @property
@@ -73,13 +73,13 @@ class InitialCheckDialog(ExtendableDialog):
             return False
 
         if not localsettings.activedents:
-            but = QtGui.QPushButton(_("How do I Fix This?"))
+            but = QtWidgets.QPushButton(_("How do I Fix This?"))
             but.clicked.connect(self.show_add_clinician_advise)
             message = _("Your database contains no dentists")
             self.form_layout.addRow(message, but)
 
         if localsettings.PRACTICE_NAME == example_name:
-            but = QtGui.QPushButton(_("How do I Fix This?"))
+            but = QtWidgets.QPushButton(_("How do I Fix This?"))
             but.clicked.connect(self.show_edit_practice)
             message = "%s <b>'%s'</b>" % (
                 _("Your practice name is"),
@@ -91,7 +91,7 @@ class InitialCheckDialog(ExtendableDialog):
                                          list(localsettings.apptix.values()),
                                          override_emergencies=True)
                ) == 0:
-            but = QtGui.QPushButton(_("Why is this?"))
+            but = QtWidgets.QPushButton(_("Why is this?"))
             but.clicked.connect(self.show_appt_space)
             message = _("You have no appointment space in your diary!")
             self.form_layout.addRow(message, but)
@@ -145,7 +145,7 @@ class InitialCheckDialog(ExtendableDialog):
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     localsettings.initiate()
 
     dl = InitialCheckDialog()

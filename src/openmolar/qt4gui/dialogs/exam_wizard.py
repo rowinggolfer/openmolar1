@@ -24,7 +24,7 @@
 from gettext import gettext as _
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 
@@ -35,10 +35,10 @@ from openmolar.qt4gui.fees import manipulate_plan
 LOGGER = logging.getLogger("openmolar")
 
 
-class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
+class ExamWizard(QtWidgets.QDialog, Ui_exam_wizard.Ui_Dialog):
 
     def __init__(self, parent=None):
-        QtGui.QDialog.__init__(self, parent)
+        QtWidgets.QDialog.__init__(self, parent)
         self.om_gui = parent
         self.pt = self.om_gui.pt
 
@@ -67,7 +67,7 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
             dent = str(self.dents_comboBox.currentText())
             if dent == "":
                 message = _("Please enter the examining Dentist")
-                QtGui.QMessageBox.information(self, _("Whoops"), message)
+                QtWidgets.QMessageBox.information(self, _("Whoops"), message)
             else:
                 break
 
@@ -90,12 +90,12 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
                     _("confirming this will remove reference to"),
                     localsettings.ops.get(self.pt.dnt2))
 
-                if QtGui.QMessageBox.question(
+                if QtWidgets.QMessageBox.question(
                         self,
                         _("Confirm"),
                         message,
-                        QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                        QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+                        QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                        QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes:
                     self.pt.dnt2 = 0
                     self.om_gui.updateDetails()
                     APPLIED = True
@@ -116,11 +116,11 @@ class ExamWizard(QtGui.QDialog, Ui_exam_wizard.Ui_Dialog):
                     examdent,
                     _("the registered dentist"))
 
-            if QtGui.QMessageBox.question(
+            if QtWidgets.QMessageBox.question(
                     self,
                     _("Confirm"), message,
-                    QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                    QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+                    QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                    QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes:
                 self.pt.dnt2 = localsettings.ops_reverse[examdent]
                 self.om_gui.updateDetails()
                 APPLIED = True
@@ -207,7 +207,7 @@ if __name__ == "__main__":
 
     from openmolar.qt4gui import maingui
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     mw = maingui.OpenmolarGui()
     mw.getrecord(11956)
 

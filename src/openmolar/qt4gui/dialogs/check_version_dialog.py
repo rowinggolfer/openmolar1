@@ -32,7 +32,7 @@ import urllib.request
 import urllib.error
 import urllib.parse
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
@@ -155,19 +155,19 @@ class MyConfigParser(configparser.SafeConfigParser, Options):
             f.close()
 
 
-class OptionsWidget(QtGui.QWidget, Options):
+class OptionsWidget(QtWidgets.QWidget, Options):
     '''
     A widget for selecting user preferences on checking for updates.
     '''
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
-        self.rb1 = QtGui.QRadioButton(_("Check for updates daily"))
-        self.rb2 = QtGui.QRadioButton(_("Check for updates weekly"))
-        self.rb3 = QtGui.QRadioButton(_("Check for updates monthly"))
-        self.rb4 = QtGui.QRadioButton(_("Never check for updates"))
+        QtWidgets.QWidget.__init__(self, parent)
+        self.rb1 = QtWidgets.QRadioButton(_("Check for updates daily"))
+        self.rb2 = QtWidgets.QRadioButton(_("Check for updates weekly"))
+        self.rb3 = QtWidgets.QRadioButton(_("Check for updates monthly"))
+        self.rb4 = QtWidgets.QRadioButton(_("Never check for updates"))
 
-        layout = QtGui.QVBoxLayout(self)
+        layout = QtWidgets.QVBoxLayout(self)
         layout.setMargin(1)
         layout.addWidget(self.rb1)
         layout.addWidget(self.rb2)
@@ -214,7 +214,7 @@ class CheckVersionDialog(ExtendableDialog, Options):
         if self.worth_executing:
             header_label = WarningLabel(self.header_text)
             header_label.label.setOpenExternalLinks(True)
-            details_label = QtGui.QLabel(MESSAGE % (self.new_version))
+            details_label = QtWidgets.QLabel(MESSAGE % (self.new_version))
             details_label.setAlignment(QtCore.Qt.AlignCenter)
 
             self.insertWidget(header_label)
@@ -248,7 +248,7 @@ class CheckVersionDialog(ExtendableDialog, Options):
             LOGGER.debug("update check not due yet")
             return False
         LOGGER.info("polling for updates")
-        QtGui.QApplication.instance().processEvents()
+        QtWidgets.QApplication.instance().processEvents()
         try:
             self.config.checked_today = True
             req = urllib.request.Request(LOOKUP_URL, headers=HEADERS)
@@ -339,7 +339,7 @@ class CheckVersionDialog(ExtendableDialog, Options):
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     dl = CheckVersionDialog()
     if not dl.exec_():

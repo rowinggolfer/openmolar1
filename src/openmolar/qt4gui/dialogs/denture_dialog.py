@@ -28,7 +28,7 @@ Provides a dialog for denture planning.
 from gettext import gettext as _
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 from openmolar.qt4gui.dialogs.alter_denture_dialog import AlterDentureDialog
@@ -49,15 +49,15 @@ class DentureDialog(BaseDialog):
         self.om_gui = om_gui
         message = _("Denture Treatment Dialog")
         self.setWindowTitle(message)
-        self.header_label = QtGui.QLabel(message)
+        self.header_label = QtWidgets.QLabel(message)
         self.header_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        frame = QtGui.QFrame()
-        layout = QtGui.QHBoxLayout(frame)
+        frame = QtWidgets.QFrame()
+        layout = QtWidgets.QHBoxLayout(frame)
 
-        new_but = QtGui.QPushButton(_("Plan New Denture(s)"))
+        new_but = QtWidgets.QPushButton(_("Plan New Denture(s)"))
         new_but.setMinimumSize(QtCore.QSize(150, 150))
-        alt_but = QtGui.QPushButton(_("Alter an Existing Denture"))
+        alt_but = QtWidgets.QPushButton(_("Alter an Existing Denture"))
         alt_but.setMinimumSize(QtCore.QSize(150, 150))
 
         layout.addWidget(new_but)
@@ -95,7 +95,7 @@ class DentureDialog(BaseDialog):
 
 if __name__ == "__main__":
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     LOGGER.setLevel(logging.DEBUG)
     dl = DentureDialog(None)
     if dl.exec_():

@@ -32,7 +32,7 @@ from gettext import gettext as _
 import logging
 import pickle
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 from openmolar.settings import localsettings
 from openmolar.qt4gui import colours
 from openmolar.qt4gui.dialogs import blockslot
@@ -55,7 +55,7 @@ CENTRE_OPTION = QtGui.QTextOption(QtCore.Qt.AlignCenter)
 CENTRE_OPTION.setWrapMode(QtGui.QTextOption.WordWrap)
 
 
-class AppointmentWidget(QtGui.QFrame):
+class AppointmentWidget(QtWidgets.QFrame):
 
     '''
     a custom widget to for a dental appointment book
@@ -88,25 +88,25 @@ class AppointmentWidget(QtGui.QFrame):
     appt_dropped_signal = QtCore.pyqtSignal(object, object, object)
 
     def __init__(self, sTime, fTime, diary_widget):
-        QtGui.QFrame.__init__(self, diary_widget)
+        QtWidgets.QFrame.__init__(self, diary_widget)
 
         LOGGER.debug("Initiating diary widget %s with parent %s",
                      self, diary_widget)
-        self.header_frame = QtGui.QFrame(self)
+        self.header_frame = QtWidgets.QFrame(self)
         self.diary_widget = diary_widget
 
         icon = QtGui.QIcon(QtGui.QPixmap(":/ps.png"))
-        self.printButton = QtGui.QPushButton(icon, "", self)
+        self.printButton = QtWidgets.QPushButton(icon, "", self)
         self.printButton.setMaximumWidth(50)
         self.printButton.clicked.connect(self.printme)
 
-        self.header_label = QtGui.QLabel("dent", self.header_frame)
+        self.header_label = QtWidgets.QLabel("dent", self.header_frame)
         self.header_label.setAlignment(QtCore.Qt.AlignCenter)
 
         font = QtGui.QFont("Sans", 14, 75)
         self.header_label.setFont(font)
 
-        self.memo_lineEdit = QtGui.QLineEdit(self)
+        self.memo_lineEdit = QtWidgets.QLineEdit(self)
         self.memo_lineEdit.setText("hello")
         self.memo_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
         self.memo_lineEdit.setMaxLength(30)  # due to schema restrictions :(
@@ -117,14 +117,14 @@ class AppointmentWidget(QtGui.QFrame):
 
         self.dentist = "DENTIST"
         self.apptix = 0
-        glay = QtGui.QGridLayout(self.header_frame)
+        glay = QtWidgets.QGridLayout(self.header_frame)
         glay.setSpacing(2)
         glay.setMargin(2)
         glay.addWidget(self.printButton, 0, 1)
         glay.addWidget(self.header_label, 0, 0)
         glay.addWidget(self.memo_lineEdit, 1, 0, 1, 2)
 
-        self.scrollArea = QtGui.QScrollArea()
+        self.scrollArea = QtWidgets.QScrollArea()
         self.scrollArea.setWidgetResizable(True)
 
         self.canvas = AppointmentCanvas(self)
@@ -135,13 +135,13 @@ class AppointmentWidget(QtGui.QFrame):
         self.setDayEndTime(fTime)
         self.setEndTime(fTime)
 
-        self.OOlabel = QtGui.QLabel(_("Out Of Office"))
+        self.OOlabel = QtWidgets.QLabel(_("Out Of Office"))
         self.OOlabel.setWordWrap(True)
         self.OOlabel.setAlignment(QtCore.Qt.AlignCenter)
-        self.OOlabel.setSizePolicy(QtGui.QSizePolicy(
-            QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
+        self.OOlabel.setSizePolicy(QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding))
 
-        lay = QtGui.QVBoxLayout(self)
+        lay = QtWidgets.QVBoxLayout(self)
         lay.setSpacing(0)
         lay.setMargin(2)
         lay.addWidget(self.header_frame)
@@ -356,7 +356,7 @@ class BlinkTimer(QtCore.QTimer):
         self.state = not self.state
 
 
-class AppointmentCanvas(QtGui.QWidget):
+class AppointmentCanvas(QtWidgets.QWidget):
 
     '''
     the canvas for me to draw on
@@ -367,9 +367,9 @@ class AppointmentCanvas(QtGui.QWidget):
     ensure_slot_visible = True
 
     def __init__(self, pWidget):
-        QtGui.QWidget.__init__(self, pWidget)
-        self.setSizePolicy(QtGui.QSizePolicy(
-            QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
+        QtWidgets.QWidget.__init__(self, pWidget)
+        self.setSizePolicy(QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding))
 
         self.setMinimumSize(self.minimumSizeHint())
         self.pWidget = pWidget
@@ -745,7 +745,7 @@ class AppointmentCanvas(QtGui.QWidget):
 
             self.setToolTip(feedback)
             if not feedback:
-                QtGui.QToolTip.hideText()
+                QtWidgets.QToolTip.hideText()
 
     def mouseDoubleClickEvent(self, event):
         self.mousePressEvent(event)
@@ -830,7 +830,7 @@ class AppointmentCanvas(QtGui.QWidget):
             self.qmenu.clear()
             return
 
-        self.qmenu = QtGui.QMenu(self)
+        self.qmenu = QtWidgets.QMenu(self)
         for i, action in enumerate(actions):
             if action is None:
                 self.qmenu.addSeparator()
@@ -842,7 +842,7 @@ class AppointmentCanvas(QtGui.QWidget):
             singleClickMenuResult(self.qmenu.exec_(event.globalPos()))
 
     def block_use_space(self, start, finish):
-        Dialog = QtGui.QDialog(self)
+        Dialog = QtWidgets.QDialog(self)
         dl = blockslot.blockDialog(Dialog, self.pWidget)
 
         dl.setTimes(start, finish)
@@ -852,7 +852,7 @@ class AppointmentCanvas(QtGui.QWidget):
             adjstart = dl.start_timeEdit.time()
             adjfinish = dl.finish_timeEdit.time()
             if finish < start:
-                QtGui.QMessageBox.information(self, _("Whoops!"),
+                QtWidgets.QMessageBox.information(self, _("Whoops!"),
                                               _("Bad Time Sequence!"))
 
             if dl.block:
@@ -1118,14 +1118,14 @@ if __name__ == "__main__":
 
     import sys
     localsettings.initiate()
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
 
     # -initiate a book starttime 08:00 endtime 10:00
     # -five minute slots, text every 3 slots
 
     # from openmolar.qt4gui import maingui
     # parent = maingui.OpenmolarGui()
-    parent = QtGui.QFrame()
+    parent = QtWidgets.QFrame()
     parent.highlighted_appointment = None
     parent.pt = BriefPatient(1)
 
@@ -1186,7 +1186,7 @@ if __name__ == "__main__":
     form.mode = form.SCHEDULING_MODE
     # form.mode = form.BROWSING_MODE
 
-    v = QtGui.QVBoxLayout()
+    v = QtWidgets.QVBoxLayout()
     v.setSpacing(0)
     v.addWidget(form)
     parent.setLayout(v)

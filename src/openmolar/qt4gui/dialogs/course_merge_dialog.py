@@ -23,7 +23,7 @@
 
 import copy
 import logging
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.dbtools import treatment_course
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
@@ -41,20 +41,20 @@ class CourseMergeDialog(ExtendableDialog):
         self.courseno2 = courseno2
         self._merged_course = None
 
-        header_label = QtGui.QLabel(
+        header_label = QtWidgets.QLabel(
             "<b>%s %s &amp; %s</b>" % (_("Merge Treatment Courses"),
                                        self.courseno1, self.courseno2))
         header_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.polling_label = QtGui.QLabel(_("Polling Database"))
+        self.polling_label = QtWidgets.QLabel(_("Polling Database"))
 
-        self.preview_button = QtGui.QPushButton(_("Preview Merged Course"))
+        self.preview_button = QtWidgets.QPushButton(_("Preview Merged Course"))
 
-        self.courseno1_browser = QtGui.QTextBrowser()
-        self.courseno2_browser = QtGui.QTextBrowser()
-        self.preview_browser = QtGui.QTextBrowser()
+        self.courseno1_browser = QtWidgets.QTextBrowser()
+        self.courseno2_browser = QtWidgets.QTextBrowser()
+        self.preview_browser = QtWidgets.QTextBrowser()
 
-        self.splitter = QtGui.QSplitter()
+        self.splitter = QtWidgets.QSplitter()
         self.splitter.setOrientation(QtCore.Qt.Vertical)
 
         self.insertWidget(header_label)
@@ -65,13 +65,13 @@ class CourseMergeDialog(ExtendableDialog):
         self.splitter.addWidget(self.courseno2_browser)
         self.splitter.addWidget(self.preview_browser)
 
-        self.adv_widget = QtGui.QLabel(_("No advanced options available"))
+        self.adv_widget = QtWidgets.QLabel(_("No advanced options available"))
         self.add_advanced_widget(self.adv_widget)
 
         QtCore.QTimer.singleShot(100, self.get_data)
 
     def advise(self, message):
-        QtGui.QMessageBox.information(self, _("message"), message)
+        QtWidgets.QMessageBox.information(self, _("message"), message)
 
     def sizeHint(self):
         return QtCore.QSize(600, 600)
@@ -173,7 +173,7 @@ class CourseMergeDialog(ExtendableDialog):
 
 if __name__ == "__main__":
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     LOGGER.setLevel(logging.DEBUG)
     dl = CourseMergeDialog(12647, 6879, 2385)
     if dl.exec_():

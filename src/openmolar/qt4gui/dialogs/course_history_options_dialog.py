@@ -23,7 +23,7 @@
 
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
 LOGGER = logging.getLogger("openmolar")
@@ -37,18 +37,18 @@ class CourseHistoryOptionsDialog(BaseDialog):
     def __init__(self, parent=None):
         BaseDialog.__init__(self, parent)
         self.setWindowTitle(_("Options Dialog"))
-        label = QtGui.QLabel("<b>%s</b>" % _("What do you wish to show?"))
+        label = QtWidgets.QLabel("<b>%s</b>" % _("What do you wish to show?"))
         label.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.estimates_checkbox = QtGui.QCheckBox(_("Include Estimates"))
+        self.estimates_checkbox = QtWidgets.QCheckBox(_("Include Estimates"))
         self.estimates_checkbox.setChecked(self.include_estimates)
         self.estimates_checkbox.toggled.connect(self.toggle_estimates)
 
-        self.daybook_checkbox = QtGui.QCheckBox(_("Include Daybook"))
+        self.daybook_checkbox = QtWidgets.QCheckBox(_("Include Daybook"))
         self.daybook_checkbox.setChecked(self.include_daybook)
         self.daybook_checkbox.toggled.connect(self.toggle_daybook)
 
-        help_label = QtGui.QLabel(_("Leave both unchecked for courses only"))
+        help_label = QtWidgets.QLabel(_("Leave both unchecked for courses only"))
         help_label.setAlignment(QtCore.Qt.AlignCenter)
 
         self.insertWidget(label)
@@ -70,7 +70,7 @@ class CourseHistoryOptionsDialog(BaseDialog):
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     dl = CourseHistoryOptionsDialog()
     if dl.exec_():

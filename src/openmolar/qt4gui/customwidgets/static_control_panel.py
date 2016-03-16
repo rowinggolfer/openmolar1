@@ -22,10 +22,10 @@
 # ########################################################################### #
 
 from functools import partial
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 
 
-class StaticControlPanel(QtGui.QWidget):
+class StaticControlPanel(QtWidgets.QWidget):
 
     '''
     emits such strings as "AT", "TM", "RP" etc.
@@ -34,45 +34,45 @@ class StaticControlPanel(QtGui.QWidget):
     deciduous_signal = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
-        tm_button = QtGui.QPushButton("TM")
+        tm_button = QtWidgets.QPushButton("TM")
         tm_button.setFocusPolicy(QtCore.Qt.NoFocus)
         tm_button.setToolTip(_("Mark the selected tooth as missing"))
 
-        at_button = QtGui.QPushButton("AT")
+        at_button = QtWidgets.QPushButton("AT")
         at_button.setFocusPolicy(QtCore.Qt.NoFocus)
         at_button.setToolTip(_("Mark the selected tooth as artificial"))
 
-        rp_button = QtGui.QPushButton("RP")
+        rp_button = QtWidgets.QPushButton("RP")
         rp_button.setFocusPolicy(QtCore.Qt.NoFocus)
         rp_button.setToolTip(_("Mark the selected tooth as root present"))
 
-        perm_button = QtGui.QPushButton("+P")
+        perm_button = QtWidgets.QPushButton("+P")
         perm_button.setFocusPolicy(QtCore.Qt.NoFocus)
         perm_button.setToolTip(_("Permanent Tooth Also Present"))
 
-        sup_button = QtGui.QPushButton("+S")
+        sup_button = QtWidgets.QPushButton("+S")
         sup_button.setFocusPolicy(QtCore.Qt.NoFocus)
         sup_button.setToolTip(_("Supernumary Tooth Present"))
 
-        pe_button = QtGui.QPushButton("PE")
+        pe_button = QtWidgets.QPushButton("PE")
         pe_button.setFocusPolicy(QtCore.Qt.NoFocus)
         pe_button.setToolTip(_("Mark the selected tooth as partially erupted"))
 
-        oe_button = QtGui.QPushButton("OE")
+        oe_button = QtWidgets.QPushButton("OE")
         oe_button.setFocusPolicy(QtCore.Qt.NoFocus)
         oe_button.setToolTip(_("Mark the selected tooth as over erupted"))
 
-        ue_button = QtGui.QPushButton("UE")
+        ue_button = QtWidgets.QPushButton("UE")
         ue_button.setFocusPolicy(QtCore.Qt.NoFocus)
         ue_button.setToolTip(_("Mark the selected tooth as partially erupted"))
 
-        dec_button = QtGui.QPushButton("Deciduous")
+        dec_button = QtWidgets.QPushButton("Deciduous")
         dec_button.setFocusPolicy(QtCore.Qt.NoFocus)
         dec_button.setToolTip(_("Toggle selected tooth/teeth as deciduous"))
 
-        layout = QtGui.QGridLayout(self)
+        layout = QtWidgets.QGridLayout(self)
         layout.setMargin(0)
         layout.setSpacing(2)
         layout.addWidget(tm_button, 0, 0)
@@ -112,7 +112,7 @@ class StaticControlPanel(QtGui.QWidget):
         this unneccesary re-implementation allows the code to run on python 2.6
         (untested)
         '''
-        QtGui.QWidget.setEnabled(self, arg)
+        QtWidgets.QWidget.setEnabled(self, arg)
 
 
 if __name__ == "__main__":
@@ -122,7 +122,7 @@ if __name__ == "__main__":
 
     from gettext import gettext as _
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     widg = StaticControlPanel()
     widg.clicked.connect(sig_catcher)
     widg.show()

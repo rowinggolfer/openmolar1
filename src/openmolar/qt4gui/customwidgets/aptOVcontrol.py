@@ -25,13 +25,13 @@ from functools import partial
 from gettext import gettext as _
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 from openmolar.settings import localsettings
 
 LOGGER = logging.getLogger("openmolar")
 
 
-class control(QtGui.QLabel):
+class control(QtWidgets.QLabel):
 
     '''
     a custom label for the top of the appointment overview widgets
@@ -86,7 +86,7 @@ class control(QtGui.QLabel):
 
     def raise_context_menu(self, point):
         if not self.recent_double_click:
-            menu = QtGui.QMenu(self)
+            menu = QtWidgets.QMenu(self)
             action = menu.addAction(_("Switch to day view of this date"))
             action.triggered.connect(self.call_day_view)
             menu.setDefaultAction(action)
@@ -117,15 +117,15 @@ class control(QtGui.QLabel):
         self.edit_memo_signal.emit(self.date.toPyDate())
 
 
-class _TestBook(QtGui.QWidget):
+class _TestBook(QtWidgets.QWidget):
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         self.control = control()
         self.control.setDate(QtCore.QDate.currentDate().addDays(3))
-        layout = QtGui.QVBoxLayout(self)
+        layout = QtWidgets.QVBoxLayout(self)
         layout.addWidget(self.control)
-        layout.addWidget(QtGui.QTextEdit())
+        layout.addWidget(QtWidgets.QTextEdit())
 
     def sizeHint(self):
         return QtCore.QSize(100, 400)
@@ -134,7 +134,7 @@ class _TestBook(QtGui.QWidget):
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     widg = _TestBook()
     widg.show()
     app.exec_()

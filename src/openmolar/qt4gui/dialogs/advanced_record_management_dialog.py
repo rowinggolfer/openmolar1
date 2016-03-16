@@ -23,7 +23,7 @@
 
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.compiled_uis import Ui_record_tools
@@ -39,7 +39,7 @@ class AdvancedRecordManagementDialog(BaseDialog):
         BaseDialog.__init__(self, parent, remove_stretch=True)
         self.pt = pt
         self.om_gui = parent
-        widget = QtGui.QWidget(self)
+        widget = QtWidgets.QWidget(self)
         self.ui = Ui_record_tools.Ui_Form()
         self.ui.setupUi(widget)
 
@@ -210,10 +210,10 @@ class AdvancedRecordManagementDialog(BaseDialog):
             [_("type"), _("note")])
         header.setStretchLastSection(True)
         for row_no, (ntype, note) in enumerate(self.pt.HIDDENNOTES):
-            ntype_item = QtGui.QTableWidgetItem(ntype)
+            ntype_item = QtWidgets.QTableWidgetItem(ntype)
             self.ui.hidden_notes_tableWidget.setItem(row_no, 0, ntype_item)
 
-            note_item = QtGui.QTableWidgetItem(note)
+            note_item = QtWidgets.QTableWidgetItem(note)
             self.ui.hidden_notes_tableWidget.setItem(row_no, 1, note_item)
 
         self.ui.hidden_notes_tableWidget.itemChanged.connect(
@@ -248,7 +248,7 @@ class AdvancedRecordManagementDialog(BaseDialog):
         connect signals
         '''
         for widg in self.ui.money_scrollAreaWidgetContents.children():
-            if isinstance(widg, QtGui.QSpinBox):
+            if isinstance(widg, QtWidgets.QSpinBox):
                 widg.valueChanged.connect(self.updateMoneyTotal)
 
     def reject(self):
@@ -280,7 +280,7 @@ if __name__ == "__main__":
     from openmolar.dbtools.patient_class import patient
     pt = patient(1)
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     pt.HIDDENNOTES = [
         ('COURSE OPENED', '= = = = = '),
         ('TC: EXAM', 'CE')

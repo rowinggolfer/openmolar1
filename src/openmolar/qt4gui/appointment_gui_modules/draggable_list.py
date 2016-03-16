@@ -24,19 +24,19 @@
 import pickle
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 LOGGER = logging.getLogger("openmolar")
 
 
-class DraggableList(QtGui.QListView):
+class DraggableList(QtWidgets.QListView):
 
     '''
     a listView whose items can be moved
     '''
 
     def __init__(self, parent=None):
-        QtGui.QListView.__init__(self, parent)
+        QtWidgets.QListView.__init__(self, parent)
         self.setDragEnabled(True)
         self.setMinimumHeight(100)
 

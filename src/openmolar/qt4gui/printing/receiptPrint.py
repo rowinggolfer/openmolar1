@@ -23,7 +23,7 @@
 
 from gettext import gettext as _
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 from openmolar.settings import localsettings
 
 
@@ -160,7 +160,7 @@ if __name__ == "__main__":
     os.chdir(os.path.expanduser("~"))
 
     localsettings.initiate()
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     myreceipt = Receipt()
     myreceipt.title = "tit"
     myreceipt.fname = "fname"

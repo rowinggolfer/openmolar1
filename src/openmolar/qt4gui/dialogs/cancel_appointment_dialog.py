@@ -27,7 +27,7 @@ Provides a dialog to enable the cancelation of an appointment.
 
 import logging
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 
@@ -53,7 +53,7 @@ class CancelAppointmentDialog(ExtendableDialog):
         self.enableApply()
 
         self.postpone_but = self.button_box.addButton(
-            QtGui.QDialogButtonBox.Discard)
+            QtWidgets.QDialogButtonBox.Discard)
         self.postpone_but.setText(_("Yes, but &Keep for re-scheduling"))
         # self.postpone_but.setToolTip(_("Discard All Changes"))
 
@@ -112,12 +112,12 @@ class CancelAppointmentDialog(ExtendableDialog):
         if self.appt.date is None:
             if appointments.delete_appt_from_apr(self.appt):
                 self.message = _("Successfully removed appointment")
-        elif QtGui.QMessageBox.question(
+        elif QtWidgets.QMessageBox.question(
             self,
             _("Confirm"),
             _("Are you sure you want to completely cancel this appointment?"),
-            QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes:
+            QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes:
             if self.delete_from_aslot():
                 if appointments.delete_appt_from_apr(self.appt):
                     self.message = _("Successfully removed appointment")
@@ -134,7 +134,7 @@ if __name__ == "__main__":
     localsettings.initiate()
     pt = BriefPatient(1)
     appts = appointments.get_pts_appts(pt)
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     dl = CancelAppointmentDialog(appts[0])
     if dl.exec_():

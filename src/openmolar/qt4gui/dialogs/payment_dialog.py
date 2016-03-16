@@ -21,14 +21,14 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.qt4gui.customwidgets.money_line_edit import MoneyLineEdit
 from openmolar.qt4gui.customwidgets.currency_label import CurrencyLabel
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 
 
-class MiscPaymentWidget(QtGui.QWidget):
+class MiscPaymentWidget(QtWidgets.QWidget):
 
     '''
     the "advanced" widget added to the payment dialog.
@@ -36,8 +36,8 @@ class MiscPaymentWidget(QtGui.QWidget):
     updated = QtCore.pyqtSignal(object)
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
-        layout = QtGui.QFormLayout(self)
+        QtWidgets.QWidget.__init__(self, parent)
+        layout = QtWidgets.QFormLayout(self)
 
         self.hdp_le = MoneyLineEdit()
         self.other_le = MoneyLineEdit()
@@ -76,27 +76,27 @@ class PaymentDialog(ExtendableDialog):
 
     def __init__(self, parent=None):
         ExtendableDialog.__init__(self, parent)
-        frame = QtGui.QFrame()
-        layout = QtGui.QGridLayout(frame)
+        frame = QtWidgets.QFrame()
+        layout = QtWidgets.QGridLayout(frame)
 
-        tx_label = QtGui.QLabel(_("Treatment"))
-        sundries_label = QtGui.QLabel(_("Sundries"))
-        total_label = QtGui.QLabel(_("Total"))
+        tx_label = QtWidgets.QLabel(_("Treatment"))
+        sundries_label = QtWidgets.QLabel(_("Sundries"))
+        total_label = QtWidgets.QLabel(_("Total"))
 
         for label in (tx_label, sundries_label, total_label):
             label.setAlignment(QtCore.Qt.AlignCenter)
 
-        cash_label = QtGui.QLabel(_("Cash"))
-        cheque_label = QtGui.QLabel(_("Cheque"))
-        card_label = QtGui.QLabel(_("Card"))
+        cash_label = QtWidgets.QLabel(_("Cash"))
+        cheque_label = QtWidgets.QLabel(_("Cheque"))
+        card_label = QtWidgets.QLabel(_("Card"))
 
         self.cash_le = MoneyLineEdit()
         self.cheque_le = MoneyLineEdit()
         self.card_le = MoneyLineEdit()
 
-        self.cash_but = QtGui.QPushButton("-")
-        self.cheque_but = QtGui.QPushButton("-")
-        self.card_but = QtGui.QPushButton("-")
+        self.cash_but = QtWidgets.QPushButton("-")
+        self.cheque_but = QtWidgets.QPushButton("-")
+        self.card_but = QtWidgets.QPushButton("-")
 
         self.cash_but.setFixedWidth(30)
         self.cheque_but.setFixedWidth(30)
@@ -114,7 +114,7 @@ class PaymentDialog(ExtendableDialog):
         self.sundries_tot_label = CurrencyLabel("0.00")
         self.grand_tot_label = CurrencyLabel("0.00")
 
-        f = QtGui.QApplication.instance().font()
+        f = QtWidgets.QApplication.instance().font()
         f.setBold(True)
 
         self.grand_tot_label.setFont(f)
@@ -306,7 +306,7 @@ class PaymentDialog(ExtendableDialog):
 
 if __name__ == "__main__":
     from gettext import gettext as _
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     dl = PaymentDialog()
     # dl.hide_treatment(True)
     dl.exec_()

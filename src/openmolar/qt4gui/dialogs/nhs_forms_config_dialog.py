@@ -21,7 +21,7 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.connect import connect
@@ -30,16 +30,16 @@ from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 from openmolar.qt4gui.printing.gp17.gp17_config import gp17config
 
 
-class _PrintSettings(QtGui.QWidget):
+class _PrintSettings(QtWidgets.QWidget):
     user_input = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
-        self.left_sb = QtGui.QSpinBox()
-        self.top_sb = QtGui.QSpinBox()
-        self.scale_x_sb = QtGui.QDoubleSpinBox()
-        self.scale_y_sb = QtGui.QDoubleSpinBox()
-        form_layout = QtGui.QFormLayout(self)
+        QtWidgets.QWidget.__init__(self, parent)
+        self.left_sb = QtWidgets.QSpinBox()
+        self.top_sb = QtWidgets.QSpinBox()
+        self.scale_x_sb = QtWidgets.QDoubleSpinBox()
+        self.scale_y_sb = QtWidgets.QDoubleSpinBox()
+        form_layout = QtWidgets.QFormLayout(self)
 
         form_layout.addRow(_("Left Offset"), self.left_sb)
         form_layout.addRow(_("Top Offset"), self.top_sb)
@@ -77,7 +77,7 @@ class NHSFormsConfigDialog(BaseDialog):
 
         title = _("NHS Form Configuration")
         self.setWindowTitle(title)
-        label = QtGui.QLabel("<b>%s</b>" % title)
+        label = QtWidgets.QLabel("<b>%s</b>" % title)
         label.setAlignment(QtCore.Qt.AlignCenter)
 
         self.gp17_widget = _PrintSettings()
@@ -105,7 +105,7 @@ class NHSFormsConfigDialog(BaseDialog):
         self.gp17ifront_widget.user_input.connect(self.enableApply)
         self.gp17iback_widget.user_input.connect(self.enableApply)
 
-        tab_widget = QtGui.QTabWidget()
+        tab_widget = QtWidgets.QTabWidget()
         tab_widget.addTab(self.gp17_widget, "GP17")
         tab_widget.addTab(self.gp17ifront_widget, "GP17i (front)")
         tab_widget.addTab(self.gp17iback_widget, "GP17i (back)")
@@ -138,7 +138,7 @@ class NHSFormsConfigDialog(BaseDialog):
 if __name__ == "__main__":
 
     localsettings.initiate()
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     dl = NHSFormsConfigDialog()
 

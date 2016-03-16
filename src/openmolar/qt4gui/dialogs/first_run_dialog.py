@@ -30,7 +30,7 @@ from xml.dom import minidom
 
 import MySQLdb
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
@@ -62,16 +62,16 @@ DB_PASS = "password"
 DB_NAME = "openmolar"
 
 
-class _InputPage(QtGui.QWidget):
+class _InputPage(QtWidgets.QWidget):
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         self.dialog = parent
-        self.label = QtGui.QLabel("text")
+        self.label = QtWidgets.QLabel("text")
         self.label.setWordWrap(True)
-        self.frame = QtGui.QFrame()
+        self.frame = QtWidgets.QFrame()
 
-        layout = QtGui.QVBoxLayout(self)
+        layout = QtWidgets.QVBoxLayout(self)
         layout.addWidget(self.label)
         layout.addStretch(30)
         layout.addWidget(self.frame)
@@ -110,8 +110,8 @@ class PageZero(_InputPage):
         self.label.setText(message)
 
         message2 = _("Click Next to continue, or Quit to leave OpenMolar now.")
-        label = QtGui.QLabel(message2)
-        layout = QtGui.QVBoxLayout(self.frame)
+        label = QtWidgets.QLabel(message2)
+        layout = QtWidgets.QVBoxLayout(self.frame)
         layout.addWidget(label)
 
     @property
@@ -136,11 +136,11 @@ class PageOne(_InputPage):
               "this can be left blank"))
         self.label.setText(message)
 
-        layout = QtGui.QFormLayout(self.frame)
-        self.line_edit1 = QtGui.QLineEdit()
-        self.line_edit2 = QtGui.QLineEdit()
+        layout = QtWidgets.QFormLayout(self.frame)
+        self.line_edit1 = QtWidgets.QLineEdit()
+        self.line_edit2 = QtWidgets.QLineEdit()
 
-        self.show_cb = QtGui.QCheckBox(_("Show Passwords"))
+        self.show_cb = QtWidgets.QCheckBox(_("Show Passwords"))
         layout.addRow(_("Password"), self.line_edit1)
         layout.addRow(_("Confirm Password"), self.line_edit2)
         layout.addRow("", self.show_cb)
@@ -158,9 +158,9 @@ class PageOne(_InputPage):
 
     def show_passwords(self, show=False):
         if show:
-            e_mode = QtGui.QLineEdit.Normal
+            e_mode = QtWidgets.QLineEdit.Normal
         else:
-            e_mode = QtGui.QLineEdit.Password
+            e_mode = QtWidgets.QLineEdit.Password
         self.line_edit1.setEchoMode(e_mode)
         self.line_edit2.setEchoMode(e_mode)
 
@@ -193,21 +193,21 @@ class PageTwo(_InputPage):
               "this set up."))
         self.label.setText(message)
 
-        frame1 = QtGui.QFrame()
+        frame1 = QtWidgets.QFrame()
 
-        layout = QtGui.QFormLayout(frame1)
-        self.line_edit1 = QtGui.QLineEdit()
+        layout = QtWidgets.QFormLayout(frame1)
+        self.line_edit1 = QtWidgets.QLineEdit()
         self.line_edit1.setText(HOST)
-        self.line_edit2 = QtGui.QLineEdit()
+        self.line_edit2 = QtWidgets.QLineEdit()
         self.line_edit2.setText(str(PORT))
 
         layout.addRow(_("Host"), self.line_edit1)
         layout.addRow(_("Port"), self.line_edit2)
 
-        layout = QtGui.QVBoxLayout(self.frame)
+        layout = QtWidgets.QVBoxLayout(self.frame)
         layout.addWidget(frame1)
         layout.addStretch(100)
-        label = QtGui.QLabel(message1)
+        label = QtWidgets.QLabel(message1)
         layout.addWidget(label)
 
     @property
@@ -257,10 +257,10 @@ class PageThree(_InputPage):
         )
         self.label.setText(message1)
 
-        layout = QtGui.QVBoxLayout(self.frame)
-        self.radio_button1 = QtGui.QRadioButton(
+        layout = QtWidgets.QVBoxLayout(self.frame)
+        self.radio_button1 = QtWidgets.QRadioButton(
             _("Create a database user and install a blank (demo) Database"))
-        self.radio_button2 = QtGui.QRadioButton(
+        self.radio_button2 = QtWidgets.QRadioButton(
             _("Use an existing database"))
 
         self.radio_button1.setChecked(True)
@@ -291,15 +291,15 @@ class PageFour(_InputPage):
         )
         self.label.setText(message)
 
-        layout = QtGui.QFormLayout(self.frame)
-        self.line_edit1 = QtGui.QLineEdit()
-        self.line_edit2 = QtGui.QLineEdit()
-        self.line_edit3 = QtGui.QLineEdit()
+        layout = QtWidgets.QFormLayout(self.frame)
+        self.line_edit1 = QtWidgets.QLineEdit()
+        self.line_edit2 = QtWidgets.QLineEdit()
+        self.line_edit3 = QtWidgets.QLineEdit()
 
         self.line_edit1.setText(DB_NAME)
         self.line_edit2.setText(DB_USER)
         self.line_edit3.setText(DB_PASS)
-        self.show_cb = QtGui.QCheckBox(_("Show Password"))
+        self.show_cb = QtWidgets.QCheckBox(_("Show Password"))
 
         layout.addRow(_("Database Name"), self.line_edit1)
         layout.addRow(_("(mysql) user"), self.line_edit2)
@@ -318,9 +318,9 @@ class PageFour(_InputPage):
 
     def show_passwords(self, show=False):
         if show:
-            e_mode = QtGui.QLineEdit.Normal
+            e_mode = QtWidgets.QLineEdit.Normal
         else:
-            e_mode = QtGui.QLineEdit.Password
+            e_mode = QtWidgets.QLineEdit.Password
         self.line_edit3.setEchoMode(e_mode)
 
     @property
@@ -359,15 +359,15 @@ class PageFive(_InputPage):
               " on localhost)"))
 
         self.label.setText(message)
-        label = QtGui.QLabel(message1)
+        label = QtWidgets.QLabel(message1)
 
-        layout = QtGui.QFormLayout(self.frame)
+        layout = QtWidgets.QFormLayout(self.frame)
         layout.addRow(label)
 
-        self.line_edit1 = QtGui.QLineEdit()
+        self.line_edit1 = QtWidgets.QLineEdit()
         self.line_edit1.setText("root")
-        self.line_edit2 = QtGui.QLineEdit()
-        self.show_cb = QtGui.QCheckBox(_("Show Password"))
+        self.line_edit2 = QtWidgets.QLineEdit()
+        self.show_cb = QtWidgets.QCheckBox(_("Show Password"))
 
         layout.addRow(_("Privileged user"), self.line_edit1)
         layout.addRow(_("Password for this user"), self.line_edit2)
@@ -387,9 +387,9 @@ class PageFive(_InputPage):
 
     def show_passwords(self, show=False):
         if show:
-            e_mode = QtGui.QLineEdit.Normal
+            e_mode = QtWidgets.QLineEdit.Normal
         else:
-            e_mode = QtGui.QLineEdit.Password
+            e_mode = QtWidgets.QLineEdit.Password
         self.line_edit2.setEchoMode(e_mode)
 
     @property
@@ -415,9 +415,9 @@ class PageSix(_InputPage):
         self.db_created = False
         message = _("Creating Database")
         self.label.setText(message)
-        self.progress_bar = QtGui.QProgressBar()
+        self.progress_bar = QtWidgets.QProgressBar()
 
-        layout = QtGui.QVBoxLayout(self.frame)
+        layout = QtWidgets.QVBoxLayout(self.frame)
         layout.addWidget(self.progress_bar)
 
     @property
@@ -448,14 +448,14 @@ class PageSix(_InputPage):
                                          self.dialog.db_name,
                                          self.dialog.privileged_user_pass,
                                          self.dialog.privileged_user) and
-                    QtGui.QMessageBox.question(
+                    QtWidgets.QMessageBox.question(
                         self, _("Confirm"),
                         "%s '%s' %s<hr />%s" % (_("A database named"),
                                                 self.dialog.db_name,
                                                 _("exists already"),
                                                 _("Overwrite this database?")),
-                        QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                        QtGui.QMessageBox.No) == QtGui.QMessageBox.No):
+                        QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                        QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.No):
                 self.dialog.database_exists_already()
                 return
             self.timer1.start(10)  # 1/100thsecond
@@ -481,7 +481,7 @@ class PageSix(_InputPage):
                                     )
 
             self.progress_bar.setValue(100)
-            QtGui.QMessageBox.information(
+            QtWidgets.QMessageBox.information(
                 self,
                 _("Success!"),
                 _("Database created successfully!")
@@ -491,7 +491,7 @@ class PageSix(_InputPage):
         except Exception as exc:
             LOGGER.exception("error creating database")
             message = "%s<hr />%s" % (_("Error Creating Database"), exc)
-            QtGui.QMessageBox.warning(self, _("Error"), message)
+            QtWidgets.QMessageBox.warning(self, _("Error"), message)
             self.db_created = False
 
 
@@ -545,7 +545,7 @@ class FirstRunDialog(BaseDialog):
 
         self.top_label = WarningLabel("FirstRun")
 
-        self.wizard_widget = QtGui.QStackedWidget()
+        self.wizard_widget = QtWidgets.QStackedWidget()
 
         page0 = PageZero(self)
         self.page1 = PageOne(self)
@@ -586,10 +586,10 @@ class FirstRunDialog(BaseDialog):
 
     def wait(self, waiting=True):
         if waiting:
-            QtGui.QApplication.instance().setOverrideCursor(
+            QtWidgets.QApplication.instance().setOverrideCursor(
                 QtCore.Qt.WaitCursor)
         else:
-            QtGui.QApplication.instance().restoreOverrideCursor()
+            QtWidgets.QApplication.instance().restoreOverrideCursor()
 
     def set_labels(self):
         self.top_label.setText(self.current_page.header_text)
@@ -616,7 +616,7 @@ class FirstRunDialog(BaseDialog):
         '''
         i = self.wizard_widget.currentIndex()
         if not self.current_page.is_completed:
-            QtGui.QMessageBox.warning(self,
+            QtWidgets.QMessageBox.warning(self,
                                       _("error"),
                                       self.current_page.error_message)
             new_i = i
@@ -770,7 +770,7 @@ class FirstRunDialog(BaseDialog):
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     dl = FirstRunDialog()
     print(dl.exec_())

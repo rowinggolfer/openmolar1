@@ -22,7 +22,7 @@
 # ########################################################################### #
 
 from gettext import gettext as _
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
@@ -30,15 +30,15 @@ from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 RECALL_METHODS = ["post", "email", "sms"]
 
 
-class ShortcutButs(QtGui.QWidget):
+class ShortcutButs(QtWidgets.QWidget):
     clicked = QtCore.pyqtSignal(object)
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
-        layout = QtGui.QHBoxLayout(self)
+        QtWidgets.QWidget.__init__(self, parent)
+        layout = QtWidgets.QHBoxLayout(self)
         layout.setMargin(0)
         for term in (1, 2, 3, 6, 9, 12):
-            but = QtGui.QPushButton("%d" % term)
+            but = QtWidgets.QPushButton("%d" % term)
             but.setMaximumWidth(40)
             layout.addWidget(but)
             if term == 9:
@@ -57,71 +57,71 @@ class ApptPrefsDialog(BaseDialog):
         self.pt = patient
 
         self.main_ui = parent
-        self.patient_label = QtGui.QLabel(
+        self.patient_label = QtWidgets.QLabel(
             "%s<br /><b>%s</b>" % (_("Appointment Preferences for Patient"),
                                    patient.name_id))
 
         self.patient_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.recall_groupbox = QtGui.QGroupBox(
+        self.recall_groupbox = QtWidgets.QGroupBox(
             _("Recall Patient Periodically"))
         self.recall_groupbox.setCheckable(True)
 
-        self.recdent_groupbox = QtGui.QGroupBox(
+        self.recdent_groupbox = QtWidgets.QGroupBox(
             _("Dentist Recall"))
 
         self.recdent_groupbox.setCheckable(True)
         self.recdent_groupbox.setChecked(False)
 
-        self.recdent_period_spinbox = QtGui.QSpinBox()
+        self.recdent_period_spinbox = QtWidgets.QSpinBox()
         self.recdent_period_spinbox.setMinimum(1)
         self.recdent_period_spinbox.setMaximum(24)
         self.recdent_period_spinbox.setValue(6)
-        self.recdent_date_edit = QtGui.QDateEdit()
+        self.recdent_date_edit = QtWidgets.QDateEdit()
         self.recdent_date_edit.setCalendarPopup(True)
         self.recdent_date_edit.setDate(QtCore.QDate.currentDate())
         self.dent_shortcut_buts = ShortcutButs()
 
-        layout = QtGui.QFormLayout(self.recdent_groupbox)
+        layout = QtWidgets.QFormLayout(self.recdent_groupbox)
         layout.addRow(_("dentist recall period (months)"),
                       self.recdent_period_spinbox)
         layout.addRow(_("Next Recall Date"), self.recdent_date_edit)
         layout.addRow(_("Shortcuts (months from today)"),
                       self.dent_shortcut_buts)
 
-        self.rechyg_groupbox = QtGui.QGroupBox(
+        self.rechyg_groupbox = QtWidgets.QGroupBox(
             _("Hygienist Recall"))
 
         self.rechyg_groupbox.setCheckable(True)
         self.rechyg_groupbox.setChecked(False)
 
-        self.rechyg_period_spinbox = QtGui.QSpinBox()
+        self.rechyg_period_spinbox = QtWidgets.QSpinBox()
         self.rechyg_period_spinbox.setMinimum(1)
         self.rechyg_period_spinbox.setMaximum(24)
-        self.rechyg_date_edit = QtGui.QDateEdit()
+        self.rechyg_date_edit = QtWidgets.QDateEdit()
         self.rechyg_date_edit.setCalendarPopup(True)
         self.rechyg_date_edit.setDate(QtCore.QDate.currentDate())
 
-        layout = QtGui.QFormLayout(self.rechyg_groupbox)
+        layout = QtWidgets.QFormLayout(self.rechyg_groupbox)
         layout.addRow(_("hygienist recall period (months)"),
                       self.rechyg_period_spinbox)
         layout.addRow(_("Next Recall"), self.rechyg_date_edit)
 
-        self.recall_method_combobox = QtGui.QComboBox()
+        self.recall_method_combobox = QtWidgets.QComboBox()
         self.recall_method_combobox.addItems(
             [_("Post"), _("email"), _("sms")])
 
-        # self.sms_reminders_checkbox = QtGui.QCheckBox(
+        # self.sms_reminders_checkbox = QtWidgets.QCheckBox(
         #    _("sms reminders for appointments?"))
 
-        # self.combined_appointment_checkbox = QtGui.QCheckBox(
+        # self.combined_appointment_checkbox = QtWidgets.QCheckBox(
         #    _("Don't offer joint appointments"))
 
-        layout = QtGui.QGridLayout(self.recall_groupbox)
+        layout = QtWidgets.QGridLayout(self.recall_groupbox)
         layout.addWidget(self.recdent_groupbox, 0, 0, 1, 2)
         layout.addWidget(self.rechyg_groupbox, 1, 0, 1, 2)
 
-        layout.addWidget(QtGui.QLabel(_("Recall method")), 2, 0)
+        layout.addWidget(QtWidgets.QLabel(_("Recall method")), 2, 0)
         layout.addWidget(self.recall_method_combobox, 2, 1)
 
         self.insertWidget(self.patient_label)
@@ -220,7 +220,7 @@ if __name__ == "__main__":
     from openmolar.dbtools import patient_class
     pt = patient_class.patient(1)
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     dl = ApptPrefsDialog(pt, None)
     dl.exec_()

@@ -24,7 +24,7 @@
 from gettext import gettext as _
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
@@ -54,11 +54,11 @@ class AlterTodaysNotesDialog(BaseDialog):
 
         self.main_ui = parent
         QtCore.QTimer.singleShot(0, self.get_todays_notes)
-        self.text_edit = QtGui.QTextEdit(self)
+        self.text_edit = QtWidgets.QTextEdit(self)
 
-        self.patient_label = QtGui.QLabel("searching for patient...")
+        self.patient_label = QtWidgets.QLabel("searching for patient...")
 
-        phrasebook_button = QtGui.QPushButton(_("Open Phrasebook"))
+        phrasebook_button = QtWidgets.QPushButton(_("Open Phrasebook"))
         phrasebook_button.clicked.connect(self.show_phrasebook)
 
         self.insertWidget(self.patient_label)
@@ -76,7 +76,7 @@ class AlterTodaysNotesDialog(BaseDialog):
         try:
             self.patient_label.setText(db_patients.name(self.sno))
         except localsettings.PatientNotFoundError as exc:
-            QtGui.QMessageBox.warning(self, "Error", exc.message)
+            QtWidgets.QMessageBox.warning(self, "Error", exc.message)
 
     def show_phrasebook(self):
         dl = PhraseBookDialog(self)
@@ -106,7 +106,7 @@ class AlterTodaysNotesDialog(BaseDialog):
         cursor.close()
 
         if self.patient_loaded and not count:
-            QtGui.QMessageBox.information(self, _("message"),
+            QtWidgets.QMessageBox.information(self, _("message"),
                                           _("No notes found for today!"))
             self.signals()
             return
@@ -163,7 +163,7 @@ if __name__ == "__main__":
 
     localsettings.initiate()
     localsettings.operator = "NW"
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     LOGGER.setLevel(logging.DEBUG)
     dl = AlterTodaysNotesDialog(11956, None)

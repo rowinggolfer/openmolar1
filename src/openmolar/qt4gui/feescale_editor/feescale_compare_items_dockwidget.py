@@ -31,20 +31,20 @@ import re
 import sys
 from gettext import gettext as _
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 from openmolar.qt4gui.feescale_editor.feescale_xml_editor import XMLEditor
 LOGGER = logging.getLogger("openmolar")
 
 
-class CompareWidget(QtGui.QWidget):
+class CompareWidget(QtWidgets.QWidget):
 
     def __init__(self, parser, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         self.parser = parser
-        label = QtGui.QLabel(parser.detailed_label_text)
+        label = QtWidgets.QLabel(parser.detailed_label_text)
         self.xml_editor = XMLEditor()
 
-        layout = QtGui.QVBoxLayout(self)
+        layout = QtWidgets.QVBoxLayout(self)
         layout.addWidget(label)
         layout.addWidget(self.xml_editor)
 
@@ -56,13 +56,13 @@ class CompareWidget(QtGui.QWidget):
             self.xml_editor.setText(_("No Match Found"))
 
 
-class CompareItemsDockWidget(QtGui.QDockWidget):
+class CompareItemsDockWidget(QtWidgets.QDockWidget):
 
     def __init__(self, parsers, parent=None):
-        QtGui.QDockWidget.__init__(self, parent)
+        QtWidgets.QDockWidget.__init__(self, parent)
 
         self.setWindowTitle(_("Compare Items"))
-        splitter = QtGui.QSplitter(self)
+        splitter = QtWidgets.QSplitter(self)
         self.compare_widgets = []
         for parser in parsers:
             compare_widget = CompareWidget(parser, self)
@@ -93,7 +93,7 @@ if __name__ == "__main__":
 
     mp1, mp2 = _MockParser(), _MockParser()
     LOGGER.setLevel(logging.DEBUG)
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     cidw = CompareItemsDockWidget([mp1, mp2])
     cidw.show()
     app.exec_()

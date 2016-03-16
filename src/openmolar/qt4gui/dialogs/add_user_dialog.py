@@ -23,7 +23,7 @@
 
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
@@ -49,8 +49,8 @@ class AddUserDialog(ExtendableDialog):
 
         self.line_edit = UpperCaseLineEdit()
 
-        frame = QtGui.QFrame(self)
-        layout = QtGui.QFormLayout(frame)
+        frame = QtWidgets.QFrame(self)
+        layout = QtWidgets.QFormLayout(frame)
         layout.addRow(_("User Initials or nickname"), self.line_edit)
 
         self.insertWidget(self.top_label)
@@ -59,7 +59,7 @@ class AddUserDialog(ExtendableDialog):
         self.line_edit.textChanged.connect(self._check_enable)
         self.line_edit.setFocus()
 
-        list_widget = QtGui.QListWidget()
+        list_widget = QtWidgets.QListWidget()
         list_widget.addItems(sorted(localsettings.allowed_logins))
         self.add_advanced_widget(list_widget)
         self.set_advanced_but_text(_("view existing users"))
@@ -67,7 +67,7 @@ class AddUserDialog(ExtendableDialog):
     def _check_enable(self, *args):
         input_ = self.username
         if input_ in localsettings.allowed_logins:
-            QtGui.QMessageBox.warning(self,
+            QtWidgets.QMessageBox.warning(self,
                                       _("error"),
                                       _("Initials/nickname mut be unique"),
                                       )
@@ -92,7 +92,7 @@ class AddUserDialog(ExtendableDialog):
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     localsettings.initiateUsers()
 
     dl = AddUserDialog()

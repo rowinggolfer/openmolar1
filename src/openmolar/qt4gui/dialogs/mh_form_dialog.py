@@ -24,7 +24,7 @@
 from gettext import gettext as _
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 from openmolar.qt4gui.printing.mh_print import MHPrint
 
@@ -39,8 +39,8 @@ class MHFormDialog(BaseDialog):
         BaseDialog.__init__(self, parent)
         self.pt = pt
         self.setWindowTitle(_("MH Form Print Dialog"))
-        self.radio_button_a = QtGui.QRadioButton(_("Leave fields empty"))
-        self.radio_button_b = QtGui.QRadioButton(_("Populate with current MH"))
+        self.radio_button_a = QtWidgets.QRadioButton(_("Leave fields empty"))
+        self.radio_button_b = QtWidgets.QRadioButton(_("Populate with current MH"))
 
         if self.has_no_patient:
             message = _("No Patient Selected, A blank form will be produced")
@@ -48,14 +48,14 @@ class MHFormDialog(BaseDialog):
             message = "%s<br /><b>%s</b>" % (
                 _("Medical History form for"), pt.name_id)
 
-        date_gb = QtGui.QGroupBox(_("Use this date for the form"))
-        self.date_edit = QtGui.QDateEdit()
+        date_gb = QtWidgets.QGroupBox(_("Use this date for the form"))
+        self.date_edit = QtWidgets.QDateEdit()
         self.date_edit.setDate(self.chosen_date)
         self.date_edit.setCalendarPopup(True)
-        layout = QtGui.QVBoxLayout(date_gb)
+        layout = QtWidgets.QVBoxLayout(date_gb)
         layout.addWidget(self.date_edit)
 
-        label = QtGui.QLabel(message)
+        label = QtWidgets.QLabel(message)
         label.setAlignment(QtCore.Qt.AlignCenter)
 
         self.insertWidget(label)
@@ -107,7 +107,7 @@ if __name__ == "__main__":
         sys.exit()
 
     LOGGER.setLevel(logging.DEBUG)
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     dl = MHFormDialog(pt_)
     if dl.exec_():

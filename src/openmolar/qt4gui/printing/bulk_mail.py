@@ -26,7 +26,7 @@ import logging
 import os
 import re
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.compiled_uis import Ui_bulkmail_options
@@ -335,7 +335,7 @@ class bulkMails(object):
             only enable the date Edit if customRadio button is checked
             '''
             dl.dateEdit.setEnabled(checked)
-        dialog = QtGui.QDialog(self.om_gui)
+        dialog = QtWidgets.QDialog(self.om_gui)
         dl = Ui_bulkmail_options.Ui_Dialog()
         dl.setupUi(dialog)
         dl.dateEdit.setDate(localsettings.currentDay())
@@ -613,7 +613,7 @@ class bulkMails(object):
 if __name__ == "__main__":
     DEBUG = True
     localsettings.station = "reception"
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     os.chdir(os.environ.get("HOME", "."))
     from openmolar.qt4gui import maingui
     from openmolar.dbtools import recall

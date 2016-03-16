@@ -21,17 +21,17 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt4 import QtGui
+from PyQt5 import QtGui, QtWidgets
 
 
-class UpperCaseLineEdit(QtGui.QLineEdit):
+class UpperCaseLineEdit(QtWidgets.QLineEdit):
 
     '''
     A custom line edit that accepts only BLOCK LETTERS.
     '''
 
     def setText(self, text):
-        QtGui.QLineEdit.setText(self, text.upper())
+        QtWidgets.QLineEdit.setText(self, text.upper())
 
     def keyPressEvent(self, event):
         '''
@@ -41,11 +41,11 @@ class UpperCaseLineEdit(QtGui.QLineEdit):
         if 65 <= event.key() <= 90:
             event = QtGui.QKeyEvent(event.type(), event.key(),
                                     event.modifiers(), event.text().upper())
-        QtGui.QLineEdit.keyPressEvent(self, event)
+        QtWidgets.QLineEdit.keyPressEvent(self, event)
 
 
 if __name__ == "__main__":
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     te = UpperCaseLineEdit()
     te.show()
     app.exec_()

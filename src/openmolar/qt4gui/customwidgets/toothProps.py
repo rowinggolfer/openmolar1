@@ -25,7 +25,7 @@ from gettext import gettext as _
 import logging
 import re
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.settings import allowed
@@ -42,7 +42,7 @@ from openmolar.qt4gui.dialogs import toothprop_fulledit
 LOGGER = logging.getLogger("openmolar")
 
 
-class chartLineEdit(QtGui.QLineEdit):
+class chartLineEdit(QtWidgets.QLineEdit):
 
     '''
     A custom line edit that accepts only BLOCK LETTERS
@@ -54,7 +54,7 @@ class chartLineEdit(QtGui.QLineEdit):
     nav_key_pressed_signal = QtCore.pyqtSignal(object)
 
     def __init__(self, parent=None):
-        QtGui.QLineEdit.__init__(self, parent)
+        QtWidgets.QLineEdit.__init__(self, parent)
         self.om_gui = parent
         self.originalPropList = []
 
@@ -209,10 +209,10 @@ class chartLineEdit(QtGui.QLineEdit):
             message = '"%s" %s <br /> %s?' % (
                 prop, _("is not recognised"),
                 _("do you want to accept anyway"))
-            allowed_prop = QtGui.QMessageBox.question(
+            allowed_prop = QtWidgets.QMessageBox.question(
                 self, _("Confirm"), message,
-                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                QtGui.QMessageBox.No) == QtGui.QMessageBox.Yes
+                QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes
         if allowed_prop:
             LOGGER.debug("toothProps - accepting new entry '%s'" % prop)
         return allowed_prop
@@ -251,18 +251,18 @@ class chartLineEdit(QtGui.QLineEdit):
                 event.text().upper()
             )
 
-        QtGui.QLineEdit.keyPressEvent(self, event)
+        QtWidgets.QLineEdit.keyPressEvent(self, event)
 
 
-class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
+class ToothPropertyEditingWidget(QtWidgets.QWidget, Ui_toothProps.Ui_Form):
     static_chosen = QtCore.pyqtSignal(object)
     next_tooth_signal = QtCore.pyqtSignal(object)
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         self.om_gui = parent
         self.setupUi(self)
-        hlayout = QtGui.QHBoxLayout(self.editframe)
+        hlayout = QtWidgets.QHBoxLayout(self.editframe)
         hlayout.setContentsMargins(0, 0, 0, 0)
         self.lineEdit = chartLineEdit(self)
         self.lineEdit.setMaxLength(34)
@@ -271,16 +271,16 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
 
         hlayout.addWidget(self.lineEdit)
         self.tooth = Tooth()
-        self.toothlayout = QtGui.QHBoxLayout(self.frame)
+        self.toothlayout = QtWidgets.QHBoxLayout(self.frame)
         self.toothlayout.setContentsMargins(2, 2, 2, 2)
         self.toothlayout.setSpacing(2)
         self.toothlayout.addWidget(self.tooth)
 
         icon = QtGui.QIcon(":/pin.png")
-        pin_button = QtGui.QPushButton(icon, "")
+        pin_button = QtWidgets.QPushButton(icon, "")
         pin_button.setMaximumWidth(30)
         pin_button.setSizePolicy(
-            QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         pin_button.setToolTip(_("Toggle Pin Retention for current Filling"))
         self.toothlayout.addWidget(pin_button)
 
@@ -299,16 +299,16 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         self.selectedChart = ""
         self.selectedTooth = ""
         self.comboboxes = []
-        self.crown_but = QtGui.QPushButton(_("Crowns"))
-        self.post_but = QtGui.QPushButton(_("Posts"))
-        self.bridge_but = QtGui.QPushButton(_("Bridges"))
-        self.implant_but = QtGui.QPushButton(_("Implants"))
-        self.fs_but = QtGui.QPushButton(_("Fissure Sealants"))
-        self.endo_but = QtGui.QPushButton(_("Endodontics"))
-        self.surgical_but = QtGui.QPushButton(_("Surgical Tx"))
+        self.crown_but = QtWidgets.QPushButton(_("Crowns"))
+        self.post_but = QtWidgets.QPushButton(_("Posts"))
+        self.bridge_but = QtWidgets.QPushButton(_("Bridges"))
+        self.implant_but = QtWidgets.QPushButton(_("Implants"))
+        self.fs_but = QtWidgets.QPushButton(_("Fissure Sealants"))
+        self.endo_but = QtWidgets.QPushButton(_("Endodontics"))
+        self.surgical_but = QtWidgets.QPushButton(_("Surgical Tx"))
 
-        frame = QtGui.QFrame()
-        vlayout = QtGui.QVBoxLayout(frame)
+        frame = QtWidgets.QFrame()
+        vlayout = QtWidgets.QVBoxLayout(frame)
         vlayout.setMargin(0)
         vlayout.addWidget(self.fs_but)
         vlayout.addWidget(self.endo_but)
@@ -395,7 +395,7 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         user has clicked the edit button
         allow the user to edit the full contents of a tootget\ h
         '''
-        Dialog = QtGui.QDialog(self)
+        Dialog = QtWidgets.QDialog(self)
         lineEdit = chartLineEdit()
         if self.selectedChart == "st":
             lineEdit.setMaxLength(34)
@@ -674,11 +674,11 @@ class ToothPropertyEditingWidget(QtGui.QWidget, Ui_toothProps.Ui_Form):
         self.surgical_but.clicked.connect(self.surgical_but_clicked)
 
 
-class Tooth(QtGui.QWidget):
+class Tooth(QtWidgets.QWidget):
     surfaces_changed_signal = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         self.isBacktooth = True
         self.quadrant = 1
         self.isUpper = True
@@ -957,8 +957,8 @@ class Tooth(QtGui.QWidget):
 
 if __name__ == "__main__":
     import sys
-    app = QtGui.QApplication(sys.argv)
-    mw = QtGui.QMainWindow()
+    app = QtWidgets.QApplication(sys.argv)
+    mw = QtWidgets.QMainWindow()
     ui = ToothPropertyEditingWidget()
     ui.setExistingProps("MOD B,GL !COMMENT_TWO ")
     mw.setCentralWidget(ui)

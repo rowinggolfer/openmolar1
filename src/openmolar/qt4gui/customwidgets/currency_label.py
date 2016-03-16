@@ -21,10 +21,10 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 
 
-class CurrencyLabel(QtGui.QWidget):
+class CurrencyLabel(QtWidgets.QWidget):
 
     '''
     a re-implimentation of QLabel which adds the local currency prefix
@@ -32,23 +32,23 @@ class CurrencyLabel(QtGui.QWidget):
     '''
 
     def __init__(self, text="", parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         try:
             c_txt = QtCore.QLocale().currencySymbol()
         except AttributeError:
             # currencySymbol is Qt 4.8 and above
             c_txt = ""
 
-        self.suffix_label = QtGui.QLabel(c_txt, self)
+        self.suffix_label = QtWidgets.QLabel(c_txt, self)
         self.suffix_label.setFixedWidth(
             self.suffix_label.fontMetrics().width(c_txt))
-        self.label = QtGui.QLabel(text, self)
+        self.label = QtWidgets.QLabel(text, self)
         self.label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
 
         self.text = self.label.text
         self.setText = self.label.setText
 
-        layout = QtGui.QHBoxLayout(self)
+        layout = QtWidgets.QHBoxLayout(self)
         layout.addWidget(self.suffix_label)
         layout.addWidget(self.label)
 
@@ -59,7 +59,7 @@ class CurrencyLabel(QtGui.QWidget):
 
 if __name__ == "__main__":
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     label = CurrencyLabel("hello")
     label.show()
     app.exec_()

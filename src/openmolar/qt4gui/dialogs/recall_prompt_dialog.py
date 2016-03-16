@@ -23,7 +23,7 @@
 
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
@@ -41,7 +41,7 @@ class RecallPromptDialog(BaseDialog):
         self.setWindowTitle(_("Recall Prompt Dialog"))
 
         pt_details = "<b>%s %s %s</b>" % (pt.title, pt.fname, pt.sname)
-        self.patient_label = QtGui.QLabel(pt_details)
+        self.patient_label = QtWidgets.QLabel(pt_details)
         self.patient_label.setAlignment(QtCore.Qt.AlignCenter)
 
         message = _("There is a problem with the recall date of this patient.")
@@ -52,7 +52,7 @@ class RecallPromptDialog(BaseDialog):
         self.apply_but.setText(_("Fix"))
 
         self.ignore_but = self.button_box.addButton(
-            QtGui.QDialogButtonBox.Discard)
+            QtWidgets.QDialogButtonBox.Discard)
         self.ignore_but.setText(_("Ignore Recall Date"))
         self.ignore_but.setToolTip(_("Ignore this for now."))
 
@@ -80,7 +80,7 @@ class RecallPromptDialog(BaseDialog):
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     from openmolar.dbtools.patient_class import patient
 
     dl = RecallPromptDialog(patient(11932))

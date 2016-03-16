@@ -24,7 +24,7 @@
 from gettext import gettext as _
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.dbtools import appointments
@@ -33,7 +33,7 @@ from openmolar.qt4gui import colours
 LOGGER = logging.getLogger("openmolar")
 
 
-class ColouredItemDelegate(QtGui.QItemDelegate):
+class ColouredItemDelegate(QtWidgets.QItemDelegate):
 
     '''
     A custom delete allows for a change in the behaviour of QListView
@@ -55,7 +55,7 @@ class ColouredItemDelegate(QtGui.QItemDelegate):
             pal = option.palette
             pal.setBrush(pal.Highlight, self.brush2)
             pal.setBrush(pal.HighlightedText, self.dark_brush)
-        QtGui.QItemDelegate.paint(self, painter, option, index)
+        QtWidgets.QItemDelegate.paint(self, painter, option, index)
 
 
 class DoubleSelectionModel(QtGui.QItemSelectionModel):

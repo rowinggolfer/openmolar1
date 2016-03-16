@@ -26,7 +26,7 @@ Provides a Class for printing the GP17(Scotland) NHS form
 '''
 import os
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.backports.printed_form import PrintedForm
 from openmolar.qt4gui.printing.gp17.gp17_config import gp17config
@@ -148,7 +148,7 @@ if __name__ == "__main__":
     TEST_IMAGE = os.path.join(localsettings.resources_location,
                               "gp17", "back.jpg")
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     form = Gp17Back()
 
     form.testing_mode = True

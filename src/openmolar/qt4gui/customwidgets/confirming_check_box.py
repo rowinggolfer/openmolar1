@@ -21,13 +21,13 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 
 
-class ConfirmingCheckBox(QtGui.QCheckBox):
+class ConfirmingCheckBox(QtWidgets.QCheckBox):
 
     '''
-    this is a subclass of QtGui.QCheckBox
+    this is a subclass of QtWidgets.QCheckBox
     I use this to allow for logic BEFORE the state is changed.
     Also, new_state_signal is available IN ADDITION to the usual stateChanged
     signal.
@@ -38,7 +38,7 @@ class ConfirmingCheckBox(QtGui.QCheckBox):
     new_state_signal = QtCore.pyqtSignal(object)
 
     def __init__(self, *args):
-        QtGui.QCheckBox.__init__(self, *args)
+        QtWidgets.QCheckBox.__init__(self, *args)
         self.setTristate(True)
 
     def nextCheckState(self):
@@ -53,16 +53,16 @@ class ConfirmingCheckBox(QtGui.QCheckBox):
         self.new_state_signal.emit(self.checkState())
 
     def check_first(self):
-        return QtGui.QMessageBox.question(
+        return QtWidgets.QMessageBox.question(
             self,
             _("Confirm"), _("Are you Sure"),
-            QtGui.QMessageBox.Yes | QtGui.QMessageBox.No
-            ) == QtGui.QMessageBox.Yes
+            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No
+            ) == QtWidgets.QMessageBox.Yes
 
 
 if __name__ == "__main__":
     from gettext import gettext as _
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     cb = ConfirmingCheckBox("hello")
     cb.show()
     cb.setCheckState(QtCore.Qt.PartiallyChecked)

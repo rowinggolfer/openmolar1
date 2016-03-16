@@ -21,14 +21,14 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.qt4gui.appointment_gui_modules.clinician_select_model \
     import ClinicianSelectModel
 from openmolar.qt4gui.dialogs.appt_mode_dialog import ApptModeDialog
 
 
-class DiaryViewController(QtGui.QWidget):
+class DiaryViewController(QtWidgets.QWidget):
     VIEW_MODE = 0
     SCHEDULING_MODE = 1
     BLOCKING_MODE = 2
@@ -40,23 +40,23 @@ class DiaryViewController(QtGui.QWidget):
     apt_mode_changed = QtCore.pyqtSignal(object)
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         self.clinician_select_model = ClinicianSelectModel(self)
 
-        self.clinicianSelection_comboBox = QtGui.QComboBox()
+        self.clinicianSelection_comboBox = QtWidgets.QComboBox()
         self.clinicianSelection_comboBox.setModel(self.clinician_select_model)
 
-        mode_but = QtGui.QPushButton("....")
+        mode_but = QtWidgets.QPushButton("....")
         mode_but.setMaximumWidth(40)
-        self.mode_label = QtGui.QLabel(_("Browsing Mode"))
+        self.mode_label = QtWidgets.QLabel(_("Browsing Mode"))
 
-        mode_frame = QtGui.QWidget()
-        mode_layout = QtGui.QHBoxLayout(mode_frame)
+        mode_frame = QtWidgets.QWidget()
+        mode_layout = QtWidgets.QHBoxLayout(mode_frame)
         mode_layout.setMargin(0)
         mode_layout.addWidget(self.mode_label)
         mode_layout.addWidget(mode_but)
 
-        layout = QtGui.QVBoxLayout(self)
+        layout = QtWidgets.QVBoxLayout(self)
         layout.setMargin(0)
         layout.addWidget(self.clinicianSelection_comboBox)
         layout.addWidget(mode_frame)
@@ -110,7 +110,7 @@ if __name__ == "__main__":
     from openmolar.settings import localsettings
     localsettings.initiate()
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     widg = DiaryViewController()
     widg.show()
 

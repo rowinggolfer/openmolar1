@@ -25,7 +25,7 @@ from functools import partial
 from gettext import gettext as _
 import logging
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 
@@ -41,7 +41,7 @@ class CompleteTreatmentDialog(ExtendableDialog):
         LOGGER.debug("CompleteTreatmentDialog %s" % treatments)
         self.setWindowTitle(_("Complete Multiple Treatments"))
 
-        label = QtGui.QLabel(
+        label = QtWidgets.QLabel(
             "%s<br />%s" % (
                 _("You have selected multiple treatments."),
                 _("Please complete, reverse or delete then apply changes.")))
@@ -49,17 +49,17 @@ class CompleteTreatmentDialog(ExtendableDialog):
 
         self.treatments = treatments
 
-        scroll_area = QtGui.QScrollArea()
-        frame = QtGui.QFrame()
+        scroll_area = QtWidgets.QScrollArea()
+        frame = QtWidgets.QFrame()
         scroll_area.setWidget(frame)
         scroll_area.setWidgetResizable(True)
 
-        self.but_layout = QtGui.QGridLayout(frame)
+        self.but_layout = QtWidgets.QGridLayout(frame)
         row = 0
 
         col = 1
         for header in (_("Planned"), _("Completed")):
-            label = QtGui.QLabel("<b>%s</b>" % header)
+            label = QtWidgets.QLabel("<b>%s</b>" % header)
             label.setAlignment(QtCore.Qt.AlignCenter)
             self.but_layout.addWidget(label, row, col)
             col += 1
@@ -70,7 +70,7 @@ class CompleteTreatmentDialog(ExtendableDialog):
 
         for i, (att, treatment, completed) in enumerate(treatments):
             row = i + 1
-            label = QtGui.QLabel(
+            label = QtWidgets.QLabel(
                 "%s - <b>%s</b>" % (att.upper(), treatment.upper()))
             label.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
             self.but_layout.addWidget(label, row, 0)
@@ -81,14 +81,14 @@ class CompleteTreatmentDialog(ExtendableDialog):
             else:
                 icon = self.complete_icon
                 col = 0
-            but = QtGui.QPushButton(icon, "")
+            but = QtWidgets.QPushButton(icon, "")
             but.setIconSize(QtCore.QSize(10, 10))
             but.setMaximumWidth(50)
             self.but_layout.addWidget(but, row, col + 1)
 
             but.clicked.connect(partial(self._but_clicked, row))
 
-            but = QtGui.QPushButton(delete_icon, "")
+            but = QtWidgets.QPushButton(delete_icon, "")
             but.setIconSize(QtCore.QSize(20, 20))
             but.setMaximumWidth(50)
 
@@ -96,16 +96,16 @@ class CompleteTreatmentDialog(ExtendableDialog):
 
             but.clicked.connect(partial(self._del_but_clicked, row))
 
-        self.but_layout.addItem(QtGui.QSpacerItem(0, 10))
+        self.but_layout.addItem(QtWidgets.QSpacerItem(0, 10))
         self.but_layout.setRowStretch(row + 1, 2)
 
-        but_frame = QtGui.QFrame()
-        layout = QtGui.QHBoxLayout(but_frame)
+        but_frame = QtWidgets.QFrame()
+        layout = QtWidgets.QHBoxLayout(but_frame)
         layout.setMargin(0)
-        complete_all_but = QtGui.QPushButton(
+        complete_all_but = QtWidgets.QPushButton(
             self.complete_icon, _("Complete All"))
 
-        self.reverse_all_but = QtGui.QPushButton(
+        self.reverse_all_but = QtWidgets.QPushButton(
             self.uncomplete_icon, _("Reverse All"))
 
         complete_all_but.clicked.connect(self._complete_all)
@@ -240,8 +240,8 @@ class CompleteTreatmentDialog(ExtendableDialog):
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
-    app = QtGui.QApplication([])
-    mw = QtGui.QWidget()
+    app = QtWidgets.QApplication([])
+    mw = QtWidgets.QWidget()
 
     dl = CompleteTreatmentDialog([("perio", "SP", False),
                                   ("perio", "SP", True),

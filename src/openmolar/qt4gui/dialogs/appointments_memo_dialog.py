@@ -24,7 +24,7 @@
 from gettext import gettext as _
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 
@@ -44,7 +44,7 @@ class AppointmentsMemoDialog(ExtendableDialog):
         label = WarningLabel(
             "%s %s" % (_("Edit Memos for"), localsettings.longDate(date_)))
 
-        self.bank_hol_label = QtGui.QLabel("")
+        self.bank_hol_label = QtWidgets.QLabel("")
         font = self.font()
         font.setBold(True)
         font.setItalic(True)
@@ -52,34 +52,34 @@ class AppointmentsMemoDialog(ExtendableDialog):
         self.bank_hol_label.setAlignment(QtCore.Qt.AlignCenter)
         self.bank_hol_label.hide()
 
-        self.global_lineedit = QtGui.QLineEdit()
+        self.global_lineedit = QtWidgets.QLineEdit()
 
-        frame = QtGui.QFrame()
-        form_layout = QtGui.QFormLayout(frame)
+        frame = QtWidgets.QFrame()
+        form_layout = QtWidgets.QFormLayout(frame)
         form_layout.addRow(_("Global Memo"), self.global_lineedit)
 
-        frame2 = QtGui.QFrame()
-        form_layout = QtGui.QFormLayout(frame2)
+        frame2 = QtWidgets.QFrame()
+        form_layout = QtWidgets.QFormLayout(frame2)
 
         self.le_dict = {}
         for apptix in \
                 localsettings.activedent_ixs + localsettings.activehyg_ixs:
-            le = QtGui.QLineEdit()
+            le = QtWidgets.QLineEdit()
             form_layout.addRow(localsettings.apptix_reverse.get(apptix), le)
             self.le_dict[apptix] = le
 
-        scroll_area = QtGui.QScrollArea()
+        scroll_area = QtWidgets.QScrollArea()
         scroll_area.setWidget(frame2)
         scroll_area.setWidgetResizable(True)
 
-        clinician_groupbox = QtGui.QGroupBox()
+        clinician_groupbox = QtWidgets.QGroupBox()
         clinician_groupbox.setTitle(_("Clinician Memos"))
-        layout = QtGui.QVBoxLayout(clinician_groupbox)
+        layout = QtWidgets.QVBoxLayout(clinician_groupbox)
         layout.addWidget(scroll_area)
 
-        self.public_holiday_le = QtGui.QLineEdit()
-        public_holiday_widget = QtGui.QFrame()
-        form_layout = QtGui.QFormLayout(public_holiday_widget)
+        self.public_holiday_le = QtWidgets.QLineEdit()
+        public_holiday_widget = QtWidgets.QFrame()
+        form_layout = QtWidgets.QFormLayout(public_holiday_widget)
         form_layout.addRow(_("Public Holiday Text"), self.public_holiday_le)
         self.add_advanced_widget(public_holiday_widget)
         self.set_advanced_but_text(_("Edit Public Holiday Text"))
@@ -149,7 +149,7 @@ class AppointmentsMemoDialog(ExtendableDialog):
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
     localsettings.initiate()
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     dl = AppointmentsMemoDialog(QtCore.QDate.currentDate().toPyDate())
     if dl.exec_():
         dl.apply()

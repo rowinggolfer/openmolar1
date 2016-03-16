@@ -25,7 +25,7 @@ from gettext import gettext as _
 import logging
 import re
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 from openmolar.dbtools import standard_letter
@@ -40,14 +40,14 @@ class CorrespondenceDialog(BaseDialog):
         BaseDialog.__init__(self, parent, remove_stretch=True)
 
         self.pt = patient
-        self.text_edit = QtGui.QTextEdit()
+        self.text_edit = QtWidgets.QTextEdit()
         self.orig_html = html
         self.text_edit.setHtml(html)
         self.orig_qhtml = self.text
         self.insertWidget(self.text_edit)
 
         if preformatted:
-            self.combo_box = QtGui.QComboBox()
+            self.combo_box = QtWidgets.QComboBox()
             self.combo_box.addItem(_("Blank Letter"))
             QtCore.QTimer.singleShot(100, self.load_preformats)
             self.insertWidget(self.combo_box)
@@ -55,7 +55,7 @@ class CorrespondenceDialog(BaseDialog):
         self.enableApply()
 
     def advise(self, message):
-        QtGui.QMessageBox.information(self, _("message"), message)
+        QtWidgets.QMessageBox.information(self, _("message"), message)
 
     def sizeHint(self):
         return QtCore.QSize(600, 600)
@@ -95,14 +95,14 @@ class CorrespondenceDialog(BaseDialog):
     def preformed_letter_selected(self, i):
         LOGGER.debug("selecting preformed letter %s", i)
         selected = str(self.combo_box.currentText())
-        if self.has_edits and QtGui.QMessageBox.question(
+        if self.has_edits and QtWidgets.QMessageBox.question(
                 self,
                 _("Confirm"),
                 "%s %s" % (
                     _("Abandon changes and convert to letter type"),
                     selected),
-                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No
-        ) == QtGui.QMessageBox.No:
+                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No
+        ) == QtWidgets.QMessageBox.No:
             return
 
         letter = self.LETTERS[selected]
@@ -138,7 +138,7 @@ class CorrespondenceDialog(BaseDialog):
 
 
 if __name__ == "__main__":
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     LOGGER.setLevel(logging.DEBUG)
     dl = CorrespondenceDialog(standard_letter._test())
     dl.exec_()

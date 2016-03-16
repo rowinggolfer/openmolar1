@@ -22,7 +22,7 @@
 # ########################################################################### #
 
 from gettext import gettext as _
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 from openmolar.settings import localsettings
 from openmolar.dbtools import patient_class
 
@@ -38,17 +38,17 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
         self.Dialog = Dialog
         self.om_gui = om_gui
         self.setupUi(Dialog)
-        vlayout = QtGui.QVBoxLayout(self.blockStart_frame)
+        vlayout = QtWidgets.QVBoxLayout(self.blockStart_frame)
         vlayout.setMargin(0)
         self.start_timeEdit = fiveminutetimeedit.FiveMinuteTimeEdit()
         vlayout.addWidget(self.start_timeEdit)
 
-        vlayout = QtGui.QVBoxLayout(self.blockEnd_frame)
+        vlayout = QtWidgets.QVBoxLayout(self.blockEnd_frame)
         vlayout.setMargin(0)
         self.finish_timeEdit = fiveminutetimeedit.FiveMinuteTimeEdit()
         vlayout.addWidget(self.finish_timeEdit)
 
-        vlayout = QtGui.QVBoxLayout(self.startTime_frame)
+        vlayout = QtWidgets.QVBoxLayout(self.startTime_frame)
         vlayout.setMargin(0)
         self.appointment_timeEdit = fiveminutetimeedit.FiveMinuteTimeEdit()
         vlayout.addWidget(self.appointment_timeEdit)
@@ -121,7 +121,7 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
                         errorlist += "<li>%s</li>" % error
                     message = "<p>%s...<ul>%s</ul></p>" % (
                         _("Unable to commit because"), errorlist)
-                    QtGui.QMessageBox.information(self.Dialog, _("error"),
+                    QtWidgets.QMessageBox.information(self.Dialog, _("error"),
                                                   message)
 
                 else:
@@ -137,7 +137,7 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
             try:
                 self.setPatient(patient_class.patient(serialno))
             except localsettings.PatientNotFoundError:
-                QtGui.QMessageBox.information(
+                QtWidgets.QMessageBox.information(
                     self.Dialog, _("Error"), _("patient not found"))
                 self.setPatient(patient_class.patient(0))
 
@@ -179,8 +179,8 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
 
 if __name__ == "__main__":
     import sys
-    app = QtGui.QApplication(sys.argv)
-    dialog = QtGui.QDialog()
+    app = QtWidgets.QApplication(sys.argv)
+    dialog = QtWidgets.QDialog()
     dl = blockDialog(dialog)
     start = QtCore.QTime(14, 40)
     finish = QtCore.QTime(15, 15)

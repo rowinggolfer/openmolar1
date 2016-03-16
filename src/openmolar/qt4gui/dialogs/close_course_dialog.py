@@ -23,7 +23,7 @@
 
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
@@ -36,7 +36,7 @@ class CloseCourseDialog(BaseDialog):
         BaseDialog.__init__(self, parent)
         self.setWindowTitle(_("Close Course Dialog"))
 
-        self.patient_label = QtGui.QLabel("")
+        self.patient_label = QtWidgets.QLabel("")
         self.patient_label.setAlignment(QtCore.Qt.AlignCenter)
         f = self.patient_label.font()
         f.setBold(True)
@@ -47,21 +47,21 @@ class CloseCourseDialog(BaseDialog):
               'yet they are deemed to be "under treatment".'))
         self.tx_complete_label.setMaximumHeight(120)
 
-        self.date_edit = QtGui.QDateEdit()
+        self.date_edit = QtWidgets.QDateEdit()
         self.date_edit.setDate(QtCore.QDate.currentDate())
         self.date_edit.setMaximumDate(QtCore.QDate().currentDate())
         self.date_edit.setCalendarPopup(True)
 
-        frame = QtGui.QFrame(self)
-        layout = QtGui.QFormLayout(frame)
+        frame = QtWidgets.QFrame(self)
+        layout = QtWidgets.QFormLayout(frame)
         layout.addRow(_("Suggested Completion Date"), self.date_edit)
 
-        question_label = QtGui.QLabel(
+        question_label = QtWidgets.QLabel(
             "<b>%s</b>" %
             _("Close this course now?"))
         question_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.ftr_checkbox = QtGui.QCheckBox(_("Pt failed to return"))
+        self.ftr_checkbox = QtWidgets.QCheckBox(_("Pt failed to return"))
         self.ftr_checkbox.setChecked(ftr)
 
         self.insertWidget(self.patient_label)
@@ -92,7 +92,7 @@ class CloseCourseDialog(BaseDialog):
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     dl = CloseCourseDialog(True)
     dl.patient_label.setText("test")

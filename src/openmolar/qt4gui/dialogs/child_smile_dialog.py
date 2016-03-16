@@ -29,7 +29,7 @@ import urllib.request, urllib.error, urllib.parse
 from xml.dom import minidom
 from xml.parsers.expat import ExpatError
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.customwidgets.upper_case_line_edit \
@@ -80,21 +80,21 @@ class ChildSmileDialog(BaseDialog):
         BaseDialog.__init__(self, parent)
 
         self.main_ui = parent
-        self.header_label = QtGui.QLabel()
+        self.header_label = QtWidgets.QLabel()
         self.header_label.setAlignment(QtCore.Qt.AlignCenter)
         self.pcde_le = UpperCaseLineEdit()
         self.pcde_le.setText(self.main_ui.pt.pcde)
-        self.simd_label = QtGui.QLabel()
+        self.simd_label = QtWidgets.QLabel()
         self.simd_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.tbi_checkbox = QtGui.QCheckBox(
+        self.tbi_checkbox = QtWidgets.QCheckBox(
             _("ToothBrushing Instruction Given"))
         self.tbi_checkbox.setChecked(True)
 
-        self.di_checkbox = QtGui.QCheckBox(_("Dietary Advice Given"))
+        self.di_checkbox = QtWidgets.QCheckBox(_("Dietary Advice Given"))
         self.di_checkbox.setChecked(True)
 
-        self.fl_checkbox = QtGui.QCheckBox(_("Fluoride Varnish Applied"))
+        self.fl_checkbox = QtWidgets.QCheckBox(_("Fluoride Varnish Applied"))
         self.fl_checkbox.setToolTip(
             _("Fee claimable for patients betwen 2 and 5"))
         self.fl_checkbox.setChecked(2 <= self.main_ui.pt.ageYears <= 5)
@@ -123,7 +123,7 @@ class ChildSmileDialog(BaseDialog):
 
     def postcode_warning(self):
         if not self.valid_postcode:
-            QtGui.QMessageBox.warning(self, "error", "Postcode is not valid")
+            QtWidgets.QMessageBox.warning(self, "error", "Postcode is not valid")
 
     def check_pcde(self):
         if self.valid_postcode:
@@ -137,7 +137,7 @@ class ChildSmileDialog(BaseDialog):
         '''
         poll the server for a simd for a postcode
         '''
-        QtGui.QApplication.instance().processEvents()
+        QtWidgets.QApplication.instance().processEvents()
         global TODAYS_LOOKUPS
         try:
             self.result = TODAYS_LOOKUPS[self.pcde]
@@ -155,7 +155,7 @@ class ChildSmileDialog(BaseDialog):
         url = "%s?pCode=%s" % (LOOKUP_URL, pcde)
 
         try:
-            QtGui.QApplication.instance().setOverrideCursor(
+            QtWidgets.QApplication.instance().setOverrideCursor(
                 QtCore.Qt.WaitCursor)
             req = urllib.request.Request(url, headers=HEADERS)
             response = urllib.request.urlopen(req, timeout=20)
@@ -168,10 +168,10 @@ class ChildSmileDialog(BaseDialog):
             LOGGER.error("timeout error polling NHS website?")
             self.result = _("Timeout polling website")
         finally:
-            QtGui.QApplication.instance().restoreOverrideCursor()
+            QtWidgets.QApplication.instance().restoreOverrideCursor()
 
         self.simd_label.setText("%s = %s" % (_("RESULT"), self.result))
-        QtGui.QApplication.instance().processEvents()
+        QtWidgets.QApplication.instance().processEvents()
 
         TODAYS_LOOKUPS[self.pcde] = "SIMD: %s" % self.simd_number
         self.enableApply(self.simd_number is not None)
@@ -187,7 +187,7 @@ class ChildSmileDialog(BaseDialog):
             return "UNDECIPHERABLE REPLY"
 
     def manual_entry(self):
-        simd, result = QtGui.QInputDialog.getInteger(
+        simd, result = QtWidgets.QInputDialog.getInteger(
             self, _("Manual Input Required"),
             _("Online lookup has failed, please enter the SIMD manually"),
             4, 1, 5)
@@ -271,9 +271,9 @@ if __name__ == "__main__":
     from collections import namedtuple
 
     localsettings.initiate()
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
-    ui = QtGui.QMainWindow()
+    ui = QtWidgets.QMainWindow()
     ui.pt = namedtuple("pt", ("pcde", "ageYears"))
 
     ui.pt.pcde = "Iv1 1P"

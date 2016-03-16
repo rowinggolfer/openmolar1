@@ -22,7 +22,7 @@
 # ########################################################################### #
 
 import logging
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.dbtools import daybook
@@ -32,23 +32,23 @@ from openmolar.qt4gui.dialogs import permissions
 LOGGER = logging.getLogger("openmolar")
 
 
-class DaybookItemAdvancedWidget(QtGui.QWidget):
+class DaybookItemAdvancedWidget(QtWidgets.QWidget):
     update_totals_signal = QtCore.pyqtSignal()
     update_fee_signal = QtCore.pyqtSignal()
     update_ptfee_signal = QtCore.pyqtSignal()
     delete_row_signal = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
-        layout = QtGui.QVBoxLayout(self)
+        QtWidgets.QWidget.__init__(self, parent)
+        layout = QtWidgets.QVBoxLayout(self)
 
-        but1 = QtGui.QPushButton(
+        but1 = QtWidgets.QPushButton(
             _("Update the daybook row with these new Totals"))
-        but2 = QtGui.QPushButton(
+        but2 = QtWidgets.QPushButton(
             _("Update the daybook row with Fee Total Only"))
-        but3 = QtGui.QPushButton(
+        but3 = QtWidgets.QPushButton(
             _("Update the daybook row with Charge Total Only"))
-        but4 = QtGui.QPushButton(
+        but4 = QtWidgets.QPushButton(
             _("Delete this row from the daybook"))
 
         layout.addWidget(but1)
@@ -77,13 +77,13 @@ class DaybookItemDialog(ExtendableDialog):
         self.feesa = feesa
         self.feesb = feesb
 
-        header_label = QtGui.QLabel(
+        header_label = QtWidgets.QLabel(
             "<b>%s %s</b>" % (_("Inspecting daybook row"), self.daybook_id))
         header_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.feesa_label = QtGui.QLabel()
+        self.feesa_label = QtWidgets.QLabel()
         self.feesa_label.setStyleSheet("color:red;")
-        self.feesb_label = QtGui.QLabel()
+        self.feesb_label = QtWidgets.QLabel()
         self.feesb_label.setStyleSheet("color:red;")
 
         self.apply_but.setText(_("Ok"))
@@ -91,7 +91,7 @@ class DaybookItemDialog(ExtendableDialog):
         self.enableApply()
 
         self.insertWidget(header_label)
-        self.web_view = QtGui.QTextBrowser()
+        self.web_view = QtWidgets.QTextBrowser()
         self.insertWidget(self.web_view)
         self.insertWidget(self.feesa_label)
         self.insertWidget(self.feesb_label)
@@ -111,7 +111,7 @@ class DaybookItemDialog(ExtendableDialog):
         QtCore.QTimer.singleShot(100, self.get_data)
 
     def advise(self, message):
-        QtGui.QMessageBox.information(self, _("message"), message)
+        QtWidgets.QMessageBox.information(self, _("message"), message)
 
     def sizeHint(self):
         return QtCore.QSize(400, 400)
@@ -178,7 +178,7 @@ class DaybookItemDialog(ExtendableDialog):
 
 if __name__ == "__main__":
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     LOGGER.setLevel(logging.DEBUG)
     dl = DaybookItemDialog(337646, 5700, 1300)
     dl.exec_()

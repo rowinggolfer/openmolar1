@@ -28,7 +28,7 @@ Will raise dialogs etc to enable user choices.
 from gettext import gettext as _
 import os
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 from openmolar.qt4gui.dialogs.gp17_printdialog import GP17PrintDialog
 from openmolar.qt4gui.printing.om_printing import commitPDFtoDB
@@ -49,12 +49,12 @@ class GP17Printer(object):
         (to check alignment)
         '''
 
-        if final_paperwork and QtGui.QMessageBox.question(
+        if final_paperwork and QtWidgets.QMessageBox.question(
                 self.om_gui,
                 _("Question"),
                 _("Print an NHS form now?"),
-                QtGui.QMessageBox.No | QtGui.QMessageBox.Yes,
-                QtGui.QMessageBox.Yes) == QtGui.QMessageBox.No:
+                QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.No:
             return
 
         if test:  # self.om_gui.pt.serialno == 0:
@@ -92,7 +92,7 @@ if __name__ == "__main__":
     localsettings.initiate()
     localsettings.station = "reception"  # prevent no clinician popup
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     om_gui = maingui.OpenmolarGui()
 

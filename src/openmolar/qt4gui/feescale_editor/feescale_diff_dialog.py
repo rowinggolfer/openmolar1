@@ -31,7 +31,7 @@ import logging
 import re
 import sys
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 from .feescale_xml_editor import XMLEditor
 
@@ -48,7 +48,7 @@ class DiffDialog(BaseDialog):
         self.window_title = _("Diff Dialog")
         self.setWindowTitle(self.window_title)
 
-        self.main_toolbar = QtGui.QToolBar()
+        self.main_toolbar = QtWidgets.QToolBar()
         self.main_toolbar.setObjectName("Main Toolbar")
         self.main_toolbar.toggleViewAction().setText(_("Toolbar"))
 
@@ -70,17 +70,17 @@ class DiffDialog(BaseDialog):
         self.xml_editor2.verticalScrollBar().valueChanged.connect(
             self.xml_editor1.verticalScrollBar().setValue)
 
-        action_show_min_diffs = QtGui.QAction(_("Show Standard Diffs"), self)
-        action_show_full_diffs = QtGui.QAction(_("Show Full Diffs"), self)
+        action_show_min_diffs = QtWidgets.QAction(_("Show Standard Diffs"), self)
+        action_show_full_diffs = QtWidgets.QAction(_("Show Full Diffs"), self)
 
         icon = QtGui.QIcon.fromTheme("application-exit")
-        action_quit = QtGui.QAction(icon, _("Quit"), self)
+        action_quit = QtWidgets.QAction(icon, _("Quit"), self)
 
         self.main_toolbar.addAction(action_show_min_diffs)
         self.main_toolbar.addAction(action_show_full_diffs)
         self.main_toolbar.addAction(action_quit)
 
-        splitter = QtGui.QSplitter()
+        splitter = QtWidgets.QSplitter()
         splitter.addWidget(self.xml_editor1)
         splitter.addWidget(self.xml_editor2)
         # splitter.setSizes([150, 650])
@@ -249,7 +249,7 @@ class DiffDialog(BaseDialog):
     def files_are_identical(self):
         if self.xml_editor1.text_object.text == \
                 self.xml_editor2.text_object.text:
-            QtGui.QMessageBox.information(self,
+            QtWidgets.QMessageBox.information(self,
                                           _("Information"),
                                           _("Files are identical"))
             return True
@@ -262,7 +262,7 @@ class DiffDialog(BaseDialog):
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     test_node = "<node>\n    hello\n</node>\n"
     orig = test_node * 10
     new = test_node * 4

@@ -23,7 +23,7 @@
 
 import logging
 
-from PyQt4.QtCore import QDate
+from PyQt5 import QtCore
 
 from openmolar import connect
 
@@ -90,7 +90,8 @@ class ApptPrefs(object):
     def new_recdent(self):
         if self.recdent_period is None:
             self.recdent_period = 6
-        return QDate.currentDate().addMonths(self.recdent_period).toPyDate()
+        return QtCore.QDate.currentDate().addMonths(
+            self.recdent_period).toPyDate()
 
     def commit_changes(self):
         LOGGER.debug("ApptPrefs committing changes")

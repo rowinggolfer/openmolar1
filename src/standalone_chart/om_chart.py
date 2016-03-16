@@ -27,7 +27,7 @@ import logging
 import sys
 import traceback
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 
 from lib_om_chart.restorable_app import RestorableApplication
 from lib_om_chart.chart_widget import ChartWidget
@@ -39,12 +39,12 @@ from lib_om_chart.connect import Connection
 LOGGER = logging.getLogger("om_chart")
 
 
-class MainWindow(QtGui.QMainWindow):
+class MainWindow(QtWidgets.QMainWindow):
     connection = Connection()
     _loaded_serialno = None
 
     def __init__(self, parent=None):
-        QtGui.QMainWindow.__init__(self, parent)
+        QtWidgets.QMainWindow.__init__(self, parent)
 
         if not self.connection.is_configured:
             self.configure()
@@ -53,12 +53,12 @@ class MainWindow(QtGui.QMainWindow):
         self.chart_widget = ChartWidget(self)
         self.setCentralWidget(self.chart_widget)
 
-        menu_file = QtGui.QMenu(_("&File"), self)
-        load_action = QtGui.QAction("&Load", self)
-        quit_action = QtGui.QAction("&Quit", self)
-        reload_action = QtGui.QAction("&Reload", self)
+        menu_file = QtWidgets.QMenu(_("&File"), self)
+        load_action = QtWidgets.QAction("&Load", self)
+        quit_action = QtWidgets.QAction("&Quit", self)
+        reload_action = QtWidgets.QAction("&Reload", self)
 
-        reconfigure_action = QtGui.QAction("Re&configure", self)
+        reconfigure_action = QtWidgets.QAction("Re&configure", self)
 
         menu_file.addAction(load_action)
         menu_file.addAction(quit_action)
@@ -71,7 +71,7 @@ class MainWindow(QtGui.QMainWindow):
         reload_action.triggered.connect(self.reload_patient)
         reconfigure_action.triggered.connect(self.check_reconfigure)
         quit_action.triggered.connect(
-            QtGui.QApplication.instance().closeAllWindows)
+            QtWidgets.QApplication.instance().closeAllWindows)
 
         self.timer = QtCore.QTimer()
         self.timer.setInterval(3000)
@@ -101,15 +101,15 @@ class MainWindow(QtGui.QMainWindow):
 
     def closeEvent(self, event=None):
         '''
-        re-implement the close event of QtGui.QMainWindow, and check the user
+        re-implement the close event of QtWidgets.QMainWindow, and check the user
         really meant to do this.
         '''
         self.timer.stop()
-        result = QtGui.QMessageBox.question(
+        result = QtWidgets.QMessageBox.question(
             self, _("Confirm"),
             _("Quit Application?"),
-            QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
-            QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok
+            QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel,
+            QtWidgets.QMessageBox.Cancel) == QtWidgets.QMessageBox.Ok
 
         if result:
             self.saveSettings()
@@ -129,7 +129,7 @@ class MainWindow(QtGui.QMainWindow):
         return row[0] + 10  # allow for a few new patients.
 
     def get_patient(self):
-        sno, result = QtGui.QInputDialog.getInt(self,
+        sno, result = QtWidgets.QInputDialog.getInt(self,
                                                 _("Manual Select"),
                                                 _("Select a serialno to load"),
                                                 1, 1, self.max_sno)
@@ -143,7 +143,7 @@ class MainWindow(QtGui.QMainWindow):
         '''
         self.chart_widget.clear()
 
-        QtGui.QApplication.instance().setOverrideCursor(
+        QtWidgets.QApplication.instance().setOverrideCursor(
             QtCore.Qt.WaitCursor)
         logging.debug("loading patient %s", sno)
         try:
@@ -157,7 +157,7 @@ class MainWindow(QtGui.QMainWindow):
                     self.chart_widget.setToothProps(tooth, static_text)
 
         except PatientNotFoundException:
-            self._message_box = QtGui.QMessageBox(self)
+            self._message_box = QtWidgets.QMessageBox(self)
             self._message_box.setText("Patient Serialno %s not found!" % sno)
             self._message_box.setIcon(self._message_box.Warning)
             self._message_box.setWindowTitle("whoops")
@@ -166,7 +166,7 @@ class MainWindow(QtGui.QMainWindow):
 
         self.chart_widget.update()
 
-        QtGui.QApplication.instance().restoreOverrideCursor()
+        QtWidgets.QApplication.instance().restoreOverrideCursor()
 
     def reload_patient(self):
         LOGGER.debug("reloading patient")
@@ -176,11 +176,11 @@ class MainWindow(QtGui.QMainWindow):
             self.check_record_in_use()
 
     def check_reconfigure(self):
-        if QtGui.QMessageBox.question(
+        if QtWidgets.QMessageBox.question(
                 self, _("confirm"),
                 _("Do you really want to reconfigure this application?"),
-                QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,
-                QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok:
+                QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel,
+                QtWidgets.QMessageBox.Cancel) == QtWidgets.QMessageBox.Ok:
             self.reconfigure()
 
     def configure(self):
@@ -198,16 +198,16 @@ class MainWindow(QtGui.QMainWindow):
 
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''
-        PyQt4 prints unhandled exceptions to stdout and carries on regardless
+        PyQt5 prints unhandled exceptions to stdout and carries on regardless
         I don't want this to happen.
         so sys.excepthook is passed to this
         '''
         self.timer.stop()
-        QtGui.QApplication.instance().restoreOverrideCursor()
+        QtWidgets.QApplication.instance().restoreOverrideCursor()
         message = ""
         for l in traceback.format_exception(exc_type, exc_val, tracebackobj):
             message += l
-        QtGui.QMessageBox.warning(
+        QtWidgets.QMessageBox.warning(
             self, _("Error"),
             'UNHANDLED EXCEPTION!<hr /><pre>%s</pre>' % message)
         LOGGER.warning(message)

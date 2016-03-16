@@ -24,7 +24,7 @@
 from gettext import gettext as _
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.dbtools.brief_patient import BriefPatient
@@ -47,13 +47,13 @@ class MedFormDateEntryDialog(BaseDialog):
         self.setWindowTitle(_("Medical Form Date Entry Dialog"))
 
         self.pt = BriefPatient(serialno)
-        self.patient_label = QtGui.QLabel(self.pt.name_id)
+        self.patient_label = QtWidgets.QLabel(self.pt.name_id)
         self.patient_label.setAlignment(QtCore.Qt.AlignCenter)
         f = self.patient_label.font()
         f.setBold(True)
         self.patient_label.setFont(f)
 
-        year_button = QtGui.QPushButton(_("Change Year"))
+        year_button = QtWidgets.QPushButton(_("Change Year"))
         last_check = localsettings.formatDate(self.pt.mh_form_date)
         if not last_check:
             last_check = _("NEVER")
@@ -86,7 +86,7 @@ class MedFormDateEntryDialog(BaseDialog):
 
     def select_year(self):
         current_year = localsettings.currentDay().year
-        year, result = QtGui.QInputDialog.getInt(self, _("Input"),
+        year, result = QtWidgets.QInputDialog.getInt(self, _("Input"),
                                                  _("Please select a year"),
                                                  self.check_date.year,
                                                  2000,
@@ -108,7 +108,7 @@ class MedFormDateEntryDialog(BaseDialog):
             LOGGER.debug("insertion OK")
         except medform_check.connect.IntegrityError:
             LOGGER.info("date already present in medforms table")
-        QtGui.QMessageBox.information(
+        QtWidgets.QMessageBox.information(
             self, _("Success!"),
             "%s %s %s %s" % (_("Sucessfully saved "),
                              localsettings.formatDate(self.check_date),
@@ -121,18 +121,18 @@ class MedFormDateEntryDialog(BaseDialog):
         if not BaseDialog.exec_(self):
             return False
         if self.check_date > localsettings.currentDay():
-            QtGui.QMessageBox.warning(self, _("Error!"),
+            QtWidgets.QMessageBox.warning(self, _("Error!"),
                                       _("That date is in the future!"))
             return self.exec_()
-        if QtGui.QMessageBox.question(
+        if QtWidgets.QMessageBox.question(
                 self,
                 _("Confirm Action"),
                 "%s<hr />%s <b>%s</b><br />%s" % (
                     self.pt.name_id, _("Date Checked"),
                     localsettings.readableDate(self.check_date),
                     _("Confirm this date now?")),
-                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                QtGui.QMessageBox.Yes) == QtGui.QMessageBox.Yes:
+                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes:
             return True
         else:
             return self.exec_()
@@ -152,7 +152,7 @@ def allow_user_input(parent=None):
                 dl2.apply()
         except localsettings.PatientNotFoundError:
             LOGGER.debug("Patient Not Found - %s", dl.chosen_sno)
-            QtGui.QMessageBox.warning(
+            QtWidgets.QMessageBox.warning(
                 parent, _("Error!"),
                 "%s %s<hr />%s" % (_("error getting serialno"),
                                    dl.chosen_sno,
@@ -163,6 +163,6 @@ def allow_user_input(parent=None):
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     localsettings.initiate()
     allow_user_input()

@@ -24,7 +24,7 @@
 from gettext import gettext as _
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.dbtools import docsprinted
@@ -45,36 +45,36 @@ class DuplicateReceiptDialog(BaseDialog):
         self.pt = patient
 
         self.main_ui = parent
-        patient_label = QtGui.QLabel(
+        patient_label = QtWidgets.QLabel(
             "%s<br /><b>%s</b>" % (_("Duplicate receipts for Patient"),
                                    patient.name_id))
 
         patient_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.no_receipts_found_label = QtGui.QLabel(
+        self.no_receipts_found_label = QtWidgets.QLabel(
             _("No previous receipts found!"))
 
-        self.prev_receipts_groupbox = QtGui.QGroupBox(
+        self.prev_receipts_groupbox = QtWidgets.QGroupBox(
             _("Reprint an existing receipt"))
 
-        self.prev_buts_layout = QtGui.QVBoxLayout(self.prev_receipts_groupbox)
+        self.prev_buts_layout = QtWidgets.QVBoxLayout(self.prev_receipts_groupbox)
 
         self.prev_receipts_groupbox.hide()
 
-        new_dup_receipt_groupbox = QtGui.QGroupBox(
+        new_dup_receipt_groupbox = QtWidgets.QGroupBox(
             _("Generate a Duplicate receipt"))
 
-        self.dup_date_edit = QtGui.QDateEdit()
+        self.dup_date_edit = QtWidgets.QDateEdit()
         self.dup_date_edit.setDate(QtCore.QDate.currentDate())
 
-        self.amount_spinbox = QtGui.QDoubleSpinBox()
+        self.amount_spinbox = QtWidgets.QDoubleSpinBox()
         self.amount_spinbox.setMaximum(10000)
 
         icon = QtGui.QIcon(localsettings.printer_png)
-        print_dup_button = QtGui.QPushButton(icon, "Print")
+        print_dup_button = QtWidgets.QPushButton(icon, "Print")
         print_dup_button.clicked.connect(self.print_duplicate)
 
-        layout = QtGui.QFormLayout(new_dup_receipt_groupbox)
+        layout = QtWidgets.QFormLayout(new_dup_receipt_groupbox)
         layout.addRow(_("Date"), self.dup_date_edit)
         layout.addRow(_("Amount"), self.amount_spinbox)
         layout.addRow(print_dup_button)
@@ -111,7 +111,7 @@ class DuplicateReceiptDialog(BaseDialog):
 
         for ix in sorted(self.prev_receipts.keys())[:3]:
             printdate = self.prev_receipts[ix]
-            but = QtGui.QPushButton(localsettings.readableDate(printdate))
+            but = QtWidgets.QPushButton(localsettings.readableDate(printdate))
             but.ix = ix
             but.clicked.connect(self.print_existing)
 
@@ -119,24 +119,24 @@ class DuplicateReceiptDialog(BaseDialog):
 
         no_receipts = len(self.prev_receipts)
         if no_receipts > 3:
-            widget = QtGui.QWidget(self)
-            label = QtGui.QLabel("%d more receipts" % (no_receipts - 3))
-            but = QtGui.QPushButton(_("show"))
+            widget = QtWidgets.QWidget(self)
+            label = QtWidgets.QLabel("%d more receipts" % (no_receipts - 3))
+            but = QtWidgets.QPushButton(_("show"))
             but.clicked.connect(self.show_all_prev_receipts)
-            layout = QtGui.QHBoxLayout(widget)
+            layout = QtWidgets.QHBoxLayout(widget)
             layout.addWidget(label)
             layout.addWidget(but)
             self.prev_buts_layout.addWidget(widget)
 
     def show_all_prev_receipts(self):
         dl = BaseDialog(self)
-        scroll_area = QtGui.QScrollArea()
-        frame = QtGui.QFrame()
-        layout = QtGui.QVBoxLayout(frame)
+        scroll_area = QtWidgets.QScrollArea()
+        frame = QtWidgets.QFrame()
+        layout = QtWidgets.QVBoxLayout(frame)
 
         for ix in sorted(self.prev_receipts.keys())[3:]:
             printdate = self.prev_receipts[ix]
-            but = QtGui.QPushButton(localsettings.readableDate(printdate))
+            but = QtWidgets.QPushButton(localsettings.readableDate(printdate))
             but.ix = ix
             but.clicked.connect(self.print_existing)
 
@@ -159,7 +159,7 @@ class DuplicateReceiptDialog(BaseDialog):
             localsettings.openPDF()
         except Exception:
             LOGGER.exception("view PDF error")
-            QtGui.QMessageBox.warning(self, "error",
+            QtWidgets.QMessageBox.warning(self, "error",
                                       _("error reviewing PDF file"))
 
     def print_duplicate(self):
@@ -193,7 +193,7 @@ if __name__ == "__main__":
     from openmolar.dbtools import patient_class
     pt = patient_class.patient(10781)
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     dl = DuplicateReceiptDialog(pt, None)
     dl.exec_()

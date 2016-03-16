@@ -21,24 +21,24 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class WarningLabel(QtGui.QWidget):
+class WarningLabel(QtWidgets.QWidget):
 
     def __init__(self, text, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
         icon = QtGui.QIcon(":/openmolar.svg")
 
-        icon_label = QtGui.QLabel()
+        icon_label = QtWidgets.QLabel()
         icon_label.setPixmap(icon.pixmap(48, 48))
 
-        self.label = QtGui.QLabel(text)
+        self.label = QtWidgets.QLabel(text)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setWordWrap(True)
 
-        layout = QtGui.QHBoxLayout(self)
+        layout = QtWidgets.QHBoxLayout(self)
         layout.addWidget(icon_label)
         layout.addWidget(self.label)
         layout.setStretch(1, 9)
@@ -48,7 +48,7 @@ class WarningLabel(QtGui.QWidget):
 
 
 if __name__ == "__main__":
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     from openmolar.qt4gui import resources_rc
     wl = WarningLabel("hello world!")
     wl.show()

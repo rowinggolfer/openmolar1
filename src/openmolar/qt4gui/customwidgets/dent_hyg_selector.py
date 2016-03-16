@@ -21,24 +21,24 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 
-class DentHygSelector(QtGui.QTreeWidget):
+class DentHygSelector(QtWidgets.QTreeWidget):
     selection_changed_signal = QtCore.pyqtSignal()
 
     def __init__(self):
-        QtGui.QTreeWidget.__init__(self)
+        QtWidgets.QTreeWidget.__init__(self)
         self.setHeaderHidden(True)
         self.dents = []
         self.hygs = []
-        self.root = QtGui.QTreeWidgetItem(self, ["All Clinicians"])
+        self.root = QtWidgets.QTreeWidgetItem(self, ["All Clinicians"])
         self.root.setCheckState(0, QtCore.Qt.Checked)
 
-        self.dent_root = QtGui.QTreeWidgetItem(self.root, ["All Dentists"])
+        self.dent_root = QtWidgets.QTreeWidgetItem(self.root, ["All Dentists"])
         self.dent_root.setCheckState(0, QtCore.Qt.Checked)
 
-        self.hyg_root = QtGui.QTreeWidgetItem(self.root, ["All Hygienists"])
+        self.hyg_root = QtWidgets.QTreeWidgetItem(self.root, ["All Hygienists"])
         self.hyg_root.setCheckState(0, QtCore.Qt.Checked)
 
         self.dent_cbs = {}
@@ -50,14 +50,14 @@ class DentHygSelector(QtGui.QTreeWidget):
     def set_dents(self, dents):
         self.dents = dents
         for dent in self.dents:
-            i = QtGui.QTreeWidgetItem(self.dent_root, [dent])
+            i = QtWidgets.QTreeWidgetItem(self.dent_root, [dent])
             i.setCheckState(0, QtCore.Qt.Checked)
             self.dent_cbs[dent] = i
 
     def set_hygs(self, hygs):
         self.hygs = hygs
         for hyg in self.hygs:
-            i = QtGui.QTreeWidgetItem(self.hyg_root, [hyg])
+            i = QtWidgets.QTreeWidgetItem(self.hyg_root, [hyg])
             i.setCheckState(0, QtCore.Qt.Checked)
             self.hyg_cbs[hyg] = i
 
@@ -133,7 +133,7 @@ class DentHygSelector(QtGui.QTreeWidget):
 
 
 if __name__ == "__main__":
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     dents = ["Neil", "Bea", "Helen"]
     hygs = ["Rosie", "Sally", "Ariana"]
     w = DentHygSelector()

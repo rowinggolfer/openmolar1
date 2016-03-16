@@ -24,7 +24,7 @@
 import logging
 from xml.dom import minidom
 
-from PyQt4 import QtCore
+from PyQt5 import QtCore
 
 LOGGER = logging.getLogger("openmolar")
 

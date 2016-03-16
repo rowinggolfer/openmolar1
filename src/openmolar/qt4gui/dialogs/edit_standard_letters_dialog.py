@@ -24,7 +24,7 @@
 from gettext import gettext as _
 import logging
 
-from PyQt4 import QtGui, QtCore, Qsci
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.dbtools import standard_letter
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
@@ -74,35 +74,35 @@ class EditStandardLettersDialog(BaseDialog):
         self._standard_letters = None
         self.deleted_letters = []
 
-        header_label = QtGui.QLabel("<b>%s</b>" % message)
+        header_label = QtWidgets.QLabel("<b>%s</b>" % message)
 
         self.list_model = ListModel()
 
-        self.list_view = QtGui.QListView()
+        self.list_view = QtWidgets.QListView()
         self.list_view.setModel(self.list_model)
 
         icon = QtGui.QIcon(":/eraser.png")
-        delete_but = QtGui.QPushButton(icon, "")
+        delete_but = QtWidgets.QPushButton(icon, "")
         delete_but.setToolTip(_("Delete the currently selected letter"))
         delete_but.setMaximumWidth(80)
 
         icon = QtGui.QIcon(":/add_user.png")
-        add_but = QtGui.QPushButton(icon, "")
+        add_but = QtWidgets.QPushButton(icon, "")
         add_but.setToolTip(_("Add a New Letter"))
         add_but.setMaximumWidth(80)
 
-        left_frame = QtGui.QFrame()
-        layout = QtGui.QGridLayout(left_frame)
+        left_frame = QtWidgets.QFrame()
+        layout = QtWidgets.QGridLayout(left_frame)
         layout.setMargin(0)
         layout.addWidget(self.list_view, 0, 0, 1, 3)
         layout.addWidget(delete_but, 1, 0)
         layout.addWidget(add_but, 1, 1)
         left_frame.setMaximumWidth(250)
 
-        right_frame = QtGui.QFrame()
-        layout = QtGui.QFormLayout(right_frame)
+        right_frame = QtWidgets.QFrame()
+        layout = QtWidgets.QFormLayout(right_frame)
         layout.setMargin(0)
-        self.description_line_edit = QtGui.QLineEdit()
+        self.description_line_edit = QtWidgets.QLineEdit()
         self.text_edit = Qsci.QsciScintilla()
         self.text_edit.setLexer(Qsci.QsciLexerHTML())
         self.footer_text_edit = Qsci.QsciScintilla()
@@ -112,7 +112,7 @@ class EditStandardLettersDialog(BaseDialog):
         layout.addRow(_("Body Text"), self.text_edit)
         layout.addRow(_("Footer"), self.footer_text_edit)
 
-        splitter = QtGui.QSplitter()
+        splitter = QtWidgets.QSplitter()
         splitter.addWidget(left_frame)
         splitter.addWidget(right_frame)
         splitter.setSizes([1, 10])
@@ -216,7 +216,7 @@ class EditStandardLettersDialog(BaseDialog):
 
     def add_letter(self, triggered=None, name=""):
         LOGGER.debug("add_letter")
-        name, result = QtGui.QInputDialog.getText(
+        name, result = QtWidgets.QInputDialog.getText(
             self,
             _("Input Required"),
             _("Please enter a unique descriptive name for this letter"),
@@ -225,7 +225,7 @@ class EditStandardLettersDialog(BaseDialog):
         if not result or name == "":
             return
         if name in self.existing_descriptions:
-            QtGui.QMessageBox.warning(self, _("error"),
+            QtWidgets.QMessageBox.warning(self, _("error"),
                                       _("this name is already in use")
                                       )
             self.add_letter(name=name)
@@ -241,7 +241,7 @@ class EditStandardLettersDialog(BaseDialog):
 
     def remove_letter(self):
         if len(self.standard_letters) < 2:
-            QtGui.QMessageBox.warning(
+            QtWidgets.QMessageBox.warning(
                 self,
                 _("Warning"),
                 _("You should have at least one standard letter "
@@ -299,7 +299,7 @@ class EditStandardLettersDialog(BaseDialog):
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
     dl = EditStandardLettersDialog()
     dl.exec_()

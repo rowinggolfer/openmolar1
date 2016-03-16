@@ -27,7 +27,7 @@ from functools import partial
 from gettext import gettext as _
 import sys
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 from openmolar.settings import localsettings
 
 CENTRE = QtGui.QTextOption(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)
@@ -47,7 +47,7 @@ class DayData(object):
         self.dents = {}
 
 
-class controlCalendar(QtGui.QCalendarWidget):
+class controlCalendar(QtWidgets.QCalendarWidget):
 
     '''
     a customised QCalendarWidget, overriding the defeault behaviour of the
@@ -55,12 +55,12 @@ class controlCalendar(QtGui.QCalendarWidget):
     '''
 
     def __init__(self, *args):
-        QtGui.QCalendarWidget.__init__(self, *args)
+        QtWidgets.QCalendarWidget.__init__(self, *args)
         self.setFirstDayOfWeek(QtCore.Qt.Monday)
         self.setGridVisible(True)
         self.setHorizontalHeaderFormat(
-            QtGui.QCalendarWidget.SingleLetterDayNames)
-        self.setVerticalHeaderFormat(QtGui.QCalendarWidget.NoVerticalHeader)
+            QtWidgets.QCalendarWidget.SingleLetterDayNames)
+        self.setVerticalHeaderFormat(QtWidgets.QCalendarWidget.NoVerticalHeader)
         self.setDateEditEnabled(True)
         self.setSelectedDate(QtCore.QDate.currentDate())
 
@@ -118,13 +118,13 @@ class weekCalendar(controlCalendar):
         self.updateCells()
 
     def paintCell(self, painter, rect, date):
-        QtGui.QCalendarWidget.paintCell(self, painter, rect, date)
+        QtWidgets.QCalendarWidget.paintCell(self, painter, rect, date)
 
         if date.weekNumber()[0] == self.selectedDate().weekNumber()[0]:
             painter.fillRect(rect, self.color)
 
 
-class monthCalendar(QtGui.QWidget):
+class monthCalendar(QtWidgets.QWidget):
 
     '''
     A month calendar
@@ -139,8 +139,8 @@ class monthCalendar(QtGui.QWidget):
         '''
         super(monthCalendar, self).__init__(parent)
         self.setSizePolicy(
-            QtGui.QSizePolicy(
-                QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
+            QtWidgets.QSizePolicy(
+                QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding))
         self.parent = parent
         self.rowNo = 1
         self.colNo = 1
@@ -295,7 +295,7 @@ class monthCalendar(QtGui.QWidget):
             self.setSelectedDate(d)
             self.selected_date_signal.emit(d)
         else:
-            menu = QtGui.QMenu(self)
+            menu = QtWidgets.QMenu(self)
             action = menu.addAction(_("Edit day memos"))
             action2 = menu.addAction(_("Edit Public Holiday information"))
 
@@ -491,7 +491,7 @@ class monthCalendar(QtGui.QWidget):
                          self.height())
 
 
-class yearCalendar(QtGui.QWidget):
+class yearCalendar(QtWidgets.QWidget):
 
     '''
     a pyqt4 custom widget to show a year calendar
@@ -506,8 +506,8 @@ class yearCalendar(QtGui.QWidget):
         '''
         super(yearCalendar, self).__init__(parent)
         self.setSizePolicy(
-            QtGui.QSizePolicy(
-                QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
+            QtWidgets.QSizePolicy(
+                QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding))
 
         self.setMinimumSize(self.minimumSizeHint())
         self.monthStarts = {}
@@ -630,7 +630,7 @@ class yearCalendar(QtGui.QWidget):
                 self.setSelectedDate(d)
                 self.selected_date_signal.emit(d)
             else:
-                menu = QtGui.QMenu(self)
+                menu = QtWidgets.QMenu(self)
                 action = menu.addAction(_("Edit day memos"))
                 action2 = menu.addAction(_("Edit Public Holiday information"))
 
@@ -853,7 +853,7 @@ if __name__ == "__main__":
     def week_signal_trap(*args):
         print("week - %s" % wcal.selectedDate())
 
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     cal = controlCalendar()
     wcal = weekCalendar()
     mcal = monthCalendar()

@@ -30,14 +30,14 @@ from gettext import gettext as _
 import logging
 import re
 import sys
-from PyQt4 import QtGui, QtCore, QtSvg
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from lib_om_chart import chart_colours as colours
 
 LOGGER = logging.getLogger("chart")
 
 
-class ChartWidget(QtGui.QWidget):
+class ChartWidget(QtWidgets.QWidget):
 
     '''
     a custom widget to show a standard UK dental chart
@@ -53,10 +53,10 @@ class ChartWidget(QtGui.QWidget):
     request_tx_context_menu_signal = QtCore.pyqtSignal(object, object, object)
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
-        self.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,
-                                             QtGui.QSizePolicy.Expanding))
+        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                             QtWidgets.QSizePolicy.Expanding))
 
         self.grid = (["ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1',
                       'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8'],
@@ -223,10 +223,10 @@ class ChartWidget(QtGui.QWidget):
                 advisory += "%s <br />" % fill
                 show = True
             if show:
-                QtGui.QToolTip.showText(event.globalPos(),
+                QtWidgets.QToolTip.showText(event.globalPos(),
                                         advisory.rstrip("<br />"))
             else:
-                QtGui.QToolTip.showText(event.globalPos(), "")
+                QtWidgets.QToolTip.showText(event.globalPos(), "")
         except IndexError:
             pass
 
@@ -307,7 +307,7 @@ class ChartWidget(QtGui.QWidget):
 
     def raise_context_menu(self, tooth, point):
         if self.isStaticChart:
-            menu = QtGui.QMenu(self)
+            menu = QtWidgets.QMenu(self)
 
             action = menu.addAction(_("Toggle Deciduous State"))
             action.triggered.connect(self.flip_deciduous_signal.emit)
@@ -1192,14 +1192,14 @@ class toothSurfaces():
                 self.painter.restore()
 
 
-class ToothImage(QtGui.QWidget):
+class ToothImage(QtWidgets.QWidget):
 
     '''
     a class to grab an image of the tooth widget
     '''
 
     def __init__(self, tooth, props, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         self.tooth = tooth
         self.props = props
         LOGGER.debug("tooth image %s with props %s" % (tooth, props))
@@ -1227,7 +1227,7 @@ if __name__ == "__main__":
         LOGGER.info("signal caught %s" % str(args))
 
     LOGGER.setLevel(logging.DEBUG)
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     form = ChartWidget()
     form.chartgrid = {'lr1': 'lr1', 'lr3': 'lr3', 'lr2': 'lr2', 'lr5': 'lr5',
                       'lr4': 'lr4', 'lr7': 'lr7', 'lr6': 'lr6', 'lr8': 'lr8',

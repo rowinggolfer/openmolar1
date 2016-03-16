@@ -29,7 +29,7 @@ ChargePercentageInputDialog
 import logging
 from gettext import gettext as _
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
@@ -47,15 +47,15 @@ class _InputDialog(BaseDialog):
     def __init__(self, parent=None):
         BaseDialog.__init__(self, parent)
         self.setWindowTitle(_("Input Required"))
-        self.label = QtGui.QLabel()
-        self.spinbox = QtGui.QDoubleSpinBox()
+        self.label = QtWidgets.QLabel()
+        self.spinbox = QtWidgets.QDoubleSpinBox()
         self.spinbox.setMinimum(-100)
         self.spinbox.setMaximum(100)
         self.spinbox.setDecimals(2)
 
-        self.gross_radio_button = QtGui.QRadioButton(_("apply to gross fees"))
+        self.gross_radio_button = QtWidgets.QRadioButton(_("apply to gross fees"))
         self.gross_radio_button.setChecked(True)
-        self.charge_radio_button = QtGui.QRadioButton(_("apply to charges"))
+        self.charge_radio_button = QtWidgets.QRadioButton(_("apply to charges"))
 
         self.insertWidget(self.label)
         self.insertWidget(self.spinbox)
@@ -112,14 +112,14 @@ class RoundupFeesDialog(_InputDialog):
         self.spinbox.setPrefix(localsettings.formatMoney(0)[0])
         # self.spinbox.setValue(0.10)
 
-        self.round_down_radio_button = QtGui.QRadioButton(_("round down"))
-        self.round_up_radio_button = QtGui.QRadioButton(_("round up"))
-        self.round_to_nearest_radio_button = QtGui.QRadioButton(
+        self.round_down_radio_button = QtWidgets.QRadioButton(_("round down"))
+        self.round_up_radio_button = QtWidgets.QRadioButton(_("round up"))
+        self.round_to_nearest_radio_button = QtWidgets.QRadioButton(
             _("round up/down to nearest value"))
         self.round_to_nearest_radio_button.setChecked(True)
 
-        frame = QtGui.QFrame()
-        layout = QtGui.QVBoxLayout(frame)
+        frame = QtWidgets.QFrame()
+        layout = QtWidgets.QVBoxLayout(frame)
         layout.addWidget(self.round_up_radio_button)
         layout.addWidget(self.round_down_radio_button)
         layout.addWidget(self.round_to_nearest_radio_button)
@@ -172,7 +172,7 @@ class ChargePercentageInputDialog(_InputDialog):
         self.charge_radio_button.hide()
         self.gross_radio_button.hide()
 
-        self.leave_zero_charges_checkBox = QtGui.QCheckBox(
+        self.leave_zero_charges_checkBox = QtWidgets.QCheckBox(
             _("Leave Zero Charges as Zero"))
         self.leave_zero_charges_checkBox.setChecked(True)
         self.insertWidget(self.leave_zero_charges_checkBox)
@@ -193,7 +193,7 @@ class ChargePercentageInputDialog(_InputDialog):
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     dl = PercentageInputDialog()
     if dl.exec_():
         print(dl.message)

@@ -23,7 +23,7 @@
 
 from gettext import gettext as _
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.ptModules.estimates import TXHash
@@ -33,10 +33,10 @@ from openmolar.qt4gui.fees import manipulate_plan
 from openmolar.qt4gui.compiled_uis import Ui_hygenist_wizard
 
 
-class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
+class HygTreatWizard(QtWidgets.QDialog, Ui_hygenist_wizard.Ui_Dialog):
 
     def __init__(self, parent=None):
-        QtGui.QDialog.__init__(self, parent)
+        QtWidgets.QDialog.__init__(self, parent)
         self.setupUi(self)
         self.om_gui = parent
         self.practitioners = localsettings.activedents + \
@@ -101,7 +101,7 @@ class HygTreatWizard(QtGui.QDialog, Ui_hygenist_wizard.Ui_Dialog):
             if self.exec_():
                 if self.dent == "":
                     message = _("Please enter a dentist / hygienist")
-                    QtGui.QMessageBox.information(self, _("Whoops"), message)
+                    QtWidgets.QMessageBox.information(self, _("Whoops"), message)
                 else:
                     break
             else:
@@ -153,7 +153,7 @@ if __name__ == "__main__":
 
     from openmolar.qt4gui import maingui
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     mw = maingui.OpenmolarGui()
     mw.getrecord(11956)
 

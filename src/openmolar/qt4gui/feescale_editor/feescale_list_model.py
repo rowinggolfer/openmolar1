@@ -27,7 +27,7 @@ this module provides models for the list views used by the FeescaleEditor
 
 import logging
 
-from PyQt4 import QtCore
+from PyQt5 import QtCore
 
 LOGGER = logging.getLogger("openmolar")
 

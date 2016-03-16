@@ -23,7 +23,7 @@
 
 import logging
 
-from PyQt4 import QtCore, QtGui, Qsci
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -107,7 +107,7 @@ class XMLEditor(Qsci.QsciScintilla):
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     widg = XMLEditor()
     widg.editor_settings()
     widg.show()

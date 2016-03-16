@@ -28,23 +28,23 @@ patient.
 
 from gettext import gettext as _
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 
 
-class _TreatmentItemWidget(QtGui.QWidget):
+class _TreatmentItemWidget(QtWidgets.QWidget):
     '''
     A simple widget to display a treatment item
     '''
     def __init__(self, shortcut, item, description, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         self.shortcut = shortcut
-        layout = QtGui.QHBoxLayout(self)
-        self.spinbox = QtGui.QSpinBox()
+        layout = QtWidgets.QHBoxLayout(self)
+        self.spinbox = QtWidgets.QSpinBox()
         self.spinbox.setFixedWidth(80)
-        self.label = QtGui.QLabel(description)
+        self.label = QtWidgets.QLabel(description)
         layout.setMargin(0)
         layout.addWidget(self.spinbox)
         layout.addWidget(self.label)
@@ -58,8 +58,8 @@ class OtherTreatmentDialog(ExtendableDialog):
     def __init__(self, parent):
         ExtendableDialog.__init__(self, parent, remove_stretch=True)
         self.setWindowTitle(_("Other Treatment Choice Dialog"))
-        label = QtGui.QLabel(_("Add the following items to the treament plan"))
-        self.tab_widget = QtGui.QTabWidget(self)
+        label = QtWidgets.QLabel(_("Add the following items to the treament plan"))
+        self.tab_widget = QtWidgets.QTabWidget(self)
 
         self.insertWidget(label)
         self.insertWidget(self.tab_widget)
@@ -67,9 +67,9 @@ class OtherTreatmentDialog(ExtendableDialog):
         layouts = []
         for tabname in (default_feetable.briefName,
                         _("Items from other feescales")):
-            tab = QtGui.QWidget()
-            layouts.append(QtGui.QVBoxLayout(tab))
-            scroll_area = QtGui.QScrollArea()
+            tab = QtWidgets.QWidget()
+            layouts.append(QtWidgets.QVBoxLayout(tab))
+            scroll_area = QtWidgets.QScrollArea()
             scroll_area.setWidget(tab)
             scroll_area.setWidgetResizable(True)
 
@@ -113,8 +113,8 @@ if __name__ == "__main__":
     from openmolar.dbtools.patient_class import patient
     localsettings.loadFeeTables()
 
-    app = QtGui.QApplication([])
-    mw = QtGui.QWidget()
+    app = QtWidgets.QApplication([])
+    mw = QtWidgets.QWidget()
     mw.pt = patient(17322)
 
     dl = OtherTreatmentDialog(mw)

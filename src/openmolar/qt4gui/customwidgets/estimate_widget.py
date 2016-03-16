@@ -27,7 +27,7 @@ this module provides a custom widget "EstimateWidget"
 
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.customwidgets.estimate_item_widget \
@@ -41,7 +41,7 @@ from openmolar.qt4gui.dialogs.complete_treatment_dialog \
 LOGGER = logging.getLogger("openmolar")
 
 
-class EstimateWidget(QtGui.QWidget):
+class EstimateWidget(QtWidgets.QWidget):
 
     '''
     provides a custom widget to view/edit the patient's estimate
@@ -52,31 +52,31 @@ class EstimateWidget(QtGui.QWidget):
     edited_signal = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
         self.om_gui = parent
 
-        size_policy = QtGui.QSizePolicy(
-            QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        size_policy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         self.setSizePolicy(size_policy)
 
         self.expandAll = False
 
         # header labels
-        self.number_label = QtGui.QLabel(_("No."))
-        self.code_label = QtGui.QLabel(_("Code"))
-        self.description_label = QtGui.QLabel(_("Description"))
+        self.number_label = QtWidgets.QLabel(_("No."))
+        self.code_label = QtWidgets.QLabel(_("Code"))
+        self.description_label = QtWidgets.QLabel(_("Description"))
         self.description_label.setMinimumWidth(120)
         self.description_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.cset_label = QtGui.QLabel(_("CSET"))
-        self.fee_label = QtGui.QLabel(_("Fee"))
+        self.cset_label = QtWidgets.QLabel(_("CSET"))
+        self.fee_label = QtWidgets.QLabel(_("Fee"))
         self.fee_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.charge_label = QtGui.QLabel(_("Charge"))
+        self.charge_label = QtWidgets.QLabel(_("Charge"))
         self.charge_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.expand_all_button = QtGui.QPushButton(_("Expand All"))
+        self.expand_all_button = QtWidgets.QPushButton(_("Expand All"))
 
-        self.g_layout = QtGui.QGridLayout(self)
+        self.g_layout = QtWidgets.QGridLayout(self)
         self.g_layout.setSpacing(0)
 
         self.g_layout.addWidget(self.number_label, 0, 0)
@@ -88,17 +88,17 @@ class EstimateWidget(QtGui.QWidget):
 
         self.g_layout.addWidget(self.expand_all_button, 0, 7, 1, 3)
 
-        self.planned_fees_total_le = QtGui.QLineEdit()
-        self.planned_charges_total_le = QtGui.QLineEdit()
+        self.planned_fees_total_le = QtWidgets.QLineEdit()
+        self.planned_charges_total_le = QtWidgets.QLineEdit()
 
-        self.completed_fees_total_le = QtGui.QLineEdit()
-        self.completed_charges_total_le = QtGui.QLineEdit()
+        self.completed_fees_total_le = QtWidgets.QLineEdit()
+        self.completed_charges_total_le = QtWidgets.QLineEdit()
 
-        self.fees_total_le = QtGui.QLineEdit()
-        self.charges_total_le = QtGui.QLineEdit()
+        self.fees_total_le = QtWidgets.QLineEdit()
+        self.charges_total_le = QtWidgets.QLineEdit()
 
-        self.interim_fees_total_le = QtGui.QLineEdit()
-        self.interim_charges_total_le = QtGui.QLineEdit()
+        self.interim_fees_total_le = QtWidgets.QLineEdit()
+        self.interim_charges_total_le = QtWidgets.QLineEdit()
 
         for le in (self.planned_fees_total_le,
                    self.completed_fees_total_le,
@@ -111,10 +111,10 @@ class EstimateWidget(QtGui.QWidget):
             le.setFixedWidth(EstimateItemWidget.MONEY_WIDTH)
             le.setAlignment(QtCore.Qt.AlignRight)
 
-        self.planned_total_label = QtGui.QLabel(_("Planned Items Total"))
-        self.interim_total_label = QtGui.QLabel(_("Interim Charges"))
-        self.completed_total_label = QtGui.QLabel(_("Completed Items Total"))
-        self.total_label = QtGui.QLabel(_("TOTAL"))
+        self.planned_total_label = QtWidgets.QLabel(_("Planned Items Total"))
+        self.interim_total_label = QtWidgets.QLabel(_("Interim Charges"))
+        self.completed_total_label = QtWidgets.QLabel(_("Completed Items Total"))
+        self.total_label = QtWidgets.QLabel(_("TOTAL"))
 
         alignment = QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter
         self.planned_total_label.setAlignment(alignment)
@@ -129,7 +129,7 @@ class EstimateWidget(QtGui.QWidget):
         self.setMinimumSize(self.minimumSizeHint())
         self.expand_all_button.clicked.connect(self.expandItems)
 
-        self.spacer_item = QtGui.QSpacerItem(0, 10)
+        self.spacer_item = QtWidgets.QSpacerItem(0, 10)
 
     def add_footer(self):
         row = len(self.estItemWidgets)
@@ -532,9 +532,9 @@ if __name__ == "__main__":
     from openmolar.dbtools import patient_class
     pt = patient_class.patient(11956)
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
-    form = QtGui.QMainWindow()
+    form = QtWidgets.QMainWindow()
     widg = EstimateWidget()
     form.setCentralWidget(widg)
     form.show()

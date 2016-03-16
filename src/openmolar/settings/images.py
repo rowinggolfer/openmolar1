@@ -24,7 +24,7 @@
 import os
 import re
 from openmolar.settings import localsettings
-from PyQt4 import QtGui
+from PyQt5 import QtGui, QtWidgets
 
 TOOTHPIXMAPS = {}
 
@@ -43,8 +43,8 @@ def toothPixmaps():
 
 
 if __name__ == "__main__":
-    app = QtGui.QApplication([])
-    lab = QtGui.QLabel()
+    app = QtWidgets.QApplication([])
+    lab = QtWidgets.QLabel()
     lab.setPixmap(toothPixmaps()["lr6"])
     lab.show()
     app.exec_()

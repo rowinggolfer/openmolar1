@@ -25,7 +25,7 @@ from gettext import gettext as _
 import logging
 from functools import partial
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 from openmolar.settings import localsettings
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
@@ -35,21 +35,21 @@ from openmolar.dbtools import medform_check
 LOGGER = logging.getLogger("openmolar")
 
 
-class CorrectionWidget(QtGui.QWidget):
+class CorrectionWidget(QtWidgets.QWidget):
     def __init__(self, pt, parent):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         self.pt = pt
         self.dialog = parent
-        label = QtGui.QLabel(_("Previously stored dates"))
-        scroll_area = QtGui.QScrollArea()
+        label = QtWidgets.QLabel(_("Previously stored dates"))
+        scroll_area = QtWidgets.QScrollArea()
         scroll_area.setMinimumHeight(100)
 
-        frame = QtGui.QFrame()
-        self.frame_layout = QtGui.QFormLayout(frame)
+        frame = QtWidgets.QFrame()
+        self.frame_layout = QtWidgets.QFormLayout(frame)
         scroll_area.setWidget(frame)
         scroll_area.setWidgetResizable(True)
 
-        layout = QtGui.QVBoxLayout(self)
+        layout = QtWidgets.QVBoxLayout(self)
         layout.addWidget(label)
         layout.addWidget(scroll_area)
 
@@ -64,7 +64,7 @@ class CorrectionWidget(QtGui.QWidget):
     def showEvent(self, event=None):
         self.clear()
         for date_ in self.pt.mh_form_dates():
-            but = QtGui.QPushButton(_("Delete"))
+            but = QtWidgets.QPushButton(_("Delete"))
             but.clicked.connect(partial(self.delete_date, date_))
             self.frame_layout.addRow(localsettings.readableDate(date_), but)
 
@@ -83,7 +83,7 @@ class MedFormCheckDialog(ExtendableDialog):
         self.setWindowTitle(_("Medical Form Checked Dialog"))
 
         self.pt = parent.pt
-        self.patient_label = QtGui.QLabel(self.pt.name)
+        self.patient_label = QtWidgets.QLabel(self.pt.name)
         self.patient_label.setAlignment(QtCore.Qt.AlignCenter)
         f = self.patient_label.font()
         f.setBold(True)
@@ -94,16 +94,16 @@ class MedFormCheckDialog(ExtendableDialog):
               'a medical history form.'))
         self.date_checked_label.setMaximumHeight(120)
 
-        self.date_edit = QtGui.QDateEdit()
+        self.date_edit = QtWidgets.QDateEdit()
         self.date_edit.setDate(QtCore.QDate.currentDate())
         self.date_edit.setMaximumDate(QtCore.QDate().currentDate())
         self.date_edit.setCalendarPopup(True)
 
-        frame = QtGui.QFrame(self)
-        layout = QtGui.QFormLayout(frame)
+        frame = QtWidgets.QFrame(self)
+        layout = QtWidgets.QFormLayout(frame)
         layout.addRow(_("Date Checked"), self.date_edit)
 
-        question_label = QtGui.QLabel(
+        question_label = QtWidgets.QLabel(
             "<b>%s</b>" %
             _("Confirm this date now?"))
         question_label.setAlignment(QtCore.Qt.AlignCenter)
@@ -155,9 +155,9 @@ if __name__ == "__main__":
         def mh_form_dates(self):
             return (datetime.date(2009,1,1), datetime.date(2011,3,3))
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
 
-    duck_parent = QtGui.QWidget()
+    duck_parent = QtWidgets.QWidget()
     duck_parent.pt = DuckPatient()
 
     dl = MedFormCheckDialog(duck_parent)

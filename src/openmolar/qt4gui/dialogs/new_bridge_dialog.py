@@ -24,7 +24,7 @@
 from gettext import gettext as _
 import logging
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 from openmolar.qt4gui.customwidgets.simple_chartwidget import SimpleChartWidg
@@ -45,16 +45,16 @@ RETAINER_LIST = [
 PONTIC_LIST = RETAINER_LIST
 
 
-class _OptionPage(QtGui.QWidget):
+class _OptionPage(QtWidgets.QWidget):
 
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         self.dialog = parent
-        self.label = QtGui.QLabel(_("Choose from the following options"))
+        self.label = QtWidgets.QLabel(_("Choose from the following options"))
         self.label.setWordWrap(True)
-        self.frame = QtGui.QFrame()
+        self.frame = QtWidgets.QFrame()
 
-        layout = QtGui.QVBoxLayout(self)
+        layout = QtWidgets.QVBoxLayout(self)
         layout.addWidget(self.label)
         layout.addWidget(self.frame)
         layout.addStretch(100)
@@ -92,10 +92,10 @@ class PageZero(_OptionPage):
 
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
-        self.upper_radioButton = QtGui.QRadioButton(_("Upper Bridge"))
-        self.lower_radioButton = QtGui.QRadioButton(_("Lower Bridge"))
+        self.upper_radioButton = QtWidgets.QRadioButton(_("Upper Bridge"))
+        self.lower_radioButton = QtWidgets.QRadioButton(_("Lower Bridge"))
 
-        layout = QtGui.QVBoxLayout(self.frame)
+        layout = QtWidgets.QVBoxLayout(self.frame)
         layout.addWidget(self.upper_radioButton)
         layout.addWidget(self.lower_radioButton)
 
@@ -116,10 +116,10 @@ class PageOne(_OptionPage):
     def __init__(self, parent=None):
         _OptionPage.__init__(self, parent)
         self.label.setText(_("Bridge Type"))
-        self.radioButton1 = QtGui.QRadioButton(_("Conventional Bridge"))
-        self.radioButton2 = QtGui.QRadioButton(_("Resin Retained Bridge"))
+        self.radioButton1 = QtWidgets.QRadioButton(_("Conventional Bridge"))
+        self.radioButton2 = QtWidgets.QRadioButton(_("Resin Retained Bridge"))
 
-        layout = QtGui.QVBoxLayout(self.frame)
+        layout = QtWidgets.QVBoxLayout(self.frame)
         layout.addWidget(self.radioButton1)
         layout.addWidget(self.radioButton2)
 
@@ -141,13 +141,13 @@ class PageTwo(_OptionPage):
         _OptionPage.__init__(self, parent)
         self.label.setText(_("Material"))
         self.radio_buttons = {}
-        layout = QtGui.QGridLayout(self.frame)
+        layout = QtWidgets.QGridLayout(self.frame)
         i = 0
         for shortcut, description in RETAINER_LIST:
             if shortcut in self.radio_buttons:
                 LOGGER.warning("duplication in BRIDGE MATERIAL LIST")
                 continue
-            rad_but = QtGui.QRadioButton(description)
+            rad_but = QtWidgets.QRadioButton(description)
             layout.addWidget(rad_but, i // 2, i % 2)
             self.radio_buttons[shortcut] = rad_but
             i += 1
@@ -174,7 +174,7 @@ class PageThree(_OptionPage):
         self.label.setText(
             _("Please select teeth which are to be used as retainers"))
         self.chartwidg = SimpleChartWidg(self, auto_ctrl_key=True)
-        layout = QtGui.QVBoxLayout(self.frame)
+        layout = QtWidgets.QVBoxLayout(self.frame)
         layout.addWidget(self.chartwidg)
 
     def showEvent(self, event=None):
@@ -201,7 +201,7 @@ class PageFour(_OptionPage):
         self.label.setText(
             _("Please select teeth which are to be used as pontics"))
         self.chartwidg = SimpleChartWidg(self, auto_ctrl_key=True)
-        layout = QtGui.QVBoxLayout(self.frame)
+        layout = QtWidgets.QVBoxLayout(self.frame)
         layout.addWidget(self.chartwidg)
 
     def showEvent(self, event=None):
@@ -239,10 +239,10 @@ class NewBridgeDialog(ExtendableDialog):
         self.om_gui = om_gui
         message = (_("Chart/Plan a Bridge"))
         self.setWindowTitle(message)
-        self.header_label = QtGui.QLabel(message)
+        self.header_label = QtWidgets.QLabel(message)
         self.header_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.wizard_widget = QtGui.QStackedWidget()
+        self.wizard_widget = QtWidgets.QStackedWidget()
 
         page0 = PageZero(self)
         page1 = PageOne(self)
@@ -261,7 +261,7 @@ class NewBridgeDialog(ExtendableDialog):
         self.insertWidget(self.header_label)
         self.insertWidget(self.wizard_widget)
 
-        self.advanced_label = QtGui.QLabel("self.advanced_label")
+        self.advanced_label = QtWidgets.QLabel("self.advanced_label")
         self.add_advanced_widget(self.advanced_label)
 
         self.next_but = self.button_box.addButton(
@@ -283,7 +283,7 @@ class NewBridgeDialog(ExtendableDialog):
 
     def next_widget(self):
         if not self.current_page.is_completed:
-            QtGui.QMessageBox.information(self, _("Whoops"),
+            QtWidgets.QMessageBox.information(self, _("Whoops"),
                                           self.current_page.error_message)
             return
 
@@ -312,7 +312,7 @@ class NewBridgeDialog(ExtendableDialog):
 
 if __name__ == "__main__":
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     LOGGER.setLevel(logging.DEBUG)
     dl = NewBridgeDialog(None)
     if dl.exec_():
