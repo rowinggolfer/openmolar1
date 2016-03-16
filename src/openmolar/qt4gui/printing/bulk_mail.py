@@ -26,7 +26,7 @@ import logging
 import os
 import re
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtPrintSupport, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.compiled_uis import Ui_bulkmail_options
@@ -315,8 +315,8 @@ class bulkMails(object):
 
     def __init__(self, om_gui):
         self.om_gui = om_gui
-        self.printer = QtGui.QPrinter()
-        self.printer.setPageSize(QtGui.QPrinter.A4)
+        self.printer = QtPrintSupport.QPrinter()
+        self.printer.setPageSize(QtPrintSupport.QPrinter.A4)
         self.headers = (_("no data loaded"),)
         self.recipients = ()
         self.bulk_model = treeModel(self.headers, self.recipients)

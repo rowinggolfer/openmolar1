@@ -22,7 +22,7 @@
 # ########################################################################### #
 
 from gettext import gettext as _
-from PyQt5 import QtCore, QtGui, QtWebKitWidgets, QtWidgets
+from PyQt5 import QtCore, QtGui, QtPrintSupport, QtWebKitWidgets, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
@@ -62,7 +62,7 @@ class PrintRecordDialog(BaseDialog):
 
     def exec_(self):
         if BaseDialog.exec_(self):
-            printer = QtGui.QPrinter()
+            printer = QtPrintSupport.QPrinter()
             printer.setPageSize(printer.A4)
             dialog = QtGui.QPrintDialog(printer, self.parent())
             if not dialog.exec_():

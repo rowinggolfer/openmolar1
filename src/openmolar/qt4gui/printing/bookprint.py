@@ -21,7 +21,7 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt5 import QtGui, QtWidgets
+from PyQt5 import QtGui, QtPrintSupport, QtWidgets
 
 
 class printBook(object):
@@ -32,8 +32,8 @@ class printBook(object):
 
     def __init__(self, html):
         self.html = html
-        self.printer = QtGui.QPrinter()
-        self.printer.setPageSize(QtGui.QPrinter.A4)
+        self.printer = QtPrintSupport.QPrinter()
+        self.printer.setPageSize(QtPrintSupport.QPrinter.A4)
 
     def printpage(self, askfirst=True):
         dialog = QtGui.QPrintDialog(self.printer)

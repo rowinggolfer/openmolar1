@@ -23,7 +23,7 @@
 
 import datetime
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtPrintSupport, QtWidgets
 
 from openmolar.settings import localsettings
 
@@ -31,7 +31,7 @@ from openmolar.settings import localsettings
 class Card(object):
 
     def __init__(self, parent=None):
-        self.printer = QtGui.QPrinter()
+        self.printer = QtPrintSupport.QPrinter()
         self.pt = None
         self.appts = ()
 
@@ -43,7 +43,7 @@ class Card(object):
         dialog = QtGui.QPrintDialog(self.printer)
         if not dialog.exec_():
             return
-        self.printer.setPaperSize(QtGui.QPrinter.A5)
+        self.printer.setPaperSize(QtPrintSupport.QPrinter.A5)
         painter = QtGui.QPainter(self.printer)
         pageRect = self.printer.pageRect()
         painter.setPen(QtCore.Qt.black)
@@ -104,7 +104,7 @@ if __name__ == "__main__":
     localsettings.initiate(False)
     app = QtWidgets.QApplication(sys.argv)
     mycard = Card()
-    print(mycard.printer.getPageMargins(QtGui.QPrinter.Millimeter))
+    print(mycard.printer.getPageMargins(QtPrintSupport.QPrinter.Millimeter))
     from openmolar.dbtools import patient_class
     from openmolar.dbtools import appointments
     pt = patient_class.patient(11956)

@@ -23,7 +23,7 @@
 
 from gettext import gettext as _
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtPrintSupport, QtWidgets
 from openmolar.settings import localsettings
 
 
@@ -41,10 +41,10 @@ class document():
         amount,
             parent=None):
         self.type = type
-        self.printer = QtGui.QPrinter()
-        self.printer.setPageSize(QtGui.QPrinter.A5)
-        self.pdfprinter = QtGui.QPrinter()
-        self.pdfprinter.setPageSize(QtGui.QPrinter.A5)
+        self.printer = QtPrintSupport.QPrinter()
+        self.printer.setPageSize(QtPrintSupport.QPrinter.A5)
+        self.pdfprinter = QtPrintSupport.QPrinter()
+        self.pdfprinter.setPageSize(QtPrintSupport.QPrinter.A5)
 
         self.title = title
         self.fname = fname
@@ -76,7 +76,7 @@ class document():
     def print_(self):
         if not self.dialogExec():
             return False
-        self.pdfprinter.setOutputFormat(QtGui.QPrinter.PdfFormat)
+        self.pdfprinter.setOutputFormat(QtPrintSupport.QPrinter.PdfFormat)
         self.pdfprinter.setOutputFileName(localsettings.TEMP_PDF)
 
         for printer in (self.printer, self.pdfprinter):

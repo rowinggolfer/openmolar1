@@ -21,7 +21,7 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtPrintSupport, QtWidgets
 from openmolar.settings import localsettings
 
 import datetime
@@ -32,7 +32,7 @@ DATE_FORMAT = "MMMM, yyyy"
 class RecallPrinter(object):
 
     def __init__(self, pt):
-        self.printer = QtGui.QPrinter()
+        self.printer = QtPrintSupport.QPrinter()
         self.pt = pt
 
         self.line1 = _('We are writing to inform you that your '

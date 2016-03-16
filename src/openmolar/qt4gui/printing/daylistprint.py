@@ -23,15 +23,15 @@
 
 from gettext import gettext as _
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtPrintSupport, QtWidgets
 from openmolar.settings import localsettings
 
 
 class PrintDaylist(object):
 
     def __init__(self, parent=None):
-        self.printer = QtGui.QPrinter()
-        self.printer.setPageSize(QtGui.QPrinter.A4)
+        self.printer = QtPrintSupport.QPrinter()
+        self.printer.setPageSize(QtPrintSupport.QPrinter.A4)
         self.dates = []
         self.dentist = []
         self.dayMemo = []

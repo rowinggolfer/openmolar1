@@ -21,21 +21,20 @@
 # #                                                                         # #
 # ########################################################################### #
 
-import math
 import sys
-from PyQt5 import QtGui, QtWidgets
+from PyQt5 import QtGui, QtPrintSupport, QtWidgets
 
 
-class printChart():
+class printChart(object):
 
     '''initiates with an image (chart) as the argument'''
 
     def __init__(self, chartimage, landscape=False):
         self.image = chartimage
-        self.printer = QtGui.QPrinter()
+        self.printer = QtPrintSupport.QPrinter()
         if landscape:
-            self.printer.setOrientation(QtGui.QPrinter.Landscape)
-        self.printer.setPageSize(QtGui.QPrinter.A4)
+            self.printer.setOrientation(QtPrintSupport.QPrinter.Landscape)
+        self.printer.setPageSize(QtPrintSupport.QPrinter.A4)
 
     def sizeToFit(self):
         '''
@@ -52,10 +51,7 @@ class printChart():
         if askfirst and not dialog.exec_():
             return
 
-        LeftMargin = 72
-
         painter = QtGui.QPainter(self.printer)
-        pageRect = self.printer.pageRect()
         painter.save()
         y = 0
         x = 0

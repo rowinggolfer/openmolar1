@@ -23,7 +23,7 @@
 
 from gettext import gettext as _
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtPrintSupport, QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.dbtools.medhist import get_mh
@@ -48,8 +48,8 @@ class MHPrint(object):
     def __init__(self, pt, parent):
         self.pt = pt
         self.parent = parent
-        self.printer = QtGui.QPrinter()
-        self.printer.setPageSize(QtGui.QPrinter.A4)
+        self.printer = QtPrintSupport.QPrinter()
+        self.printer.setPageSize(QtPrintSupport.QPrinter.A4)
 
         if self.parent.include_mh:
             self.mh = get_mh(self.pt.serialno)

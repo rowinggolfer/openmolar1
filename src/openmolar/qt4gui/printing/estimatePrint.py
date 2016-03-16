@@ -23,7 +23,7 @@
 
 from gettext import gettext as _
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtPrintSupport, QtWidgets
 from openmolar.settings import localsettings
 
 
@@ -32,11 +32,11 @@ class estimate(object):
     def __init__(self, parent=None):
         self.setProps()
         self.estItems = []
-        self.printer = QtGui.QPrinter()
-        self.printer.setPageSize(QtGui.QPrinter.A5)
+        self.printer = QtPrintSupport.QPrinter()
+        self.printer.setPageSize(QtPrintSupport.QPrinter.A5)
 
-        self.pdfprinter = QtGui.QPrinter()
-        self.pdfprinter.setPageSize(QtGui.QPrinter.A5)
+        self.pdfprinter = QtPrintSupport.QPrinter()
+        self.pdfprinter.setPageSize(QtPrintSupport.QPrinter.A5)
 
     def setProps(self, tit="", fn="", sn="", serialno=0):
         self.title = tit
@@ -51,7 +51,7 @@ class estimate(object):
         dialog = QtGui.QPrintDialog(self.printer)
         if not dialog.exec_():
             return
-        self.pdfprinter.setOutputFormat(QtGui.QPrinter.PdfFormat)
+        self.pdfprinter.setOutputFormat(QtPrintSupport.QPrinter.PdfFormat)
         self.pdfprinter.setOutputFileName(localsettings.TEMP_PDF)
 
         for printer in (self.printer, self.pdfprinter):

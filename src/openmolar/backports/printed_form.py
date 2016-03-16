@@ -26,7 +26,7 @@ Provides a Class for printing on an A4 Sheet
 '''
 
 import logging
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtPrintSupport, QtWidgets
 
 from openmolar.settings import localsettings
 
@@ -48,16 +48,16 @@ class PrintedForm(object):
 
     def __init__(self):
 
-        self.printer = QtGui.QPrinter()
-        self.pdfprinter = QtGui.QPrinter()
+        self.printer = QtPrintSupport.QPrinter()
+        self.pdfprinter = QtPrintSupport.QPrinter()
         self.pdfprinter.setPrinterName("PDF PRINTER")
-        self.pdfprinter.setOutputFormat(QtGui.QPrinter.PdfFormat)
+        self.pdfprinter.setOutputFormat(QtPrintSupport.QPrinter.PdfFormat)
         self.pdfprinter.setOutputFileName(localsettings.TEMP_PDF)
 
         self.chosen_printer = self.printer
 
         for printer in (self.printer, self.pdfprinter):
-            printer.setPageSize(QtGui.QPrinter.A4)
+            printer.setPageSize(QtPrintSupport.QPrinter.A4)
             printer.setFullPage(True)
             printer.setResolution(96)
 
