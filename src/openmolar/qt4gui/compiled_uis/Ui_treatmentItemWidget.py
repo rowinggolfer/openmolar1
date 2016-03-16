@@ -1,27 +1,28 @@
-#! /usr/bin/python
+# -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/treatmentItemWidget.ui'
 #
-# Created by: PyQt4 UI code generator 4.11.4
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore, QtGui
+from gettext import gettext as _
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(415, 31)
-        self.horizontalLayout = QtGui.QHBoxLayout(Form)
+        self.horizontalLayout = QtWidgets.QHBoxLayout(Form)
         self.horizontalLayout.setContentsMargins(-1, 3, -1, 3)
         self.horizontalLayout.setSpacing(4)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.spinBox = QtGui.QSpinBox(Form)
+        self.spinBox = QtWidgets.QSpinBox(Form)
         self.spinBox.setMaximumSize(QtCore.QSize(60, 16777215))
         self.spinBox.setObjectName("spinBox")
         self.horizontalLayout.addWidget(self.spinBox)
-        self.label = QtGui.QLabel(Form)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+        self.label = QtWidgets.QLabel(Form)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
@@ -39,11 +40,9 @@ class Ui_Form(object):
 
 
 if __name__ == "__main__":
-    import gettext
-    gettext.install("openmolar")
     import sys
-    app = QtGui.QApplication(sys.argv)
-    Form = QtGui.QWidget()
+    app = QtWidgets.QApplication(sys.argv)
+    Form = QtWidgets.QWidget()
     ui = Ui_Form()
     ui.setupUi(Form)
     Form.show()

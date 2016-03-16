@@ -1,33 +1,34 @@
-#! /usr/bin/python
+# -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/patient_diary.ui'
 #
-# Created by: PyQt4 UI code generator 4.11.4
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore, QtGui
+from gettext import gettext as _
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(829, 205)
-        self.gridLayout = QtGui.QGridLayout(Form)
+        self.gridLayout = QtWidgets.QGridLayout(Form)
         self.gridLayout.setObjectName("gridLayout")
-        self.pt_diary_treeView = QtGui.QTreeView(Form)
+        self.pt_diary_treeView = QtWidgets.QTreeView(Form)
         self.pt_diary_treeView.setObjectName("pt_diary_treeView")
         self.gridLayout.addWidget(self.pt_diary_treeView, 1, 0, 3, 1)
-        self.apptWizard_pushButton = QtGui.QPushButton(Form)
+        self.apptWizard_pushButton = QtWidgets.QPushButton(Form)
         self.apptWizard_pushButton.setEnabled(True)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.apptWizard_pushButton.sizePolicy().hasHeightForWidth())
         self.apptWizard_pushButton.setSizePolicy(sizePolicy)
         self.apptWizard_pushButton.setObjectName("apptWizard_pushButton")
         self.gridLayout.addWidget(self.apptWizard_pushButton, 1, 1, 1, 1)
-        self.newAppt_pushButton = QtGui.QPushButton(Form)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.newAppt_pushButton = QtWidgets.QPushButton(Form)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.newAppt_pushButton.sizePolicy().hasHeightForWidth())
@@ -38,9 +39,9 @@ class Ui_Form(object):
         self.newAppt_pushButton.setIcon(icon)
         self.newAppt_pushButton.setObjectName("newAppt_pushButton")
         self.gridLayout.addWidget(self.newAppt_pushButton, 2, 1, 1, 1)
-        self.printAppt_pushButton = QtGui.QPushButton(Form)
+        self.printAppt_pushButton = QtWidgets.QPushButton(Form)
         self.printAppt_pushButton.setEnabled(True)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.printAppt_pushButton.sizePolicy().hasHeightForWidth())
@@ -51,7 +52,7 @@ class Ui_Form(object):
         self.printAppt_pushButton.setIcon(icon1)
         self.printAppt_pushButton.setObjectName("printAppt_pushButton")
         self.gridLayout.addWidget(self.printAppt_pushButton, 3, 1, 1, 1)
-        self.appt_memo_lineEdit = QtGui.QLineEdit(Form)
+        self.appt_memo_lineEdit = QtWidgets.QLineEdit(Form)
         self.appt_memo_lineEdit.setStyleSheet("color:rgb(255, 0, 0)")
         self.appt_memo_lineEdit.setObjectName("appt_memo_lineEdit")
         self.gridLayout.addWidget(self.appt_memo_lineEdit, 0, 0, 1, 2)
@@ -71,13 +72,10 @@ class Ui_Form(object):
 
 from openmolar.qt4gui import resources_rc
 
-
 if __name__ == "__main__":
-    import gettext
-    gettext.install("openmolar")
     import sys
-    app = QtGui.QApplication(sys.argv)
-    Form = QtGui.QWidget()
+    app = QtWidgets.QApplication(sys.argv)
+    Form = QtWidgets.QWidget()
     ui = Ui_Form()
     ui.setupUi(Form)
     Form.show()

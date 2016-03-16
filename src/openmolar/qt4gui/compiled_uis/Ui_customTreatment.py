@@ -1,50 +1,51 @@
-#! /usr/bin/python
+# -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file '/home/neil/openmolar/openmolar1/src/openmolar/qt-designer/customTreatment.ui'
 #
-# Created by: PyQt4 UI code generator 4.11.4
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore, QtGui
+from gettext import gettext as _
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(346, 192)
-        self.gridLayout = QtGui.QGridLayout(Dialog)
+        self.gridLayout = QtWidgets.QGridLayout(Dialog)
         self.gridLayout.setObjectName("gridLayout")
-        self.label = QtGui.QLabel(Dialog)
+        self.label = QtWidgets.QLabel(Dialog)
         self.label.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 2, 0, 1, 3)
-        self.number_spinBox = QtGui.QSpinBox(Dialog)
+        self.number_spinBox = QtWidgets.QSpinBox(Dialog)
         self.number_spinBox.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.number_spinBox.setMinimum(1)
         self.number_spinBox.setObjectName("number_spinBox")
         self.gridLayout.addWidget(self.number_spinBox, 2, 3, 1, 1)
-        self.label_3 = QtGui.QLabel(Dialog)
+        self.label_3 = QtWidgets.QLabel(Dialog)
         self.label_3.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.label_3.setObjectName("label_3")
         self.gridLayout.addWidget(self.label_3, 4, 0, 1, 3)
-        self.fee_doubleSpinBox = QtGui.QDoubleSpinBox(Dialog)
+        self.fee_doubleSpinBox = QtWidgets.QDoubleSpinBox(Dialog)
         self.fee_doubleSpinBox.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.fee_doubleSpinBox.setMaximum(3000.0)
         self.fee_doubleSpinBox.setSingleStep(1.0)
         self.fee_doubleSpinBox.setObjectName("fee_doubleSpinBox")
         self.gridLayout.addWidget(self.fee_doubleSpinBox, 4, 3, 1, 1)
-        spacerItem = QtGui.QSpacerItem(20, 50, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(20, 50, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout.addItem(spacerItem, 5, 2, 1, 1)
-        self.buttonBox = QtGui.QDialogButtonBox(Dialog)
+        self.buttonBox = QtWidgets.QDialogButtonBox(Dialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.gridLayout.addWidget(self.buttonBox, 6, 1, 1, 3)
-        self.description_lineEdit = QtGui.QLineEdit(Dialog)
+        self.description_lineEdit = QtWidgets.QLineEdit(Dialog)
         self.description_lineEdit.setMaxLength(50)
         self.description_lineEdit.setObjectName("description_lineEdit")
         self.gridLayout.addWidget(self.description_lineEdit, 1, 0, 1, 4)
-        self.label_2 = QtGui.QLabel(Dialog)
+        self.label_2 = QtWidgets.QLabel(Dialog)
         self.label_2.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.label_2.setObjectName("label_2")
         self.gridLayout.addWidget(self.label_2, 0, 0, 1, 1)
@@ -53,8 +54,8 @@ class Ui_Dialog(object):
         self.label_2.setBuddy(self.description_lineEdit)
 
         self.retranslateUi(Dialog)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), Dialog.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), Dialog.reject)
+        self.buttonBox.accepted.connect(Dialog.accept)
+        self.buttonBox.rejected.connect(Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         Dialog.setTabOrder(self.number_spinBox, self.fee_doubleSpinBox)
         Dialog.setTabOrder(self.fee_doubleSpinBox, self.buttonBox)
@@ -67,11 +68,9 @@ class Ui_Dialog(object):
 
 
 if __name__ == "__main__":
-    import gettext
-    gettext.install("openmolar")
     import sys
-    app = QtGui.QApplication(sys.argv)
-    Dialog = QtGui.QDialog()
+    app = QtWidgets.QApplication(sys.argv)
+    Dialog = QtWidgets.QDialog()
     ui = Ui_Dialog()
     ui.setupUi(Dialog)
     Dialog.show()
