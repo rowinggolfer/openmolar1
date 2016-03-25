@@ -42,8 +42,8 @@ def main():
     files = list(source_files())
     print("%d py files found" % len(files))
     outdir = os.path.join(module_path, "openmolar", "locale")
-    print("using pygettext to create messages.pot in directory %s"% outdir)
-    pr = subprocess.Popen(["pygettext", "-p", outdir] + files)
+    print("using pygettext3 to create messages.pot in directory %s"% outdir)
+    pr = subprocess.Popen(["pygettext3", "-p", outdir] + files)
     pr.wait()
     print("ALL DONE!")
 

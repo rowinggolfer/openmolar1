@@ -70,16 +70,24 @@ else:
 
 LOGGER.debug("running openmolar base module = %s", os.path.dirname(__file__))
 
-lang = os.environ.get("LANG")
-if lang:
-    try:
-        LOGGER.debug("trying to install your environment language %s", lang)
-        lang1 = gettext.translation('openmolar', languages=[lang, ])
-        lang1.install()
-    except IOError:
-        LOGGER.warning("%s not found, using default", lang)
+try:
+    path = os.path.join(os.path.expanduser("~"), ".openmolar", "locale")
+    gettext.translation("openmolar",
+                        localedir=path, languages=['default']).install()
+    LOGGER.info("Installed translation file found in %s", path)
+except FileNotFoundError:
+    LOGGER.exception("no local translation found")
+
+    lang = os.environ.get("LANG")
+    if lang:
+        try:
+            LOGGER.debug("trying to install your environment language %s", lang)
+            lang1 = gettext.translation('openmolar', languages=[lang, ])
+            lang1.install()
+        except IOError:
+            LOGGER.warning("%s not found, using default", lang)
+            gettext.install('openmolar')
+    else:
+        # - on windows.. os.environ.get("LANG") is None
+        LOGGER.warning("no language environment found (windows?)")
         gettext.install('openmolar')
-else:
-    # - on windows.. os.environ.get("LANG") is None
-    LOGGER.warning("no language environment found (windows?)")
-    gettext.install('openmolar')

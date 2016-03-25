@@ -21,6 +21,7 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
 from PyQt4 import QtGui, QtCore
 
 
@@ -274,9 +275,6 @@ class Advisor(QtGui.QWidget):
 
 
 if __name__ == "__main__":
-    import gettext
-    gettext.install("")
-
     app = QtGui.QApplication([])
 
     advisor = Advisor()
