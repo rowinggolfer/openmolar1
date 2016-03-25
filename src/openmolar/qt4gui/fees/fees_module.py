@@ -251,7 +251,7 @@ def table_clicked(om_gui, index):
         '''
         apply the result of the QMenu generated when feetable is clicked
         '''
-        if arg.text().startsWith(_("Add to tx plan")):
+        if arg.text().startswith(_("Add to tx plan")):
             om_gui.feeScaleTreatAdd(fee_item, sub_index)
         else:
             om_gui.advise("%s %s" % (arg.text(), _("not yet available")), 1)

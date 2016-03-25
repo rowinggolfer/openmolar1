@@ -1,32 +1,48 @@
-To get openMolar running from the git repo, please follow these instructions
-
-
-I will give instructions tested debian jessie
-
-####INSTALL INSTRUCTIONS#####
-
-----------------------------------------------------------------------------------------------------------------
-##CLIENT MACHINE##
-ensure depenencies are met on the client machine
-~$sudo apt-get install python-mysqldb python-qt4 python-qscintilla2 xdg-utils
-
-that's it!
+DEBIAN / UBUNTU USERS
+PLEASE BE AWARE THAT YOU WOULD BE BETTER OFF INSTALLING FROM THE OFFICIAL
+REPOSITORIES - see http://www.openmolar.com/om1/installation
 
 ----------------------------------------------------------------------------------------------------------------
 
-##SERVER MACHINE##
-ensure dependencies are met on the server machine (which will probably be the same machine as your client for testing purposes, providing a service on "localhost")
-~$sudo apt-get install mysql-server
+To get openMolar running from source, please follow these instructions
 
-MAKE A CAREFUL NOTE OF THE PASSWORD YOU SET UP FOR THE ROOT MYSQL-USER. YOU CANNOT CREATE A DATABASE WITHOUT THIS.
+openmolar requires a python3 runtime, qt4 for python3 and a python3 wrapper around the c-api for
+communicating with the database, along with a few other utilities. These are all
+available for most recent gnu/linux operating systems, and also for microsoft
+windows.
+You also need a mysql or mariadb database server running on your network, or on
+the client machine for a standalone test.
+
+----------------------------------------------------------------------------------------------------------------
+
+    By way of example, I will give instructions for installing these dependencies on debian testing. 
+    On other operating systems, you need to install the equivalent software
+    before running openmolar for the first time.
+
+    ##CLIENT MACHINE##
+    ensure depenencies are met on the client machine
+
+    ~$ sudo apt-get install python3-mysqldb python3-qt4 python3-pyqt4.qsci xdg-utils
+
+
+    ##SERVER MACHINE##
+    ensure dependencies are met on the server machine (which will probably be the same machine as your client 
+    for testing purposes, providing a service on "localhost")
+
+    ~$ sudo apt-get install mysql-server
+    OR
+    ~$ sudo apt-get install mariadb-server
+
+    MAKE A CAREFUL NOTE OF THE PASSWORD YOU SET UP FOR THE ROOT MYSQL-USER. 
+    YOU CANNOT CREATE A DATABASE WITHOUT THIS.
 
 ----------------------------------------------------------------------------------------------------------------
 
 
-You are ready to try openmolar (you can do this without installing ANYTHING)
+Once you have prepared your machine/network in this way, You are ready to try openmolar
 
-cd into the src directory and type
-./main.py
+navigate into the "src" directory and type
+~$ python3 main.py
 
 on first run of openMolar, you set a password for the app, you are given an opportunity to install a test database.
 
@@ -35,18 +51,20 @@ NB - The test database is currently very limited with only 1 patient. (serial no
 But The app will not run without it!
 
 
-the test database has one operator - "user". So when prompted, enter the system password you just set up, and put "user" into the user1 field.
+the test database has one operator - "user". 
+So when prompted, enter the system password you just set up, and put "user" into the user1 field.
 
 
-if you wish to re-initiate your settings at any point, delete the file ~/.openmolar/openmolar.conf, or edit this file (with care)
+if you wish to re-initiate your settings at any point, delete the file
+~/.openmolar/openmolar.conf, to trigger the setup wizard again, alternatively edit this file (with care)
 
 
-when you are ready to install, type
+if / when you are ready to install, type
 
-python setup.py install
+~$ python setup.py install
 
 
 regards
 
 Neil Wallace <neil@openmolar.com>
-Updated 24th Oct 2013
+Updated 23th Mar 2016

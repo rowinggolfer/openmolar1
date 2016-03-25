@@ -91,7 +91,7 @@ def get_digits(string_value):
     '''
     m = re.search("(\d+)", string_value)
     if not m:
-        return None
+        return -1
     return int(m.groups()[0])
 
 
