@@ -29,7 +29,7 @@ from gettext import gettext as _
 import logging
 import tempfile
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 
 from openmolar.settings import localsettings, utilities
 
@@ -80,8 +80,9 @@ def commitPDFtoDB(om_gui, descr, serialno=None):
             # -now refresh the docprinted widget (if visible)
             if om_gui.ui.prevCorres_treeWidget.isVisible():
                 om_gui.docsPrintedInit()
-    except Exception as e:
-        om_gui.advise(_("Error saving PDF copy %s") % e, 2)
+    except Exception as exc:
+        om_gui.advise(
+            "%s<hr /><pre>%s</pre>" % (_("Error saving PDF copy"), exc), 2)
 
 
 def printReceipt(om_gui, valDict, total="0.00"):
@@ -125,8 +126,7 @@ def printLetter(om_gui):
                             "%s (html)" % dl.letter_description,
                             dl.text)
             dl.pt.addHiddenNote("printed",
-                                "%s %s" % (_("letter"), dl.letter_description)
-                                )
+                                "%s %s" % (_("letter"), dl.letter_description))
             if dl.pt == om_gui.pt:
                 if om_gui.ui.prevCorres_treeWidget.isVisible():
                     om_gui.docsPrintedInit()
@@ -148,10 +148,22 @@ def printAccountsTable(om_gui):
         return()
     total = 0
     html = '<html><body><table border="1">'
-    html += _('''<tr><th>Dent</th><th>SerialNo</th><th>Cset</th>
-<th>FName</th><th>Sname</th><th>DOB</th><th>Memo</th><th>Last Appt</th>
-<th>Last Bill</th><th>Type</th><th>Number</th><th>Complete</th>
-<th>Amount</th></tr>''')
+    html += '''<tr><th>%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th>
+               <th>%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th>
+               <th>%s</th><th>%s</th><th>%s</th></tr>''' % (
+                   _('Dent'),
+                   _('SerialNo'),
+                   _('Cset'),
+                   _('FName'),
+                   _('Sname'),
+                   _('DOB'),
+                   _('Memo'),
+                   _('Last Appt'),
+                   _('Last Bill'),
+                   _('Type'),
+                   _('Number'),
+                   _('Complete'),
+                   _('Amount'))
     for row in range(rowno):
         if row % 2 == 0:
             html += '<tr bgcolor="#eeeeee">'
@@ -175,7 +187,7 @@ def printAccountsTable(om_gui):
 
     html += '<tr><td colspan="11"></td><td><b>' + _('TOTAL') + '''</b></td>
         <td align="right"><b>%s</b></td></tr></table></body></html>''' % (
-        localsettings.formatMoney(total))
+            localsettings.formatMoney(total))
 
     myclass = letterprint.letter(html)
     myclass.printpage()
@@ -223,10 +235,8 @@ def customEstimate(om_gui, html=""):
             else:
                 sorted_ests["P"].append(est)
 
-        for type_, description in (
-            ("N", _("NHS items")),
-            ("P", _("Private items"))
-        ):
+        for type_, description in (("N", _("NHS items")),
+                                   ("P", _("Private items"))):
             if sorted_ests[type_]:
                 ehtml += '<tr><td colspan = "3"><b>%s</b></td></tr>' % (
                     description)
@@ -242,23 +252,26 @@ def customEstimate(om_gui, html=""):
                 if "^" in item:
                     item = item.replace("^", "")
 
-                ehtml += '''<tr><td>%s</td><td>%s</td>
-    <td align="right">%s</td></tr>''' % (
-                    number, item, localsettings.formatMoney(amount))
+                ehtml += '''<tr>
+                    <td>%s</td><td>%s</td><td align="right">%s</td>
+                    </tr>''' % (
+                        number, item, localsettings.formatMoney(amount))
 
-        ehtml += _('''<tr><td></td><td><b>TOTAL</b></td>
-<td align="right"><b>%s</b></td></tr>''') % localsettings.formatMoney(pt_total)
+        ehtml += '''<tr><td></td><td><b>%s</b></td>
+            <td align="right"><b>%s</b></td></tr>''' % (
+                _("TOTAL"), localsettings.formatMoney(pt_total))
         ehtml += "</table>" + "<br />" * 4
         html = html.replace("<br />" * (12), ehtml)
-        html += _('''<p><i>Please note, this estimate may be subject
-to change if clinical circumstances dictate.</i></p>''')
+        html += '<p><i>%s</i></p>' % _('Please note, this estimate may '
+                                       'be subject to change if clinical '
+                                       'circumstances dictate.')
 
-    if htmlEditor(om_gui, type="cust Estimate", html=html, version=0):
+    if htmlEditor(om_gui, type_="cust Estimate", html=html, version=0):
         om_gui.pt.addHiddenNote("printed", "cust estimate")
         om_gui.updateHiddenNotesLabel()
 
 
-def htmlEditor(om_gui, type="", html="", version=0):
+def htmlEditor(om_gui, type_="", html="", version=0):
     '''
     raise a dialog to print an html editor
     '''
@@ -271,7 +284,7 @@ def htmlEditor(om_gui, type="", html="", version=0):
             if dl.has_edits:
                 docsprinted.add(
                     dl.pt.serialno,
-                    "%s(html)" % type,
+                    "%s(html)" % type_,
                     dl.text,
                     version + 1
                 )
@@ -313,7 +326,7 @@ def printChart(om_gui):
     if om_gui.pt.serialno == 0:
         om_gui.advise("no patient selected", 1)
         return
-    staticimage = QtGui.QPixmap.grabWidget(om_gui.ui.summaryChartWidget)
+    staticimage = om_gui.ui.summaryChartWidget.grab()
     myclass = chartPrint.printChart(staticimage)
     myclass.printpage()
     om_gui.pt.addHiddenNote("printed", "static chart")
@@ -323,7 +336,7 @@ def printChart(om_gui):
 def printMonth(om_gui):
     temp = om_gui.ui.monthView.selectedDate
     om_gui.ui.monthView.selectedDate = None
-    printimage = QtGui.QPixmap.grabWidget(om_gui.ui.monthView)
+    printimage = om_gui.ui.monthView.grab()
     myclass = chartPrint.printChart(printimage, landscape=True)
     myclass.sizeToFit()
     myclass.printpage()
@@ -343,8 +356,8 @@ def printaccount(om_gui, tone="A"):
         doc.setTone(tone)
         if tone == "B":
             doc.setPreviousCorrespondenceDate(om_gui.pt.billdate)
-            # TODO unsure if this is correct date! - p
-            # lease print one and try it!
+            # TODO unsure if this is correct date!
+            # please print one and try it!
         if doc.print_():
             om_gui.pt.updateBilling(tone)
             om_gui.pt.addHiddenNote("printed", "account - tone %s" % tone)
@@ -451,7 +464,7 @@ def printNotes(om_gui):
         return
 
     image_file = tempfile.NamedTemporaryFile(suffix=".png")
-    image = QtGui.QPixmap.grabWidget(om_gui.ui.summaryChartWidget)
+    image = om_gui.ui.summaryChartWidget.grab()
     image.save(image_file.name)
     dl = PrintRecordDialog(
         om_gui.pt, "file://%s" % image_file.name, om_gui)
@@ -490,7 +503,7 @@ def printSelectedAccounts(om_gui):
             if item.checkState():
                 tone = ("A", "B", "C")[col - 13]
                 sno = int(om_gui.ui.accounts_tableWidget.item(row, 1).text())
-                LOGGER.info("Account tone %s letter to %s" % (tone, sno))
+                LOGGER.info("Account tone %s letter to %s", tone, sno)
                 printpt = patient_class.patient(sno)
 
                 doc = accountPrint.document(

@@ -30,7 +30,7 @@ from gettext import gettext as _
 import logging
 import re
 import sys
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtSvg, QtWidgets
 
 from openmolar.qt4gui import colours
 
@@ -55,8 +55,8 @@ class chartWidget(QtWidgets.QWidget):
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
 
-        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                                             QtWidgets.QSizePolicy.Expanding))
+        self.setSizePolicy(QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding))
 
         self.grid = (["ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1',
                       'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8'],
@@ -185,7 +185,7 @@ class chartWidget(QtWidgets.QWidget):
         adds fillings and comments to a tooth
         '''
         if tooth in self.commentedTeeth:
-                self.commentedTeeth.remove(tooth)
+            self.commentedTeeth.remove(tooth)
         if "!" in props:
             self.commentedTeeth.append(tooth)
 
@@ -215,18 +215,16 @@ class chartWidget(QtWidgets.QWidget):
         # show detailed info
         try:
             tooth = self.grid[y][x]
-            show = False
-            advisory = "<center><b>   %s   </b></center><hr />" % tooth.upper()
+            fills = []
             for fill in self.__dict__[tooth]:
                 if not re.match("!.*", fill):
-                    fill = fill.upper()
-                advisory += "%s <br />" % fill
-                show = True
-            if show:
-                QtWidgets.QToolTip.showText(event.globalPos(),
-                                        advisory.rstrip("<br />"))
+                    fills.append(fill.upper())
+            if fills:
+                advisory = "<center><b>   %s   </b></center><hr />%s" % (
+                    tooth.upper(), "<br />".join(fills))
             else:
-                QtWidgets.QToolTip.showText(event.globalPos(), "")
+                advisory = ""
+            QtWidgets.QToolTip.showText(event.globalPos(), advisory)
         except IndexError:
             pass
 
@@ -269,7 +267,7 @@ class chartWidget(QtWidgets.QWidget):
         if shiftClick:
             for row in set((py, y)):
                 for column in range(lowx, highx + 1):
-                    if not [column, row] in self.multiSelection:
+                    if [column, row] not in self.multiSelection:
                         self.multiSelection.append([column, row])
         self.setSelected(x, y, showSelection=True)
 
@@ -382,7 +380,7 @@ class chartWidget(QtWidgets.QWidget):
         elif event.key() == QtCore.Qt.Key_Right:
             x = 0 if x == 15 else x + 1
         elif event.key() == QtCore.Qt.Key_Up:
-            y = 1if y == 0 else y - 1
+            y = 1 if y == 0 else y - 1
         elif event.key() == QtCore.Qt.Key_Down:
             y = 0 if y == 1 else y + 1
         elif event.key() == QtCore.Qt.Key_Return:
@@ -682,7 +680,7 @@ class toothSurfaces():
         # deciduous (ie. indeterminate) 6, 7, 8 are marked as "*"
         # paint over these.
         if self.toothtext == "*":
-            erase_color = parent.palette().background().color()
+            erase_color = parent.palette().window().color()
             self.painter.setPen(erase_color)
             self.painter.setBrush(erase_color)
             self.painter.drawRect(self.rect)
@@ -784,7 +782,7 @@ class toothSurfaces():
                             prop = prop[3:] + ",gl"
 
                 if prop[:2] in ("tm", "at"):
-                    erase_color = parent.palette().background().color()
+                    erase_color = parent.palette().window().color()
                     self.painter.setPen(erase_color)
                     self.painter.setBrush(erase_color)
                     self.painter.drawRect(self.rect)
@@ -795,7 +793,7 @@ class toothSurfaces():
                     prop = ""
                 if prop[:2] in ("ue", "pe", "oe", "rp"):
                     if prop[:2] == "ue":
-                        erase_color = parent.palette().background().color()
+                        erase_color = parent.palette().window().color()
                         self.painter.setBrush(erase_color)
                     else:
                         self.painter.setBrush(QtCore.Qt.transparent)
@@ -1217,7 +1215,8 @@ class ToothImage(QtWidgets.QWidget):
         '''
         returns a png image of the tooth
         '''
-        return QtGui.QPixmap.grabWidget(self)
+        # changed for qt5
+        return self.grab()
 
 
 if __name__ == "__main__":
@@ -1256,7 +1255,7 @@ if __name__ == "__main__":
     form.delete_prop_signal.connect(signal_catcher)
 
     form.show()
-    pixmap = QtGui.QPixmap.grabWidget(form)
+    pixmap = form.grab()
     pixmap.save("/home/neil/chart.png")
     form.selected = [0, 2]
     sys.exit(app.exec_())

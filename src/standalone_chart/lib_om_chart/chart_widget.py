@@ -30,7 +30,7 @@ from gettext import gettext as _
 import logging
 import re
 import sys
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtSvg, QtWidgets
 
 from lib_om_chart import chart_colours as colours
 
@@ -55,8 +55,8 @@ class ChartWidget(QtWidgets.QWidget):
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
 
-        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                                             QtWidgets.QSizePolicy.Expanding))
+        self.setSizePolicy(QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding))
 
         self.grid = (["ur8", "ur7", "ur6", "ur5", 'ur4', 'ur3', 'ur2', 'ur1',
                       'ul1', 'ul2', 'ul3', 'ul4', 'ul5', 'ul6', 'ul7', 'ul8'],
@@ -185,7 +185,7 @@ class ChartWidget(QtWidgets.QWidget):
         adds fillings and comments to a tooth
         '''
         if tooth in self.commentedTeeth:
-                self.commentedTeeth.remove(tooth)
+            self.commentedTeeth.remove(tooth)
         if "!" in props:
             self.commentedTeeth.append(tooth)
 
@@ -382,7 +382,7 @@ class ChartWidget(QtWidgets.QWidget):
         elif event.key() == QtCore.Qt.Key_Right:
             x = 0 if x == 15 else x + 1
         elif event.key() == QtCore.Qt.Key_Up:
-            y = 1if y == 0 else y - 1
+            y = 1 if y == 0 else y - 1
         elif event.key() == QtCore.Qt.Key_Down:
             y = 0 if y == 1 else y + 1
         elif event.key() == QtCore.Qt.Key_Return:
@@ -1219,7 +1219,7 @@ class ToothImage(QtWidgets.QWidget):
         '''
         returns a png image of the tooth
         '''
-        return QtGui.QPixmap.grabWidget(self)
+        return self.grab()
 
 
 if __name__ == "__main__":
@@ -1258,7 +1258,7 @@ if __name__ == "__main__":
     form.delete_prop_signal.connect(signal_catcher)
 
     form.show()
-    pixmap = QtGui.QPixmap.grabWidget(form)
+    pixmap = form.grab()
     pixmap.save("/home/neil/chart.png")
     form.selected = [0, 2]
     sys.exit(app.exec_())

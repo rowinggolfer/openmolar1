@@ -73,12 +73,12 @@ class DraggableList(QtWidgets.QListView):
         real_point = QtCore.QPoint(
             event.pos().x(), event.pos().y() - self.verticalOffset())
         index = self.indexAt(real_point)
-        pixmap = QtGui.QPixmap()
-        pixmap = pixmap.grabWidget(self, self.rectForIndex(index))
+
+        pixmap = self.grab(self.rectForIndex(index))
         drag.setPixmap(pixmap)
         drag.setHotSpot(QtCore.QPoint(-10, 0))
 
-        drag.start(QtCore.Qt.CopyAction)
+        drag.exec_(QtCore.Qt.CopyAction)
 
     def mouseMoveEvent(self, event):
         self.startDrag(event)
