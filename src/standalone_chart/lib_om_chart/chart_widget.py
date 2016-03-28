@@ -215,18 +215,16 @@ class ChartWidget(QtWidgets.QWidget):
         # show detailed info
         try:
             tooth = self.grid[y][x]
-            show = False
-            advisory = "<center><b>   %s   </b></center><hr />" % tooth.upper()
+            fills = []
             for fill in self.__dict__[tooth]:
                 if not re.match("!.*", fill):
-                    fill = fill.upper()
-                advisory += "%s <br />" % fill
-                show = True
-            if show:
-                QtWidgets.QToolTip.showText(event.globalPos(),
-                                        advisory.rstrip("<br />"))
+                    fills.append(fill.upper())
+            if fills:
+                advisory = "<center><b>   %s   </b></center><hr />%s" % (
+                    tooth.upper(), "<br />".join(fills))
             else:
-                QtWidgets.QToolTip.showText(event.globalPos(), "")
+                advisory = ""
+            QtWidgets.QToolTip.showText(event.globalPos(), advisory)
         except IndexError:
             pass
 
@@ -269,7 +267,7 @@ class ChartWidget(QtWidgets.QWidget):
         if shiftClick:
             for row in set((py, y)):
                 for column in range(lowx, highx + 1):
-                    if not [column, row] in self.multiSelection:
+                    if [column, row] not in self.multiSelection:
                         self.multiSelection.append([column, row])
         self.setSelected(x, y, showSelection=True)
 
@@ -682,7 +680,7 @@ class toothSurfaces():
         # deciduous (ie. indeterminate) 6, 7, 8 are marked as "*"
         # paint over these.
         if self.toothtext == "*":
-            erase_color = parent.palette().background().color()
+            erase_color = parent.palette().window().color()
             self.painter.setPen(erase_color)
             self.painter.setBrush(erase_color)
             self.painter.drawRect(self.rect)
@@ -784,7 +782,7 @@ class toothSurfaces():
                             prop = prop[3:] + ",gl"
 
                 if prop[:2] in ("tm", "at"):
-                    erase_color = parent.palette().background().color()
+                    erase_color = parent.palette().window().color()
                     self.painter.setPen(erase_color)
                     self.painter.setBrush(erase_color)
                     self.painter.drawRect(self.rect)
@@ -795,7 +793,7 @@ class toothSurfaces():
                     prop = ""
                 if prop[:2] in ("ue", "pe", "oe", "rp"):
                     if prop[:2] == "ue":
-                        erase_color = parent.palette().background().color()
+                        erase_color = parent.palette().window().color()
                         self.painter.setBrush(erase_color)
                     else:
                         self.painter.setBrush(QtCore.Qt.transparent)
@@ -911,16 +909,16 @@ class toothSurfaces():
                             material)
 
                 if prop == "pv" and self.isUpper:
-                    self.painter.drawPolygon(
-                        QtGui.QPolygon([self.rect.topLeft().x(),
-                                        self.rect.topLeft().y(),
-                                        self.rect.topRight().x(),
-                                        self.rect.topRight().y(),
-                                        self.innerRect.topRight().x(),
-                                        self.innerRect.topRight().y(),
-                                        self.innerRect.topLeft().x(),
-                                        self.innerRect.topLeft().y()]))
-
+                    poly = QtGui.QPolygon()
+                    poly.setPoints([self.rect.topLeft().x(),
+                                    self.rect.topLeft().y(),
+                                    self.rect.topRight().x(),
+                                    self.rect.topRight().y(),
+                                    self.innerRect.topRight().x(),
+                                    self.innerRect.topRight().y(),
+                                    self.innerRect.topLeft().x(),
+                                    self.innerRect.topLeft().y()])
+                    self.painter.drawPolygon(poly)
                     self.painter.drawText(
                         self.rect.adjusted(0, 0, 0, -self.rect.height() / 2),
                         QtCore.Qt.AlignCenter,
@@ -929,16 +927,16 @@ class toothSurfaces():
                     prop = ""
 
                 if prop == "pv" and not self.isUpper:
-                    self.painter.drawPolygon(
-                        QtGui.QPolygon([self.rect.bottomLeft().x(),
-                                        self.rect.bottomLeft().y(),
-                                        self.rect.bottomRight().x(),
-                                        self.rect.bottomRight().y(),
-                                        self.innerRect.bottomRight().x(),
-                                        self.innerRect.bottomRight().y(),
-                                        self.innerRect.bottomLeft().x(),
-                                        self.innerRect.bottomLeft().y()]))
-
+                    poly = QtGui.QPolygon()
+                    poly.setPoints([self.rect.bottomLeft().x(),
+                                    self.rect.bottomLeft().y(),
+                                    self.rect.bottomRight().x(),
+                                    self.rect.bottomRight().y(),
+                                    self.innerRect.bottomRight().x(),
+                                    self.innerRect.bottomRight().y(),
+                                    self.innerRect.bottomLeft().x(),
+                                    self.innerRect.bottomLeft().y()])
+                    self.painter.drawPolygon(poly)
                     self.painter.drawText(
                         self.rect.adjusted(0, self.rect.height() / 2, 0, 0),
                         QtCore.Qt.AlignCenter, prop)
@@ -966,224 +964,267 @@ class toothSurfaces():
                 shapes = []
                 if self.backTooth:
                     if "fs" in prop:
-                        shapes.append(
-                            QtGui.QPolygon([dx, ey - 1, fx, ey - 1, fx + 1,
-                                            ey + 1, dx, ey + 1]))
-                        shapes.append(
-                            QtGui.QPolygon([ex - 1, dy, ex + 1, dy, ex + 1,
-                                            fy, ex - 1, fy]))
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([dx, ey - 1, fx, ey - 1, fx + 1,
+                                        ey + 1, dx, ey + 1])
+                        shapes.append(poly)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([ex - 1, dy, ex + 1, dy, ex + 1,
+                                        fy, ex - 1, fy])
+                        shapes.append(poly)
                     elif "dr" in prop:
-                        n = QtGui.QPolygon([cx, dy, dx, by, fx, by, hx, dy,
-                                            hx, fy, fx, hy, dx, hy, cx, fy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([cx, dy, dx, by, fx, by, hx, dy,
+                                        hx, fy, fx, hy, dx, hy, cx, fy])
+                        shapes.append(poly)
                     elif re.match("[modbp]{5}", prop):
-                        n = QtGui.QPolygon([ax, by, cx, dy, dx, dy, dx, by,
-                                            fx, by, fx, dy, gx, dy, ix, by,
-                                            ix, hy, gx, fy, fx, fy, fx, hy,
-                                            dx, hy, dx, fy, cx, fy, ax, hy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([ax, by, cx, dy, dx, dy, dx, by,
+                                        fx, by, fx, dy, gx, dy, ix, by,
+                                        ix, hy, gx, fy, fx, fy, fx, hy,
+                                        dx, hy, dx, fy, cx, fy, ax, hy])
+                        shapes.append(poly)
                     elif re.match("[modb]{4}", prop):
-                        n = QtGui.QPolygon([ax, by, dx, dy, dx, by, fx, by,
-                                            fx, dy, ix, by, ix, hy, fx, fy,
-                                            dx, fy, ax, hy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([ax, by, dx, dy, dx, by, fx, by,
+                                        fx, dy, ix, by, ix, hy, fx, fy,
+                                        dx, fy, ax, hy])
+                        shapes.append(poly)
                     elif re.match("[modp]{4}", prop):
-                        n = QtGui.QPolygon([ax, by, dx, dy, fx, dy, ix, by,
-                                            ix, hy, fx, fy, fx, hy, dx, hy,
-                                            dx, fy, ax, hy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([ax, by, dx, dy, fx, dy, ix, by,
+                                        ix, hy, fx, fy, fx, hy, dx, hy,
+                                        dx, fy, ax, hy])
+                        shapes.append(poly)
                     elif re.match("[mod]{3}", prop):
-                        n = QtGui.QPolygon([ax, by, dx, dy, fx, dy, ix, by,
-                                            ix, hy, fx, fy, dx, fy, ax, hy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([ax, by, dx, dy, fx, dy, ix, by,
+                                        ix, hy, fx, fy, dx, fy, ax, hy])
+                        shapes.append(poly)
                     elif re.match("[mob]{3}", prop):
-                        n = QtGui.QPolygon([dx, dy, ex, dy, ex, by, fx, by,
-                                            fx, dy, gx, dy, ix, by, ix, hy,
-                                            gx, fy, dx, fy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([dx, dy, ex, dy, ex, by, fx, by,
+                                        fx, dy, gx, dy, ix, by, ix, hy,
+                                        gx, fy, dx, fy])
+                        shapes.append(poly)
                     elif re.match("[mop]{3}", prop):
-                        n = QtGui.QPolygon([dx, dy, gx, dy, ix, by, ix, hy,
-                                            gx, fy, fx, fy, fx, hy, ex, hy,
-                                            ex, fy, dx, fy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([dx, dy, gx, dy, ix, by, ix, hy,
+                                        gx, fy, fx, fy, fx, hy, ex, hy,
+                                        ex, fy, dx, fy])
+                        shapes.append(poly)
                     elif re.match("[dob]{3}", prop):
-                        n = QtGui.QPolygon([ax, cy, cx, dy, ex, dy, ex, by,
-                                            fx, by, fx, dy, fx, dy, fx, fy,
-                                            cx, fy, ax, gy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([ax, cy, cx, dy, ex, dy, ex, by,
+                                        fx, by, fx, dy, fx, dy, fx, fy,
+                                        cx, fy, ax, gy])
+                        shapes.append(poly)
                     elif re.match("[dop]{3}", prop):
-                        n = QtGui.QPolygon([ax, cy, cx, dy, fx, dy, fx, fy,
-                                            ex, fy, ex, hy, dx, hy, dx, fy,
-                                            cx, fy, ax, gy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([ax, cy, cx, dy, fx, dy, fx, fy,
+                                        ex, fy, ex, hy, dx, hy, dx, fy,
+                                        cx, fy, ax, gy])
+                        shapes.append(poly)
                     elif re.match("[mbd]{3}", prop):
-                        n = QtGui.QPolygon([ax, by, dx, ay, fx, ay, ix, by,
-                                            ix, ey, hx, ey, hx, cy, bx, cy,
-                                            bx, ey, ax, ey])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([ax, by, dx, ay, fx, ay, ix, by,
+                                        ix, ey, hx, ey, hx, cy, bx, cy,
+                                        bx, ey, ax, ey])
+                        shapes.append(poly)
                     elif re.match("[mpd]{3}", prop):
-                        n = QtGui.QPolygon([ax, ey, bx, ey, bx, hy, hx, hy,
-                                            hx, ey, ix, ey, ix, gy, gx, iy,
-                                            bx, iy, ax, gy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([ax, ey, bx, ey, bx, hy, hx, hy,
+                                        hx, ey, ix, ey, ix, gy, gx, iy,
+                                        bx, iy, ax, gy])
+                        shapes.append(poly)
                     elif re.match("[ob]{2}", prop):
-                        n = QtGui.QPolygon([cx, ay, gx, ay, fx, cy, fx, fy,
-                                            dx, fy, dx, cy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([cx, ay, gx, ay, fx, cy, fx, fy,
+                                        dx, fy, dx, cy])
+                        shapes.append(poly)
                     elif re.match("[op]{2}", prop):
-                        n = QtGui.QPolygon([dx, dy, fx, dy, fx, gy, gx, iy,
-                                            cx, iy, dx, gy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([dx, dy, fx, dy, fx, gy, gx, iy,
+                                        cx, iy, dx, gy])
+                        shapes.append(poly)
                     elif re.match("[mb]{2}", prop):
-                        n = QtGui.QPolygon([dx, ay, fx, ay, ix, by, ix, ey,
-                                            hx, ey, hx, dy, fx, cy, dx, cy,
-                                            bx, by])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([dx, ay, fx, ay, ix, by, ix, ey,
+                                        hx, ey, hx, dy, fx, cy, dx, cy,
+                                        bx, by])
+                        shapes.append(poly)
                     elif re.match("[mp]{2}", prop):
-                        n = QtGui.QPolygon([dx, iy, fx, iy, ix, hy, ix, ey,
-                                            hx, ey, hx, fy, fx, gy, dx, gy,
-                                            bx, hy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([dx, iy, fx, iy, ix, hy, ix, ey,
+                                        hx, ey, hx, fy, fx, gy, dx, gy,
+                                        bx, hy])
+                        shapes.append(poly)
                     elif re.match("[db]{2}", prop):
-                        n = QtGui.QPolygon([fx, ay, dx, ay, ax, by, ax, ey,
-                                            bx, ey, bx, dy, dx, cy, fx, cy,
-                                            hx, by])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([fx, ay, dx, ay, ax, by, ax, ey,
+                                        bx, ey, bx, dy, dx, cy, fx, cy,
+                                        hx, by])
+                        shapes.append(poly)
                     elif re.match("[dp]{2}", prop):
-                        n = QtGui.QPolygon([fx, iy, dx, iy, ax, hy, ax, ey,
-                                            bx, ey, bx, fy, dx, gy, fx, gy,
-                                            hx, hy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([fx, iy, dx, iy, ax, hy, ax, ey,
+                                        bx, ey, bx, fy, dx, gy, fx, gy,
+                                        hx, hy])
+                        shapes.append(poly)
                     elif re.match("[mo]{2}", prop):
-                        n = QtGui.QPolygon([dx, dy, gx, dy, ix, cy, ix, gy,
-                                            gx, fy, dx, fy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([dx, dy, gx, dy, ix, cy, ix, gy,
+                                        gx, fy, dx, fy])
+                        shapes.append(poly)
                     elif re.match("[do]{2}", prop):
-                        n = QtGui.QPolygon([ax, cy, cx, dy, fx, dy, fx, fy,
-                                            cx, fy, ax, gy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([ax, cy, cx, dy, fx, dy, fx, fy,
+                                        cx, fy, ax, gy])
+                        shapes.append(poly)
 
                     elif "o" in prop:
-                        n = QtGui.QPolygon([dx, dy, fx, dy, fx, fy, dx, fy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([dx, dy, fx, dy, fx, fy, dx, fy])
+                        shapes.append(poly)
                     elif "m" in prop:
-                        n = QtGui.QPolygon([gx, dy, ix, by, ix, hy, gx, fy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([gx, dy, ix, by, ix, hy, gx, fy])
+                        shapes.append(poly)
                     elif "d" in prop:
-                        n = QtGui.QPolygon([ax, by, cx, dy, cx, fy, ax, hy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([ax, by, cx, dy, cx, fy, ax, hy])
+                        shapes.append(poly)
                     elif "p" in prop:
-                        n = QtGui.QPolygon([bx, iy, dx, gy, fx, gy, hx, iy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([bx, iy, dx, gy, fx, gy, hx, iy])
+                        shapes.append(poly)
                     elif "b" in prop:
-                        n = QtGui.QPolygon([bx, ay, hx, ay, fx, cy, dx, cy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([bx, ay, hx, ay, fx, cy, dx, cy])
+                        shapes.append(poly)
                 else:  # front tooth
                     if "dr" in prop:
-                        n = QtGui.QPolygon([cx, dy, dx, by, fx, by, hx, dy,
-                                            hx, fy, fx, hy, dx, hy, cx, fy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([cx, dy, dx, by, fx, by, hx, dy,
+                                        hx, fy, fx, hy, dx, hy, cx, fy])
+                        shapes.append(poly)
                     elif re.match("[mbd]{3}", prop):
-                        n = QtGui.QPolygon([ax, by, dx, ay, fx, ay, ix, by,
-                                            ix, ey, hx, ey, hx, cy, bx, cy,
-                                            bx, ey, ax, ey])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([ax, by, dx, ay, fx, ay, ix, by,
+                                        ix, ey, hx, ey, hx, cy, bx, cy,
+                                        bx, ey, ax, ey])
+                        shapes.append(poly)
                     elif re.match("[mpd]{3}", prop):
-                        n = QtGui.QPolygon([ax, ey, bx, ey, bx, hy, hx, hy,
-                                            hx, ey, ix, ey, ix, gy, gx, iy,
-                                            bx, iy, ax, gy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([ax, ey, bx, ey, bx, hy, hx, hy,
+                                        hx, ey, ix, ey, ix, gy, gx, iy,
+                                        bx, iy, ax, gy])
+                        shapes.append(poly)
                     elif re.match("[ib]{2}", prop):
-                        n = QtGui.QPolygon([cx, ay, gx, ay, fx, cy, fx, fy,
-                                            dx, fy, dx, cy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([cx, ay, gx, ay, fx, cy, fx, fy,
+                                        dx, fy, dx, cy])
+                        shapes.append(poly)
                     elif re.match("[ip]{2}", prop):
-                        n = QtGui.QPolygon([dx, dy, fx, dy, fx, gy, gx, iy,
-                                            cx, iy, dx, gy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([dx, dy, fx, dy, fx, gy, gx, iy,
+                                        cx, iy, dx, gy])
+                        shapes.append(poly)
                     elif re.match("[mb]{2}", prop):
-                        n = QtGui.QPolygon([dx, ay, fx, ay, ix, by, ix, ey,
-                                            hx, ey, hx, dy, fx, cy, dx, cy,
-                                            bx, by])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([dx, ay, fx, ay, ix, by, ix, ey,
+                                        hx, ey, hx, dy, fx, cy, dx, cy,
+                                        bx, by])
+                        shapes.append(poly)
                     elif re.match("[mp]{2}", prop):
-                        n = QtGui.QPolygon([dx, iy, fx, iy, ix, hy, ix, ey,
-                                            hx, ey, hx, fy, fx, gy, dx, gy,
-                                            bx, hy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([dx, iy, fx, iy, ix, hy, ix, ey,
+                                        hx, ey, hx, fy, fx, gy, dx, gy,
+                                        bx, hy])
+                        shapes.append(poly)
                     elif re.match("[db]{2}", prop):
-                        n = QtGui.QPolygon([fx, ay, dx, ay, ax, by, ax, ey,
-                                            bx, ey, bx, dy, dx, cy, fx, cy,
-                                            hx, by])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([fx, ay, dx, ay, ax, by, ax, ey,
+                                        bx, ey, bx, dy, dx, cy, fx, cy,
+                                        hx, by])
+                        shapes.append(poly)
                     elif re.match("[dp]{2}", prop):
-                        n = QtGui.QPolygon([fx, iy, dx, iy, ax, hy, ax, ey,
-                                            bx, ey, bx, fy, dx, gy, fx, gy,
-                                            hx, hy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([fx, iy, dx, iy, ax, hy, ax, ey,
+                                        bx, ey, bx, fy, dx, gy, fx, gy,
+                                        hx, hy])
+                        shapes.append(poly)
                     elif re.match("[mid]{3}", prop):
-                        n = QtGui.QPolygon([ax, cy, cx, dy,
-                                            self.innerRect.topLeft().x(),
-                                            self.innerRect.topLeft().y(),
-                                            self.innerRect.topRight().x(),
-                                            self.innerRect.topRight().y(),
-                                            gx, dy, ix, cy, ix, gy, gx, fy,
-                                            self.innerRect.bottomRight().x(),
-                                            self.innerRect.bottomRight().y(),
-                                            self.innerRect.bottomLeft().x(),
-                                            self.innerRect.bottomLeft().y(),
-                                            cx, fy, ax, gy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([ax, cy, cx, dy,
+                                        self.innerRect.topLeft().x(),
+                                        self.innerRect.topLeft().y(),
+                                        self.innerRect.topRight().x(),
+                                        self.innerRect.topRight().y(),
+                                        gx, dy, ix, cy, ix, gy, gx, fy,
+                                        self.innerRect.bottomRight().x(),
+                                        self.innerRect.bottomRight().y(),
+                                        self.innerRect.bottomLeft().x(),
+                                        self.innerRect.bottomLeft().y(),
+                                        cx, fy, ax, gy])
+                        shapes.append(poly)
                     elif re.match("[mi]{2}", prop):
-                        n = QtGui.QPolygon([self.innerRect.topLeft().x(),
-                                            self.innerRect.topLeft().y(),
-                                            self.innerRect.topRight().x(
-                                            ), self.innerRect.topRight().y(),
-                                            gx, dy, ix, cy, ix, gy, gx, fy,
-                                            self.innerRect.bottomRight().x(),
-                                            self.innerRect.bottomRight().y(),
-                                            self.innerRect.bottomLeft().x(),
-                                            self.innerRect.bottomLeft().y(),
-                                            ])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([self.innerRect.topLeft().x(),
+                                        self.innerRect.topLeft().y(),
+                                        self.innerRect.topRight().x(),
+                                        self.innerRect.topRight().y(),
+                                        gx, dy, ix, cy, ix, gy, gx, fy,
+                                        self.innerRect.bottomRight().x(),
+                                        self.innerRect.bottomRight().y(),
+                                        self.innerRect.bottomLeft().x(),
+                                        self.innerRect.bottomLeft().y(),
+                                        ])
+                        shapes.append(poly)
                     elif re.match("[di]{2}", prop):
-                        n = QtGui.QPolygon([ax, cy, cx, dy,
-                                            self.innerRect.topLeft().x(
-                                            ), self.innerRect.topLeft().y(),
-                                            self.innerRect.topRight().x(
-                                            ), self.innerRect.topRight().y(),
-                                            self.innerRect.bottomRight().x(),
-                                            self.innerRect.bottomRight().y(),
-                                            self.innerRect.bottomLeft().x(),
-                                            self.innerRect.bottomLeft().y(),
-                                            cx, fy, ax, gy])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([ax, cy, cx, dy,
+                                        self.innerRect.topLeft().x(),
+                                        self.innerRect.topLeft().y(),
+                                        self.innerRect.topRight().x(),
+                                        self.innerRect.topRight().y(),
+                                        self.innerRect.bottomRight().x(),
+                                        self.innerRect.bottomRight().y(),
+                                        self.innerRect.bottomLeft().x(),
+                                        self.innerRect.bottomLeft().y(),
+                                        cx, fy, ax, gy])
+                        shapes.append(poly)
                     elif "i" in prop:
-                        n = QtGui.QPolygon([self.innerRect.topLeft().x(),
-                                            self.innerRect.topLeft().y(),
-                                            self.innerRect.topRight().x(),
-                                            self.innerRect.topRight().y(),
-                                            self.innerRect.bottomRight().x(),
-                                            self.innerRect.bottomRight().y(),
-                                            self.innerRect.bottomLeft().x(),
-                                            self.innerRect.bottomLeft().y()])
-                        shapes.append(n)
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([self.innerRect.topLeft().x(),
+                                        self.innerRect.topLeft().y(),
+                                        self.innerRect.topRight().x(),
+                                        self.innerRect.topRight().y(),
+                                        self.innerRect.bottomRight().x(),
+                                        self.innerRect.bottomRight().y(),
+                                        self.innerRect.bottomLeft().x(),
+                                        self.innerRect.bottomLeft().y()])
+                        shapes.append(poly)
                     elif "m" in prop:
-                        shapes.append(
-                            QtGui.QPolygon([hx, dy, ix, dy, ix, fy, hx,
-                                            fy, gx, ey]))
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([hx, dy, ix, dy, ix, fy, hx,
+                                        fy, gx, ey])
+                        shapes.append(poly)
                     elif "d" in prop:
-                        shapes.append(
-                            QtGui.QPolygon([ax, dy, bx, dy, cx, ey, bx,
-                                            fy, ax, fy]))
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([ax, dy, bx, dy, cx, ey, bx,
+                                        fy, ax, fy])
+                        shapes.append(poly)
                     elif "p" in prop:
-                        shapes.append(
-                            QtGui.QPolygon([cx, hy, cx, gy, ex, fy, gx,
-                                            gy, gx, hy, fx, iy, dx, iy]))
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([cx, hy, cx, gy, ex, fy, gx,
+                                        gy, gx, hy, fx, iy, dx, iy])
+                        shapes.append(poly)
                     elif "b" in prop:
-                        shapes.append(
-                            QtGui.QPolygon([cx, cy, cx, ay, ex, ay, gx,
-                                            ay, gx, cy, fx, dy, dx, dy]))
+                        poly = QtGui.QPolygon()
+                        poly.setPoints([cx, cy, cx, ay, ex, ay, gx,
+                                        ay, gx, cy, fx, dy, dx, dy])
+                        shapes.append(poly)
                 for shape in shapes:
                     self.painter.drawPolygon(shape)
                     # todo - drawPath may be MUCH better (curvier)
