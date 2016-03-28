@@ -709,7 +709,7 @@ class yearCalendar(QtWidgets.QWidget):
                 painter.drawRect(rect)
 
                 painter.setPen(self.palette().color(
-                               self.palette().HighlightedText))
+                    self.palette().HighlightedText))
                 painter.drawText(rect, QtCore.Qt.AlignCenter, str(self.year))
 
                 # rectLeft = rect.adjusted(0, 0,-rect.width()/4, 0)
@@ -727,7 +727,7 @@ class yearCalendar(QtWidgets.QWidget):
                     my_text = ("M", "Tu", "W", "Th", "F", "Sa", "Su")[dayno]
 
                     painter.setPen(self.palette().color(
-                                   self.palette().HighlightedText))
+                        self.palette().HighlightedText))
 
                     painter.drawText(rect, QtCore.Qt.AlignCenter, my_text)
 
@@ -740,7 +740,7 @@ class yearCalendar(QtWidgets.QWidget):
                 painter.drawRect(rect)
 
                 painter.setPen(self.palette().color(
-                               self.palette().WindowText))
+                    self.palette().WindowText))
 
                 c_date = datetime.date(self.year, month, 1)
                 my_text = str(localsettings.monthName(c_date))
@@ -758,7 +758,7 @@ class yearCalendar(QtWidgets.QWidget):
                     painter.drawRect(rect)
 
                     painter.setPen(self.palette().color(
-                                   self.palette().WindowText))
+                        self.palette().WindowText))
 
                     if col >= startday:
                         try:
@@ -769,10 +769,10 @@ class yearCalendar(QtWidgets.QWidget):
                             if c_date == self.selectedDate:
                                 painter.save()
                                 painter.setBrush(self.palette().color(
-                                                 self.palette().Highlight))
+                                    self.palette().Highlight))
 
                                 painter.setPen(self.palette().color(
-                                               self.palette().HighlightedText))
+                                    self.palette().HighlightedText))
 
                                 painter.drawRect(rect)
                                 painter.drawText(
@@ -802,7 +802,7 @@ class yearCalendar(QtWidgets.QWidget):
 
                             else:
                                 painter.setPen(self.palette().color(
-                                               self.palette().WindowText))
+                                    self.palette().WindowText))
                                 painter.drawText(
                                     rect, QtCore.Qt.AlignCenter, my_text)
 
@@ -833,9 +833,10 @@ class yearCalendar(QtWidgets.QWidget):
                                 bottomrightY = rect.topRight().y() +\
                                     rect.width() / 2
 
-                                shape = QtGui.QPolygon([topleftX, topY,
-                                                        rightX, topY, rightX,
-                                                        bottomrightY])
+                                shape = QtGui.QPolygon()
+                                shape.setPoints([topleftX, topY,
+                                                 rightX, topY,
+                                                 rightX, bottomrightY])
 
                                 painter.drawPolygon(shape)
                                 painter.restore()
@@ -858,11 +859,11 @@ if __name__ == "__main__":
     wcal = weekCalendar()
     mcal = monthCalendar()
     ycal = yearCalendar()
-    
+
     wcal.show()
     wcal.week_changed_signal.connect(week_signal_trap)
 
-    if False:
+    if True:
         localsettings.initiate()
         from openmolar.dbtools import appointments
         startdate = datetime.date(2010, 2, 1)
