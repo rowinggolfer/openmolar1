@@ -24,6 +24,7 @@
 '''
 has one class, a custom widget which inherits from QWidget
 '''
+from gettext import gettext as _
 
 import re
 import sys
@@ -52,8 +53,9 @@ class SimpleChartWidg(QtWidgets.QWidget):
     def __init__(self, parent=None, auto_ctrl_key=False):
         QtWidgets.QWidget.__init__(self, parent)
 
-        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                                             QtWidgets.QSizePolicy.Expanding))
+        self.setSizePolicy(
+            QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                  QtWidgets.QSizePolicy.Expanding))
 
         self.grid = GRID
 
@@ -111,7 +113,7 @@ class SimpleChartWidg(QtWidgets.QWidget):
         '''
         set the tooth which is currently selected
         '''
-        if not (x, y) in self.selected:
+        if (x, y) not in self.selected:
             self.selected.add((x, y))
             self.prevSelect = (x, y)
         else:
@@ -186,11 +188,11 @@ class SimpleChartWidg(QtWidgets.QWidget):
         painter.save()
         painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
         midline = self.width() / 100
-        #-- cell width
+        # cell width
         xOffset = (self.width() - midline) / 16
-        #-- cell height
+        # cell height
         yOffset = self.height() / 2
-        #--red pen
+        # red pen
         if self.isEnabled():
             painter.setPen(QtGui.QPen(QtCore.Qt.red, 2))
         else:
@@ -202,10 +204,10 @@ class SimpleChartWidg(QtWidgets.QWidget):
         leftpad = fm.width("Right ")
         rightpad = fm.width(" Left")
 
-        #--big horizontal dissection of entire widget
+        # big horizontal dissection of entire widget
         painter.drawLine(leftpad, self.height() / 2, self.width() - rightpad,
                          self.height() / 2)
-        #--vertical dissection of entire widget
+        # vertical dissection of entire widget
         painter.drawLine(self.width() / 2, 0, self.width() / 2, self.height())
 
         highlight_rects, selected_rects = [], []
@@ -243,15 +245,15 @@ class SimpleChartWidg(QtWidgets.QWidget):
         textRect = QtCore.QRect(0, 0, self.width(), self.height())
 
         if self.showLeftRight:
-            #--show left/right (this is done here to avoid being overwritten
-            #--during the rest of the paint job
+            # show left/right (this is done here to avoid being overwritten
+            # during the rest of the paint job
             painter.drawText(textRect, QtCore.Qt.AlignRight |
                              QtCore.Qt.AlignVCenter, (_("Left")))
 
             painter.drawText(textRect, QtCore.Qt.AlignLeft |
                              QtCore.Qt.AlignVCenter, (_("Right")))
 
-        #--free the painter's saved state
+        # free the painter's saved state
         painter.restore()
 
     def tooth(self, painter, rect, ident):
@@ -285,7 +287,6 @@ class SimpleChartWidg(QtWidgets.QWidget):
 
 
 if __name__ == "__main__":
-    from gettext import gettext as _
     app = QtWidgets.QApplication(sys.argv)
     form = SimpleChartWidg()
     # form.disable_lowers()
