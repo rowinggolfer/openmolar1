@@ -117,9 +117,10 @@ class SimpleListModel(QtCore.QAbstractListModel):
             QtGui.QPixmap(":/icons/schedule_active.png"))
 
     def clear(self):
+        self.beginResetModel()
         self.unscheduledList = []
         self.scheduledList = []
-        self.reset()
+        self.endResetModel()
 
     @property
     def items(self):
@@ -204,7 +205,6 @@ class SimpleListModel(QtCore.QAbstractListModel):
         '''
 
         self.clear()
-
         for appt in appts:
             if appt.past:
                 pass
@@ -212,8 +212,9 @@ class SimpleListModel(QtCore.QAbstractListModel):
                 self.unscheduledList.append(appt)
             else:
                 self.scheduledList.append(appt)
-        self.reset()
+        self.beginResetModel()
         self.set_selected_appointments(selected_apps)
+        self.endResetModel()
 
     def set_selected_appointments(self, selected_apps):
         '''

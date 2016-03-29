@@ -171,7 +171,6 @@ class PatientDiaryTreeModel(QtCore.QAbstractItemModel):
         self.rootItem = TreeItem("Appointments", None, None, None)
         self.parents = {0: self.rootItem}
         self.setupModelData()
-        # self.reset()
 
     def columnCount(self, parent=None):
         if parent and parent.isValid():

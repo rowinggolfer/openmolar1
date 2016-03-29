@@ -68,6 +68,12 @@ class TreatmentListModel(QtCore.QAbstractListModel):
 
         return att, values
 
+    def reset(self):
+        '''
+        qt5 deprecated the QAbstractItemModel.reset method
+        '''
+        self.beginResetModel()
+        self.endResetModel()
 
 class PlannedTreatmentListModel(TreatmentListModel):
 
