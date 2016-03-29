@@ -23,7 +23,10 @@
 
 import logging
 
-from PyQt5 import Qsci, QtCore, QtGui, QtWidgets
+from PyQt5 import Qsci
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
 
 LOGGER = logging.getLogger("openmolar")
 

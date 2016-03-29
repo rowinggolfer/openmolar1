@@ -37,7 +37,9 @@ import webbrowser  # for email
 
 from functools import partial
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
 
 from openmolar.connect import params
 from openmolar.settings import localsettings, utilities

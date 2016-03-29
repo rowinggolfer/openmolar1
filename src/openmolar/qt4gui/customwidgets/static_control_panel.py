@@ -22,7 +22,8 @@
 # ########################################################################### #
 
 from functools import partial
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 
 
 class StaticControlPanel(QtWidgets.QWidget):

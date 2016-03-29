@@ -22,7 +22,11 @@
 # ########################################################################### #
 
 from gettext import gettext as _
-from PyQt5 import QtCore, QtGui, QtPrintSupport, QtWebKitWidgets, QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import QtPrintSupport
+from PyQt5 import QtWebKitWidgets
+from PyQt5 import QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog

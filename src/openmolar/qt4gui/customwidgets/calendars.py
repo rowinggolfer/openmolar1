@@ -27,7 +27,9 @@ from functools import partial
 from gettext import gettext as _
 import sys
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
 from openmolar.settings import localsettings
 
 CENTRE = QtGui.QTextOption(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)

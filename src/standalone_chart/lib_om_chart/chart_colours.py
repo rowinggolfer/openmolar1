@@ -21,7 +21,8 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt5 import QtCore, QtGui
+from PyQt5 import QtCore
+from PyQt5 import QtGui
 
 CHARTTEXT = QtGui.QColor("#111111")
 LINEEDIT = QtGui.QColor("#ffffaa")

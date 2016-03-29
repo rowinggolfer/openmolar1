@@ -22,7 +22,9 @@
 # ########################################################################### #
 
 import sys
-from PyQt5 import QtGui, QtPrintSupport, QtWidgets
+from PyQt5 import QtGui
+from PyQt5 import QtPrintSupport
+from PyQt5 import QtWidgets
 
 
 class printChart(object):

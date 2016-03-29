@@ -21,7 +21,8 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 
 
 class FiveMinuteTimeEdit(QtWidgets.QTimeEdit):

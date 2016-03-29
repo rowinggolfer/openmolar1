@@ -21,7 +21,9 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
 from openmolar.qt4gui import resources_rc
 
 

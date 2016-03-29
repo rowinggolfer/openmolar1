@@ -27,7 +27,8 @@ import logging
 import sys
 import traceback
 
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 
 from lib_om_chart.restorable_app import RestorableApplication
 from lib_om_chart.chart_widget import ChartWidget

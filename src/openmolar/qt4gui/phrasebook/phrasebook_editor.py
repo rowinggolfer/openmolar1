@@ -29,8 +29,12 @@ import os
 import sys
 from xml.dom import minidom
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
 
 from openmolar.settings import localsettings
 

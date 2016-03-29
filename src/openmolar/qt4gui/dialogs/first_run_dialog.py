@@ -30,7 +30,8 @@ from xml.dom import minidom
 
 import MySQLdb
 
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel

@@ -21,7 +21,10 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt5 import QtCore, QtGui, QtPrintSupport, QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import QtPrintSupport
+from PyQt5 import QtWidgets
 from openmolar.settings import localsettings
 
 import datetime

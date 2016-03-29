@@ -24,7 +24,8 @@
 import os
 import re
 from openmolar.settings import localsettings
-from PyQt5 import QtGui, QtWidgets
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
 
 TOOTHPIXMAPS = {}
 

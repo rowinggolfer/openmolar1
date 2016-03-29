@@ -22,7 +22,8 @@
 # ########################################################################### #
 
 from gettext import gettext as _
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 from openmolar.qt4gui.compiled_uis import Ui_activeDentStartFinish
 from openmolar.qt4gui.compiled_uis import Ui_aslotEdit
 from openmolar.qt4gui.customwidgets import fiveminutetimeedit

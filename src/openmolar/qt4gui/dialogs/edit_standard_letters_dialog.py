@@ -24,7 +24,10 @@
 from gettext import gettext as _
 import logging
 
-from PyQt5 import Qsci, QtCore, QtGui, QtWidgets
+from PyQt5 import Qsci
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
 
 from openmolar.dbtools import standard_letter
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog

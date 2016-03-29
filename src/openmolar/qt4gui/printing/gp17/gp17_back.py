@@ -26,7 +26,8 @@ Provides a Class for printing the GP17(Scotland) NHS form
 '''
 import os
 
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 
 from openmolar.backports.printed_form import PrintedForm
 from openmolar.qt4gui.printing.gp17.gp17_config import gp17config

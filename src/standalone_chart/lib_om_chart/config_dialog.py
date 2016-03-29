@@ -28,7 +28,9 @@ has one class, a dialog to write the config
 import logging
 import sys
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
 
 from lib_om_chart import config
 

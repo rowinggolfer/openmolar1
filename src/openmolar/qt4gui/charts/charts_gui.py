@@ -29,7 +29,8 @@ import copy
 import logging
 import re
 
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 from openmolar.settings import localsettings
 
 LOGGER = logging.getLogger("openmolar")

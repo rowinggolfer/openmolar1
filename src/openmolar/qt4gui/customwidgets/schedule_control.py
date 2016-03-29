@@ -28,7 +28,10 @@ schedule_control.py provides the DiaryScheduleController class for openmolar.
 from gettext import gettext as _
 import logging
 
-from PyQt5 import QtCore, QtGui, QtWebKitWidgets, QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import QtWebKitWidgets
+from PyQt5 import QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.dbtools.brief_patient import BriefPatient

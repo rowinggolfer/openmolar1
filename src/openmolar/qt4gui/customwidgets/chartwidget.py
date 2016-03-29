@@ -30,7 +30,10 @@ from gettext import gettext as _
 import logging
 import re
 import sys
-from PyQt5 import QtCore, QtGui, QtSvg, QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import QtSvg
+from PyQt5 import QtWidgets
 
 from openmolar.qt4gui import colours
 

@@ -27,7 +27,9 @@ provides the logic to manipulate the forum.
 
 import datetime
 from gettext import gettext as _
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.dbtools import forum

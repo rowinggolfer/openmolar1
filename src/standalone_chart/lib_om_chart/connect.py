@@ -30,7 +30,6 @@ import logging
 import time
 import MySQLdb
 
-from PyQt5 import 
 
 from lib_om_chart import config
 

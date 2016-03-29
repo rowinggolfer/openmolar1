@@ -27,7 +27,8 @@ functions to open a course, close a course, or check if one is needed.
 import datetime
 import logging
 
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.dbtools import writeNewCourse

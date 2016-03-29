@@ -32,7 +32,8 @@ import logging
 
 from functools import partial
 
-from PyQt5 import QtGui, QtWidgets
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.ptModules.estimates import TXHash, Estimate

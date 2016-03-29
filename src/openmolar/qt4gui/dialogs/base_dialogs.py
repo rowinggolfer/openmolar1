@@ -29,7 +29,9 @@ These are backported from openmolar2
 from gettext import gettext as _
 import logging
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
 
 LOGGER = logging.getLogger("openmolar")
 

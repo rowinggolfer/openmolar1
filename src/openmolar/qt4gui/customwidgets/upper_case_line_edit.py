@@ -21,7 +21,8 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from PyQt5 import QtGui, QtWidgets
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
 
 
 class UpperCaseLineEdit(QtWidgets.QLineEdit):

@@ -23,7 +23,9 @@
 
 import re
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
 
 from openmolar.dbtools.treatment_course import CURRTRT_ROOT_ATTS
 from openmolar.qt4gui.customwidgets.upper_case_line_edit \
