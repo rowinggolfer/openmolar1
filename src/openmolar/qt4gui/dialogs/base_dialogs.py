@@ -35,6 +35,7 @@ from PyQt5 import QtWidgets
 
 LOGGER = logging.getLogger("openmolar")
 
+
 class BaseDialog(QtWidgets.QDialog):
 
     '''
@@ -43,6 +44,8 @@ class BaseDialog(QtWidgets.QDialog):
     slots connected to accept and reject
     has a VBoxlayout - accessed by self.layout_
     '''
+
+    extension_frame = None
 
     def __init__(self, parent=None, remove_stretch=False):
         QtWidgets.QDialog.__init__(self, parent)
@@ -66,16 +69,12 @@ class BaseDialog(QtWidgets.QDialog):
         self.dirty = False
         self.enableApply(False)
 
-        if not remove_stretch:
-            self.spacer = QtWidgets.QSpacerItem(
-                0, 50, QtWidgets.QSizePolicy.Expanding,
-                QtWidgets.QSizePolicy.Expanding)
-            self.layout_.addItem(self.spacer)
-            self.insertpoint_offset = 2
+        if remove_stretch:
+            self.spacer = True
+            self.layout_.addStretch()
         else:
-            self.spacer = None
-            self.insertpoint_offset = 1
-        self.layout_.addWidget(self.button_box)
+            self.spacer = False
+        self.insertWidget(self.button_box)
 
     def sizeHint(self):
         '''
@@ -88,15 +87,6 @@ class BaseDialog(QtWidgets.QDialog):
         Overwrite this function inherited from QWidget
         '''
         return QtCore.QSize(300, 300)
-
-    def remove_spacer(self):
-        '''
-        If this is called, then the spacer added at init is removed.
-        sometimes the spacer mucks up dialogs
-        '''
-        if self.spacer is not None:
-            self.layout_.removeItem(self.spacer)
-            self.insertpoint_offset = 1
 
     @property
     def abandon_message(self):
@@ -127,9 +117,17 @@ class BaseDialog(QtWidgets.QDialog):
         '''
         insert widget at the bottom of the layout
         '''
-        count = self.layout_.count()
-        insertpoint = count - self.insertpoint_offset
-        self.layout_.insertWidget(insertpoint, widg)
+        if self.layout_.count() == 0:
+            self.layout_.addWidget(widg)
+            return
+        insertpos = self.layout_.count() - 1
+        if insertpos:
+            if self.spacer:
+                insertpos -= 1
+            if self.extension_frame:
+                insertpos -= 1
+        LOGGER.debug("inserting %s at position %s", widg, insertpos)
+        self.layout_.insertWidget(insertpos, widg)
 
     def _clicked(self, but):
         '''
@@ -145,9 +143,10 @@ class BaseDialog(QtWidgets.QDialog):
         if not (self.check_before_reject_if_dirty and self.dirty):
             QtWidgets.QDialog.reject(self)
         else:
-            if QtWidgets.QMessageBox.question(self,
-               _("Confirm"), self.abandon_message,
-                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+            if QtWidgets.QMessageBox.question(
+                    self,
+                    _("Confirm"), self.abandon_message,
+                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
                     QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes:
                 QtWidgets.QDialog.reject(self)
 
@@ -176,7 +175,7 @@ class BaseDialog(QtWidgets.QDialog):
         default_but = accept_but if default == "accept" else reject_but
 
         return QtWidgets.QMessageBox.question(
-            self,  _("Confirm"),
+            self, _("Confirm"),
             message, buttons, default_but) == accept_but
 
 
@@ -194,15 +193,19 @@ class ExtendableDialog(BaseDialog):
 
         icon = QtGui.QIcon.fromTheme("go-down")
         #: a pointer to the Advanced button
-        self.more_but = QtWidgets.QPushButton(icon, "&Advanced")
+        self.more_but = QtWidgets.QPushButton(icon, "&%s" % _("Advanced"))
         self.more_but.setFlat(True)
         self.more_but.setCheckable(True)
         self.more_but.setFocusPolicy(QtCore.Qt.NoFocus)
         self.button_box.addButton(self.more_but, self.button_box.HelpRole)
 
         self.extension_frame = QtWidgets.QFrame(self)
+        self.extension_frame.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.extension_frame.setFrameStyle(QtWidgets.QFrame.Sunken)
+        self.extension_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.extension_frame.setLineWidth(2)
         QtWidgets.QVBoxLayout(self.extension_frame)
-        self.layout().addWidget(self.extension_frame)
+        self.layout_.insertWidget(-1, self.extension_frame)
         self.extension_frame.hide()
 
     def set_advanced_but_text(self, txt):
@@ -223,18 +226,37 @@ class ExtendableDialog(BaseDialog):
         self.extension_frame.layout().addWidget(widg)
 
     def show_extension(self, show):
-        LOGGER.debug("show extenssion, show=%s", show)
+        LOGGER.debug("show extension, show=%s", show)
         self.more_but.setChecked(not show)
         self.extension_frame.setVisible(show)
+        self.adjustSize()
 
 
 if __name__ == "__main__":
+    logging.basicConfig()
+    LOGGER.setLevel(logging.DEBUG)
     app = QtWidgets.QApplication([])
 
     dl = BaseDialog()
-    QtCore.QTimer.singleShot(1000, dl.accept)
+    dl.insertWidget(QtWidgets.QLabel("simple dialog"))
+    # QtCore.QTimer.singleShot(1000, dl.accept)
     dl.exec_()
 
-    dl = ExtendableDialog()
-    QtCore.QTimer.singleShot(1000, dl.accept)
-    dl.exec_()
+    dl2 = BaseDialog(remove_stretch=True)
+    dl2.insertWidget(QtWidgets.QLabel("simple dialog - no stretch"))
+    # QtCore.QTimer.singleShot(1000, dl2.accept)
+    dl2.exec_()
+
+    dl3 = ExtendableDialog()
+    dl3.insertWidget(QtWidgets.QLabel("extendable dialog"))
+    dl3.insertWidget(QtWidgets.QLabel("extendable dialog - label2"))
+    dl3.add_advanced_widget(QtWidgets.QLabel("advanced options"))
+    # QtCore.QTimer.singleShot(5000, dl3.accept)
+    dl3.exec_()
+
+    dl4 = ExtendableDialog(remove_stretch=True)
+    dl4.insertWidget(QtWidgets.QLabel("extendable dialog - no stretch"))
+    dl4.insertWidget(QtWidgets.QLabel("extendable dialog - label2"))
+    dl4.add_advanced_widget(QtWidgets.QLabel("advanced options"))
+    # QtCore.QTimer.singleShot(5000, dl4.accept)
+    dl4.exec_()

@@ -21,11 +21,16 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
+import logging
+
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
+
+LOGGER = logging.getLogger("openmolar")
 
 
 class SaveDiscardCancelDialog(ExtendableDialog):
@@ -79,11 +84,12 @@ class SaveDiscardCancelDialog(ExtendableDialog):
             self.result = self.DISCARD
             self.accept()
 
-    def showExtension(self, extend):
+    def show_extension(self, extend):
         if extend:
+            LOGGER.debug("showing changes %s" % self.changes)
             self.changes_list_widget.clear()
             self.changes_list_widget.addItems(self.changes)
-        ExtendableDialog.showExtension(self, extend)
+        ExtendableDialog.show_extension(self, extend)
 
     def reject(self):
         self.result = self.CANCEL
@@ -91,7 +97,8 @@ class SaveDiscardCancelDialog(ExtendableDialog):
 
 
 if __name__ == "__main__":
-    from gettext import gettext as _
+    logging.basicConfig()
+    LOGGER.setLevel(logging.DEBUG)
     changes = ["Sname", "Fname"]
 
     app = QtWidgets.QApplication([])

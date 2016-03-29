@@ -21,6 +21,8 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
+
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
@@ -96,7 +98,8 @@ class AlterCashbookDialog(ExtendableDialog):
             self.code_cb.setEnabled(True)
             self.amount_sb.setEnabled(True)
             self.patient_le.setEnabled(True)
-        self.showExtension(False)
+        self.more_but.setChecked(False)
+        self.show_extension(False)
 
     def check_enable(self):
         self.date_edit.dateChanged.connect(self.enable_apply)
@@ -170,4 +173,4 @@ if __name__ == "__main__":
 
     dl = AlterCashbookDialog(152039)
 
-    print((dl.exec_()))
+    print(dl.exec_())
