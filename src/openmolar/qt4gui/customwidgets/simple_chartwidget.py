@@ -195,9 +195,10 @@ class SimpleChartWidg(QtWidgets.QWidget):
             painter.setPen(QtGui.QPen(QtCore.Qt.red, 2))
         else:
             painter.setPen(QtGui.QPen(QtCore.Qt.gray, 2))
-        sansFont = QtGui.QFont(14)
-        painter.setFont(sansFont)
-        fm = QtGui.QFontMetrics(sansFont)
+        font = painter.font()
+        font.setPointSize(14)
+        painter.setFont(font)
+        fm = QtGui.QFontMetrics(font)
         leftpad = fm.width("Right ")
         rightpad = fm.width(" Left")
 
