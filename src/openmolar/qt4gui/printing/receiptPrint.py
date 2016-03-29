@@ -60,7 +60,7 @@ class Receipt(object):
         self.total = t
 
     def print_(self):
-        dialog = QtGui.QPrintDialog(self.printer)
+        dialog = QtPrintSupport.QPrintDialog(self.printer)
         if not dialog.exec_():
             return
         self.pdfprinter.setOutputFormat(QtPrintSupport.QPrinter.PdfFormat)

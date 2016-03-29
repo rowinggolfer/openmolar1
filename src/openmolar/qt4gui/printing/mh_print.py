@@ -152,7 +152,7 @@ class MHPrint(object):
             painter.drawEllipse(rect)
             painter.restore()
 
-        dialog = QtGui.QPrintDialog(self.printer, self.parent)
+        dialog = QtPrintSupport.QPrintDialog(self.printer, self.parent)
 
         if not dialog.exec_():
             return

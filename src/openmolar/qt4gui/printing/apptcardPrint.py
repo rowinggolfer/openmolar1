@@ -43,7 +43,7 @@ class Card(object):
         self.appts = appts
 
     def print_(self):
-        dialog = QtGui.QPrintDialog(self.printer)
+        dialog = QtPrintSupport.QPrintDialog(self.printer)
         if not dialog.exec_():
             return
         self.printer.setPaperSize(QtPrintSupport.QPrinter.A5)

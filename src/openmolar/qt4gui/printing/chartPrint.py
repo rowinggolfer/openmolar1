@@ -49,7 +49,7 @@ class printChart(object):
         '''
         print the chart
         '''
-        dialog = QtGui.QPrintDialog(self.printer)
+        dialog = QtPrintSupport.QPrintDialog(self.printer)
         if askfirst and not dialog.exec_():
             return
 

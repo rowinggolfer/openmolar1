@@ -38,7 +38,7 @@ class printBook(object):
         self.printer.setPageSize(QtPrintSupport.QPrinter.A4)
 
     def printpage(self, askfirst=True):
-        dialog = QtGui.QPrintDialog(self.printer)
+        dialog = QtPrintSupport.QPrintDialog(self.printer)
         if askfirst and not dialog.exec_():
             return
         # print dir(self.printer)

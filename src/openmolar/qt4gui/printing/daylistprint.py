@@ -50,7 +50,7 @@ class PrintDaylist(object):
         '''
         if expanded, the list will fill the page
         '''
-        dialog = QtGui.QPrintDialog(self.printer)
+        dialog = QtPrintSupport.QPrintDialog(self.printer)
         if not dialog.exec_():
             return
         # leave space at the bottom for notes?

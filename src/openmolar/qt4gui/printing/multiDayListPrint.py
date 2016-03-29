@@ -53,7 +53,7 @@ class PrintDaylist(object):
         '''
         print all.
         '''
-        dialog = QtGui.QPrintDialog(self.printer)
+        dialog = QtPrintSupport.QPrintDialog(self.printer)
         if not dialog.exec_():
             return
         LeftMargin, RightMargin, TopMargin, BottomMargin = 30, 30, 30, 30

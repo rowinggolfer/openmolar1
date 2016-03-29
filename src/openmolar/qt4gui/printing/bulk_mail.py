@@ -424,7 +424,7 @@ class bulkMails(object):
             print("selected bulk mail out of range")
 
     def print_(self):
-        dialog = QtGui.QPrintDialog(self.printer, self.om_gui)
+        dialog = QtPrintSupport.QPrintDialog(self.printer, self.om_gui)
         if not dialog.exec_():
             return
 

@@ -49,7 +49,7 @@ class RecallPrinter(object):
         self.sign_off = _("Yours Sincerely")
 
     def print_(self):
-        dialog = QtGui.QPrintDialog(self.printer)
+        dialog = QtPrintSupport.QPrintDialog(self.printer)
         if not dialog.exec_():
             return
         AddressMargin = 80

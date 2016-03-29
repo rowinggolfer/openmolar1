@@ -30,7 +30,7 @@ from PyQt5 import QtWidgets
 from openmolar.settings import localsettings
 
 
-class document():
+class document(object):
 
     ''' this class provides a letter asking for settlement of an account'''
 
@@ -58,7 +58,7 @@ class document():
         self.tone = "A"
         self.previousCorrespondenceDate = ""
         self.requireDialog = True
-        self.dialog = QtGui.QPrintDialog(self.printer)
+        self.dialog = QtPrintSupport.QPrintDialog(self.printer)
 
     def setTone(self, arg):
         '''determines how aggressive the letter is'''

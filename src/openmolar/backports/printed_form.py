@@ -87,7 +87,7 @@ class PrintedForm(object):
         '''
         raise a dialog before printing
         '''
-        dl = QtGui.QPrintDialog(self.printer)
+        dl = QtPrintSupport.QPrintDialog(self.printer)
         if dl.exec_():
             self.chosen_printer = self.printer
             self.print_()
