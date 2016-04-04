@@ -22,7 +22,7 @@ the client machine for a standalone test.
     ##CLIENT MACHINE##
     ensure depenencies are met on the client machine
 
-    ~$ sudo apt-get install python3-mysqldb python3-qt4 python3-pyqt4.qsci xdg-utils
+    ~$ sudo apt-get install python3-mysqldb python3-pyqt5 python3-pyqt5.qsci xdg-utils
 
 
     ##SERVER MACHINE##
