@@ -32,9 +32,8 @@ from xml.dom import minidom
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
-from PyQt5 import QtCore
-from PyQt5 import QtGui
-from PyQt5 import QtWidgets
+
+from PyQt5.QtXmlPatterns import QXmlSchemaValidator, QXmlSchema
 
 from openmolar.settings import localsettings
 
@@ -310,7 +309,7 @@ class PhrasebookEditor(QtWidgets.QMainWindow):
 
         validator = QXmlSchemaValidator(schema)
         validator.setMessageHandler(message_handler)
-        result = validator.validate(self.text)
+        result = validator.validate(self.text.encode("utf8"))
 
         return result, message_handler
 

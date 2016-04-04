@@ -140,7 +140,7 @@ class FeescaleParser(object):
 
         validator = QXmlSchemaValidator(schema)
         validator.setMessageHandler(self.message_handler)
-        result = validator.validate(xml)
+        result = validator.validate(xml.encode("utf8"))
 
         if result:
             LOGGER.debug("Feescale complies with stylesheet!")
