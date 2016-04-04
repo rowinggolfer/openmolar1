@@ -76,7 +76,7 @@ try:
                         localedir=path, languages=['default']).install()
     LOGGER.info("Installed translation file found in %s", path)
 except FileNotFoundError:
-    LOGGER.exception("no local translation found")
+    LOGGER.debug("no local translation found")
 
     lang = os.environ.get("LANG")
     if lang:

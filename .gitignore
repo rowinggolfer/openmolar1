@@ -4,3 +4,4 @@ builds/*
 dist/*
 MANIFEST
 .ropeproject
+src/openmolar/qt4gui/compiled_uis/Ui*

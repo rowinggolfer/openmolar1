@@ -77,15 +77,6 @@ clean_tmp:
 	mkdir -p $(TMP_DIR)
 	rm -rf $(TMP_DIR)*
 
-resources:
-	pyrcc5 $(HEAD)/src/openmolar/resources/resources.qrc > $(HEAD)/src/openmolar/qt4gui/resources_rc.py
-
-ui_files:
-	./om_pyuic4.py
-
-clean_codebase:
-	./code_cleaner.py
-
 git_tag:
 	@echo "writing git tag  - if this fails and you haven't pushed tags to parent repo, try 'make FORCE=true git_tag'" 
 	git tag $(FORCE_TAG) -a v$(NEW_VERSION) -m "$(NEW_VERSION)"

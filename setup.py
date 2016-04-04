@@ -28,6 +28,7 @@ see https://docs.python.org/2/distutils/configfile.html for explanation
 
 from distutils.command.install_data import install_data
 from distutils.command.sdist import sdist as _sdist
+from distutils.command.config import config as _config
 from distutils.core import setup
 from distutils.dep_util import newer
 from distutils.log import info
@@ -36,7 +37,10 @@ import glob
 import os
 import re
 import shutil
+import subprocess
 import sys
+
+from PyQt5 import uic
 
 OM_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "src")
 sys.path.insert(0, OM_PATH)
@@ -44,9 +48,115 @@ sys.path.insert(0, OM_PATH)
 from openmolar.settings import version
 
 VERSION = version.VERSION
+RESOURCE_FILE = os.path.join(OM_PATH, "openmolar", "qt4gui", "resources_rc.py")
 
 
-class sdist(_sdist):
+class Configure(_config):
+    '''
+    compile qt-designer files and qresources.
+    these files vary as the uic module advances, meaning files created on
+    debian testing may not work on debian stable etc...
+    '''
+
+    REMOVALS = ("        _translate = QtCore.QCoreApplication.translate\n",)
+
+    REPLACEMENTS = [("import resources_rc",
+                     "from openmolar.qt4gui import resources_rc"),
+                    ('from PyQt5',
+                     'from gettext import gettext as _\nfrom PyQt5')]
+
+    SRC_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                              "src", "openmolar", "qt-designer")
+
+    DEST_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                               "src", "openmolar", "qt4gui", "compiled_uis")
+
+    def gettext_wrap(self, match):
+        '''
+        a callable used form regex substitution
+        '''
+        return '_(%s)' % match.groups()[1].strip(" ")
+
+
+    def de_bracket(self, match):
+        '''
+        a callable used form regex substitution
+        '''
+        return match.groups()[0].strip("()")
+
+
+    def compile_ui(self, ui_fname, outdir):
+        name = os.path.basename(ui_fname)
+        outname = "Ui_%s.py" % name.rstrip(".ui")
+        pyfile = os.path.join(outdir, outname)
+
+        print("compiling %s" % ui_fname)
+
+        f = open(pyfile, "w")
+        uic.compileUi(ui_fname, f, execute=True)
+        f.close()
+
+        f = open(pyfile, "r")
+        data = f.read()
+        f.close()
+
+        newdata = data
+        for removal in self.REMOVALS:
+            newdata = newdata.replace(removal, "")
+
+        newdata = re.sub(r'_translate\((".*?"), (".*?")\)',
+                         self.gettext_wrap, newdata, 0, re.DOTALL)
+
+        for orig, new in self.REPLACEMENTS:
+            newdata = newdata.replace(orig, new)
+
+        if newdata != data:
+            f = open(pyfile, "w")
+            f.write(newdata)
+            f.close()
+        else:
+            print("om_pyuic made no changes to the standard uic output!")
+
+        return pyfile
+
+    def get_ui_files(self):
+        for ui_file in os.listdir(self.SRC_FOLDER):
+            if re.match(".*.ui$", ui_file):
+                yield ui_file
+
+
+    def run(self, *args, **kwargs):
+        print("running configure")
+        print("compiling qt-designer files")
+        for ui_file in self.get_ui_files():
+            path = os.path.join(self.SRC_FOLDER, os.path.basename(ui_file))
+            py_file = self.compile_ui(path, self.DEST_FOLDER)
+            if py_file:
+                print("created/updated py file", py_file)
+        print("compiling resource file")
+        p = subprocess.Popen(
+            ["pyrcc5", "-o", RESOURCE_FILE,
+             os.path.join(OM_PATH, "openmolar", "resources", "resources.qrc")]
+        )
+        p.wait()
+        print("configure completed")
+
+
+class Clean(_config):
+    '''
+    remove files created by configure
+    '''
+
+    def run(self, *args, **kwargs):
+        print("running clean")
+        for file_ in os.listdir(Configure.DEST_FOLDER):
+            if file_.startswith("Ui"):
+                os.remove(os.path.join(Configure.DEST_FOLDER, file_))
+        if os.path.exists(RESOURCE_FILE):
+            os.remove(RESOURCE_FILE)
+
+
+class Sdist(_sdist):
 
     '''
     overwrite distutils standard source code builder to remove
@@ -85,7 +195,7 @@ class sdist(_sdist):
         shutil.move(self.backup_version_filepath, self.version_filepath)
 
 
-class InstallData(install_data):
+class InstallLocale(install_data):
 
     '''
     re-implement class distutils.install_data install_data
@@ -131,23 +241,23 @@ setup(
     license='GPL v3',
     package_dir={'openmolar': 'src/openmolar'},
     packages=['openmolar',
-                'openmolar.backports',
-                'openmolar.dbtools',
-                'openmolar.schema_upgrades',
-                'openmolar.qt4gui',
-                'openmolar.qt4gui.dialogs',
-                'openmolar.qt4gui.appointment_gui_modules',
-                'openmolar.qt4gui.charts',
-                'openmolar.qt4gui.compiled_uis',
-                'openmolar.qt4gui.customwidgets',
-                'openmolar.qt4gui.dialogs',
-                'openmolar.qt4gui.fees',
-                'openmolar.qt4gui.feescale_editor',
-                'openmolar.qt4gui.phrasebook',
-                'openmolar.qt4gui.printing',
-                'openmolar.qt4gui.printing.gp17',
-                'openmolar.settings',
-                'openmolar.ptModules'],
+              'openmolar.backports',
+              'openmolar.dbtools',
+              'openmolar.schema_upgrades',
+              'openmolar.qt4gui',
+              'openmolar.qt4gui.dialogs',
+              'openmolar.qt4gui.appointment_gui_modules',
+              'openmolar.qt4gui.charts',
+              'openmolar.qt4gui.compiled_uis',
+              'openmolar.qt4gui.customwidgets',
+              'openmolar.qt4gui.dialogs',
+              'openmolar.qt4gui.fees',
+              'openmolar.qt4gui.feescale_editor',
+              'openmolar.qt4gui.phrasebook',
+              'openmolar.qt4gui.printing',
+              'openmolar.qt4gui.printing.gp17',
+              'openmolar.settings',
+              'openmolar.ptModules'],
     package_data={'openmolar': ['resources/icons/*.*',
                                 'resources/teeth/*.png',
                                 'resources/gp17/*.jpg',
@@ -163,7 +273,9 @@ setup(
         ('/usr/share/man/man1', ['bin/openmolar.1']),
         ('/usr/share/icons/hicolor/scalable/apps', ['bin/openmolar.svg']),
         ('/usr/share/applications', ['bin/openmolar.desktop']), ],
-    cmdclass={'sdist': sdist,
-              'install_data': InstallData},
+    cmdclass={'sdist': Sdist,
+              'clean': Clean,
+              'configure': Configure,
+              'install_data': InstallLocale},
     scripts=['openmolar'],
 )

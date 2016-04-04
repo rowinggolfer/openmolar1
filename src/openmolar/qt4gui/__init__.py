@@ -21,5 +21,14 @@
 # #                                                                         # #
 # ########################################################################### #
 
+import logging
+import sys
 
-from openmolar.qt4gui import resources_rc
+LOGGER = logging.getLogger("openmolar")
+
+try:
+    from openmolar.qt4gui import resources_rc
+except ImportError:
+    LOGGER.error(
+        "no resources_rc file.... have you ran setup.py configure?")
+    sys.exit("openmolar is not properly configured")

@@ -6,9 +6,10 @@ REPOSITORIES - see http://www.openmolar.com/om1/installation
 
 To get openMolar running from source, please follow these instructions
 
-openmolar requires a python3 runtime, qt4 for python3 and a python3 wrapper around the c-api for
-communicating with the database, along with a few other utilities. These are all
-available for most recent gnu/linux operating systems, and also for microsoft
+openmolar requires a python3 runtime, qt5 for python3 and a python3 wrapper around the c-api for
+communicating with the database, along with a few other utilities. 
+
+These are all available for most recent gnu/linux operating systems, and also for microsoft
 windows.
 You also need a mysql or mariadb database server running on your network, or on
 the client machine for a standalone test.
@@ -19,13 +20,15 @@ the client machine for a standalone test.
     On other operating systems, you need to install the equivalent software
     before running openmolar for the first time.
 
-    ##CLIENT MACHINE##
-    ensure depenencies are met on the client machine
+    ## CLIENT MACHINE(S) ##
+    ensure depenencies are met on the client machine(s)
 
-    ~$ sudo apt-get install python3-mysqldb python3-pyqt5 python3-pyqt5.qsci xdg-utils
+    ~$ sudo apt-get install python3-mysqldb python3-pyqt5 python3-pyqt5.qsci python3-pyqt5.qsci 
+                            python3-pyqt5.qtsvg python3-pyqt5.qtxmlpatterns python3-pyqt5.qtwebkit
+                            xdg-utils
 
 
-    ##SERVER MACHINE##
+    ## SERVER MACHINE ##
     ensure dependencies are met on the server machine (which will probably be the same machine as your client 
     for testing purposes, providing a service on "localhost")
 
@@ -39,32 +42,14 @@ the client machine for a standalone test.
 ----------------------------------------------------------------------------------------------------------------
 
 
-Once you have prepared your machine/network in this way, You are ready to try openmolar
+Once you have prepared your machine/network in this way, 
+you are ready to install openmolar
 
-navigate into the "src" directory and type
-~$ python3 main.py
-
-on first run of openMolar, you set a password for the app, you are given an opportunity to install a test database.
-
-
-NB - The test database is currently very limited with only 1 patient. (serial no 1)
-But The app will not run without it!
-
-
-the test database has one operator - "user". 
-So when prompted, enter the system password you just set up, and put "user" into the user1 field.
-
-
-if you wish to re-initiate your settings at any point, delete the file
-~/.openmolar/openmolar.conf, to trigger the setup wizard again, alternatively edit this file (with care)
-
-
-if / when you are ready to install, type
-
-~$ python setup.py install
+~$ python3 setup.py configure
+~$ python3 setup.py install
 
 
 regards
 
 Neil Wallace <neil@openmolar.com>
-Updated 23th Mar 2016
+Updated 4th April 2016
