@@ -102,7 +102,7 @@ def loadForum(om_gui):
                 if post.date > (localsettings.currentTime() -
                                 datetime.timedelta(hours=36)):
                     item.setIcon(i, om_gui.ui.forumNewTopic_pushButton.icon())
-                    item.setTextColor(i, QtGui.QColor("orange"))
+                    item.setForeground(i, QtGui.QBrush(QtGui.QColor("orange")))
                 # TODO - put in some code to set the text for "today"
                 # or yesterday etc...
         if GROUP_TOPICS:
