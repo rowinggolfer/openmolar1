@@ -43,6 +43,7 @@ import subprocess
 import sys
 
 from PyQt5 import uic
+from PyQt5.Qt import PYQT_VERSION_STR
 
 OM_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "src")
 sys.path.insert(0, OM_PATH)
@@ -51,6 +52,19 @@ from openmolar.settings import version
 
 VERSION = version.VERSION
 RESOURCE_FILE = os.path.join(OM_PATH, "openmolar", "qt4gui", "resources_rc.py")
+
+
+def version_fixes(pydata):
+    '''
+    apply some specific fixes to the compiled ui files.
+    '''
+    if PYQT_VERSION_STR < "5.3.2":
+        pydata = pydata.replace(
+            "MainWindow.setUnifiedTitleAndToolBarOnMac(False)",
+            "# MainWindow.setUnifiedTitleAndToolBarOnMac(False)"
+        )
+
+    return pydata
 
 
 class Build(_build):
@@ -111,6 +125,8 @@ class Build(_build):
 
         for orig, new in self.REPLACEMENTS:
             newdata = newdata.replace(orig, new)
+
+        newdata = version_fixes(newdata)
 
         if newdata != data:
             f = open(pyfile, "w")

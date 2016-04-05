@@ -220,7 +220,9 @@ class ChartWidget(QtWidgets.QWidget):
             tooth = self.grid[y][x]
             fills = []
             for fill in self.__dict__[tooth]:
-                if not re.match("!.*", fill):
+                if re.match("!.*", fill):
+                    fills.append(fill)
+                else:
                     fills.append(fill.upper())
             if fills:
                 advisory = "<center><b>   %s   </b></center><hr />%s" % (

@@ -92,6 +92,8 @@ tarball:
 	echo "making  tarball (using setup.py sdist)"
 	make clean_tmp
 	cd $(HEAD) ;\
+		python3 setup.py clean ;\
+	cd $(HEAD) ;\
 		python3 setup.py sdist ;\
 	echo "tarball created!"
 	mkdir -p $(BUILDS_DIR)
