@@ -28,7 +28,9 @@ see https://docs.python.org/2/distutils/configfile.html for explanation
 
 from distutils.command.install_data import install_data
 from distutils.command.sdist import sdist as _sdist
-from distutils.command.config import config as _config
+from distutils.command.build import build as _build
+from distutils.command.clean import clean as _clean
+from distutils.command.install import install as _install
 from distutils.core import setup
 from distutils.dep_util import newer
 from distutils.log import info
@@ -51,7 +53,7 @@ VERSION = version.VERSION
 RESOURCE_FILE = os.path.join(OM_PATH, "openmolar", "qt4gui", "resources_rc.py")
 
 
-class Configure(_config):
+class Build(_build):
     '''
     compile qt-designer files and qresources.
     these files vary as the uic module advances, meaning files created on
@@ -139,21 +141,23 @@ class Configure(_config):
              os.path.join(OM_PATH, "openmolar", "resources", "resources.qrc")]
         )
         p.wait()
+        _config.run(self, *args, **kwargs)
         print("configure completed")
 
 
-class Clean(_config):
+class Clean(_clean):
     '''
     remove files created by configure
     '''
 
     def run(self, *args, **kwargs):
         print("running clean")
-        for file_ in os.listdir(Configure.DEST_FOLDER):
+        for file_ in os.listdir(Build.DEST_FOLDER):
             if file_.startswith("Ui"):
-                os.remove(os.path.join(Configure.DEST_FOLDER, file_))
+                os.remove(os.path.join(Build.DEST_FOLDER, file_))
         if os.path.exists(RESOURCE_FILE):
             os.remove(RESOURCE_FILE)
+        _clean.run(self, *args, **kwargs)
 
 
 class Sdist(_sdist):
@@ -258,7 +262,8 @@ setup(
               'openmolar.qt4gui.printing.gp17',
               'openmolar.settings',
               'openmolar.ptModules'],
-    package_data={'openmolar': ['resources/icons/*.*',
+    package_data={'openmolar': ['qt-designer/*.*',
+                                'resources/icons/*.*',
                                 'resources/teeth/*.png',
                                 'resources/gp17/*.jpg',
                                 'resources/gp17-1/*.png',
@@ -275,7 +280,7 @@ setup(
         ('/usr/share/applications', ['bin/openmolar.desktop']), ],
     cmdclass={'sdist': Sdist,
               'clean': Clean,
-              'configure': Configure,
+              'build': Build,
               'install_data': InstallLocale},
     scripts=['openmolar'],
 )

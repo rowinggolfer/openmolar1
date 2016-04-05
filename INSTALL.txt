@@ -45,7 +45,7 @@ the client machine for a standalone test.
 Once you have prepared your machine/network in this way, 
 you are ready to install openmolar
 
-~$ python3 setup.py configure
+~$ python3 setup.py build
 ~$ python3 setup.py install
 
 
