@@ -141,8 +141,8 @@ class Build(_build):
              os.path.join(OM_PATH, "openmolar", "resources", "resources.qrc")]
         )
         p.wait()
-        _config.run(self, *args, **kwargs)
-        print("configure completed")
+        _build.run(self, *args, **kwargs)
+        print("build completed")
 
 
 class Clean(_clean):
