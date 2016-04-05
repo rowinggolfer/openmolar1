@@ -5,3 +5,5 @@ dist/*
 MANIFEST
 .ropeproject
 src/openmolar/qt4gui/compiled_uis/Ui*
+build
+resources_rc.py
