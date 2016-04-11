@@ -1334,7 +1334,7 @@ class DiaryWidget(Advisor):
         a new appointment has been selected for scheduling
         '''
         LOGGER.debug("DiaryWidget.schedule_controller_appointment_selected")
-        if not appt.unscheduled:
+        if appt is not None and not appt.unscheduled:
             self.signals_calendar(False)
             self.ui.weekCalendar.setSelectedDate(appt.date)
             self.set_date(appt.date)
