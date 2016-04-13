@@ -124,7 +124,8 @@ class ChildSmileDialog(BaseDialog):
 
     def postcode_warning(self):
         if not self.valid_postcode:
-            QtWidgets.QMessageBox.warning(self, "error", "Postcode is not valid")
+            QtWidgets.QMessageBox.warning(self, "error",
+                                          "Postcode is not valid")
 
     def check_pcde(self):
         if self.valid_postcode:
@@ -162,6 +163,7 @@ class ChildSmileDialog(BaseDialog):
             response = urllib.request.urlopen(req, timeout=20)
             result = response.read()
             self.result = self._parse_result(result)
+            TODAYS_LOOKUPS[self.pcde] = "SIMD: %s" % self.simd_number
         except urllib.error.URLError:
             LOGGER.error("url error polling NHS website?")
             self.result = _("Error polling website")
@@ -174,7 +176,6 @@ class ChildSmileDialog(BaseDialog):
         self.simd_label.setText("%s = %s" % (_("RESULT"), self.result))
         QtWidgets.QApplication.instance().processEvents()
 
-        TODAYS_LOOKUPS[self.pcde] = "SIMD: %s" % self.simd_number
         self.enableApply(self.simd_number is not None)
 
         self.header_label.setText("SIMD %d" % self.simd_number)
@@ -188,12 +189,18 @@ class ChildSmileDialog(BaseDialog):
             return "UNDECIPHERABLE REPLY"
 
     def manual_entry(self):
-        simd, result = QtWidgets.QInputDialog.getInteger(
-            self, _("Manual Input Required"),
-            _("Online lookup has failed, please enter the SIMD manually"),
-            4, 1, 5)
-        if not result:
+        dl = QtWidgets.QInputDialog(self)
+        dl.setWindowTitle(_("Manual Input Required"))
+        dl.setInputMode(dl.IntInput)
+        dl.setIntRange(1, 5)
+        dl.setIntValue(4)
+        dl.setLabelText(
+            _("Online lookup has failed, please enter the SIMD manually"))
+        self.rejected.connect(dl.reject)  # for Unittests
+        if dl.exec_():
             self.reject()
+            return
+        simd = dl.intValue()
         self.result += " - Manually entered SIMD of %d" % simd
         return simd
 

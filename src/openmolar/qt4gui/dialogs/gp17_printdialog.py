@@ -238,25 +238,3 @@ class GP17PrintDialog(ExtendableDialog):
             self.apply()
             return True
         return False
-
-
-if __name__ == "__main__":
-    import os
-    from openmolar.dbtools import patient_class
-
-    os.chdir(os.path.expanduser("~"))  # for save pdf
-
-    localsettings.initiate()
-
-    app = QtWidgets.QApplication([])
-
-    pt = patient_class.patient(20862)
-    dl = GP17PrintDialog(pt)
-    if dl.exec_():
-        for Form in dl.chosen_forms:
-            form = Form()
-            form.set_data(dl.data)
-
-            form.set_testing_mode(dl.print_boxes)
-            form.set_background_mode(dl.print_background)
-            form.controlled_print()

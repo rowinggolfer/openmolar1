@@ -21,6 +21,7 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
 import re
 
 from PyQt5 import QtCore
@@ -49,7 +50,7 @@ class TxDisplayWidget(QtWidgets.QWidget):
         but.clicked.connect(self._complete_treatments)
 
         layout = QtWidgets.QHBoxLayout(self)
-        # layout.setMargin(0)
+        layout.setSpacing(1)
         layout.addWidget(self.pl_lineedit)
         layout.addWidget(but)
         layout.addWidget(self.cmp_lineedit)
@@ -105,6 +106,7 @@ class AdvancedTxPlanningDialog(ExtendableDialog):
         self.widgets = {}
         frame = QtWidgets.QFrame()
         form_layout = QtWidgets.QFormLayout(frame)
+        form_layout.setSpacing(0)
 
         plan_header_label = QtWidgets.QLabel(_("Planned Text"))
         plan_header_label.setAlignment(QtCore.Qt.AlignCenter)
@@ -129,6 +131,7 @@ class AdvancedTxPlanningDialog(ExtendableDialog):
 
         chart_frame = QtWidgets.QFrame()
         form_layout2 = QtWidgets.QFormLayout(chart_frame)
+        form_layout2.setSpacing(0)
 
         plan_header_label = QtWidgets.QLabel(_("Planned Text"))
         plan_header_label.setAlignment(QtCore.Qt.AlignCenter)
@@ -188,7 +191,7 @@ class AdvancedTxPlanningDialog(ExtendableDialog):
     def _show_chart(self):
         self.SHOW_CHART_ITEMS = not self.SHOW_CHART_ITEMS
         self.chart_scroll_area.setVisible(self.SHOW_CHART_ITEMS)
-        self.hide_extension()
+        self.show_extension(False)
         self.resize(self.sizeHint())
         if self.SHOW_CHART_ITEMS:
             self.chart_but.setText(_("Hide Chart Items"))
@@ -311,26 +314,3 @@ class AdvancedTxPlanningDialog(ExtendableDialog):
             return True
 
         return False
-
-
-if __name__ == "__main__":
-    from gettext import gettext as _
-    from openmolar.dbtools.patient_class import patient
-
-    app = QtWidgets.QApplication([])
-    mw = QtWidgets.QWidget()
-    mw.pt = patient(11956)
-    dl = AdvancedTxPlanningDialog(mw)
-    if dl.exec_():
-        for att, item in dl.deleted_plan_items:
-            print("%spl %s deleted" % (att, item))
-        for att, item in dl.deleted_cmp_items:
-            print("%scmp %s deleted" % (att, item))
-        for att, item in dl.new_plan_items:
-            print("%spl %s added" % (att, item))
-        for att, item in dl.new_cmp_items:
-            print("%scmp %s added" % (att, item))
-        for att, item in dl.completed_items:
-            print("%s %s was completed" % (att, item))
-        for att, item in dl.reversed_items:
-            print("%s %s was reveresed" % (att, item))

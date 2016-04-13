@@ -21,10 +21,13 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
 import logging
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
+
+from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
 LOGGER = logging.getLogger("openmolar")
@@ -35,11 +38,11 @@ class AccountSeverityDialog(BaseDialog):
     def __init__(self, parent=None):
         BaseDialog.__init__(self, parent)
         self.setWindowTitle(_("Account Dialog"))
-        label = QtWidgets.QLabel(_("Please Choose the tone of this letter"))
-        label.setAlignment(QtCore.Qt.AlignCenter)
+        label = WarningLabel(_("Please Choose the tone of this letter"))
         self.radio_button_a = QtWidgets.QRadioButton(
             _("Normal Account - Very Polite"))
-        self.radio_button_b = QtWidgets.QRadioButton(_("Mildly assertive request"))
+        self.radio_button_b = QtWidgets.QRadioButton(
+            _("Mildly assertive request"))
         self.radio_button_c = QtWidgets.QRadioButton(
             _("Threaten with Debt Collector"))
 
@@ -61,12 +64,3 @@ class AccountSeverityDialog(BaseDialog):
 
     def sizeHint(self):
         return QtCore.QSize(300, 200)
-
-
-if __name__ == "__main__":
-    LOGGER.setLevel(logging.DEBUG)
-    app = QtWidgets.QApplication([])
-
-    dl = AccountSeverityDialog()
-    if dl.exec_():
-        print(dl.severity)

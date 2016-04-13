@@ -488,13 +488,3 @@ class AlterDentureDialog(ExtendableDialog):
         if result:
             result = self.check_valid_input or self.exec_()
         return result
-
-
-if __name__ == "__main__":
-
-    app = QtWidgets.QApplication([])
-    LOGGER.setLevel(logging.DEBUG)
-    dl = AlterDentureDialog(None)
-    if dl.exec_():
-        for att, tx in dl.chosen_treatments:
-            print(att, tx)

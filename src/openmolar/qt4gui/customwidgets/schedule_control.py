@@ -176,7 +176,7 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
         # now arrange the stacked widget
 
         # page 0 - Browsing mode
-        self.browsing_webview = QtWebKitWidgets.QWebView()
+        self.browsing_webview = QtWebKitWidgets.QWebView(self)
         self.reset_browsing_webview()
         self.addWidget(self.browsing_webview)
 

@@ -27,20 +27,17 @@ from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 
-from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
-
 from openmolar.dbtools import appointments
 from openmolar.qt4gui.printing import apptcardPrint
 
 
 class AppointmentCardDialog(BaseDialog):
 
-    def __init__(self, patient, parent):
+    def __init__(self, patient, parent=None):
         BaseDialog.__init__(self, parent)
         self.pt = patient
 
-        self.main_ui = parent
         patient_label = QtWidgets.QLabel(
             "%s<br /><b>%s</b>" % (_("Appointment Card for"), patient.name_id))
 
@@ -54,8 +51,6 @@ class AppointmentCardDialog(BaseDialog):
         icon = QtGui.QIcon(":/ps.png")
         self.apply_but.setText(_("Print"))
         self.apply_but.setIcon(icon)
-
-        self.remove_spacer()
 
         self.insertWidget(patient_label)
         self.insertWidget(self.appointments_label)
@@ -85,8 +80,11 @@ class AppointmentCardDialog(BaseDialog):
         self.set_label_text()
 
         if self.appts == []:
-            QtWidgets.QMessageBox.information(self, "warning",
-                                          _("No appointments to print!"))
+            mb = QtWidgets.QMessageBox(self)
+            mb.setWindowTitle(_("message"))
+            mb.setText(_("No appointments to print!"))
+            self.rejected.connect(mb.accept)  # useful for Unittest
+            mb.exec_()
             self.reject()
 
         print_today_issue = False
@@ -114,14 +112,3 @@ class AppointmentCardDialog(BaseDialog):
         card.print_()
         self.pt.addHiddenNote("printed", "appt card")
         BaseDialog.accept(self)
-
-
-if __name__ == "__main__":
-    localsettings.initiate()
-    from openmolar.dbtools import patient_class
-    pt = patient_class.patient(20862)
-
-    app = QtWidgets.QApplication([])
-
-    dl = AppointmentCardDialog(pt, None)
-    dl.exec_()

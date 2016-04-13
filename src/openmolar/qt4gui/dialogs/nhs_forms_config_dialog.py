@@ -134,13 +134,3 @@ class NHSFormsConfigDialog(BaseDialog):
             self.apply()
             return True
         return False
-
-
-if __name__ == "__main__":
-
-    localsettings.initiate()
-    app = QtWidgets.QApplication([])
-
-    dl = NHSFormsConfigDialog()
-
-    print((dl.exec_()))

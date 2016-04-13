@@ -71,11 +71,3 @@ class AssistantSelectDialog(QtWidgets.QDialog):
             localsettings.setOperator(localsettings.clinicianInits, u2)
             return (True, u2)
         return (False, None)
-
-
-if __name__ == "__main__":
-    localsettings.initiateUsers()
-    app = QtWidgets.QApplication([])
-    dl = AssistantSelectDialog()
-    print(dl.result())
-    app.closeAllWindows()

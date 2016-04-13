@@ -69,7 +69,7 @@ class ListModel(QtCore.QAbstractListModel):
 class EditReferralCentresDialog(BaseDialog):
 
     def __init__(self, parent=None):
-        BaseDialog.__init__(self, parent, remove_stretch=True)
+        BaseDialog.__init__(self, parent)
         message = _("Edit Referral Centres")
         self.setWindowTitle(message)
 
@@ -136,7 +136,7 @@ class EditReferralCentresDialog(BaseDialog):
         # self.enableApply()
 
     def sizeHint(self):
-        return QtCore.QSize(700, 300)
+        return QtCore.QSize(800, 500)
 
     def signals(self, connect=True):
         for signal in (self.description_line_edit.textChanged,
@@ -295,11 +295,3 @@ class EditReferralCentresDialog(BaseDialog):
             referral.delete_centres(self.deleted_centres)
             return True
         return False
-
-
-if __name__ == "__main__":
-    LOGGER.setLevel(logging.DEBUG)
-    app = QtWidgets.QApplication([])
-
-    dl = EditReferralCentresDialog()
-    dl.exec_()

@@ -96,22 +96,3 @@ class AddTreatmentDialog(QtWidgets.QDialog, Ui_addTreatment.Ui_Dialog):
                     for n in range(number):
                         yield item_widg.usercode
 
-
-if __name__ == "__main__":
-    import sys
-    localsettings.initiate()
-    localsettings.loadFeeTables()
-    app = QtWidgets.QApplication(sys.argv)
-
-    from openmolar.dbtools import patient_class
-    pt = patient_class.patient(11956)
-    items = (
-            ("exam", "CE"),
-            ("xray", "M"),
-            ("perio", "SP")
-    )
-
-    dl = AddTreatmentDialog(items, pt)
-    dl.use_completed_messages()
-    for att, shortcut in dl.getInput():
-        print("chosen item = %s %s" % (att, shortcut))

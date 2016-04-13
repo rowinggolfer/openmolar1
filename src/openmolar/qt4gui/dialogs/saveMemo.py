@@ -23,6 +23,7 @@
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
+
 from openmolar.qt4gui.compiled_uis import Ui_saveMemo
 from openmolar.settings import localsettings
 from openmolar.dbtools import memos
@@ -72,11 +73,3 @@ class SaveMemoDialog(Ui_saveMemo.Ui_Dialog, QtWidgets.QDialog):
             type = "all"
 
         return memos.saveMemo(self.sno, author, type, exdate, message, True)
-
-
-if __name__ == "__main__":
-    localsettings.initiateUsers()
-    localsettings.initiate()
-    app = QtWidgets.QApplication([])
-    dl = SaveMemoDialog(11956)
-    print(dl.getInput())

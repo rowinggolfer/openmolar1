@@ -25,6 +25,7 @@ import logging
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
+
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
@@ -89,16 +90,3 @@ class CloseCourseDialog(BaseDialog):
     @property
     def ftr(self):
         return self.ftr_checkbox.isChecked()
-
-
-if __name__ == "__main__":
-    LOGGER.setLevel(logging.DEBUG)
-    app = QtWidgets.QApplication([])
-
-    dl = CloseCourseDialog(True)
-    dl.patient_label.setText("test")
-    # dl.tx_complete_label.hide()
-    dl.set_minimum_date(QtCore.QDate().currentDate().addMonths(-1))
-
-    if dl.exec_():
-        print(dl.completion_date, dl.ftr)

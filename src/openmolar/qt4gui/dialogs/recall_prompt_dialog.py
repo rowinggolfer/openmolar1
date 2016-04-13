@@ -21,10 +21,12 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
 import logging
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
+
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
@@ -77,14 +79,3 @@ class RecallPromptDialog(BaseDialog):
     def reject(self):
         self.result = self.CANCEL
         BaseDialog.reject(self)
-
-
-if __name__ == "__main__":
-    LOGGER.setLevel(logging.DEBUG)
-    app = QtWidgets.QApplication([])
-    from openmolar.dbtools.patient_class import patient
-
-    dl = RecallPromptDialog(patient(11932))
-
-    dl.exec_()
-    print(dl.result)

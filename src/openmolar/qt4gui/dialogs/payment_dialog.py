@@ -303,12 +303,3 @@ class PaymentDialog(ExtendableDialog):
             self.card_but.setEnabled(False)
 
         self.misc_payment_widget.hide_treatment(hide)
-
-
-if __name__ == "__main__":
-    from gettext import gettext as _
-    app = QtWidgets.QApplication([])
-    dl = PaymentDialog()
-    # dl.hide_treatment(True)
-    dl.exec_()
-    app.closeAllWindows()

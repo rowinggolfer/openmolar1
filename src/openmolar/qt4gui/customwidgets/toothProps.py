@@ -37,9 +37,7 @@ from openmolar.qt4gui.dialogs.crown_choice_dialog import CrownChoiceDialog
 from openmolar.qt4gui.dialogs.post_choice_dialog import PostChoiceDialog
 from openmolar.qt4gui.dialogs.implant_choice_dialog import ImplantChoiceDialog
 from openmolar.qt4gui.dialogs.chart_tx_choice_dialog import ChartTxChoiceDialog
-from openmolar.qt4gui.dialogs.bridge_dialog import BridgeDialog
-
-from openmolar.qt4gui.dialogs import toothprop_fulledit
+from openmolar.qt4gui.dialogs.toothprop_fulledit import ToothPropEditor
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -397,14 +395,13 @@ class ToothPropertyEditingWidget(QtWidgets.QWidget, Ui_toothProps.Ui_Form):
         user has clicked the edit button
         allow the user to edit the full contents of a tootget\ h
         '''
-        Dialog = QtWidgets.QDialog(self)
         lineEdit = chartLineEdit()
         if self.selectedChart == "st":
             lineEdit.setMaxLength(34)
         lineEdit.setText(self.lineEdit.text())
 
-        dl = toothprop_fulledit.editor(self.selectedTooth, self.selectedChart,
-                                       lineEdit, Dialog)
+        dl = ToothPropEditor(self.selectedTooth, self.selectedChart,
+                             lineEdit, self.parent())
 
         if dl.exec_():
             self.lineEdit.setText(dl.result)

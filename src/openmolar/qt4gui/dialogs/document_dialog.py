@@ -21,16 +21,16 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
 import logging
 import os
+from xml.dom import minidom
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
 from openmolar.settings import localsettings, urls
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
-
-from xml.dom import minidom
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -126,19 +126,19 @@ class DocumentDialog(ExtendableDialog):
                 for group in doc_node.getElementsByTagName("group"):
                     docs = group.getElementsByTagName("document")
                     group_widg = _LabelledFileListWidget(docs)
-                    tab = widg.addTab(
-                        group_widg,
-                        group.getAttribute("heading"))
+                    tab = widg.addTab(group_widg,
+                                      group.getAttribute("heading"))
                     group_widg.radio_buts[0].setChecked(True)
                 widg.selected_file = widg.currentWidget().selected_file
             except:
-                LOGGER.exception("unable to parse '%s'" % control_f)
+                LOGGER.exception("unable to parse '%s'", control_f)
                 widg = QtWidgets.QLabel(_("docs.xml is not parseable"))
 
         else:
             # self.remove_spacer()
             widg = _FileListWidget(files)
 
+        self.apply_but.setText(_("Open &File"))
         self.enableApply(bool(widg.selected_file()))
         self.insertWidget(label)
         self.insertWidget(widg)
@@ -166,7 +166,7 @@ class DocumentDialog(ExtendableDialog):
                 os.path.join(localsettings.DOCS_DIRECTORY, doc))
             LOGGER.info("opening %s" % doc)
             localsettings.openPDF(doc)
-        except Exception as exc:
+        except Exception:
             message = _("Error opening PDF file")
             LOGGER.exception(message)
             self.parent().advise(message, 2)
@@ -176,14 +176,3 @@ class DocumentDialog(ExtendableDialog):
             self._open_document()
             return True
         return False
-
-
-if __name__ == "__main__":
-    app = QtWidgets.QApplication([])
-
-    def advise(message, severity):
-        QtWidgets.QMessageBox.information(dl, "message", message)
-
-    mw = QtWidgets.QWidget()
-    dl = DocumentDialog(mw)
-    dl.exec_()

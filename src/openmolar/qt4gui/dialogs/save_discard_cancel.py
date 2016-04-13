@@ -66,7 +66,7 @@ class SaveDiscardCancelDialog(ExtendableDialog):
         self.result = self.SAVE
 
     def sizeHint(self):
-        return QtCore.QSize(400, 100)
+        return QtCore.QSize(400, 200)
 
     def _clicked(self, but):
         if but == self.discard_but:
@@ -94,16 +94,3 @@ class SaveDiscardCancelDialog(ExtendableDialog):
     def reject(self):
         self.result = self.CANCEL
         QtWidgets.QDialog.reject(self)
-
-
-if __name__ == "__main__":
-    logging.basicConfig()
-    LOGGER.setLevel(logging.DEBUG)
-    changes = ["Sname", "Fname"]
-
-    app = QtWidgets.QApplication([])
-    message = "You have unsaved changes"
-
-    dl = SaveDiscardCancelDialog(message, changes)
-    dl.exec_()
-    print(dl.result)

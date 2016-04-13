@@ -22,7 +22,9 @@
 # ########################################################################### #
 
 import copy
+from gettext import gettext as _
 import logging
+
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
@@ -75,7 +77,7 @@ class CourseMergeDialog(ExtendableDialog):
         QtWidgets.QMessageBox.information(self, _("message"), message)
 
     def sizeHint(self):
-        return QtCore.QSize(600, 600)
+        return QtCore.QSize(800, 600)
 
     def get_data(self):
         self.tx_course1 = treatment_course.TreatmentCourse(self.serialno,
@@ -116,11 +118,11 @@ class CourseMergeDialog(ExtendableDialog):
             if self.tx_course1.accd < new_course.accd:
                 new_course.accd = self.tx_course1.accd
             if (new_course.cmpd is not None or
-               self.tx_course1.cmpd > new_course.cmpd):
+                    self.tx_course1.cmpd > new_course.cmpd):
                 new_course.cmpd = self.tx_course1.cmpd
             if (new_course.examd is None or
-               (self.tx_course1.examd and
-                    self.tx_course1.examd < new_course.examd)):
+                    (self.tx_course1.examd and
+                     self.tx_course1.examd < new_course.examd)):
                 new_course.examd = self.tx_course1.examd
             if self.tx_course1.examt > new_course.examt:
                 new_course.examt = self.tx_course1.examt
@@ -165,17 +167,7 @@ class CourseMergeDialog(ExtendableDialog):
         if treatment_course.update_course(trtchanges.rstrip(","),
                                           trtvalues,
                                           self.serialno,
-                                          self.courseno2
-                                          ):
+                                          self.courseno2):
             treatment_course.update_estimate_courseno(self.courseno1,
                                                       self.courseno2)
             treatment_course.delete_course(self.serialno, self.courseno1)
-
-
-if __name__ == "__main__":
-
-    app = QtWidgets.QApplication([])
-    LOGGER.setLevel(logging.DEBUG)
-    dl = CourseMergeDialog(12647, 6879, 2385)
-    if dl.exec_():
-        dl.update_db()

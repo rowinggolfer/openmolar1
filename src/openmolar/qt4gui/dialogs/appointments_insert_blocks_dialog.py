@@ -249,11 +249,3 @@ class InsertBlocksDialog(BaseDialog):
                     _("Bad Input"),
                     "<ul><li>%s</li></ul>" % "</li><li>".join(warnings))
         self.reject()
-
-
-if __name__ == "__main__":
-    localsettings.initiate()
-    app = QtWidgets.QApplication([])
-    dl = InsertBlocksDialog()
-    if dl.exec_():
-        dl.apply()

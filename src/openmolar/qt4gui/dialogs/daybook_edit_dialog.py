@@ -23,6 +23,7 @@
 
 from gettext import gettext as _
 import logging
+
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
@@ -121,12 +122,3 @@ class DaybookEditDialog(ExtendableDialog):
         apply any edits (should be called if self.exec_() == True)
         '''
         daybook.update_treatments(self.daybook_id, self.new_values())
-
-
-if __name__ == "__main__":
-
-    app = QtWidgets.QApplication([])
-    LOGGER.setLevel(logging.DEBUG)
-    dl = DaybookEditDialog(337646)
-    if dl.exec_():
-        dl.update_treatments()

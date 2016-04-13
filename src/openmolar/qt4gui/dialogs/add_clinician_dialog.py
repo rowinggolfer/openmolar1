@@ -30,11 +30,8 @@ from PyQt5 import QtWidgets
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
-from openmolar.qt4gui.customwidgets.upper_case_line_edit \
-    import UpperCaseLineEdit
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 from openmolar.qt4gui.dialogs.add_user_dialog import AddUserDialog
-
 from openmolar.dbtools import db_settings
 
 LOGGER = logging.getLogger("openmolar")
@@ -194,14 +191,3 @@ class AddClinicianDialog(ExtendableDialog):
         if ExtendableDialog.exec_(self):
             return self.apply()
         return False
-
-
-if __name__ == "__main__":
-    LOGGER.setLevel(logging.DEBUG)
-    app = QtWidgets.QApplication([])
-    localsettings.initiateUsers()
-    localsettings.initiate()
-
-    dl = AddClinicianDialog(True)
-    if dl.exec_():
-        print("clinician added to database successfully")

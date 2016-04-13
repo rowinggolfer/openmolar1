@@ -92,14 +92,3 @@ class DentureDialog(BaseDialog):
             self.accept()
         else:
             self.reject()
-
-
-if __name__ == "__main__":
-
-    app = QtWidgets.QApplication([])
-    LOGGER.setLevel(logging.DEBUG)
-    dl = DentureDialog(None)
-    if dl.exec_():
-        print(dl.chosen_treatments)
-    else:
-        print("dialog rejected")

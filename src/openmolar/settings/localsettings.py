@@ -757,7 +757,7 @@ def autologin():
     look in ~/.openmolar/login.conf for login options
     '''
     PASSWORD, USER1, USER2 = "", "", ""
-    scp = configparser.SafeConfigParser()
+    scp = configparser.ConfigParser()
     scp.read(LOGIN_CONF)
     try:
         try:

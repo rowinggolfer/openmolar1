@@ -22,7 +22,6 @@
 # ########################################################################### #
 
 from gettext import gettext as _
-from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 from openmolar.settings import localsettings
 from openmolar.dbtools import patient_class
@@ -33,12 +32,12 @@ from openmolar.qt4gui.dialogs.find_patient_dialog import FindPatientDialog
 from openmolar.qt4gui.customwidgets import fiveminutetimeedit
 
 
-class blockDialog(Ui_blockSlot.Ui_Dialog):
+class BlockDialog(Ui_blockSlot.Ui_Dialog, QtWidgets.QDialog):
 
-    def __init__(self, Dialog, om_gui=None):
-        self.Dialog = Dialog
-        self.om_gui = om_gui
-        self.setupUi(Dialog)
+    def __init__(self, parent=None):
+        QtWidgets.QDialog.__init__(self, parent)
+        self.setupUi(self)
+        self.om_gui = parent
         vlayout = QtWidgets.QVBoxLayout(self.blockStart_frame)
         # vlayout.setMargin(0)
         self.start_timeEdit = fiveminutetimeedit.FiveMinuteTimeEdit()
@@ -94,7 +93,7 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
 
     def exec_(self):
         while True:
-            if self.Dialog.exec_():
+            if QtWidgets.QDialog.exec_(self):
                 errors = []
                 if self.start_timeEdit.time() < self.earliestStart:
                     errors.append(
@@ -122,9 +121,8 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
                         errorlist += "<li>%s</li>" % error
                     message = "<p>%s...<ul>%s</ul></p>" % (
                         _("Unable to commit because"), errorlist)
-                    QtWidgets.QMessageBox.information(self.Dialog, _("error"),
-                                                  message)
-
+                    QtWidgets.QMessageBox.information(self, _("error"),
+                                                      message)
                 else:
                     self.block = self.tabWidget.currentIndex() == 0
                     return True
@@ -139,7 +137,7 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
                 self.setPatient(patient_class.patient(serialno))
             except localsettings.PatientNotFoundError:
                 QtWidgets.QMessageBox.information(
-                    self.Dialog, _("Error"), _("patient not found"))
+                    self, _("Error"), _("patient not found"))
                 self.setPatient(patient_class.patient(0))
 
     def setPatient(self, pt):
@@ -177,15 +175,3 @@ class blockDialog(Ui_blockSlot.Ui_Dialog):
             self.length_spinBox.setMaximum(self.length)
         self.length_spinBox.setValue(self.length)
 
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    dialog = QtWidgets.QDialog()
-    dl = blockDialog(dialog)
-    start = QtCore.QTime(14, 40)
-    finish = QtCore.QTime(15, 15)
-    dl.setTimes(start, finish)
-    dl.exec_()
-
-    app.closeAllWindows()

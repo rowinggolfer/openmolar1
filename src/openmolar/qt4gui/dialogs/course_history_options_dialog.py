@@ -21,10 +21,13 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
 import logging
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
+
+from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
 LOGGER = logging.getLogger("openmolar")
@@ -38,8 +41,7 @@ class CourseHistoryOptionsDialog(BaseDialog):
     def __init__(self, parent=None):
         BaseDialog.__init__(self, parent)
         self.setWindowTitle(_("Options Dialog"))
-        label = QtWidgets.QLabel("<b>%s</b>" % _("What do you wish to show?"))
-        label.setAlignment(QtCore.Qt.AlignCenter)
+        label = WarningLabel("<b>%s</b>" % _("What do you wish to show?"))
 
         self.estimates_checkbox = QtWidgets.QCheckBox(_("Include Estimates"))
         self.estimates_checkbox.setChecked(self.include_estimates)
@@ -49,7 +51,8 @@ class CourseHistoryOptionsDialog(BaseDialog):
         self.daybook_checkbox.setChecked(self.include_daybook)
         self.daybook_checkbox.toggled.connect(self.toggle_daybook)
 
-        help_label = QtWidgets.QLabel(_("Leave both unchecked for courses only"))
+        help_label = QtWidgets.QLabel(
+            _("Leave both unchecked for courses only"))
         help_label.setAlignment(QtCore.Qt.AlignCenter)
 
         self.insertWidget(label)
@@ -60,19 +63,10 @@ class CourseHistoryOptionsDialog(BaseDialog):
         self.enableApply()
 
     def sizeHint(self):
-        return QtCore.QSize(200, 150)
+        return QtCore.QSize(300, 400)
 
     def toggle_estimates(self, value):
         CourseHistoryOptionsDialog.include_estimates = value
 
     def toggle_daybook(self, value):
         CourseHistoryOptionsDialog.include_daybook = value
-
-
-if __name__ == "__main__":
-    LOGGER.setLevel(logging.DEBUG)
-    app = QtWidgets.QApplication([])
-
-    dl = CourseHistoryOptionsDialog()
-    if dl.exec_():
-        print(dl.include_estimates, dl.include_daybook)

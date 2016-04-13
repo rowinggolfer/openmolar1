@@ -21,7 +21,9 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
 import logging
+
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
@@ -110,7 +112,8 @@ class CourseEditDialog(ExtendableDialog):
             self.examd_date_edit.setDate(examd)
             form_layout.addRow(_("exam date"), self.examd_date_edit)
         else:
-            form_layout.addRow(QtWidgets.QLabel(_("No Exam Date on this course")))
+            form_layout.addRow(QtWidgets.QLabel(
+                _("No Exam Date on this course")))
         self.accd_date_edit.dateChanged.connect(self._check_applicable)
         self.cmpd_date_edit.dateChanged.connect(self._check_applicable)
 
@@ -133,12 +136,3 @@ class CourseEditDialog(ExtendableDialog):
         '''
         treatment_course.update_course_dates(
             self.accd, self.cmpd if self.cmpd_db else None, self.courseno)
-
-
-if __name__ == "__main__":
-
-    app = QtWidgets.QApplication([])
-    LOGGER.setLevel(logging.DEBUG)
-    dl = CourseEditDialog(17437)
-    if dl.exec_():
-        dl.update_db()

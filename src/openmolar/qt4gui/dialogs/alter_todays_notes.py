@@ -107,8 +107,11 @@ class AlterTodaysNotesDialog(BaseDialog):
         cursor.close()
 
         if self.patient_loaded and not count:
-            QtWidgets.QMessageBox.information(self, _("message"),
-                                          _("No notes found for today!"))
+            mb = QtWidgets.QMessageBox(self)
+            mb.setWindowTitle(_("message"))
+            mb.setText(_("No notes found for today!"))
+            self.rejected.connect(mb.accept)  # useful for Unittest
+            mb.exec_()
             self.signals()
             return
 
@@ -158,14 +161,3 @@ class AlterTodaysNotesDialog(BaseDialog):
         if BaseDialog.exec_(self):
             self.apply_changed()
             return True
-
-
-if __name__ == "__main__":
-
-    localsettings.initiate()
-    localsettings.operator = "NW"
-    app = QtWidgets.QApplication([])
-
-    LOGGER.setLevel(logging.DEBUG)
-    dl = AlterTodaysNotesDialog(11956, None)
-    dl.exec_()

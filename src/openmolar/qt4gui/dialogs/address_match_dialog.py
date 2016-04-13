@@ -21,15 +21,14 @@
 # #                                                                         # #
 # ########################################################################### #
 
-import datetime
+from gettext import gettext as _
 import re
+
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
 from openmolar.settings import localsettings
-from openmolar.connect import connect
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
-
 from openmolar.dbtools import families
 
 
@@ -62,8 +61,7 @@ class AddressMatchDialog(BaseDialog):
                             self.om_gui.pt.addr3,
                             self.om_gui.pt.town,
                             self.om_gui.pt.county,
-                            self.om_gui.pt.pcde,
-                            )
+                            self.om_gui.pt.pcde,)
 
         addr = "%s, %s, %s, %s, %s, %s" % (
             self.address[0],
@@ -98,12 +96,10 @@ class AddressMatchDialog(BaseDialog):
 
         self.table_widget.clear()
         self.table_widget.setSortingEnabled(False)
-        #--good practice to disable this while loading
         self.table_widget.setRowCount(len(rows))
         self.table_widget.setColumnCount(len(HEADERS))
         self.table_widget.setHorizontalHeaderLabels(HEADERS)
         self.table_widget.horizontalHeader().setStretchLastSection(True)
-        # table.verticalHeader().hide()
         for row, result in enumerate(rows):
             for col, field in enumerate(result):
                 if field is None:
@@ -125,7 +121,6 @@ class AddressMatchDialog(BaseDialog):
         self.table_widget.setColumnWidth(1, 0)
         self.table_widget.setSortingEnabled(True)
         self.table_widget.sortItems(0, QtCore.Qt.DescendingOrder)
-        #--allow user to sort pt attributes
 
     @property
     def selected_patients(self):
@@ -139,21 +134,3 @@ class AddressMatchDialog(BaseDialog):
         for row in rows:
             patients.append(int(self.table_widget.item(row, 1).text()))
         return patients
-
-
-if __name__ == "__main__":
-
-    localsettings.initiate()
-    app = QtWidgets.QApplication([])
-
-    from .family_manage_dialog import _DuckPatient
-
-    mw = QtWidgets.QWidget()
-    mw.pt = _DuckPatient((1, "", "", "", "The Gables",
-                          "Craggiemore Daviot", "Inverness", "", "",
-                          "IV2 5XQ", "", "active", ""))
-
-    print(mw.pt)
-    dl = AddressMatchDialog(mw)
-    if dl.exec_():
-        print(dl.selected_patients)

@@ -21,7 +21,9 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
 import logging
+
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
@@ -154,15 +156,3 @@ class AutoAddressDialog(BaseDialog):
         elif BaseDialog.exec_(self):
             return True
         return False
-
-
-if __name__ == "__main__":
-
-    localsettings.initiate()
-    app = QtWidgets.QApplication([])
-
-    mw = QtWidgets.QWidget()
-
-    dl = AutoAddressDialog(mw)
-
-    print((dl.exec_()))

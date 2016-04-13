@@ -22,8 +22,10 @@
 # ########################################################################### #
 
 from gettext import gettext as _
+
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
+
 from openmolar.qt4gui.compiled_uis import Ui_activeDentStartFinish
 from openmolar.qt4gui.compiled_uis import Ui_aslotEdit
 from openmolar.qt4gui.customwidgets import fiveminutetimeedit
@@ -138,7 +140,7 @@ class dentWidget(Ui_activeDentStartFinish.Ui_Form):
         self.lineEdit.setText(arg.memo)
 
 
-class alterDayDialog(Ui_aslotEdit.Ui_Dialog):
+class alterDayDialog(Ui_aslotEdit.Ui_Dialog, QtWidgets.QDialog):
 
     '''
     a custom dialog to enter the start dates, end dates and availability
@@ -147,13 +149,12 @@ class alterDayDialog(Ui_aslotEdit.Ui_Dialog):
 
     def __init__(self, diary_widget, date):
         # date passed in is a QDate
-        self.dialog = QtWidgets.QDialog(diary_widget)
+        QtWidgets.QDialog.__init__(self, diary_widget)
         self.diary_widget = diary_widget
-        self.setupUi(self.dialog)
+        self.setupUi(self)
         self.data_list = []
         self.date = date
-        self.dialog.setWindowTitle(_("Clinician Times") +
-                                   " - %s" % date.toString())
+        self.setWindowTitle("%s - %s" % (_("Clinician Times"), date.toString()))
         self.loadData()
         self.showItems()
 
@@ -255,17 +256,6 @@ class alterDayDialog(Ui_aslotEdit.Ui_Dialog):
         return changed
 
     def getInput(self):
-        if self.dialog.exec_():
+        if self.exec_():
             changes = self.checkForChanges()
             return self.applyChanges(changes)
-
-
-if __name__ == "__main__":
-    import sys
-    localsettings.initiate()
-    app = QtWidgets.QApplication(sys.argv)
-    from openmolar.qt4gui.diary_widget import DiaryWidget
-    d_widg = DiaryWidget()
-    dl = alterDayDialog(d_widg, QtCore.QDate.currentDate())
-
-    print(dl.getInput())

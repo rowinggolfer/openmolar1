@@ -136,10 +136,3 @@ class CorrespondenceDialog(BaseDialog):
     @property
     def letter_description(self):
         return str(self.combo_box.currentText())
-
-
-if __name__ == "__main__":
-    app = QtWidgets.QApplication([])
-    LOGGER.setLevel(logging.DEBUG)
-    dl = CorrespondenceDialog(standard_letter._test())
-    dl.exec_()

@@ -21,6 +21,7 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
 import re
 
 from PyQt5 import QtCore
@@ -30,6 +31,7 @@ from openmolar.dbtools import treatment_course
 
 from openmolar.qt4gui.customwidgets.upper_case_line_edit \
     import UpperCaseLineEdit
+from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 
 
@@ -42,22 +44,6 @@ class EditTreatmentDialog(ExtendableDialog):
         self.serialno = serialno
         self.courseno = courseno
 
-        planning = QtWidgets.QMessageBox.question(self, _("Option"),
-            "%s<hr /><em>%s</em>" %(
-                _("Edit Completed items?"),
-                _("Choosing 'NO' will offer edit of planned items")
-                ),
-            QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No,
-            QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.No
-
-
-        if planning:
-            header = _("Planned Items")
-            self.suffix = "pl"
-        else:
-            header = _("Completed Items")
-            self.suffix = "cmp"
-
         self._treatment_course = None
         self.widgets = {}
         self.orig_values = {}
@@ -65,8 +51,7 @@ class EditTreatmentDialog(ExtendableDialog):
         frame = QtWidgets.QFrame()
         form_layout = QtWidgets.QFormLayout(frame)
 
-        header_label = QtWidgets.QLabel(header)
-        header_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.header_label = WarningLabel("")
 
         tooth_atts = []
 
@@ -84,7 +69,7 @@ class EditTreatmentDialog(ExtendableDialog):
         scroll_area.setWidget(frame)
         scroll_area.setWidgetResizable(True)
 
-        self.insertWidget(header_label)
+        self.insertWidget(self.header_label)
         self.insertWidget(scroll_area)
 
         self.add_advanced_widget(QtWidgets.QLabel(_("No Advanced Options")))
@@ -98,8 +83,24 @@ class EditTreatmentDialog(ExtendableDialog):
         return self._treatment_course
 
     def load_values(self):
+        mb = QtWidgets.QMessageBox(self)
+        mb.setWindowTitle(_("Option"))
+        mb.setIcon(mb.Question)
+        mb.setStandardButtons(mb.Yes | mb.No)
+        mb.setText("%s<hr /><em>%s</em>" % (
+            _("Edit Completed items?"),
+            _("Choosing 'NO' will offer edit of planned items")))
+        self.rejected.connect(mb.accept)  # for Unittests
+        mb.exec_()
+
+        if mb.result() == mb.No:
+            self.header_label.setText(_("Planned Items"))
+            suffix = "pl"
+        else:
+            self.header_label.setText(_("Completed Items"))
+            suffix = "cmp"
         for att in treatment_course.CURRTRT_ROOT_ATTS:
-            val = self.treatment_course.__dict__[att+self.suffix]
+            val = self.treatment_course.__dict__[att + suffix]
             widg = self.widgets[att]
             self.orig_values[att] = val
             widg.setText(val)
@@ -116,14 +117,14 @@ class EditTreatmentDialog(ExtendableDialog):
         self.enableApply(False)
 
     def sizeHint(self):
-        return QtCore.QSize(200, 600)
+        return QtCore.QSize(350, 600)
 
     def update_db(self):
         changes = ""
         values = []
         for att in treatment_course.CURRTRT_ROOT_ATTS:
             if self.new_value(att) != self.orig_values[att]:
-                changes += "%s%s=%%s ," %(att, self.suffix)
+                changes += "%s%s=%%s ," % (att, self.suffix)
                 values.append(self.new_value(att))
 
         treatment_course.update_course(
@@ -131,13 +132,3 @@ class EditTreatmentDialog(ExtendableDialog):
             values,
             self.serialno,
             self.courseno)
-
-
-if __name__ == "__main__":
-    from gettext import gettext as _
-
-    app = QtWidgets.QApplication([])
-    serialno, courseno = (14469, 45869)
-    dl = EditTreatmentDialog(serialno, courseno)
-    if dl.exec_():
-        dl.update_db()

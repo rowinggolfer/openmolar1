@@ -22,17 +22,15 @@
 # ########################################################################### #
 
 from gettext import gettext as _
+
 from PyQt5 import QtCore
-from PyQt5 import QtGui
 from PyQt5 import QtPrintSupport
 from PyQt5 import QtWebKitWidgets
 from PyQt5 import QtWidgets
 
-from openmolar.settings import localsettings
-from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
-
 from openmolar.ptModules import formatted_notes
 from openmolar.ptModules import patientDetails
+from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
 
 class PrintRecordDialog(BaseDialog):
@@ -40,29 +38,41 @@ class PrintRecordDialog(BaseDialog):
     def __init__(self, patient, chartimage, parent):
         BaseDialog.__init__(self, parent)
         self.pt = patient
+        self.chartimage = chartimage
 
-        self.main_ui = parent
         patient_label = QtWidgets.QLabel(
             "%s<br /><b>%s</b>" % (_("Print the record of"), patient.name_id))
 
         patient_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.web_view = QtWebKitWidgets.QWebView()
+        self.web_view = QtWebKitWidgets.QWebView(self)
+        self.web_view.loadStarted.connect(self.print_start)
+        self.web_view.loadFinished.connect(self.print_load_result)
 
         self.insertWidget(patient_label)
         self.insertWidget(self.web_view)
 
-        html = patientDetails.header(patient).replace("center", "left")
-
-        html += '<img src="%s" height = "120px" /><hr />' % (
-            chartimage)
-        html += formatted_notes.notes(patient.notes_dict)
-        self.web_view.setHtml(html)
         self.apply_but.setText("Print")
         self.enableApply()
 
+        html = patientDetails.header(self.pt).replace("center", "left")
+
+        html += '''<hr />
+                    <div align="center">
+                    <img src="%s" width="80%%" />
+                    </div>
+                    <hr />''' % self.chartimage
+        html += formatted_notes.notes(self.pt.notes_dict)
+        self.web_view.setHtml(html)
+
+    def print_load_result(self, result):
+        print("Load successful = %s" % result)
+
+    def print_start(self):
+        print("Load started")
+
     def sizeHint(self):
-        return QtCore.QSize(600, 600)
+        return QtCore.QSize(800, 600)
 
     def exec_(self):
         if BaseDialog.exec_(self):
@@ -73,15 +83,3 @@ class PrintRecordDialog(BaseDialog):
                 return False
 
             self.web_view.print_(printer)
-
-
-if __name__ == "__main__":
-    localsettings.initiate()
-
-    from openmolar.dbtools import patient_class
-    pt = patient_class.patient(10781)
-
-    app = QtWidgets.QApplication([])
-
-    dl = PrintRecordDialog(pt, "file:///home/neil/chart.png", None)
-    dl.exec_()

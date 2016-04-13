@@ -25,19 +25,20 @@ from gettext import gettext as _
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
+
 from openmolar.qt4gui.compiled_uis import Ui_newCourse
 from openmolar.settings import localsettings
 
 
-class NewCourseDialog(Ui_newCourse.Ui_Dialog):
+class NewCourseDialog(Ui_newCourse.Ui_Dialog, QtWidgets.QDialog):
 
     '''
     a custom dialog to set the variables for a new course of treatment
     '''
 
-    def __init__(self, dialog, dnt1, dnt2, csetype, parent=None):
-        self.setupUi(dialog)
-        self.dialog = dialog
+    def __init__(self, dnt1, dnt2, csetype, parent=None):
+        QtWidgets.QDialog.__init__(self, parent)
+        self.setupUi(self)
         self.dateEdit.setDate(QtCore.QDate().currentDate())
         self.dnt1_comboBox.addItems(localsettings.activedents)
         try:
@@ -64,7 +65,7 @@ class NewCourseDialog(Ui_newCourse.Ui_Dialog):
         sensible values are returned
         '''
         while True:
-            if self.dialog.exec_():
+            if self.exec_():
                 dnt1 = str(self.dnt1_comboBox.currentText())
                 dnt2 = str(self.dnt2_comboBox.currentText())
                 cset = str(self.cseType_comboBox.currentText())
@@ -77,12 +78,3 @@ class NewCourseDialog(Ui_newCourse.Ui_Dialog):
                     return (True, retarg)
             else:
                 return(False, None)
-
-
-if __name__ == "__main__":
-    import sys
-    localsettings.initiate()
-    app = QtWidgets.QApplication(sys.argv)
-    dl = QtWidgets.QDialog()
-    ui = NewCourseDialog(dl, "BW", "AH", "")
-    print(ui.getInput())

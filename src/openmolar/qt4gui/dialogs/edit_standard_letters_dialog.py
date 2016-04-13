@@ -229,8 +229,7 @@ class EditStandardLettersDialog(BaseDialog):
             return
         if name in self.existing_descriptions:
             QtWidgets.QMessageBox.warning(self, _("error"),
-                                      _("this name is already in use")
-                                      )
+                                          _("this name is already in use"))
             self.add_letter(name=name)
             return
         letter = standard_letter.StandardLetter(
@@ -298,11 +297,3 @@ class EditStandardLettersDialog(BaseDialog):
             standard_letter.delete_letters(self.deleted_letters)
             return True
         return False
-
-
-if __name__ == "__main__":
-    LOGGER.setLevel(logging.DEBUG)
-    app = QtWidgets.QApplication([])
-
-    dl = EditStandardLettersDialog()
-    dl.exec_()

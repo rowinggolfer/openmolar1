@@ -618,8 +618,8 @@ class FirstRunDialog(BaseDialog):
         i = self.wizard_widget.currentIndex()
         if not self.current_page.is_completed:
             QtWidgets.QMessageBox.warning(self,
-                                      _("error"),
-                                      self.current_page.error_message)
+                                          _("error"),
+                                          self.current_page.error_message)
             new_i = i
         elif i == 4 and not self.page3.create_new:
             new_i = i + 3
@@ -767,18 +767,3 @@ class FirstRunDialog(BaseDialog):
     @property
     def privileged_user_pass(self):
         return str(self.page5.line_edit2.text())
-
-
-if __name__ == "__main__":
-    LOGGER.setLevel(logging.DEBUG)
-    app = QtWidgets.QApplication([])
-
-    dl = FirstRunDialog()
-    print(dl.exec_())
-    print(dl.host)
-    print(dl.port)
-    print(dl.db_name)
-    print(dl.db_user)
-    print(dl.db_pass)
-    print(dl.privileged_user)
-    print(dl.privileged_user_pass)

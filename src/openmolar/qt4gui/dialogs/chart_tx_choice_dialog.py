@@ -126,27 +126,4 @@ class ChartTxChoiceDialog(ExtendableDialog):
                 self, _("Error"),
                 _("No items of this type have found in any feescale"))
         self.add_buttons(self.all_tx_buttons)
-        self.hide_extension()
-
-
-if __name__ == "__main__":
-    from openmolar.dbtools.patient_class import patient
-
-    app = QtWidgets.QApplication([])
-    mw = QtWidgets.QWidget()
-    mw.pt = patient(11956)
-    dl = ChartTxChoiceDialog(True, mw)
-    dl.set_items(dl.FS_ITEMS)
-    if dl.exec_():
-        print(dl.chosen_shortcut)
-    dl.set_items(dl.ENDO_ITEMS)
-    if dl.exec_():
-        print(dl.chosen_shortcut)
-    dl.set_items(dl.SURGICAL_ITEMS)
-    if dl.exec_():
-        print(dl.chosen_shortcut)
-
-    dl = ChartTxChoiceDialog(False, mw)
-    dl.add_buttons([])
-    if dl.exec_():
-        print(dl.chosen_shortcut)
+        self.show_extension(False)

@@ -22,8 +22,8 @@
 # ########################################################################### #
 
 from PyQt5 import QtWidgets
+
 from openmolar.qt4gui.compiled_uis import Ui_newBPE
-from openmolar.settings import localsettings
 
 
 class BPE_Dialog(QtWidgets.QDialog, Ui_newBPE.Ui_Dialog):
@@ -32,11 +32,11 @@ class BPE_Dialog(QtWidgets.QDialog, Ui_newBPE.Ui_Dialog):
         QtWidgets.QDialog.__init__(self, parent)
         self.setupUi(self)
         for cb in (self.bpe_comboBox,
-        self.bpe2_comboBox,
-        self.bpe3_comboBox,
-         self.bpe4_comboBox,
-         self.bpe5_comboBox,
-        self.bpe6_comboBox):
+                   self.bpe2_comboBox,
+                   self.bpe3_comboBox,
+                   self.bpe4_comboBox,
+                   self.bpe5_comboBox,
+                   self.bpe6_comboBox):
             cb.setCurrentIndex(-1)
 
     def getInput(self):
@@ -47,22 +47,14 @@ class BPE_Dialog(QtWidgets.QDialog, Ui_newBPE.Ui_Dialog):
 
     def getBPE(self):  # this could be simplified!!!!
         retarg = ""
-        for i in (
-            self.bpe_comboBox.currentText(),
-            self.bpe2_comboBox.currentText(),
-            self.bpe3_comboBox.currentText(),
-            self.bpe4_comboBox.currentText(),
-            self.bpe5_comboBox.currentText(),
-            self.bpe6_comboBox.currentText()
-            ):
+        for i in (self.bpe_comboBox.currentText(),
+                  self.bpe2_comboBox.currentText(),
+                  self.bpe3_comboBox.currentText(),
+                  self.bpe4_comboBox.currentText(),
+                  self.bpe5_comboBox.currentText(),
+                  self.bpe6_comboBox.currentText()):
             val = str(i)
             if val == "":
                 val = "_"
             retarg += val
         return retarg  # a 6 character string.
-
-
-if __name__ == "__main__":
-    app = QtWidgets.QApplication([])
-    dl = BPE_Dialog()
-    print(dl.getInput())

@@ -26,12 +26,14 @@ OpenMolar has has many contributions towards translation.
 Language selection should be automatic on statup (using locale)
 However this dialog provides a way of demonstrating the other languages.
 '''
+
 import gettext
 import os
 import logging
 from gettext import gettext as _
 
 from PyQt5 import QtWidgets
+
 from openmolar.qt4gui.compiled_uis import Ui_choose_language
 
 LOGGER = logging.getLogger("openmolar")
@@ -124,12 +126,3 @@ class LanguageDialog(Ui_choose_language.Ui_Dialog, QtWidgets.QDialog):
                         _("no translation file found for"), lang)
         QtWidgets.QMessageBox.information(self, _("Advisory"), message)
         return result
-
-
-if __name__ == "__main__":
-    logging.basicConfig()
-
-    app = QtWidgets.QApplication([])
-    gettext.install('openmolar')
-    dl = LanguageDialog()
-    dl.getInput()

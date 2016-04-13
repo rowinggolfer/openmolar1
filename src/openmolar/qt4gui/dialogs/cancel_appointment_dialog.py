@@ -31,10 +31,8 @@ from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
 from openmolar.settings import localsettings
-
 from openmolar.dbtools import appointments
 from openmolar.dbtools.brief_patient import BriefPatient
-
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 
@@ -128,15 +126,3 @@ class CancelAppointmentDialog(ExtendableDialog):
         else:
             return
         self.accept()
-
-
-if __name__ == "__main__":
-    from gettext import gettext as _
-    localsettings.initiate()
-    pt = BriefPatient(1)
-    appts = appointments.get_pts_appts(pt)
-    app = QtWidgets.QApplication([])
-
-    dl = CancelAppointmentDialog(appts[0])
-    if dl.exec_():
-        print(dl.result)

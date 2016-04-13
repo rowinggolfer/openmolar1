@@ -59,7 +59,7 @@ class BaseDialog(QtWidgets.QDialog):
         self.cancel_but = self.button_box.button(self.button_box.Cancel)
         self.apply_but = self.button_box.button(self.button_box.Apply)
 
-        self.button_box.setCenterButtons(True)
+        # self.button_box.setCenterButtons(True)
 
         self.layout_ = QtWidgets.QVBoxLayout(self)
 
@@ -70,11 +70,11 @@ class BaseDialog(QtWidgets.QDialog):
         self.enableApply(False)
 
         if remove_stretch:
+            self.spacer = False
+        else:
             self.spacer = True
             self.layout_.addStretch()
-        else:
-            self.spacer = False
-        self.insertWidget(self.button_box)
+        self.layout_.addWidget(self.button_box)
 
     def sizeHint(self):
         '''
@@ -179,6 +179,27 @@ class BaseDialog(QtWidgets.QDialog):
             message, buttons, default_but) == accept_but
 
 
+class HorizontalBaseDialog(BaseDialog):
+
+    '''
+    similar to BaseDialog, but uses a grid layout with the buttons on the
+    right.
+    '''
+
+    def __init__(self, parent=None, remove_stretch=False):
+        BaseDialog.__init__(self, parent, True)
+        self.setWindowTitle("OpenMolar")
+
+        self.button_box.setOrientation(QtCore.Qt.Vertical)
+        self.layout_.setDirection(QtWidgets.QBoxLayout.LeftToRight)
+        frame = QtWidgets.QFrame()
+        self.insertWidget(frame)
+        self.layout_ = QtWidgets.QVBoxLayout(frame)
+        if not remove_stretch:
+            self.spacer = True
+            self.layout_.addStretch()
+
+
 class ExtendableDialog(BaseDialog):
 
     '''
@@ -186,7 +207,7 @@ class ExtendableDialog(BaseDialog):
     unlike BaseDialog.. this dialog has no spacer item by default
     '''
 
-    def __init__(self, parent=None, remove_stretch=False):
+    def __init__(self, parent=None, remove_stretch=True):
         BaseDialog.__init__(self, parent, remove_stretch)
 
         self.button_box.setCenterButtons(False)
@@ -200,11 +221,8 @@ class ExtendableDialog(BaseDialog):
         self.button_box.addButton(self.more_but, self.button_box.HelpRole)
 
         self.extension_frame = QtWidgets.QFrame(self)
-        self.extension_frame.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.extension_frame.setFrameStyle(QtWidgets.QFrame.Sunken)
-        self.extension_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.extension_frame.setLineWidth(2)
-        QtWidgets.QVBoxLayout(self.extension_frame)
+        layout = QtWidgets.QVBoxLayout(self.extension_frame)
+        layout.setContentsMargins(0, 0, 0, 0)
         self.layout_.insertWidget(-1, self.extension_frame)
         self.extension_frame.hide()
 
@@ -230,33 +248,3 @@ class ExtendableDialog(BaseDialog):
         self.more_but.setChecked(not show)
         self.extension_frame.setVisible(show)
         self.adjustSize()
-
-
-if __name__ == "__main__":
-    logging.basicConfig()
-    LOGGER.setLevel(logging.DEBUG)
-    app = QtWidgets.QApplication([])
-
-    dl = BaseDialog()
-    dl.insertWidget(QtWidgets.QLabel("simple dialog"))
-    # QtCore.QTimer.singleShot(1000, dl.accept)
-    dl.exec_()
-
-    dl2 = BaseDialog(remove_stretch=True)
-    dl2.insertWidget(QtWidgets.QLabel("simple dialog - no stretch"))
-    # QtCore.QTimer.singleShot(1000, dl2.accept)
-    dl2.exec_()
-
-    dl3 = ExtendableDialog()
-    dl3.insertWidget(QtWidgets.QLabel("extendable dialog"))
-    dl3.insertWidget(QtWidgets.QLabel("extendable dialog - label2"))
-    dl3.add_advanced_widget(QtWidgets.QLabel("advanced options"))
-    # QtCore.QTimer.singleShot(5000, dl3.accept)
-    dl3.exec_()
-
-    dl4 = ExtendableDialog(remove_stretch=True)
-    dl4.insertWidget(QtWidgets.QLabel("extendable dialog - no stretch"))
-    dl4.insertWidget(QtWidgets.QLabel("extendable dialog - label2"))
-    dl4.add_advanced_widget(QtWidgets.QLabel("advanced options"))
-    # QtCore.QTimer.singleShot(5000, dl4.accept)
-    dl4.exec_()

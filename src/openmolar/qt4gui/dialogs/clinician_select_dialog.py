@@ -93,11 +93,3 @@ class ClinicianSelectDialog(QtWidgets.QDialog):
             localsettings.setOperator(chosen, u2)
             return (change_needed, chosen)
         return (False, None)
-
-
-if __name__ == "__main__":
-    localsettings.initiate()
-    app = QtWidgets.QApplication([])
-    dl = ClinicianSelectDialog()
-    print(dl.result())
-    app.closeAllWindows()

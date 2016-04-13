@@ -29,7 +29,8 @@ from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 
 from openmolar.dbtools.feescales import FeescaleConfigurer
-from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
+from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
+from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -101,22 +102,22 @@ class FeescaleWidget(QtWidgets.QWidget):
         self.up_button.setEnabled(False)
 
 
-class FeescaleConfigDialog(ExtendableDialog):
+class FeescaleConfigDialog(BaseDialog):
     '''
     This dialog allows the user to alter comments about a feescale,
     and make changes to the priorites they are loaded into openmolar.
     '''
 
     def __init__(self, parent=None):
-        ExtendableDialog.__init__(self, parent, remove_stretch=True)
+        BaseDialog.__init__(self, parent, remove_stretch=True)
 
         title = _("Confgure Feescales Dialog")
         self.setWindowTitle(title)
-        label = QtWidgets.QLabel("%s<hr />%s" % (_(
-            "This dialog enables you to modify the metadata which determines "
-            "the order feescales are loaded."), _(
-            "You can also archive a feescale by unchecking 'in use'.")))
-        label.setWordWrap(True)
+        label = WarningLabel(
+            "%s<hr />%s" % (
+                _("This dialog enables you to modify the metadata which "
+                  "determines the order feescales are loaded."),
+                _("You can also archive a feescale by unchecking 'in use'.")))
         self.insertWidget(label)
         self.configurer = FeescaleConfigurer()
         LOGGER.debug("Feescales to config\n%s", "\n".join(
@@ -124,7 +125,8 @@ class FeescaleConfigDialog(ExtendableDialog):
 
         frame = QtWidgets.QFrame()
         self.fs_layout = QtWidgets.QVBoxLayout(frame)
-        self.fs_layout.setSpacing(1)
+        self.fs_layout.setContentsMargins(0, 0, 0, 0)
+        self.fs_layout.setSpacing(0)
         for feescale in self.configurer.feescales:
             widg = FeescaleWidget(feescale)
             widg.promote_signal.connect(self.promote_widget)
@@ -140,7 +142,7 @@ class FeescaleConfigDialog(ExtendableDialog):
         self.enable_buttons()
 
     def sizeHint(self):
-        return QtCore.QSize(600, 400)
+        return QtCore.QSize(600, 600)
 
     @property
     def fs_widgets(self):
@@ -198,20 +200,7 @@ class FeescaleConfigDialog(ExtendableDialog):
                                           )
 
     def exec_(self):
-        if ExtendableDialog.exec_(self):
+        if BaseDialog.exec_(self):
             self._apply()
             return True
         return False
-
-
-if __name__ == "__main__":
-    logging.basicConfig()
-    LOGGER.setLevel(logging.DEBUG)
-
-    app = QtWidgets.QApplication([])
-
-    dl = FeescaleConfigDialog()
-    if dl.exec_():
-        LOGGER.info("Dialog was applied")
-    else:
-        LOGGER.info("Dialog cancelled")

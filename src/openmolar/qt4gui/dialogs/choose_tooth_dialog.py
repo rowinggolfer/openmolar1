@@ -42,9 +42,3 @@ class ChooseToothDialog(QtWidgets.QDialog, Ui_choose_tooth.Ui_Dialog):
             return self.chartwidg.getSelected()
         else:
             return []
-
-
-if __name__ == "__main__":
-    app = QtWidgets.QApplication([])
-    dl = ChooseToothDialog()
-    dl.getInput()

@@ -24,13 +24,14 @@
 import copy
 from gettext import gettext as _
 import logging
+
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
 from openmolar.dbtools import estimates
-
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 from openmolar.qt4gui.customwidgets.estimate_widget import EstimateWidget
+
 LOGGER = logging.getLogger("openmolar")
 
 
@@ -120,20 +121,11 @@ class EstimateEditDialog(ExtendableDialog):
                     _("Confirm"),
                     _("Apply Changes?"),
                     QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel,
-                    QtWidgets.QMessageBox.Cancel) == QtWidgets.QMessageBox.Cancel):
+                    QtWidgets.QMessageBox.Cancel) ==
+                QtWidgets.QMessageBox.Cancel):
             return
         ExtendableDialog._clicked(self, but)
 
     def update_db(self):
         estimates.apply_changes(
             self.patient, self.orig_ests, self.patient.estimates)
-
-
-if __name__ == "__main__":
-
-    app = QtWidgets.QApplication([])
-    LOGGER.setLevel(logging.DEBUG)
-    dl = EstimateEditDialog(11956, 29749)
-    if dl.exec_():
-        dl.update_db()
-        print(dl.patient.estimates)

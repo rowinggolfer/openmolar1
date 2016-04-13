@@ -21,34 +21,32 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
+
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
+
 from openmolar.settings import localsettings, appointment_shortcuts
-from openmolar.qt4gui.compiled_uis import Ui_apptWizard
-from openmolar.qt4gui.compiled_uis import Ui_apptWizardItem
+from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
 
-class apptWidget(QtWidgets.QWidget, Ui_apptWizardItem.Ui_Form):
+class apptWidget(QtWidgets.QWidget):
 
-    def __init__(self, parent_dialog):
+    def __init__(self, appointments, parent_dialog):
         QtWidgets.QWidget.__init__(self, parent_dialog)
         self.dl = parent_dialog
-        self.setupUi(self)
-        self.signals()
-        self.appointments = []
 
-    def signals(self):
-        '''
-        sets the various signals required to monitor user input
-        '''
-        self.pushButton.clicked.connect(self.add)
+        combo_box = QtWidgets.QComboBox()
+        but = QtWidgets.QPushButton(_("Add"))
+        but.setFixedWidth(120)
 
-    def addAppointments(self, arg):
-        '''
-        let this widget be self aware, give it control over the appointments
-        '''
-        self.appointments = arg
-        self.comboBox.addItems(["%d appointments" % len(self.appointments)])
+        layout = QtWidgets.QHBoxLayout(self)
+        layout.addWidget(combo_box)
+        layout.addWidget(but)
+        but.clicked.connect(self.add)
+
+        self.appointments = appointments
+        combo_box.addItems(["%d appointments" % len(self.appointments)])
         for appt in self.appointments:
             if "clinician" not in appt:
                 if self.dl.om_gui.pt.dnt2 != 0:
@@ -58,13 +56,7 @@ class apptWidget(QtWidgets.QWidget, Ui_apptWizardItem.Ui_Form):
             initials = localsettings.apptix_reverse.get(appt.get("clinician"))
             mystr = "%s %d mins with %s" % (
                 appt.get("trt1"), appt.get("length"), initials)
-            self.comboBox.addItems([mystr])
-
-    def setLabelText(self, arg):
-        '''
-        this label has the description for the shortcut
-        '''
-        self.label.setText(arg)
+            combo_box.addItems([mystr])
 
     def add(self):
         '''
@@ -74,52 +66,26 @@ class apptWidget(QtWidgets.QWidget, Ui_apptWizardItem.Ui_Form):
         self.dl.accept()
 
 
-class apptWizard(QtWidgets.QDialog, Ui_apptWizard.Ui_Dialog):
+class apptWizard(BaseDialog):
 
     add_appointments_signal = QtCore.pyqtSignal(object)
 
     def __init__(self, om_gui=None):
-        QtWidgets.QDialog.__init__(self, om_gui)
-        self.setupUi(self)
-        self.items = []
+        BaseDialog.__init__(self, om_gui, remove_stretch=True)
         self.om_gui = om_gui
-        self.setShortcuts()
 
-    def setShortcuts(self):
+        parent_widg = QtWidgets.QWidget()
+        form_layout = QtWidgets.QFormLayout(parent_widg)
+        scroll_area = QtWidgets.QScrollArea()
+        scroll_area.setWidget(parent_widg)
+        scroll_area.setWidgetResizable(True)
+        self.insertWidget(scroll_area)
+
         self.shortcuts = appointment_shortcuts.getShortCuts()
-        self.showAppts()
-
-    def showAppts(self):
-        self.apptWidgets = []
-        vlayout = QtWidgets.QVBoxLayout(self.frame)
         for shortcut in self.shortcuts:
-            i = apptWidget(self)
-            i.setLabelText(shortcut.get("description"))
-            i.addAppointments(shortcut.get("appointments"))
-            self.apptWidgets.append(i)
-            vlayout.addWidget(i)
-        spacerItem = QtWidgets.QSpacerItem(1, 20, QtWidgets.QSizePolicy.Minimum,
-                                       QtWidgets.QSizePolicy.Expanding)
+            widg = apptWidget(shortcut.get("appointments"), self)
+            form_layout.addRow(shortcut.get("description"), widg)
+        self.apply_but.hide()
 
-        vlayout.addItem(spacerItem)
-
-
-if __name__ == "__main__":
-    import sys
-    from openmolar.dbtools import patient_class
-
-    class TestGui(QtWidgets.QWidget):
-
-        def __init__(self, parent=None):
-            QtWidgets.QWidget.__init__(self, parent)
-            self.pt = patient_class.patient(3)
-
-    def test(*args):
-        print("signal caught", args)
-
-    localsettings.initiate()
-    app = QtWidgets.QApplication(sys.argv)
-    main_ui = TestGui()
-    dl = apptWizard(main_ui)
-    dl.add_appointments_signal.connect(test)
-    dl.exec_()
+    def sizeHint(self):
+        return QtCore.QSize(600, 500)

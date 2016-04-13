@@ -24,10 +24,11 @@
 '''
 functions to open a course, close a course, or check if one is needed.
 '''
+
 import datetime
+from gettext import gettext as _
 import logging
 
-from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
 from openmolar.settings import localsettings
@@ -36,7 +37,6 @@ from openmolar.qt4gui.dialogs.close_course_dialog import CloseCourseDialog
 from openmolar.qt4gui.dialogs.newCourse import NewCourseDialog
 from openmolar.qt4gui.dialogs.appt_prefs_dialog import ApptPrefsDialog
 from openmolar.qt4gui.dialogs.recall_prompt_dialog import RecallPromptDialog
-from openmolar.qt4gui.printing import om_printing
 from openmolar.qt4gui import contract_gui_module
 from openmolar.ptModules import plan
 from openmolar.qt4gui.printing.gp17.gp17_printer import GP17Printer
@@ -92,23 +92,21 @@ def setupNewCourse(om_gui):
 
     if localsettings.clinicianNo != 0 and \
             localsettings.clinicianInits in localsettings.activedents:
-        #-- clinician could be a hygenist!
+        # clinician could be a hygenist!
         cdnt = localsettings.clinicianNo
     elif om_gui.pt.dnt2 == 0:
         cdnt = om_gui.pt.dnt1
     else:
         cdnt = om_gui.pt.dnt2
 
-    dialog = QtWidgets.QDialog(om_gui)
-
-    dl = NewCourseDialog(dialog,
-                         localsettings.ops.get(om_gui.pt.dnt1),
+    dl = NewCourseDialog(localsettings.ops.get(om_gui.pt.dnt1),
                          localsettings.ops.get(cdnt),
-                         om_gui.pt.cset)
+                         om_gui.pt.cset,
+                         om_gui)
 
     result, atts = dl.getInput()
 
-    #-- (True, ['BW', 'AH', '', PyQt5.QtCore.QDate(2009, 5, 3)])
+    # (True, ['BW', 'AH', '', PyQt5.QtCore.QDate(2009, 5, 3)])
 
     if result:
         dnt1 = localsettings.ops_reverse.get(atts[0])
@@ -128,8 +126,7 @@ def setupNewCourse(om_gui):
 
 
 def apply_new_courseno(om_gui, new_courseno, accd=None):
-    new_course = om_gui.pt.new_tx_course(new_courseno)
-    # om_gui.pt.dbstate.treatment_course = new_course
+    om_gui.pt.new_tx_course(new_courseno)
     om_gui.pt.treatment_course.setAccd(accd)
     # force a recheck for the new course date
     om_gui.pt.forget_fee_table()

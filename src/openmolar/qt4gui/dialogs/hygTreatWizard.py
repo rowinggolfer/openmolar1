@@ -144,18 +144,3 @@ class HygTreatWizard(QtWidgets.QDialog, Ui_hygenist_wizard.Ui_Dialog):
             self.om_gui.advise("Hyg Treatment not applied", 2)
 
         return False
-
-
-if __name__ == "__main__":
-    localsettings.initiate()
-    localsettings.loadFeeTables()
-    localsettings.station = "reception"
-
-    from openmolar.qt4gui import maingui
-
-    app = QtWidgets.QApplication([])
-    mw = maingui.OpenmolarGui()
-    mw.getrecord(11956)
-
-    dl = HygTreatWizard(mw)
-    print(dl.perform_tx())

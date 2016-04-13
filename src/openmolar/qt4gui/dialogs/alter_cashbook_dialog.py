@@ -42,7 +42,7 @@ where id = %s'''
 class AlterCashbookDialog(ExtendableDialog):
 
     def __init__(self, ix, parent=None):
-        ExtendableDialog.__init__(self, parent)
+        ExtendableDialog.__init__(self, parent, remove_stretch=False)
 
         self.ix = ix
         title = _("Alter Cashbook Entry")
@@ -157,20 +157,10 @@ class AlterCashbookDialog(ExtendableDialog):
         db.commit()
 
     def sizeHint(self):
-        return QtCore.QSize(300, 350)
+        return QtCore.QSize(400, 450)
 
     def exec_(self):
         if ExtendableDialog.exec_(self):
             self.apply()
             return True
         return False
-
-
-if __name__ == "__main__":
-
-    localsettings.initiate()
-    app = QtWidgets.QApplication([])
-
-    dl = AlterCashbookDialog(152039)
-
-    print(dl.exec_())

@@ -22,6 +22,7 @@
 # ########################################################################### #
 
 import logging
+
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
@@ -92,17 +93,3 @@ class CourseConsistencyDialog(ExtendableDialog):
         apply any edits (should be called if self.exec_() == True)
         '''
         pass
-
-
-if __name__ == "__main__":
-
-    app = QtWidgets.QApplication([])
-    LOGGER.setLevel(logging.DEBUG)
-    serialno = 14469
-    coursenos = (9568, 11394, 14016, 15946, 16161, 16433, 17677, 20644, 21411,
-                 23844, 26049, 27230, 30876, 31820, 32526, 41921, 42138, 45151)
-
-    for courseno in coursenos:
-        dl = CourseConsistencyDialog(serialno, courseno)
-        if dl.exec_():
-            dl.update_db()

@@ -28,18 +28,17 @@ from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 
-from openmolar.settings import localsettings
 from openmolar.qt4gui.compiled_uis import Ui_toothprops_full_edit
 from openmolar.qt4gui.customwidgets.chartwidget import ToothImage
 
 LOGGER = logging.getLogger("openmolar")
 
 
-class editor(Ui_toothprops_full_edit.Ui_Dialog):
+class ToothPropEditor(Ui_toothprops_full_edit.Ui_Dialog, QtWidgets.QDialog):
 
-    def __init__(self, tooth, chart, lineEdit, dialog):
-        self.dialog = dialog
-        self.setupUi(self.dialog)
+    def __init__(self, tooth, chart, lineEdit, parent=None):
+        QtWidgets.QDialog.__init__(self, parent)
+        self.setupUi(self)
         self.tooth = tooth
         self.chart = chart
         self.setLabel()
@@ -151,20 +150,9 @@ class editor(Ui_toothprops_full_edit.Ui_Dialog):
         self.lineEdit.setText(s)
 
     def exec_(self):
-        if self.dialog.exec_():
+        if QtWidgets.QDialog.exec_(self):
             self.result = self.lineEdit.text()
             if self.initialVal != self.result:
                 self.result = str(self.result)
                 return True
-
-
-if __name__ == "__main__":
-    localsettings.initiate()
-    LOGGER.setLevel(logging.DEBUG)
-    app = QtWidgets.QApplication([])
-    Dialog = QtWidgets.QDialog()
-
-    le = QtWidgets.QLineEdit()
-    le.setText("IM/TIT MOD RT CR,GO !KUO")
-    dl = editor("ul7", "st", le, Dialog)
-    dl.exec_()
+        return False

@@ -37,7 +37,7 @@ from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 from openmolar.settings import localsettings
 from openmolar.qt4gui import colours
-from openmolar.qt4gui.dialogs import blockslot
+from openmolar.qt4gui.dialogs.blockslot import BlockDialog
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -844,8 +844,7 @@ class AppointmentCanvas(QtWidgets.QWidget):
             singleClickMenuResult(self.qmenu.exec_(event.globalPos()))
 
     def block_use_space(self, start, finish):
-        Dialog = QtWidgets.QDialog(self)
-        dl = blockslot.blockDialog(Dialog, self.pWidget)
+        dl = BlockDialog(self.pWidget)
 
         dl.setTimes(start, finish)
         dl.setPatient(self.pWidget.diary_widget.pt)
@@ -855,11 +854,10 @@ class AppointmentCanvas(QtWidgets.QWidget):
             adjfinish = dl.finish_timeEdit.time()
             if finish < start:
                 QtWidgets.QMessageBox.information(self, _("Whoops!"),
-                                              _("Bad Time Sequence!"))
+                                                  _("Bad Time Sequence!"))
 
             if dl.block:
-                reason = str(
-                    dl.comboBox.currentText())[:30]
+                reason = str(dl.comboBox.currentText())[:30]
                 args = (start, finish, adjstart, adjfinish,
                         localsettings.apptix.get(self.pWidget.dentist), reason)
                 self.pWidget.block_empty_slot_signal.emit(args)

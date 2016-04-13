@@ -96,7 +96,7 @@ class Options(object):
     checked_today = False
 
 
-class MyConfigParser(configparser.SafeConfigParser, Options):
+class MyConfigParser(configparser.ConfigParser, Options):
 
     user_chosen_option = None
 
@@ -105,7 +105,7 @@ class MyConfigParser(configparser.SafeConfigParser, Options):
         read the local config file and see if user has specified preferences
         as to when checking should take place.
         '''
-        configparser.SafeConfigParser.__init__(self)
+        configparser.ConfigParser.__init__(self)
         self.read(CONFIG_PATH)
         if "UPDATE" not in self.sections():
             self.write_config()
@@ -293,7 +293,7 @@ class CheckVersionDialog(ExtendableDialog, Options):
     @property
     def new_version(self):
         if self._new_version is None:
-            scp = configparser.SafeConfigParser()
+            scp = configparser.ConfigParser()
             scp.read_string(self.result)
             version, release_date, message = "", None, ""
             try:
@@ -335,14 +335,3 @@ class CheckVersionDialog(ExtendableDialog, Options):
                 self.config.write_config()
             return True
         return False
-
-
-if __name__ == "__main__":
-    LOGGER.setLevel(logging.DEBUG)
-
-    app = QtWidgets.QApplication([])
-
-    dl = CheckVersionDialog()
-    if not dl.exec_():
-        dl2 = CheckVersionDialog(force_check=True)
-        dl2.exec_()

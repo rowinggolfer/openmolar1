@@ -59,7 +59,8 @@ class DuplicateReceiptDialog(BaseDialog):
         self.prev_receipts_groupbox = QtWidgets.QGroupBox(
             _("Reprint an existing receipt"))
 
-        self.prev_buts_layout = QtWidgets.QVBoxLayout(self.prev_receipts_groupbox)
+        self.prev_buts_layout = QtWidgets.QVBoxLayout(
+            self.prev_receipts_groupbox)
 
         self.prev_receipts_groupbox.hide()
 
@@ -92,7 +93,7 @@ class DuplicateReceiptDialog(BaseDialog):
         QtCore.QTimer.singleShot(0, self.get_previous_receipts)
 
     def sizeHint(self):
-        return QtCore.QSize(260, 400)
+        return QtCore.QSize(400, 500)
 
     def get_previous_receipts(self):
         query = '''select printdate, ix from newdocsprinted
@@ -188,14 +189,3 @@ class DuplicateReceiptDialog(BaseDialog):
 
     def apply_changed(self):
         print("applying changes")
-
-
-if __name__ == "__main__":
-    localsettings.initiate()
-    from openmolar.dbtools import patient_class
-    pt = patient_class.patient(10781)
-
-    app = QtWidgets.QApplication([])
-
-    dl = DuplicateReceiptDialog(pt, None)
-    dl.exec_()

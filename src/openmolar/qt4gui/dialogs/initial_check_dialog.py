@@ -58,7 +58,7 @@ class InitialCheckDialog(ExtendableDialog):
 
     def advise(self, message):
         QtWidgets.QMessageBox.information(self.parent(), _("Information"),
-                                      message)
+                                          message)
 
     @property
     def has_issues(self):
@@ -141,17 +141,3 @@ class InitialCheckDialog(ExtendableDialog):
                 _("Perhaps all future clinical time is already booked?"),
                 _("The BOOKEND value (last day to search for appointments) "
                   "may simply need adjusting")))
-
-
-if __name__ == "__main__":
-    LOGGER.setLevel(logging.DEBUG)
-    app = QtWidgets.QApplication([])
-    localsettings.initiate()
-
-    dl = InitialCheckDialog()
-    if dl.has_issues:
-        dl.exec_()
-    for message in dl.critical_messages:
-        LOGGER.warning(message)
-    for message in dl.messages:
-        LOGGER.info(message)

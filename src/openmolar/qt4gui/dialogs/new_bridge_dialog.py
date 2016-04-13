@@ -29,6 +29,7 @@ from PyQt5 import QtWidgets
 
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 from openmolar.qt4gui.customwidgets.simple_chartwidget import SimpleChartWidg
+from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -240,8 +241,7 @@ class NewBridgeDialog(ExtendableDialog):
         self.om_gui = om_gui
         message = (_("Chart/Plan a Bridge"))
         self.setWindowTitle(message)
-        self.header_label = QtWidgets.QLabel(message)
-        self.header_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.header_label = WarningLabel(message)
 
         self.wizard_widget = QtWidgets.QStackedWidget()
 
@@ -285,7 +285,7 @@ class NewBridgeDialog(ExtendableDialog):
     def next_widget(self):
         if not self.current_page.is_completed:
             QtWidgets.QMessageBox.information(self, _("Whoops"),
-                                          self.current_page.error_message)
+                                              self.current_page.error_message)
             return
 
         for key, value in self.current_page.properties:
@@ -309,12 +309,3 @@ class NewBridgeDialog(ExtendableDialog):
             self.next_widget()
         else:
             ExtendableDialog._clicked(self, but)
-
-
-if __name__ == "__main__":
-
-    app = QtWidgets.QApplication([])
-    LOGGER.setLevel(logging.DEBUG)
-    dl = NewBridgeDialog(None)
-    if dl.exec_():
-        print(dl.chosen_properties)

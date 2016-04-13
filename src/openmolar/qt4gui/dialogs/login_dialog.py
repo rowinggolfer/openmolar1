@@ -308,11 +308,3 @@ class LoginDialog(ExtendableDialog):
                     )
                 )
         return False
-
-
-if __name__ == "__main__":
-    LOGGER.setLevel(logging.DEBUG)
-    app = QtWidgets.QApplication([])
-
-    dl = LoginDialog()
-    print(dl.exec_())

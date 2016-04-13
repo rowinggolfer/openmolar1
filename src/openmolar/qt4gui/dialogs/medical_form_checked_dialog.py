@@ -27,11 +27,11 @@ from functools import partial
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
+
 from openmolar.settings import localsettings
+from openmolar.dbtools import medform_check
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
-
-from openmolar.dbtools import medform_check
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -72,7 +72,7 @@ class CorrectionWidget(QtWidgets.QWidget):
     def delete_date(self, date_):
         LOGGER.debug("pt %s delete_date %s", self.pt.serialno, date_)
         medform_check.delete(self.pt.serialno, date_)
-        self.dialog.hide_extension()
+        self.dialog.show_extension(False)
 
 
 class MedFormCheckDialog(ExtendableDialog):
@@ -119,6 +119,9 @@ class MedFormCheckDialog(ExtendableDialog):
 
         self.enableApply()
 
+    def sizeHint(self):
+        return QtCore.QSize(400, 300)
+
     @property
     def check_date(self):
         '''
@@ -143,26 +146,3 @@ class MedFormCheckDialog(ExtendableDialog):
                     )
         except medform_check.connect.IntegrityError:
             LOGGER.info("date already present in medforms table")
-
-
-if __name__ == "__main__":
-    LOGGER.setLevel(logging.DEBUG)
-    import datetime
-
-    class DuckPatient(object):
-        name = "NEIL WALLACE"
-        serialno = 1
-
-        def mh_form_dates(self):
-            return (datetime.date(2009,1,1), datetime.date(2011,3,3))
-
-    app = QtWidgets.QApplication([])
-
-    duck_parent = QtWidgets.QWidget()
-    duck_parent.pt = DuckPatient()
-
-    dl = MedFormCheckDialog(duck_parent)
-
-    if dl.exec_():
-        print(dl.check_date)
-        dl.apply()

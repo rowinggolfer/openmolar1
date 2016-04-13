@@ -21,6 +21,7 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
 import logging
 
 from PyQt5 import QtCore
@@ -29,7 +30,6 @@ from PyQt5 import QtWidgets
 from openmolar.settings import localsettings
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
-
 from openmolar.dbtools import db_settings
 
 LOGGER = logging.getLogger("openmolar")
@@ -70,7 +70,7 @@ class EditPracticeDialog(BaseDialog):
         self.enableApply()
 
     def sizeHint(self):
-        return QtCore.QSize(400, 400)
+        return QtCore.QSize(500, 500)
 
     def showEvent(self, event):
         self.practice_line_edit.setFocus()
@@ -104,14 +104,3 @@ class EditPracticeDialog(BaseDialog):
         if BaseDialog.exec_(self):
             return self.apply()
         return False
-
-
-if __name__ == "__main__":
-    LOGGER.setLevel(logging.DEBUG)
-    app = QtWidgets.QApplication([])
-    localsettings.initiate()
-
-    dl = EditPracticeDialog()
-    dl.exec_()
-    print(dl.practice_name)
-    print(dl.practice_address)

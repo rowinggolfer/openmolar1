@@ -2130,7 +2130,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         '''
         user is asking for a different font on the appointment book
         '''
-        i, result = QtWidgets.QInputDialog.getInteger(
+        i, result = QtWidgets.QInputDialog.getInt(
             self,
             _("FontSize"),
             _("Enter your preferred font size for appointment book"),
@@ -3294,13 +3294,13 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         applies a max fee chargeable
         '''
         if QtWidgets.QMessageBox.question(
-            self,
-            _("Confirm"),
-            _("apply an exemption to the NHS items on this estimate?"),
-            QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                self,
+                _("Confirm"),
+                _("apply an exemption to the NHS items on this estimate?"),
+                QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
                 QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.No:
             return
-        max_, result = QtWidgets.QInputDialog.getInteger(
+        max_, result = QtWidgets.QInputDialog.getInt(
             self,
             _("input needed"),
             "%s <br />%s" % (_("maximum charge for the patient"),

@@ -43,7 +43,7 @@ from openmolar.ptModules import formatted_notes
 from openmolar.qt4gui.dialogs import alterAday
 from openmolar.qt4gui.dialogs import finalise_appt_time
 from openmolar.qt4gui.dialogs import permissions
-from openmolar.qt4gui.dialogs import choose_clinicians
+from openmolar.qt4gui.dialogs.choose_clinicians import ChooseCliniciansDialog
 from openmolar.qt4gui.dialogs.find_patient_dialog import FinalChoiceDialog
 from openmolar.qt4gui.dialogs.appointments_insert_blocks_dialog \
     import InsertBlocksDialog
@@ -343,7 +343,7 @@ class DiaryWidget(Advisor):
         '''
         radiobutton toggling who's book to show on the appointment
         '''
-        self.dl = choose_clinicians.dialog(self.monthClinicianSelector, self)
+        self.dl = ChooseCliniciansDialog(self.monthClinicianSelector, self)
         self.dl.exec_()
         val = self.monthClinicianSelector.allChecked()
         self.ui.monthClinicians_checkBox.setChecked(val)

@@ -23,6 +23,7 @@
 
 from collections import namedtuple
 from functools import partial
+from gettext import gettext as _
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
@@ -31,14 +32,12 @@ from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 
 PostChartButton = namedtuple('PostChartButton',
-                            ("shortcut", "description", "tooltip"))
+                             ("shortcut", "description", "tooltip"))
 
 STATIC_LIST = []
-for shortcut, description in (
-    ("CR,C1", _("Cast Precious Metal")),
-    ("CR,C2", _("Cast Non-Precious Metal")),
-    ("CR,OP", _("Other")),
-):
+for shortcut, description in (("CR,C1", _("Cast Precious Metal")),
+                              ("CR,C2", _("Cast Non-Precious Metal")),
+                              ("CR,OP", _("Other")),):
     pcb = PostChartButton(shortcut, description, "")
     STATIC_LIST.append(pcb)
 
@@ -90,24 +89,8 @@ class PostChoiceDialog(ExtendableDialog):
 
     def _show_all_posts(self):
         self.add_buttons(localsettings.FEETABLES.ui_post_chart_buttons)
-        self.hide_extension()
+        self.show_extension(False)
 
     def but_clicked(self, shortcut):
         self.chosen_shortcut = shortcut
         self.accept()
-
-
-if __name__ == "__main__":
-    from gettext import gettext as _
-    from openmolar.dbtools.patient_class import patient
-
-    app = QtWidgets.QApplication([])
-    mw = QtWidgets.QWidget()
-    mw.pt = patient(11956)
-    dl = PostChoiceDialog(True, mw)
-    if dl.exec_():
-        print(dl.chosen_shortcut)
-    localsettings.loadFeeTables()
-    dl = PostChoiceDialog(False, mw)
-    if dl.exec_():
-        print(dl.chosen_shortcut)

@@ -224,13 +224,3 @@ class FinalChoiceDialog(ExtendableDialog):
             self.chosen_sno = int(result)
             return True
         return False
-
-
-if __name__ == "__main__":
-
-    localsettings.initiate()
-    app = QtWidgets.QApplication([])
-
-    dl = FindPatientDialog()
-    if dl.exec_():
-        print((dl.chosen_sno))

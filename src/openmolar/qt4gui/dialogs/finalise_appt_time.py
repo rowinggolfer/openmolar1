@@ -68,15 +68,3 @@ class ftDialog(Ui_finalise_appt_time.Ui_Dialog, QtWidgets.QDialog):
             localsettings.humanTime(arg * self.minslotlength),
             localsettings.humanTime(arg * self.minslotlength + self.length)))
         self.minutesL8Rlabel.setText("%d %s" % (minL8r, _("Minutes")))
-
-
-if __name__ == "__main__":
-    import datetime
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    Dialog = ftDialog(datetime.time(8, 30), 60, 15)
-    if Dialog.exec_():
-        print("accepted - selected appointment is (%s, %d)" % (
-            Dialog.selectedTime, Dialog.length))
-    else:
-        print("rejected")

@@ -25,10 +25,9 @@ from gettext import gettext as _
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
-from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
-RECALL_METHODS = ["post", "email", "sms"]
+RECALL_METHODS = [_("post"), _("email"), _("sms")]
 
 
 class ShortcutButs(QtWidgets.QWidget):
@@ -53,11 +52,10 @@ class ShortcutButs(QtWidgets.QWidget):
 
 class ApptPrefsDialog(BaseDialog):
 
-    def __init__(self, patient, parent):
+    def __init__(self, patient, parent=None):
         BaseDialog.__init__(self, parent)
         self.pt = patient
 
-        self.main_ui = parent
         self.patient_label = QtWidgets.QLabel(
             "%s<br /><b>%s</b>" % (_("Appointment Preferences for Patient"),
                                    patient.name_id))
@@ -166,17 +164,15 @@ class ApptPrefsDialog(BaseDialog):
 
     def init_edited_signals(self):
         for widg in (
-            self.recall_groupbox,
-            self.recdent_groupbox,
-            self.rechyg_groupbox,
-            # self.sms_reminders_checkbox,
-            # self.combined_appointment_checkbox
+                self.recall_groupbox,
+                self.recdent_groupbox,
+                self.rechyg_groupbox,
+                # self.sms_reminders_checkbox,
+                # self.combined_appointment_checkbox
         ):
             widg.toggled.connect(self._set_enabled)
-        for widg in (
-            self.recdent_date_edit,
-            self.rechyg_date_edit,
-        ):
+        for widg in (self.recdent_date_edit,
+                     self.rechyg_date_edit):
             widg.dateChanged.connect(self._set_enabled)
 
         self.recdent_period_spinbox.valueChanged.connect(self._set_enabled)
@@ -214,14 +210,3 @@ class ApptPrefsDialog(BaseDialog):
         if BaseDialog.exec_(self):
             self.apply_changed()
             return True
-
-
-if __name__ == "__main__":
-    localsettings.initiate()
-    from openmolar.dbtools import patient_class
-    pt = patient_class.patient(1)
-
-    app = QtWidgets.QApplication([])
-
-    dl = ApptPrefsDialog(pt, None)
-    dl.exec_()

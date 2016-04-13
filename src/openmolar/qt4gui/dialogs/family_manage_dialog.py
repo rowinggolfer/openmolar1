@@ -24,6 +24,7 @@
 import datetime
 from gettext import gettext as _
 import logging
+
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
@@ -99,7 +100,7 @@ class _ConfirmDialog(BaseDialog):
         self.browser = QtWidgets.QTextBrowser()
 
         label = QtWidgets.QLabel("%s %s %s" % (_("Add Record"), serialno,
-                                           _("to this family group?")))
+                                               _("to this family group?")))
 
         self.insertWidget(label)
         self.insertWidget(self.browser)
@@ -161,7 +162,8 @@ class _AdvancedWidget(QtWidgets.QWidget):
         QtWidgets.QWidget.__init__(self, parent)
 
         icon = QtGui.QIcon(":/agt_reload.png")
-        sync_address_but = QtWidgets.QPushButton(icon, _("Synchronise Addresses"))
+        sync_address_but = QtWidgets.QPushButton(icon,
+                                                 _("Synchronise Addresses"))
         sync_address_but.clicked.connect(self.sync_address_signal.emit)
 
         icon = QtGui.QIcon(":/search.png")
@@ -377,22 +379,3 @@ class LoadRelativesDialog(FamilyManageDialog):
         pt = self.member_dict[self.sender()]
         self.chosen_sno = pt.serialno
         self.accept()
-
-
-if __name__ == "__main__":
-
-    localsettings.initiate()
-    app = QtWidgets.QApplication([])
-
-    mw = QtWidgets.QWidget()
-    mw.pt = _DuckPatient((1, "", "", "", "The Gables",
-                          "Craggiemore Daviot", "Inverness", "", "",
-                          "IV2 5XQ", "", "active", ""))
-
-    mw.pt.familyno = 1
-
-    dl = FamilyManageDialog(mw)
-    dl.exec_()
-
-    dl2 = LoadRelativesDialog(mw)
-    dl2.exec_()

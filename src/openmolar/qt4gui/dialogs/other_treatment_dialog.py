@@ -32,7 +32,8 @@ from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
 from openmolar.settings import localsettings
-from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
+from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
+from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
 
 class _TreatmentItemWidget(QtWidgets.QWidget):
@@ -51,15 +52,15 @@ class _TreatmentItemWidget(QtWidgets.QWidget):
         layout.addWidget(self.label)
 
 
-class OtherTreatmentDialog(ExtendableDialog):
+class OtherTreatmentDialog(BaseDialog):
     '''
     Make it easy for "other" items of treatment to tbe added to a treatment
     plan.
     '''
     def __init__(self, parent):
-        ExtendableDialog.__init__(self, parent, remove_stretch=True)
+        BaseDialog.__init__(self, parent, remove_stretch=True)
         self.setWindowTitle(_("Other Treatment Choice Dialog"))
-        label = QtWidgets.QLabel(_("Add the following items to the treament plan"))
+        label = WarningLabel(_("Add the following items to the treament plan"))
         self.tab_widget = QtWidgets.QTabWidget(self)
 
         self.insertWidget(label)
@@ -108,16 +109,3 @@ class OtherTreatmentDialog(ExtendableDialog):
             if number != 0:
                 for n in range(number):
                     yield ("other", item_widg.shortcut)
-
-
-if __name__ == "__main__":
-    from openmolar.dbtools.patient_class import patient
-    localsettings.loadFeeTables()
-
-    app = QtWidgets.QApplication([])
-    mw = QtWidgets.QWidget()
-    mw.pt = patient(17322)
-
-    dl = OtherTreatmentDialog(mw)
-    if dl.exec_():
-        print(list(dl.chosen_treatments))

@@ -104,7 +104,8 @@ class ApptSettingsDialog(BaseDialog):
 
         # HYGIENIST POLICY
         hygienist_frame = QtWidgets.QFrame()
-        c_label = QtWidgets.QLabel("<b>%s</b>" % _("Hygienist selection policy"))
+        c_label = QtWidgets.QLabel(
+            "<b>%s</b>" % _("Hygienist selection policy"))
         c_label.setAlignment(QtCore.Qt.AlignCenter)
         layout = QtWidgets.QGridLayout(hygienist_frame)
 
@@ -133,7 +134,7 @@ class ApptSettingsDialog(BaseDialog):
         self.dow_checkboxes = []
         dow_frame = QtWidgets.QFrame()
         dow_label = QtWidgets.QLabel("<b>%s</b>" %
-                                 _("Look for appointments on these days"))
+                                     _("Look for appointments on these days"))
         dow_label.setAlignment(QtCore.Qt.AlignCenter)
         layout = QtWidgets.QGridLayout(dow_frame)
         layout.addWidget(dow_label, 0, 0, 1, 7)
@@ -153,6 +154,9 @@ class ApptSettingsDialog(BaseDialog):
         # self.apply_but.setText(_("Search Now"))
 
         self.enableApply()
+
+    def sizeHint(self):
+        return QtCore.QSize(400, 600)
 
     def add_dow_checkboxes(self, layout):
         for i in range(7):
@@ -233,14 +237,3 @@ class ApptSettingsDialog(BaseDialog):
                 self.ignore_emergency_checkbox.isChecked()
             return True
         return False
-
-
-if __name__ == "__main__":
-    app = QtWidgets.QApplication([])
-
-    dl = ApptSettingsDialog()
-    if dl.exec_():
-        print("dentist_policy", dl.dentist_policy)
-        print("hygienist_policy", dl.hygienist_policy)
-        print("excluded days", dl.excluded_days)
-        print("ignore_emergency_space", dl.ignore_emergency_spaces)

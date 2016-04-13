@@ -21,6 +21,8 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
+
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
@@ -70,14 +72,14 @@ class RecallDialog(QtWidgets.QDialog):
         but_box.addButton(but_box.Ok).clicked.connect(self.accept)
         but_box.addButton(but_box.Cancel).clicked.connect(self.reject)
 
-        layout = QtWidgets.QGridLayout(self)
-        layout.addWidget(start_label, 1, 0)
-        layout.addWidget(self.start_date, 1, 1)
-        layout.addWidget(end_label, 2, 0)
-        layout.addWidget(self.end_date, 2, 1)
-        layout.addWidget(self.end_date, 2, 1)
-        layout.addWidget(self.dent_gb, 3, 0, 1, 2)
-        layout.addWidget(but_box, 4, 0, 1, 2)
+        layout2 = QtWidgets.QGridLayout(self)
+        layout2.addWidget(start_label, 1, 0)
+        layout2.addWidget(self.start_date, 1, 1)
+        layout2.addWidget(end_label, 2, 0)
+        layout2.addWidget(self.end_date, 2, 1)
+        layout2.addWidget(self.end_date, 2, 1)
+        layout2.addWidget(self.dent_gb, 3, 0, 1, 2)
+        layout2.addWidget(but_box, 4, 0, 1, 2)
 
     @property
     def conditions(self):
@@ -97,13 +99,3 @@ class RecallDialog(QtWidgets.QDialog):
                 if cb.isChecked():
                     vals.append(cb.dent)
         return tuple(vals)
-
-
-if __name__ == "__main__":
-    from gettext import gettext as _
-    localsettings.initiate()
-    app = QtWidgets.QApplication([])
-    dl = RecallDialog()
-    if dl.exec_():
-        print(dl.conditions)
-        print(dl.values)

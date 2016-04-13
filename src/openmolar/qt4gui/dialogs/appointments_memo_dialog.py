@@ -145,12 +145,3 @@ class AppointmentsMemoDialog(ExtendableDialog):
         new_memos = list(self.changed_memos)
         if new_memos:
             appointments.setMemos(self.date, new_memos)
-
-
-if __name__ == "__main__":
-    LOGGER.setLevel(logging.DEBUG)
-    localsettings.initiate()
-    app = QtWidgets.QApplication([])
-    dl = AppointmentsMemoDialog(QtCore.QDate.currentDate().toPyDate())
-    if dl.exec_():
-        dl.apply()

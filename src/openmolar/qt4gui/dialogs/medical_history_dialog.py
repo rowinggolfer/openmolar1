@@ -229,6 +229,7 @@ class MedicalHistoryDialog(BaseDialog):
         self.enableApply()
 
     def load_mh(self):
+        LOGGER.debug("loading medical history")
         self.mh = medhist.get_mh(self.pt.serialno)
         if self.is_new_mh:
             return
@@ -302,14 +303,10 @@ class MedicalHistoryDialog(BaseDialog):
                 self.meds_text_edit.add_new_drug(med)
             else:
                 if QtWidgets.QMessageBox.question(
-                    self,
-                    _("question"),
-                    "%s <b>'%s'</b> %s" % (
-                        _("Delete"),
-                        med,
-                        _("from your input?")
-                    ),
-                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                        self, _("question"),
+                        "%s <b>'%s'</b> %s" % (_("Delete"), med,
+                                               _("from your input?")),
+                        QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
                         QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.No:
                     return False
                 else:
@@ -374,8 +371,8 @@ class MedicalHistoryDialog(BaseDialog):
         for prop in (medhist.PROPERTIES):
             if prop in ("ix", "time_stamp", "chkdate", 'modified_by'):
                 continue
-            old_val = self.mh.__dict__[prop]
-            new_val = self.new_mh.__dict__[prop]
+            old_val = self.mh._asdict().get(prop)
+            new_val = self.new_mh._asdict().get(prop)
             if old_val is None:
                 old_val = ""
             if old_val != new_val:
@@ -389,10 +386,10 @@ class MedicalHistoryDialog(BaseDialog):
             return
         if not self.has_edits and self.mh.chkdate != self.new_mh.chkdate:
             if QtWidgets.QMessageBox.question(
-                self,
-                _("question"),
-                _("No changes - mark as checked today?"),
-                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                    self,
+                    _("question"),
+                    _("No changes - mark as checked today?"),
+                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
                     QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.Yes:
                 self.checked_only = True
             else:
@@ -400,10 +397,10 @@ class MedicalHistoryDialog(BaseDialog):
                 return
         elif self.is_new_mh and not self.has_edits:
             if QtWidgets.QMessageBox.question(
-                self,
-                _("question"),
-                _("Blank Medical History Entered - mark as checked today?"),
-                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                    self,
+                    _("question"),
+                    _("Blank Medical History Entered - mark as checked today?"),
+                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
                     QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.No:
                 BaseDialog.reject(self)
                 return
@@ -451,23 +448,3 @@ class MedicalHistoryDialog(BaseDialog):
     def update_chkdate(self):
         LOGGER.info("updating chkdate for existing mh")
         medhist.update_chkdate(self.mh.ix)
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication([])
-    from openmolar.dbtools import patient_class
-
-    LOGGER.setLevel(logging.DEBUG)
-    i = 16539
-    try:
-        pt = patient_class.patient(i)
-    except localsettings.PatientNotFoundError:
-        LOGGER.warning("no such serialno %s", i)
-        sys.exit()
-    dl = MedicalHistoryDialog(pt)
-    if dl.exec_():
-        LOGGER.debug("dialogl accepted")
-        dl.apply()
-    else:
-        LOGGER.debug("dialogl rejected")

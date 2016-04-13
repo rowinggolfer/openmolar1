@@ -74,10 +74,8 @@ class AdvancedRecordManagementDialog(BaseDialog):
         '''
         loads the money at startup
         '''
-        self.ui.total_label.setText(localsettings.formatMoney(
-                                    self.pt.fees))
-
-        self.ui.money0_spinBox.setValue(self.pt.money0)
+        self.ui.total_label.setText(
+            localsettings.formatMoney(self.pt.fees))
         self.ui.money1_spinBox.setValue(self.pt.money1)
         self.ui.money2_spinBox.setValue(self.pt.money2)
         self.ui.money3_spinBox.setValue(self.pt.money3)
@@ -271,22 +269,3 @@ class AdvancedRecordManagementDialog(BaseDialog):
         self.changeMoney()
         self.changeDates()
         self.changeHidden_notes()
-
-
-if __name__ == "__main__":
-    localsettings.initiate()
-    localsettings.loadFeeTables()
-    LOGGER.setLevel(logging.DEBUG)
-
-    from openmolar.dbtools.patient_class import patient
-    pt = patient(1)
-
-    app = QtWidgets.QApplication([])
-    pt.HIDDENNOTES = [
-        ('COURSE OPENED', '= = = = = '),
-        ('TC: EXAM', 'CE')
-    ]
-
-    dl = AdvancedRecordManagementDialog(pt, None)
-    if dl.exec_():
-        dl.apply()

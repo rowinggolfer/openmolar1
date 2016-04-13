@@ -23,6 +23,7 @@
 
 from collections import namedtuple
 from functools import partial
+from gettext import gettext as _
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
@@ -32,15 +33,13 @@ from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 
 
 STATIC_LIST = []
-for shortcut, description in (
-    ("IM/TIT", _("Titanium Implant")),
-    ("IM/ABUT", _("Implant Abutment")),
-    ("CR,IC", _("Implant Crown")),
-    ("BR/CR,IC", _("Implant Bridge Retainer")),
-    ("BR/P,IC", _("Implant Bridge Pontic")),
-):
+for shortcut, description in (("IM/TIT", _("Titanium Implant")),
+                              ("IM/ABUT", _("Implant Abutment")),
+                              ("CR,IC", _("Implant Crown")),
+                              ("BR/CR,IC", _("Implant Bridge Retainer")),
+                              ("BR/P,IC", _("Implant Bridge Pontic")),):
     implant_chart_button = namedtuple('ImplantType',
-                                     ("shortcut", "description", "tooltip"))
+                                      ("shortcut", "description", "tooltip"))
     implant_chart_button.description = description
     implant_chart_button.tooltip = ""
     implant_chart_button.shortcut = shortcut
@@ -89,19 +88,3 @@ class ImplantChoiceDialog(ExtendableDialog):
     def but_clicked(self, shortcut):
         self.chosen_shortcut = shortcut
         self.accept()
-
-
-if __name__ == "__main__":
-    from gettext import gettext as _
-    from openmolar.dbtools.patient_class import patient
-
-    app = QtWidgets.QApplication([])
-    mw = QtWidgets.QWidget()
-    mw.pt = patient(11956)
-    dl = ImplantChoiceDialog(True, mw)
-    if dl.exec_():
-        print(dl.chosen_shortcut)
-    localsettings.loadFeeTables()
-    dl = ImplantChoiceDialog(False, mw)
-    if dl.exec_():
-        print(dl.chosen_shortcut)

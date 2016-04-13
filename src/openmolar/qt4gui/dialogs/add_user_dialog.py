@@ -21,6 +21,7 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
 import logging
 
 from PyQt5 import QtWidgets
@@ -67,10 +68,10 @@ class AddUserDialog(ExtendableDialog):
     def _check_enable(self, *args):
         input_ = self.username
         if input_ in localsettings.allowed_logins:
-            QtWidgets.QMessageBox.warning(self,
-                                      _("error"),
-                                      _("Initials/nickname mut be unique"),
-                                      )
+            QtWidgets.QMessageBox.warning(
+                self,
+                _("error"),
+                _("Initials/nickname must be unique"))
             self.enableApply(False)
         else:
             self.enableApply(input_ != "")
@@ -88,13 +89,3 @@ class AddUserDialog(ExtendableDialog):
         if ExtendableDialog.exec_(self):
             return self.apply()
         return False
-
-
-if __name__ == "__main__":
-    LOGGER.setLevel(logging.DEBUG)
-    app = QtWidgets.QApplication([])
-    localsettings.initiateUsers()
-
-    dl = AddUserDialog()
-    if dl.exec_():
-        print(dl.username)

@@ -21,16 +21,12 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
+
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
-
-if __name__ == "__main__":
-    import os
-    import sys
-    sys.path.insert(0, os.path.abspath("../../../"))
-
-from openmolar.settings import localsettings
+from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
 
@@ -47,29 +43,25 @@ class ApptModeDialog(BaseDialog):
 
         self.setWindowTitle(_("User choice"))
 
-        label = QtWidgets.QLabel(_("Set the Appointment Viewing Mode"))
+        label = WarningLabel(_("Set the Appointment Viewing Mode"))
         self.insertWidget(label)
 
         for mode, description, value in (
-            (_("Browsing"),
-                "",
-                self.VIEW_MODE
-             ),
+                (_("Browsing"),
+                 "",
+                 self.VIEW_MODE),
 
-            (_("Scheduling"),
-                _("make appointments for a patient"),
-                self.SCHEDULING_MODE
-             ),
+                (_("Scheduling"),
+                 _("make appointments for a patient"),
+                 self.SCHEDULING_MODE),
 
-            (_("Blocking"),
-                _("block time periods. eg. lunch times etc."),
-                self.BLOCKING_MODE
-             ),
+                (_("Blocking"),
+                 _("block time periods. eg. lunch times etc."),
+                 self.BLOCKING_MODE),
 
-            (_("Note Checking"),
-                _("check notes for today's patients"),
-                self.NOTES_MODE),
-        ):
+                (_("Note Checking"),
+                 _("check notes for today's patients"),
+                 self.NOTES_MODE)):
 
             but = QtWidgets.QPushButton(mode)
             but.setToolTip(description)

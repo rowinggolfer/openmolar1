@@ -22,23 +22,14 @@
 # ########################################################################### #
 
 from PyQt5 import QtWidgets
+
 from openmolar.qt4gui.compiled_uis import Ui_choose_clinicians
 
 
-class dialog(Ui_choose_clinicians.Ui_Dialog, QtWidgets.QDialog):
+class ChooseCliniciansDialog(Ui_choose_clinicians.Ui_Dialog, QtWidgets.QDialog):
 
     def __init__(self, widg, parent=None):
-        super(dialog, self).__init__(parent)
+        super().__init__(parent)
         self.setupUi(self)
         layout = QtWidgets.QVBoxLayout(self.frame)
         layout.addWidget(widg)
-
-
-if __name__ == "__main__":
-    import gettext
-    app = QtWidgets.QApplication([])
-    gettext.install('openmolar')
-    l = QtWidgets.QListView()
-    dl = dialog(l)
-    dl.exec_()
-    app.closeAllWindows()

@@ -21,13 +21,16 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
 import logging
 import re
+
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
 from openmolar.qt4gui.customwidgets.upper_case_line_edit import \
     UpperCaseLineEdit
+from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
 from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 from openmolar.qt4gui.customwidgets.simple_chartwidget import SimpleChartWidg
 
@@ -189,7 +192,8 @@ class PageOne(_OptionPage):
         _OptionPage.__init__(self, parent)
         self.acrylic_radioButton = QtWidgets.QRadioButton(_("Acrylic Denture"))
         self.metal_radioButton = QtWidgets.QRadioButton(_("Chrome Denture"))
-        self.flexible_radioButton = QtWidgets.QRadioButton(_("Flexible Denture"))
+        self.flexible_radioButton = QtWidgets.QRadioButton(
+            _("Flexible Denture"))
 
         layout = QtWidgets.QVBoxLayout(self.frame)
         layout.addWidget(self.acrylic_radioButton)
@@ -303,8 +307,7 @@ class NewDentureDialog(ExtendableDialog):
         self.om_gui = om_gui
         message = (_("Add A New Denture To The Treatment Plan"))
         self.setWindowTitle(message)
-        self.header_label = QtWidgets.QLabel(message)
-        self.header_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.header_label = WarningLabel(message)
 
         self.ndu_le = UpperCaseLineEdit()
         self.ndl_le = UpperCaseLineEdit()
@@ -360,7 +363,7 @@ class NewDentureDialog(ExtendableDialog):
     def next_widget(self):
         if not self.current_page.is_completed:
             QtWidgets.QMessageBox.information(self, _("Whoops"),
-                                          self.current_page.error_message)
+                                              self.current_page.error_message)
             return
 
         if self.current_index == 0:
@@ -464,13 +467,3 @@ class NewDentureDialog(ExtendableDialog):
         if result:
             result = self.check_valid_input or self.exec_()
         return result
-
-
-if __name__ == "__main__":
-
-    app = QtWidgets.QApplication([])
-    LOGGER.setLevel(logging.DEBUG)
-    dl = NewDentureDialog(None)
-    if dl.exec_():
-        for att, tx in dl.chosen_treatments:
-            print(att, tx)

@@ -197,20 +197,3 @@ class ExamWizard(QtWidgets.QDialog, Ui_exam_wizard.Ui_Dialog):
             date_ = localsettings.formatDate(self.pt.appt_prefs.new_recdent)
             self.om_gui.advise("updating recall date to %s" % date_)
             self.pt.appt_prefs.update_recdent()
-
-
-if __name__ == "__main__":
-    LOGGER.setLevel(logging.DEBUG)
-
-    localsettings.initiate()
-    localsettings.loadFeeTables()
-    localsettings.station = "reception"
-
-    from openmolar.qt4gui import maingui
-
-    app = QtWidgets.QApplication([])
-    mw = maingui.OpenmolarGui()
-    mw.getrecord(11956)
-
-    dl = ExamWizard(mw)
-    print(dl.perform_exam())

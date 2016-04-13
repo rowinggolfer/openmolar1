@@ -21,7 +21,9 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
 import logging
+
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
@@ -99,7 +101,6 @@ class DaybookItemDialog(ExtendableDialog):
 
         self.adv_widget = DaybookItemAdvancedWidget()
         self.add_advanced_widget(self.adv_widget)
-        self.remove_spacer()
 
         self.total_fee = 0
         self.total_ptfee = 0
@@ -115,7 +116,7 @@ class DaybookItemDialog(ExtendableDialog):
         QtWidgets.QMessageBox.information(self, _("message"), message)
 
     def sizeHint(self):
-        return QtCore.QSize(400, 400)
+        return QtCore.QSize(600, 600)
 
     def get_data(self):
         rows = daybook.inspect_item(self.daybook_id)
@@ -175,11 +176,3 @@ class DaybookItemDialog(ExtendableDialog):
             self.advise(_("Successfully deleted row"))
         else:
             self.advise(_("No changes made"))
-
-
-if __name__ == "__main__":
-
-    app = QtWidgets.QApplication([])
-    LOGGER.setLevel(logging.DEBUG)
-    dl = DaybookItemDialog(337646, 5700, 1300)
-    dl.exec_()

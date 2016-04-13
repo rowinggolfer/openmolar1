@@ -41,7 +41,8 @@ class MHFormDialog(BaseDialog):
         self.pt = pt
         self.setWindowTitle(_("MH Form Print Dialog"))
         self.radio_button_a = QtWidgets.QRadioButton(_("Leave fields empty"))
-        self.radio_button_b = QtWidgets.QRadioButton(_("Populate with current MH"))
+        self.radio_button_b = QtWidgets.QRadioButton(
+            _("Populate with current MH"))
 
         if self.has_no_patient:
             message = _("No Patient Selected, A blank form will be produced")
@@ -71,6 +72,9 @@ class MHFormDialog(BaseDialog):
         self.radio_button_b.setChecked(bool(self.pt and self.pt.mh_chkdate))
         self.enableApply()
 
+    def sizeHint(self):
+        return QtCore.QSize(400, 300)
+
     @property
     def has_no_patient(self):
         return self.pt is None
@@ -86,30 +90,3 @@ class MHFormDialog(BaseDialog):
         mh_print = MHPrint(self.pt, self)
         mh_print.date_ = self.date_edit.date().toPyDate()
         mh_print.print_()
-
-    def sizeHint(self):
-        return QtCore.QSize(300, 200)
-
-
-if __name__ == "__main__":
-    import os
-    import sys
-    os.chdir(os.path.expanduser("~"))
-
-    from openmolar.dbtools import patient_class
-    from openmolar.settings import localsettings
-
-    LOGGER.setLevel(logging.DEBUG)
-    i = 29833
-    try:
-        pt_ = patient_class.patient(i)
-    except localsettings.PatientNotFoundError:
-        LOGGER.warning("no such serialno %s", i)
-        sys.exit()
-
-    LOGGER.setLevel(logging.DEBUG)
-    app = QtWidgets.QApplication([])
-
-    dl = MHFormDialog(pt_)
-    if dl.exec_():
-        dl.apply()
