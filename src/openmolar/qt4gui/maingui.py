@@ -2790,10 +2790,11 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
             manipulate_plan.add_treatments_to_plan(self, dl.tx_items, True)
 
     def notes_link_clicked(self, url):
+        LOGGER.debug("notes link clicked '%s'", url)
         url_text = url.toString()
-        m = re.match(r"edit_notes\?(\d+|\|\|SNO\|\|)", url_text)
+        m = re.match(r"edit_notes\?(\d+|__SNO__)", url_text)
         if m:
-            if m.groups()[0] == "||SNO||":
+            if m.groups()[0] == "__SNO__":
                 serialno = self.pt.serialno
                 patient_loaded = True
             else:
@@ -2807,6 +2808,8 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
                     self.load_notes()
             if self.sender() == self.diary_widget.ui.appt_notes_webView:
                 self.diary_widget.show_todays_notes(serialno)
+        else:
+            LOGGER.warning("unable to match clicked link '%s'", url)
 
     def show_diary(self):
         '''

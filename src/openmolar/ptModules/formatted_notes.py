@@ -239,7 +239,7 @@ def notes(notes_dict, full_notes=True):
 
         if (date == localsettings.currentDay() and
            op == localsettings.operator):
-            subline += '<br /><a href="edit_notes?||SNO||">%s</a>' % _("Edit")
+            subline += '<br /><a href="edit_notes?__SNO__">%s</a>' % _("Edit")
 
         newline += '''
         %s</td>
@@ -263,7 +263,7 @@ def todays_notes(serialno):
         html += "%s <a href='edit_notes?%s'>%s</a></body></html>" % (
             _("No notes found"), serialno, _("Add a note"))
 
-    return html.replace("||SNO||", str(serialno))
+    return html.replace("__SNO__", str(serialno))
 
 
 if __name__ == "__main__":

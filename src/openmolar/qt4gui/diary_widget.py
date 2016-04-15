@@ -1573,6 +1573,7 @@ class _testDiary(QtWidgets.QMainWindow):
         # pt = patient_class.patient(1)
         # dw.schedule_controller.set_patient(pt)
 
+        localsettings.operator = "NW"
         self.setCentralWidget(dw)
 
         action1 = QtWidgets.QAction("clear emergency slots", self)
