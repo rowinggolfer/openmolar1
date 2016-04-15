@@ -30,8 +30,8 @@ from distutils.command.install_data import install_data
 from distutils.command.sdist import sdist as _sdist
 from distutils.command.build import build as _build
 from distutils.command.clean import clean as _clean
-from distutils.command.install import install as _install
 from distutils.core import setup
+from distutils.core import Command
 from distutils.dep_util import newer
 from distutils.log import info
 
@@ -41,6 +41,7 @@ import re
 import shutil
 import subprocess
 import sys
+import unittest
 
 from PyQt5 import uic
 from PyQt5.Qt import PYQT_VERSION_STR
@@ -93,13 +94,11 @@ class Build(_build):
         '''
         return '_(%s)' % match.groups()[1].strip(" ")
 
-
     def de_bracket(self, match):
         '''
         a callable used form regex substitution
         '''
         return match.groups()[0].strip("()")
-
 
     def compile_ui(self, ui_fname, outdir):
         name = os.path.basename(ui_fname)
@@ -141,7 +140,6 @@ class Build(_build):
         for ui_file in os.listdir(self.SRC_FOLDER):
             if re.match(".*.ui$", ui_file):
                 yield ui_file
-
 
     def run(self, *args, **kwargs):
         print("running configure")
@@ -251,6 +249,25 @@ class InstallLocale(install_data):
         install_data.run(self)
 
 
+class Test(Command):
+
+    description = 'run tests'
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self, *args, **kwargs):
+        loader = unittest.TestLoader()
+        tests = loader.discover(start_dir="src")
+        result = unittest.TestResult()
+        tests.run(result)
+        print(result)
+
+
 setup(
     name='openmolar',
     version=VERSION,
@@ -297,6 +314,7 @@ setup(
     cmdclass={'sdist': Sdist,
               'clean': Clean,
               'build': Build,
-              'install_data': InstallLocale},
+              'install_data': InstallLocale,
+              'test': Test},
     scripts=['openmolar'],
 )
