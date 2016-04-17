@@ -21,7 +21,6 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from gettext import gettext as _
 import logging
 import re
 from PyQt5 import QtCore

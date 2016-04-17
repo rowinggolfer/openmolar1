@@ -25,7 +25,6 @@
 this module provides an html summary of the patient's reception activity
 '''
 
-from gettext import gettext as _
 
 from openmolar.settings import localsettings
 from openmolar.dbtools import paymentHistory

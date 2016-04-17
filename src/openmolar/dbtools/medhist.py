@@ -25,7 +25,6 @@
 this module provides read/write tools for medical history
 '''
 from collections import namedtuple
-from gettext import gettext as _
 import logging
 
 from openmolar.connect import connect

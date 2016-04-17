@@ -26,7 +26,6 @@ this module puts the "openmolar" modules onto the python path,
 and starts the gui
 '''
 
-from gettext import gettext as _
 import getopt
 import logging
 import os

@@ -25,7 +25,6 @@
 this module provides read/write tools for the daybook database table
 '''
 
-from gettext import gettext as _
 from collections import namedtuple
 import logging
 

@@ -27,7 +27,6 @@ to schema 1_9
 '''
 
 from collections import OrderedDict
-from gettext import gettext as _
 import logging
 
 from openmolar.schema_upgrades.database_updater_thread import \

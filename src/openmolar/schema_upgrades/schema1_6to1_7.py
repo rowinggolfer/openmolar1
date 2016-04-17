@@ -25,7 +25,6 @@
 This module provides a function 'run' which will move data
 to schema 1_7
 '''
-from gettext import gettext as _
 import logging
 from xml.dom import minidom
 

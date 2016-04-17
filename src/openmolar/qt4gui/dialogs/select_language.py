@@ -30,7 +30,6 @@ However this dialog provides a way of demonstrating the other languages.
 import gettext
 import os
 import logging
-from gettext import gettext as _
 
 from PyQt5 import QtWidgets
 
@@ -117,7 +116,7 @@ class LanguageDialog(Ui_choose_language.Ui_Dialog, QtWidgets.QDialog):
         for rb in self.radioboxes:
             if rb.isChecked():
                 lang = rb.text()
-                result = self.setLanguage(str(lang))
+                result = self.setLanguage(lang)
                 if result:
                     message = "%s %s" % (
                         _("switched interface to"), lang)

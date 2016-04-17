@@ -26,7 +26,6 @@ provides the main class which is my gui
 '''
 
 import datetime
-from gettext import gettext as _
 import logging
 import os
 import pickle
@@ -2095,6 +2094,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         dl = LanguageDialog(self)
         if dl.getInput():
             self.ui.retranslateUi(self)
+            self.diary_widget.ui.retranslateUi(self)
 
     def printGP17_clicked(self):
         '''

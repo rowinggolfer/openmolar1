@@ -21,7 +21,6 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from gettext import gettext as _
 
 from PyQt5 import QtCore
 from PyQt5 import QtPrintSupport

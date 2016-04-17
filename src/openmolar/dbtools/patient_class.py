@@ -27,7 +27,6 @@ patient_class.py
 
 from copy import deepcopy
 import datetime
-from gettext import gettext as _
 import logging
 import re
 import sys

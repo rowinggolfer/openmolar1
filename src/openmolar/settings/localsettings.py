@@ -21,7 +21,6 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from gettext import gettext as _
 import configparser
 import datetime
 import hashlib

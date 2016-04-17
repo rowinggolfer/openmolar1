@@ -26,7 +26,6 @@ diary_widget.py provides the DiaryWidget class for openmolar.
 '''
 
 import datetime
-from gettext import gettext as _
 import logging
 import time
 

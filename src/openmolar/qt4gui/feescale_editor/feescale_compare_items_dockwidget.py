@@ -29,7 +29,6 @@ These are used to compare two feescales
 import logging
 import re
 import sys
-from gettext import gettext as _
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets

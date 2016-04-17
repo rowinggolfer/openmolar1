@@ -26,7 +26,6 @@ provides one class - the appointment overview widget used in the weekview
 '''
 
 import datetime
-from gettext import gettext as _
 import logging
 import pickle
 

@@ -26,7 +26,6 @@ provides code to add Xrays, perio items......etc
 to the treatment plan
 '''
 
-from gettext import gettext as _
 import re
 import logging
 

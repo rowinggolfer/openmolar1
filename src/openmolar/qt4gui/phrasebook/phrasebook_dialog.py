@@ -22,7 +22,6 @@
 # ########################################################################### #
 
 from collections import OrderedDict
-from gettext import gettext as _
 import types
 from xml.dom import minidom
 

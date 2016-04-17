@@ -26,7 +26,6 @@ This module provides a function 'run' which will move data
 to schema 3.2
 '''
 
-from gettext import gettext as _
 
 import logging
 

@@ -25,7 +25,6 @@
 module provides one class - NewFeescaleDialog
 '''
 
-from gettext import gettext as _
 import os
 import shutil
 

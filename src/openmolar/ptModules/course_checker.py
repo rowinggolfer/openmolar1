@@ -22,7 +22,6 @@
 # ########################################################################### #
 
 import datetime
-from gettext import gettext as _
 import logging
 import re
 

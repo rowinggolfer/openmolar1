@@ -26,7 +26,6 @@ this module contains functions which were originally part of the maingui.py
 script, concerning fees, accounts and graphical feescale display.
 '''
 
-from gettext import gettext as _
 import logging
 
 from PyQt5 import QtCore

@@ -26,7 +26,6 @@ has one class, a custom widget which inherits from QWidget
 '''
 
 from functools import partial
-from gettext import gettext as _
 import logging
 import re
 import sys

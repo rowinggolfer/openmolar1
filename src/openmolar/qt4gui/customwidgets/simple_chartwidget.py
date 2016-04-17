@@ -24,7 +24,6 @@
 '''
 has one class, a custom widget which inherits from QWidget
 '''
-from gettext import gettext as _
 
 import re
 import sys

@@ -72,8 +72,9 @@ LOGGER.debug("running openmolar base module = %s", os.path.dirname(__file__))
 
 try:
     path = os.path.join(os.path.expanduser("~"), ".openmolar", "locale")
-    gettext.translation("openmolar",
-                        localedir=path, languages=['default']).install()
+    lang1 = gettext.translation("openmolar", localedir=path,
+                                languages=['default'])
+    lang1.install()
     LOGGER.info("Installed translation file found in %s", path)
 except FileNotFoundError:
     LOGGER.debug("no local translation found")

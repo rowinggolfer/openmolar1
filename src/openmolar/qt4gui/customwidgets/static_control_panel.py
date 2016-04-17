@@ -121,7 +121,6 @@ if __name__ == "__main__":
     def sig_catcher(*args):
         print(args, widg.sender())
 
-    from gettext import gettext as _
 
     app = QtWidgets.QApplication([])
     widg = StaticControlPanel()

@@ -25,7 +25,6 @@
 Provides a dialog for denture planning.
 '''
 
-from gettext import gettext as _
 import logging
 
 from PyQt5 import QtCore

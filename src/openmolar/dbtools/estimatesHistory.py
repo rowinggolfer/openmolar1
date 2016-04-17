@@ -21,7 +21,6 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from gettext import gettext as _
 from collections import OrderedDict
 
 from openmolar.settings import localsettings

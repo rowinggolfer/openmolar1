@@ -23,7 +23,6 @@
 
 import configparser
 from datetime import date, timedelta
-from gettext import gettext as _
 import logging
 import re
 import os

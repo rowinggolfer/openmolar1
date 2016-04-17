@@ -26,7 +26,6 @@ module provides one class DiffDialog
 '''
 
 import difflib
-from gettext import gettext as _
 import logging
 import re
 import sys

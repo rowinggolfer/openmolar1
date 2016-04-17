@@ -25,7 +25,6 @@
 this module is called when the schema is found to be out of date
 '''
 
-from gettext import gettext as _
 import importlib
 import logging
 import sys
@@ -255,7 +254,6 @@ class SchemaUpdater(BaseDialog, Advisor):
 
 
 if __name__ == "__main__":
-    from gettext import gettext as _
     # - put "openmolar" on the pyth path and go....
     LOGGER.setLevel(logging.DEBUG)
     LOGGER.debug("starting schema_updater")

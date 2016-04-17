@@ -26,7 +26,6 @@ functions to open a course, close a course, or check if one is needed.
 '''
 
 import datetime
-from gettext import gettext as _
 import logging
 
 from PyQt5 import QtWidgets

@@ -28,7 +28,6 @@ to schema 3_1
 
 from collections import namedtuple
 from collections import OrderedDict
-from gettext import gettext as _
 import logging
 import re
 from MySQLdb import IntegrityError

@@ -39,7 +39,6 @@ import logging
 import re
 import os
 import sys
-from gettext import gettext as _
 from xml.dom import minidom
 
 from PyQt5 import QtCore

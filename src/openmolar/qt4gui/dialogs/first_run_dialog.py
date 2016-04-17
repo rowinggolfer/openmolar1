@@ -22,7 +22,6 @@
 # ########################################################################### #
 
 import base64
-from gettext import gettext as _
 import hashlib
 import logging
 import os

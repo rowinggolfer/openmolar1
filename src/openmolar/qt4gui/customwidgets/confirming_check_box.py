@@ -62,7 +62,6 @@ class ConfirmingCheckBox(QtWidgets.QCheckBox):
 
 
 if __name__ == "__main__":
-    from gettext import gettext as _
     app = QtWidgets.QApplication([])
     cb = ConfirmingCheckBox("hello")
     cb.show()

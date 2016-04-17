@@ -530,7 +530,6 @@ class EstimateWidget(QtWidgets.QWidget):
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
 
-    from gettext import gettext as _
     from openmolar.dbtools import patient_class
     pt = patient_class.patient(11956)
 

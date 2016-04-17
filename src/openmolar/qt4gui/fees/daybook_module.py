@@ -25,7 +25,6 @@
 update perio dates, xray dates, and write items to the daybook
 '''
 
-from gettext import gettext as _
 import logging
 import re
 

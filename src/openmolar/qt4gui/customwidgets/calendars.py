@@ -24,7 +24,6 @@
 import calendar
 import datetime
 from functools import partial
-from gettext import gettext as _
 import sys
 
 from PyQt5 import QtCore

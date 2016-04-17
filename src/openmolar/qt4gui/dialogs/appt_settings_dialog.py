@@ -25,7 +25,6 @@
 This dialog allows the user to specify a few options when making appointments.
 '''
 
-from gettext import gettext as _
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets

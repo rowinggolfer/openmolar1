@@ -25,7 +25,6 @@
 provides printing functions for the main gui.
 '''
 
-from gettext import gettext as _
 import logging
 import tempfile
 

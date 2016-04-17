@@ -26,7 +26,6 @@ a module to search for previous course items
 '''
 
 import datetime
-from gettext import gettext as _
 import logging
 
 from openmolar.settings import localsettings

@@ -28,7 +28,6 @@ the canvas is a subclass of this
 
 import datetime
 from functools import partial
-from gettext import gettext as _
 import logging
 import pickle
 

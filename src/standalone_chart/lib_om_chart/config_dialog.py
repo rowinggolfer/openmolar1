@@ -157,7 +157,6 @@ class ConfigDialog(QtWidgets.QDialog):
 
 
 if __name__ == "__main__":
-    from gettext import gettext as _
     app = QtWidgets.QApplication([])
     dl = ConfigDialog()
     if dl.exec_():

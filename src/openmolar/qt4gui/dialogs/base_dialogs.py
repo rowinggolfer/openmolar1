@@ -26,7 +26,6 @@ this module provide 2 classes, BaseDialog and ExtendableDialog.
 These are backported from openmolar2
 '''
 
-from gettext import gettext as _
 import logging
 
 from PyQt5 import QtCore

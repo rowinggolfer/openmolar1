@@ -22,7 +22,6 @@
 # ########################################################################### #
 
 from collections import OrderedDict
-from gettext import gettext as _
 import logging
 import re
 import os

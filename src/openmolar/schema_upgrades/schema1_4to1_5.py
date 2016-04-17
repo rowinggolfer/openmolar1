@@ -29,7 +29,6 @@ also, remove the key for calendar, it makes more sense to have the date
 as the primary key. (cleaner code for updates)
 '''
 
-from gettext import gettext as _
 import logging
 
 from openmolar.schema_upgrades.database_updater_thread \

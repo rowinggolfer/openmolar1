@@ -22,7 +22,6 @@
 # ########################################################################### #
 
 from collections import namedtuple
-from gettext import gettext as _
 import logging
 
 from PyQt5 import QtCore

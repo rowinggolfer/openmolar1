@@ -25,7 +25,6 @@
 Provides a Class for printing the GP17s
 Will raise dialogs etc to enable user choices.
 '''
-from gettext import gettext as _
 import os
 
 from PyQt5 import QtWidgets

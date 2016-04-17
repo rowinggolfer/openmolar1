@@ -26,7 +26,6 @@ this module provides an html summary of the patient's details
 '''
 
 import datetime
-from gettext import gettext as _
 import logging
 import sys
 from openmolar.settings import localsettings

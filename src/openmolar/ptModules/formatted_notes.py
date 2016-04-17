@@ -25,7 +25,6 @@
 This module replaces notes.py with schema version 1.9
 '''
 
-from gettext import gettext as _
 
 from collections import OrderedDict
 import logging

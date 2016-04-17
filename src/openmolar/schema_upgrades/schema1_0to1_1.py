@@ -29,7 +29,6 @@ Incidentally - this script introduces the "settings table" in which the schema
 variable is stored.
 '''
 
-from gettext import gettext as _
 import logging
 import sys
 

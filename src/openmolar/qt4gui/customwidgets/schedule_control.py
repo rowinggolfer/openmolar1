@@ -25,7 +25,6 @@
 schedule_control.py provides the DiaryScheduleController class for openmolar.
 '''
 
-from gettext import gettext as _
 import logging
 
 from PyQt5 import QtCore

@@ -27,7 +27,6 @@ that is displayed in the patients diary view
 found under the reception tab
 '''
 
-from gettext import gettext as _
 import logging
 
 from PyQt5 import QtCore

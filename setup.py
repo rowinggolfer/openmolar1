@@ -78,10 +78,7 @@ class Build(_build):
     REMOVALS = ("        _translate = QtCore.QCoreApplication.translate\n",)
 
     REPLACEMENTS = [("import resources_rc",
-                     "from openmolar.qt4gui import resources_rc"),
-                    ('from PyQt5',
-                     'from gettext import gettext as _\nfrom PyQt5')]
-
+                     "from openmolar.qt4gui import resources_rc"),]
     SRC_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                               "src", "openmolar", "qt-designer")
 

@@ -21,7 +21,6 @@
 # #                                                                         # #
 # ########################################################################### #
 
-from gettext import gettext as _
 from openmolar.settings import localsettings
 from openmolar.connect import connect
 
