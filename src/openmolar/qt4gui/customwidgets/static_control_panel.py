@@ -74,7 +74,7 @@ class StaticControlPanel(QtWidgets.QWidget):
         dec_button.setToolTip(_("Toggle selected tooth/teeth as deciduous"))
 
         layout = QtWidgets.QGridLayout(self)
-        # layout.setMargin(0)
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(2)
         layout.addWidget(tm_button, 0, 0)
         layout.addWidget(at_button, 0, 1)

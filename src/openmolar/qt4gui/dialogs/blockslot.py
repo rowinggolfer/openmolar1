@@ -39,17 +39,17 @@ class BlockDialog(Ui_blockSlot.Ui_Dialog, QtWidgets.QDialog):
         self.setupUi(self)
         self.om_gui = parent
         vlayout = QtWidgets.QVBoxLayout(self.blockStart_frame)
-        # vlayout.setMargin(0)
+        vlayout.setContentsMargins(0, 0, 0, 0)
         self.start_timeEdit = fiveminutetimeedit.FiveMinuteTimeEdit()
         vlayout.addWidget(self.start_timeEdit)
 
         vlayout = QtWidgets.QVBoxLayout(self.blockEnd_frame)
-        # vlayout.setMargin(0)
+        vlayout.setContentsMargins(0, 0, 0, 0)
         self.finish_timeEdit = fiveminutetimeedit.FiveMinuteTimeEdit()
         vlayout.addWidget(self.finish_timeEdit)
 
         vlayout = QtWidgets.QVBoxLayout(self.startTime_frame)
-        # vlayout.setMargin(0)
+        vlayout.setContentsMargins(0, 0, 0, 0)
         self.appointment_timeEdit = fiveminutetimeedit.FiveMinuteTimeEdit()
         vlayout.addWidget(self.appointment_timeEdit)
 
@@ -174,4 +174,3 @@ class BlockDialog(Ui_blockSlot.Ui_Dialog, QtWidgets.QDialog):
         if initialise:
             self.length_spinBox.setMaximum(self.length)
         self.length_spinBox.setValue(self.length)
-

@@ -96,7 +96,7 @@ class EditStandardLettersDialog(BaseDialog):
 
         left_frame = QtWidgets.QFrame()
         layout = QtWidgets.QGridLayout(left_frame)
-        # layout.setMargin(0)
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.list_view, 0, 0, 1, 3)
         layout.addWidget(delete_but, 1, 0)
         layout.addWidget(add_but, 1, 1)
@@ -104,7 +104,7 @@ class EditStandardLettersDialog(BaseDialog):
 
         right_frame = QtWidgets.QFrame()
         layout = QtWidgets.QFormLayout(right_frame)
-        # layout.setMargin(0)
+        layout.setContentsMargins(0, 0, 0, 0)
         self.description_line_edit = QtWidgets.QLineEdit()
         self.text_edit = Qsci.QsciScintilla()
         self.text_edit.setLexer(Qsci.QsciLexerHTML())

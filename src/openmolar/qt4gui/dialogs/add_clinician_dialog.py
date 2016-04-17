@@ -73,7 +73,7 @@ class AddClinicianDialog(ExtendableDialog):
 
         row1 = QtWidgets.QWidget()
         layout = QtWidgets.QHBoxLayout(row1)
-        # layout.setMargin(0)
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.user_id_comboBox)
         layout.addWidget(but)
 

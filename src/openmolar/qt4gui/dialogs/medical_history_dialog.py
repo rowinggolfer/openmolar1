@@ -204,7 +204,7 @@ class MedicalHistoryDialog(BaseDialog):
 
         frame = QtWidgets.QFrame()
         vlayout = QtWidgets.QHBoxLayout(frame)
-        # vlayout.setMargin(0)
+        vlayout.setContentsMargins(0, 0, 0, 0)
         vlayout.addWidget(l_frame)
         vlayout.addWidget(r_frame)
 

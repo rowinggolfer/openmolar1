@@ -21,6 +21,8 @@
 # #                                                                         # #
 # ########################################################################### #
 
+from gettext import gettext as _
+
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
@@ -53,12 +55,12 @@ class DiaryViewController(QtWidgets.QWidget):
 
         mode_frame = QtWidgets.QWidget()
         mode_layout = QtWidgets.QHBoxLayout(mode_frame)
-        # mode_layout.setMargin(0)
+        mode_layout.setContentsMargins(0, 0, 0, 0)
         mode_layout.addWidget(self.mode_label)
         mode_layout.addWidget(mode_but)
 
         layout = QtWidgets.QVBoxLayout(self)
-        # layout.setMargin(0)
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.clinicianSelection_comboBox)
         layout.addWidget(mode_frame)
 
@@ -102,11 +104,9 @@ class DiaryViewController(QtWidgets.QWidget):
 
 
 if __name__ == "__main__":
+
     def sig_catcher(*args):
         print("signal", args)
-
-    import gettext
-    gettext.install("openmolar")
 
     from openmolar.settings import localsettings
     localsettings.initiate()

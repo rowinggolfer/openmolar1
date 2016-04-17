@@ -33,6 +33,7 @@ from openmolar.settings import localsettings
 from openmolar.settings import allowed
 from openmolar.qt4gui.compiled_uis import Ui_toothProps
 from openmolar.qt4gui import colours
+from openmolar.qt4gui.dialogs.bridge_dialog import BridgeDialog
 from openmolar.qt4gui.dialogs.crown_choice_dialog import CrownChoiceDialog
 from openmolar.qt4gui.dialogs.post_choice_dialog import PostChoiceDialog
 from openmolar.qt4gui.dialogs.implant_choice_dialog import ImplantChoiceDialog
@@ -309,7 +310,7 @@ class ToothPropertyEditingWidget(QtWidgets.QWidget, Ui_toothProps.Ui_Form):
 
         frame = QtWidgets.QFrame()
         vlayout = QtWidgets.QVBoxLayout(frame)
-        # vlayout.setMargin(0)
+        vlayout.setContentsMargins(0, 0, 0, 0)
         vlayout.addWidget(self.fs_but)
         vlayout.addWidget(self.endo_but)
         vlayout.addWidget(self.crown_but)

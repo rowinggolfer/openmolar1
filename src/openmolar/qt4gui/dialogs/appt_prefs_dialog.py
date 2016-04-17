@@ -36,7 +36,7 @@ class ShortcutButs(QtWidgets.QWidget):
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
         layout = QtWidgets.QHBoxLayout(self)
-        # layout.setMargin(0)
+        layout.setContentsMargins(0, 0, 0, 0)
         for term in (1, 2, 3, 6, 9, 12):
             but = QtWidgets.QPushButton("%d" % term)
             but.setMaximumWidth(40)

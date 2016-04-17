@@ -465,7 +465,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         called by menu - help - about openmolar
         '''
         self.advise('''<p>%s</p><p>%s</p>''' % (localsettings.about(),
-                                                localsettings.license), 1)
+                                                localsettings.license_), 1)
 
     def addCustomWidgets(self):
         '''
@@ -484,7 +484,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         hlayout.addWidget(self.loadedPatient_label)
         hlayout.addWidget(self.sepline)
         hlayout.addWidget(self.operator_label)
-        # hlayout.setMargin(0)
+        hlayout.setContentsMargins(0, 0, 0, 0)
         self.ui.statusbar.addPermanentWidget(self.statusbar_frame)
 
         # summary chart
@@ -520,13 +520,13 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         # static control panel
         self.ui.static_control_panel = StaticControlPanel()
         hlayout = QtWidgets.QHBoxLayout(self.ui.static_frame)
-        # hlayout.setMargin(0)
+        hlayout.setContentsMargins(0, 0, 0, 0)
         hlayout.addWidget(self.ui.static_control_panel)
 
         # TOOTHPROPS (right hand side on the charts page)
         self.ui.toothPropsWidget = toothProps.ToothPropertyEditingWidget(self)
         hlayout = QtWidgets.QHBoxLayout(self.ui.toothProps_frame)
-        # hlayout.setMargin(0)
+        hlayout.setContentsMargins(0, 0, 0, 0)
         hlayout.addWidget(self.ui.toothPropsWidget)
 
         self.enableEdit(False)
@@ -549,7 +549,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
 
         self.ui.cashbookTextBrowser = cashbook_module.CashBookBrowser(self)
         layout = QtWidgets.QVBoxLayout(self.ui.cashbook_placeholder_widget)
-        # layout.setMargin(0)
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.ui.cashbookTextBrowser)
 
     def set_referral_centres(self):
@@ -1248,8 +1248,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
     def getrecord(self,
                   serialno,
                   addToRecentSnos=True,
-                  newPatientReload=False
-                  ):
+                  newPatientReload=False):
         '''
         a record has been called by one of several means
         '''
@@ -1284,7 +1283,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
             self.pt = patient_class.patient(serialno)
             self.pt_diary_widget.set_patient(self.pt)
             if (current_address == localsettings.BLANK_ADDRESS or
-               self.pt.address_tuple != current_address):
+                    self.pt.address_tuple != current_address):
                 localsettings.LAST_ADDRESS = current_address
                 localsettings.last_family_no = self.pt.familyno
 
@@ -1461,8 +1460,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
                 self.pt.dnt1 = localsettings.activedent_ixs[0]
                 self.advise("%s %s %s" % (_("Setting"),
                                           localsettings.activedents[0],
-                                          _("as patient's dentist"))
-                            )
+                                          _("as patient's dentist")))
         self.load_dentComboBoxes(newPatientReload)
         self.pt.checkExemption()
         self.updateDetails()
@@ -1476,8 +1474,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         for chart in (self.ui.staticChartWidget,
                       self.ui.planChartWidget,
                       self.ui.completedChartWidget,
-                      self.ui.summaryChartWidget
-                      ):
+                      self.ui.summaryChartWidget):
             chart.clear()
             # -necessary to restore the chart to full dentition
         self.selectedChartWidget = "st"
@@ -1683,7 +1680,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         self.ui.tabWidget.setCurrentIndex(0)
         self.diary_widget.reset()
         c_list = QtWidgets.QCompleter([_("Mr"), _("Mrs"), _("Ms"), _("Miss"),
-                                   _("Master"), _("Dr"), _("Professor")])
+                                       _("Master"), _("Dr"), _("Professor")])
         self.ui.titleEdit.setCompleter(c_list)
 
         if localsettings.station == "surgery":
@@ -1938,7 +1935,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         changes = self.pt.changes
 
         if (len(self.ui.notesEnter_textEdit.toPlainText()) != 0 or
-           len(self.pt.HIDDENNOTES) != 0):
+                len(self.pt.HIDDENNOTES) != 0):
             changes.append("New Notes")
 
         if "treatment_course" in changes:
@@ -2029,35 +2026,31 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         self.ui.clinician_phrasebook_pushButton.setVisible(
             arg and PHRASEBOOKS.has_phrasebook(localsettings.clinicianNo))
 
-        for widg in (
-            self.ui.summaryChartWidget,
-            self.ui.misc_reception_groupBox,
-            self.ui.printEst_pushButton,
-            self.ui.printAccount_pushButton,
-            self.ui.saveButton,
-            self.ui.phraseBook_pushButton,
-            self.ui.clinician_phrasebook_pushButton,
-            self.ui.medNotes_pushButton,
-            self.ui.medNotes_pushButton2,
-            self.ui.printGP17_pushButton,
-            self.ui.reception_view_checkBox,
-            self.ui.notesEnter_textEdit,
-            self.ui.synopsis_lineEdit,
-            self.ui.memos_pushButton,
-            self.pt_diary_widget,
-            self.ui.reloadButton,
-        ):
+        for widg in (self.ui.summaryChartWidget,
+                     self.ui.misc_reception_groupBox,
+                     self.ui.printEst_pushButton,
+                     self.ui.printAccount_pushButton,
+                     self.ui.saveButton,
+                     self.ui.phraseBook_pushButton,
+                     self.ui.clinician_phrasebook_pushButton,
+                     self.ui.medNotes_pushButton,
+                     self.ui.medNotes_pushButton2,
+                     self.ui.printGP17_pushButton,
+                     self.ui.reception_view_checkBox,
+                     self.ui.notesEnter_textEdit,
+                     self.ui.synopsis_lineEdit,
+                     self.ui.memos_pushButton,
+                     self.pt_diary_widget,
+                     self.ui.reloadButton):
             widg.setEnabled(arg)
 
         enable_tx_buts = arg and localsettings.clinicianNo != 0
-        for widg in (
-            self.ui.exampushButton,
-            self.ui.xray_pushButton,
-            self.ui.newBPE_pushButton,
-            self.ui.hygWizard_pushButton,
-            self.ui.childsmile_button,
-            self.ui.completedChartWidget
-        ):
+        for widg in (self.ui.exampushButton,
+                     self.ui.xray_pushButton,
+                     self.ui.newBPE_pushButton,
+                     self.ui.hygWizard_pushButton,
+                     self.ui.childsmile_button,
+                     self.ui.completedChartWidget):
             widg.setEnabled(enable_tx_buts)
 
         self.ui.closeCourse_pushButton.setEnabled(False)
@@ -3059,8 +3052,8 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
             self.forumNewTopic_clicked)
         self.ui.forumParent_pushButton.clicked.connect(
             self.forumParent_clicked)
-        self.ui.forumViewFilter_comboBox.currentIndexChanged[
-            str].connect(self.forumViewFilterChanged)
+        self.ui.forumViewFilter_comboBox.currentIndexChanged[str].connect(
+            self.forumViewFilterChanged)
         self.ui.forumCollapse_pushButton.clicked.connect(self.forumCollapse)
         self.ui.forumExpand_pushButton.clicked.connect(self.forumExpand)
 
@@ -3277,14 +3270,13 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
             if not permissions.granted(self):
                 return
         if QtWidgets.QMessageBox.question(
-            self,
-            _("Confirm"),
-            "%s<hr /><i>(%s)</i>" % (
-                _("Scrap the estimate and re-price everything?"),
-                _("Custom items and items added using feescale "
-                  "method will be unaffected")
-            ),
-            QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                self,
+                _("Confirm"),
+                "%s<hr /><i>(%s)</i>" % (
+                    _("Scrap the estimate and re-price everything?"),
+                    _("Custom items and items added using feescale "
+                      "method will be unaffected")),
+                QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
                 QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.No:
             return
 
@@ -3383,8 +3375,9 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
     def load_fee_tables(self):
         localsettings.loadFeeTables()
         for warning in localsettings.FEETABLES.warnings:
-            self.advise("<b>%s</b><hr />%s" % (
-                        _("error loading feetable"), warning), 2)
+            self.advise(
+                "<b>%s</b><hr />%s" % (_("error loading feetable"), warning),
+                2)
         self.ui.cseType_comboBox.addItems(localsettings.CSETYPES)
 
     def hide_rare_feescale_items(self, bool_):

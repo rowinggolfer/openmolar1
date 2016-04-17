@@ -62,16 +62,6 @@ PT_COUNT = 0
 
 locale.setlocale(locale.LC_ALL, '')
 
-try:
-    s = _("translation tools are installed successfully")
-    LOGGER.debug(s)
-except NameError:
-    LOGGER.error("installing gettext for translations")
-    # - an unelegant hack to get _() on the namespace for testing
-    # - main.py will normally do this for us.
-    import gettext
-    gettext.install("openmolar")
-
 
 def showVersion():
     '''
@@ -248,7 +238,7 @@ for the wonderful icon and Logo.''' % (
         CLIENT_SCHEMA_VERSION,
         DB_SCHEMA_VERSION)
 
-license = '''<hr />
+license_ = '''<hr />
 <p>
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

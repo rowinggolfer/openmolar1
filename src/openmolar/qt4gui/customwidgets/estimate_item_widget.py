@@ -23,6 +23,7 @@
 
 from gettext import gettext as _
 import logging
+
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
@@ -488,7 +489,7 @@ class _TestParent(QtWidgets.QWidget):
         QtWidgets.QWidget.__init__(self, parent)
 
         layout = QtWidgets.QHBoxLayout(self)
-        # layout.setMargin(0)
+        layout.setContentsMargins(0, 0, 0, 0)
 
         widg = EstimateItemWidget(self)
         layout.addWidget(widg.number_label)

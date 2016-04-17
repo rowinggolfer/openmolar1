@@ -169,7 +169,7 @@ class OptionsWidget(QtWidgets.QWidget, Options):
         self.rb4 = QtWidgets.QRadioButton(_("Never check for updates"))
 
         layout = QtWidgets.QVBoxLayout(self)
-        # layout.setMargin(1)
+        layout.setContentsMargins(1, 1, 1, 1)
         layout.addWidget(self.rb1)
         layout.addWidget(self.rb2)
         layout.addWidget(self.rb3)

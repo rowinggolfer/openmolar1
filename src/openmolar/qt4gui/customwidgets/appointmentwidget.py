@@ -121,7 +121,7 @@ class AppointmentWidget(QtWidgets.QFrame):
         self.apptix = 0
         glay = QtWidgets.QGridLayout(self.header_frame)
         glay.setSpacing(2)
-        # glay.setMargin(2)
+        glay.setContentsMargins(1, 1, 1, 1)
         glay.addWidget(self.printButton, 0, 1)
         glay.addWidget(self.header_label, 0, 0)
         glay.addWidget(self.memo_lineEdit, 1, 0, 1, 2)
@@ -145,7 +145,7 @@ class AppointmentWidget(QtWidgets.QFrame):
 
         lay = QtWidgets.QVBoxLayout(self)
         lay.setSpacing(0)
-        # lay.setMargin(2)
+        lay.setContentsMargins(1, 1, 1, 1)
         lay.addWidget(self.header_frame)
         lay.addWidget(self.OOlabel)
         lay.addWidget(self.scrollArea)

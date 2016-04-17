@@ -154,7 +154,7 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
 
         self.appt_controls_frame = QtWidgets.QWidget()
         layout = QtWidgets.QGridLayout(self.appt_controls_frame)
-        # layout.setMargin(1)
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(2)
         layout.addWidget(diary_button, 0, 0, 1, 2)
         layout.addWidget(settings_button, 0, 3, 1, 2)
@@ -183,7 +183,7 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
         # page 1 -- scheduling mode
         widg = QtWidgets.QWidget()
         layout = QtWidgets.QGridLayout(widg)
-        # layout.setMargin(0)
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.patient_label, 0, 0)
         layout.addWidget(self.get_patient_button, 0, 1)
         layout.addWidget(self.appt_listView, 2, 0, 1, 2)
