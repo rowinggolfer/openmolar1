@@ -47,6 +47,8 @@ class FeescaleWidget(QtWidgets.QWidget):
         QtWidgets.QWidget.__init__(self, parent)
         self.feescale = feescale
 
+        self.label = QtWidgets.QLabel("")
+
         self.in_use_checkbox = QtWidgets.QCheckBox(_("In use"))
         self.in_use_checkbox.setChecked(feescale.in_use)
 
@@ -64,7 +66,7 @@ class FeescaleWidget(QtWidgets.QWidget):
 
         layout = QtWidgets.QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(QtWidgets.QLabel("%02d" % feescale.ix))
+        layout.addWidget(self.label)
         layout.addWidget(self.in_use_checkbox)
         layout.addWidget(self.comment_line_edit)
         layout.addWidget(self.down_button)
@@ -150,8 +152,17 @@ class FeescaleConfigDialog(BaseDialog):
             if type(widg) == FeescaleWidget:
                 yield widg
 
-    def enable_buttons(self):
+    @property
+    def n_active_feescales(self):
+        i = 0
         for widg in self.fs_widgets:
+            if widg.in_use:
+                i += 1
+        return i
+
+    def enable_buttons(self):
+        for i, widg in enumerate(self.fs_widgets):
+            widg.label.setText("%02d" % (i + 1))
             widg.enable()
         w_list = list(self.fs_widgets)
         w_list[0].disable_promote()
@@ -191,12 +202,11 @@ class FeescaleConfigDialog(BaseDialog):
         return False
 
     def _apply(self):
-        for i, widg in enumerate(self.fs_widgets):
+        for priority, widg in enumerate(self.fs_widgets):
             self.configurer.apply_changes(widg.feescale.ix,
                                           widg.in_use,
                                           widg.comment,
-                                          len(self.configurer.feescales) - i
-                                          )
+                                          priority + 1)
 
     def exec_(self):
         if BaseDialog.exec_(self):

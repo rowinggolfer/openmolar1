@@ -78,7 +78,7 @@ UPDATE_QUERY = "update feescales set xml_data = %s where ix = %s"
 NEW_FEESCALE_QUERY = "insert into feescales (xml_data) values(%s)"
 
 FULL_QUERY = '''SELECT ix, in_use, priority, comment, xml_data FROM feescales
-ORDER BY priority DESC, in_use'''
+ORDER BY priority, in_use'''
 
 UPDATE_META_QUERY = '''UPDATE feescales set in_use=%s, priority=%s, comment=%s
 WHERE ix=%s'''
@@ -174,7 +174,7 @@ class FeescaleHandler(object):
         else:  # if called by feescale editor
             self.ixs_in_db = set([])
         if priority_order:
-            query += ' order by priority desc'
+            query += ' order by priority'
         db = connect.connect()
         cursor = db.cursor()
         cursor.execute(query)

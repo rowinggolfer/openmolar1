@@ -204,7 +204,7 @@ class FeeTables(object):
         retarg = "%d Tables \n" % len(self.tables)
         for key in self.tables:
             table = self.tables[key]
-            retarg += "===" * 12 + "\n"
+            retarg += "===" * 20 + "\n"
             retarg += "   table %s - %s\n" % (key, table.briefName)
             retarg += "%s \n" % table.description
             retarg += "valid %s - %s\n" % (
@@ -212,10 +212,9 @@ class FeeTables(object):
                 localsettings.formatDate(table.endDate))
 
             retarg += "       categories %s\n" % table.categories
-            retarg += "       fee cols %s\n" % str(table.feeColNames)
-            retarg += "    pt_fee cols %s\n" % str(table.pt_feeColNames)
-            retarg += "       query %s\n" % table.columnQuery
-            retarg += "===" * 12 + "\n"
+            retarg += "    has pt column %s\n" % table.hasPtCols
+            retarg += "    has %d fee items\n" % len(table.feesDict)
+            retarg += "===" * 20 + "\n"
         return retarg
 
     def getTables(self):
