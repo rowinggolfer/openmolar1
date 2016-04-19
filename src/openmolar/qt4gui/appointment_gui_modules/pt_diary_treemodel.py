@@ -160,17 +160,17 @@ class PatientDiaryTreeModel(QtCore.QAbstractItemModel):
             QtGui.QPixmap(":/icons/schedule_active.png"))
 
     def addAppointments(self, appointments):
-        self.beginResetModel()
         self.clear()
         self.appointments = appointments
         self.setupModelData()
         self.appointments_changed_signal.emit()
-        self.endResetModel()
 
     def clear(self):
+        self.beginResetModel()
         self.appointments = []
         self.rootItem = TreeItem("Appointments", None, None, None)
         self.parents = {0: self.rootItem}
+        self.endResetModel()
         self.setupModelData()
 
     def columnCount(self, parent=None):
@@ -265,6 +265,7 @@ class PatientDiaryTreeModel(QtCore.QAbstractItemModel):
         return parentItem.childCount()
 
     def setupModelData(self):
+        self.beginResetModel()
         unscheduled = []
         scheduled = []
         # jump through hoops to ensure "unscheduled appear at the bottom
@@ -288,6 +289,7 @@ class PatientDiaryTreeModel(QtCore.QAbstractItemModel):
 
             self.parents[cat_no].appendChild(
                 TreeItem("", appt, self.parents[cat_no]))
+        self.endResetModel()
 
     def searchModel(self, appt):
         '''
