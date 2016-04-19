@@ -130,7 +130,7 @@ class AlterCashbookDialog(ExtendableDialog):
 
         pounds = amt // 100
         pence = amt % 100
-        double_val = float("%s.%s" % (pounds, pence))
+        double_val = float("%s.%02d" % (pounds, pence))
         self.amount_sb.setValue(double_val)
 
         self.check_enable()

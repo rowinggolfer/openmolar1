@@ -194,7 +194,7 @@ def notes(notes_dict, full_notes=True):
     '''
 
     retarg = HEADER + '''
-        <table class="notes_table">
+        <table class="table">
             <tr>
                 <th class="date">Date</th>
                 <th class="ops">ops</th>
@@ -243,7 +243,7 @@ def notes(notes_dict, full_notes=True):
         newline += '''
         %s</td>
         <td class="tx">%s</td>
-        <td width="70%%" class="notes">%s</td>''' % (subline, tx, notes)
+        <td class="notes">%s</td>''' % (subline, tx, notes)
 
         if show_metadata:
             newline += '<td class="reception">%s</td>\n</tr>\n' % metadata
