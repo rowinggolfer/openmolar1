@@ -77,57 +77,34 @@ class ExamWizard(QtWidgets.QDialog, Ui_exam_wizard.Ui_Dialog):
             return()
 
     def check_dent(self, examdent):
+        APPLIED = True
         if examdent == localsettings.ops.get(self.pt.dnt1):
-            if (self.pt.dnt2 == 0 or
-                    self.pt.dnt2 == self.pt.dnt1):  # --no dnt2
-                APPLIED = True
-            else:
-                message = '''<p>%s %s<br />%s</p>
-                <hr /><p><i>%s %s</i></p>''' % (
+            if examdent != localsettings.ops.get(self.pt.dnt2, examdent):
+                message = '''<p>%s %s</p>
+                <hr /><p><i>%s</i></p>''' % (
                     examdent,
-                    _("is now both the registered and course dentist"),
-                    _("Is this correct?"),
-                    _("confirming this will remove reference to"),
-                    localsettings.ops.get(self.pt.dnt2))
+                    _("is the patient's contracted dentist, "
+                      "but NOT the course dentist"),
+                    _("You may wish to correct this."))
+                QtWidgets.QMessageBox.warning(self, _("Warning"), message)
 
-                if QtWidgets.QMessageBox.question(
-                        self,
-                        _("Confirm"),
-                        message,
-                        QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
-                        QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes:
-                    self.pt.dnt2 = 0
-                    self.om_gui.updateDetails()
-                    APPLIED = True
+        elif examdent == localsettings.ops.get(self.pt.dnt2):
+            message = '%s %s' % (examdent,
+                                 _("is not the patient's contracted dentist"))
+            QtWidgets.QMessageBox.warning(self, _("Warning"), message)
+
         else:
-            message = '<p>%s %s<br />%s</p>' % (
-                examdent,
-                _("performed this exam"),
-                _("Is this correct?"))
-
-            if examdent != localsettings.ops.get(self.pt.dnt2):
-                message += '<br /><i>%s, %s</i></p>' % (
-                    _("confirming this will change the course dentist"),
-                    _("but not the registered dentist")
-                )
-            else:
-                message += '<i>%s %s %s</i>' % (
-                    _("consider making"),
-                    examdent,
-                    _("the registered dentist"))
+            message = '<p>%s %s<br />%s %s</p><hr />%s</p>' % (
+                examdent, _("performed this exam"), examdent,
+                _("is neither the patient's regular dentist or the course "
+                  "dentist!"), _("Is this correct?"))
 
             if QtWidgets.QMessageBox.question(
                     self,
                     _("Confirm"), message,
-                    QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
-                    QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes:
-                self.pt.dnt2 = localsettings.ops_reverse[examdent]
-                self.om_gui.updateDetails()
-                APPLIED = True
-            else:
+                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                    QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.No:
                 APPLIED = False
-
-            self.om_gui.load_dentComboBoxes()
 
         return APPLIED, examdent
 
