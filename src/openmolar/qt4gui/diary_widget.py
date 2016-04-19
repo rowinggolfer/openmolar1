@@ -206,7 +206,7 @@ class DiaryWidget(Advisor):
         this function is overwritten so that the advisor popup can be
         put in the correct place
         '''
-        QtWidgets.QMainWindow.resizeEvent(self, event)
+        super().resizeEvent(event)
         self.setBriefMessageLocation()
 
     def setBriefMessageLocation(self):
