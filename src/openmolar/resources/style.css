@@ -34,7 +34,7 @@ li.active_slot{font-size:11pt;list-style-type:circle;font-style:bold;color:red;b
 /*-- th and td --*/
 table{width:100%;}
 
-.date{background-color:#ffeedd: width:20%}
+.date{background-color:#ffeedd; width:20%}
 .ops{background-color:#dddddd; width:10%}
 .tx{background-color:#aaaaaa; width:20%}
 .notes{background-color:#dddddd; width:50%}
