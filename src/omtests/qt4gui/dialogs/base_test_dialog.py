@@ -71,13 +71,5 @@ class BaseTestDialog(unittest.TestCase):
 
     def doCleanups(self):
         LOGGER.info("Cleaning up (destroying QApplication)")
-        # for w in self.app.allWidgets():
-        #     try:
-        #         w.deleteLater()
-        #         # w.destroy()
-        #         LOGGER.warning("destroyed %s", w)
-        #     except:
-        #         LOGGER.warning("could not destroy %s", w)
         self.app.closeAllWindows()
-        # self.app.deleteLater()
         self.app = None

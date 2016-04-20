@@ -68,22 +68,33 @@ def version_fixes(pydata):
     return pydata
 
 
-class Build(_build):
+class MakeUis(Command):
     '''
     compile qt-designer files and qresources.
     these files vary as the uic module advances, meaning files created on
     debian testing may not work on debian stable etc...
     '''
 
+    description = 'compile ui files and resources into python files'
+    user_options = []
     REMOVALS = ("        _translate = QtCore.QCoreApplication.translate\n",)
 
     REPLACEMENTS = [("import resources_rc",
-                     "from openmolar.qt4gui import resources_rc"),]
+                     "from openmolar.qt4gui import resources_rc")]
+
     SRC_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                               "src", "openmolar", "qt-designer")
 
     DEST_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "src", "openmolar", "qt4gui", "compiled_uis")
+
+
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
 
     def gettext_wrap(self, match):
         '''
@@ -139,7 +150,6 @@ class Build(_build):
                 yield ui_file
 
     def run(self, *args, **kwargs):
-        print("running configure")
         print("compiling qt-designer files")
         for ui_file in self.get_ui_files():
             path = os.path.join(self.SRC_FOLDER, os.path.basename(ui_file))
@@ -152,6 +162,17 @@ class Build(_build):
              os.path.join(OM_PATH, "openmolar", "resources", "resources.qrc")]
         )
         p.wait()
+        print("MakeUis Completed")
+
+
+class Build(_build):
+    '''
+    re-implement to ensure that ui_files are called.
+    '''
+
+    def run(self, *args, **kwargs):
+        make_uis = MakeUis(self.distribution)
+        make_uis.run(*args, **kwargs)
         _build.run(self, *args, **kwargs)
         print("build completed")
 
@@ -163,9 +184,9 @@ class Clean(_clean):
 
     def run(self, *args, **kwargs):
         print("running clean")
-        for file_ in os.listdir(Build.DEST_FOLDER):
+        for file_ in os.listdir(MakeUis.DEST_FOLDER):
             if file_.startswith("Ui"):
-                os.remove(os.path.join(Build.DEST_FOLDER, file_))
+                os.remove(os.path.join(MakeUis.DEST_FOLDER, file_))
         if os.path.exists(RESOURCE_FILE):
             os.remove(RESOURCE_FILE)
         _clean.run(self, *args, **kwargs)
@@ -312,6 +333,7 @@ setup(
               'clean': Clean,
               'build': Build,
               'install_data': InstallLocale,
+              'makeuis': MakeUis,
               'test': Test},
     scripts=['openmolar'],
 )

@@ -53,10 +53,10 @@ class BaseDialog(QtWidgets.QDialog):
         self.button_box = QtWidgets.QDialogButtonBox(self)
         self.button_box.setOrientation(QtCore.Qt.Horizontal)
         self.button_box.setStandardButtons(
-            self.button_box.Cancel | self.button_box.Apply)
+            self.button_box.Cancel | self.button_box.Ok)
 
         self.cancel_but = self.button_box.button(self.button_box.Cancel)
-        self.apply_but = self.button_box.button(self.button_box.Apply)
+        self.apply_but = self.button_box.button(self.button_box.Ok)
 
         # self.button_box.setCenterButtons(True)
 
@@ -133,7 +133,7 @@ class BaseDialog(QtWidgets.QDialog):
         "private" function called when button box is clicked
         '''
         role = self.button_box.buttonRole(but)
-        if role == QtWidgets.QDialogButtonBox.ApplyRole:
+        if role == QtWidgets.QDialogButtonBox.AcceptRole:
             self.accept()
         else:
             self.reject()
@@ -154,6 +154,7 @@ class BaseDialog(QtWidgets.QDialog):
         call this to enable the apply button (which is disabled by default)
         '''
         self.apply_but.setEnabled(enable)
+        self.apply_but.setAutoDefault(enable)
 
     def get_confirm(self, message,
                     accept="ok", reject="cancel", default="accept"):

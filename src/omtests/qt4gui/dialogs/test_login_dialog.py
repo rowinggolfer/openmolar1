@@ -34,8 +34,11 @@ class TestDialog(BaseTestDialog):
     '''
 
     dl_class = LoginDialog
+    reject = True
 
     def test_exec(self):
+        self.init()
+        self.dl.dirty = False  # prevents a blocking "are you sure" message
         self.exec_()
 
 

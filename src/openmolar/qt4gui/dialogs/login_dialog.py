@@ -67,8 +67,7 @@ class AlternateServersWidget(QtWidgets.QWidget):
             _("You have selected to connect to"),
             localsettings.server_names[self.chosen],
             _("This is not the default database - "
-                "are you sure you wish to use this database?")
-        )
+              "are you sure you wish to use this database?"))
 
     def input(self, bool_):
         if not bool_:
@@ -76,10 +75,10 @@ class AlternateServersWidget(QtWidgets.QWidget):
         self.chosen = self.radio_buttons.index(self.sender())
         if self.chosen != 0:
             if QtWidgets.QMessageBox.question(
-                self,
-                _("confirm"),
-                self.confirm_message,
-                QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                    self,
+                    _("confirm"),
+                    self.confirm_message,
+                    QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
                     QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.No:
                 self.radio_buttons[0].setChecked(True)
         LOGGER.warning("chosen server = %s", self.chosen)
@@ -104,7 +103,8 @@ class LoginDialog(ExtendableDialog):
         self.user2_lineEdit = UpperCaseLineEdit()
         self.user2_lineEdit.setMaximumWidth(50)
 
-        self.reception_radioButton = QtWidgets.QRadioButton(_("Reception Machine"))
+        self.reception_radioButton = QtWidgets.QRadioButton(
+            _("Reception Machine"))
         self.surgery_radioButton = QtWidgets.QRadioButton(_("Surgery Machine"))
         self.surgery_radioButton.setChecked(True)
 

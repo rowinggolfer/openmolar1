@@ -30,5 +30,5 @@ try:
     from openmolar.qt4gui import resources_rc
 except ImportError:
     LOGGER.error(
-        "no resources_rc file.... have you ran setup.py build?")
+        "no resources_rc file.... have you ran setup.py makeuis?")
     sys.exit("openmolar is not properly built")

@@ -113,15 +113,12 @@ class EstimateEditDialog(ExtendableDialog):
         '''
         overwrite BaseDialog method
         '''
-        role = self.button_box.buttonRole(but)
-        if (role == QtWidgets.QDialogButtonBox.ApplyRole and
-                QtWidgets.QMessageBox.question(
-                    self,
-                    _("Confirm"),
-                    _("Apply Changes?"),
-                    QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel,
-                    QtWidgets.QMessageBox.Cancel) ==
-                QtWidgets.QMessageBox.Cancel):
+        if but == self.apply_but and QtWidgets.QMessageBox.question(
+                self,
+                _("Confirm"),
+                _("Apply Changes?"),
+                QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel,
+                QtWidgets.QMessageBox.Cancel) == QtWidgets.QMessageBox.Cancel:
             return
         ExtendableDialog._clicked(self, but)
 
