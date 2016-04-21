@@ -23,7 +23,7 @@
 
 '''
 distutils script for openmolar1.
-see https://docs.python.org/2/distutils/configfile.html for explanation
+see https://docs.python.org/3/distutils/setupscript.html for explanation
 '''
 
 from distutils.command.install_data import install_data
@@ -32,7 +32,6 @@ from distutils.command.build import build as _build
 from distutils.command.clean import clean as _clean
 from distutils.core import setup
 from distutils.core import Command
-from distutils.dep_util import newer
 from distutils.log import info
 
 import glob
@@ -41,6 +40,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import unittest
 import platform
 
@@ -54,10 +54,19 @@ from openmolar.settings import version
 
 VERSION = version.VERSION
 RESOURCE_FILE = os.path.join(OM_PATH, "openmolar", "qt4gui", "resources_rc.py")
-IS_WINDOWS = platform.system() == 'Windows'
-USR = ""
-if not IS_WINDOWS:
-    USR = "/usr/"
+
+
+if platform.system() == 'Windows':
+    # getext path is $PYTHONPATH/share/locale
+    # eg C:\\Python34\\share\\locale
+    il8n_DIR = os.path.join("share", "locale")
+    DATA_FILES = []
+else:
+    il8n_DIR = os.path.join("/usr", "share", "locale")
+    # also install a man page.
+    DATA_FILES = [('share/icons/hicolor/scalable/apps', ['bin/openmolar.svg']),
+                  ('share/applications', ['bin/openmolar.desktop']),
+                  ('share/man/man1', ['bin/openmolar.1'])]
 
 
 def version_fixes(pydata):
@@ -170,6 +179,54 @@ class MakeUis(Command):
         print("MakeUis Completed")
 
 
+class AlterVersion(object):
+    '''
+    openmolar version file is tweaked on install or sdist.
+    extraneous code is removed.
+    '''
+    version_filepath = re.sub(r"\.pyc$", ".py", version.__file__)
+    backup_version_filepath = version_filepath + "_orig"
+
+    def change(self):
+        '''
+        the git repository version of openmolar contains some hooks into git
+        these should be removed for a source or binary build.
+        '''
+        print("rewriting version.py")
+        f = open(self.version_filepath, "r")
+        new_data = ""
+        add_line = True
+        for line_ in f:
+            if line_.startswith("VERSION ="):
+                print("Forcing version number of '%s'" % VERSION)
+                new_data += 'VERSION = "%s"\n\n\n' % VERSION
+                add_line = False
+            elif line_.startswith("if __name__"):
+                add_line = True
+            if add_line:
+                new_data += line_
+
+        shutil.move(self.version_filepath, self.backup_version_filepath)
+        f = open(self.version_filepath, "w")
+        f.write(new_data)
+        f.close()
+
+    def restore(self):
+        '''
+        revert the changes made by AlterVersion.change()
+        '''
+        print("restoring version.py")
+        os.remove(self.version_filepath)
+        shutil.move(self.backup_version_filepath, self.version_filepath)
+
+    def test(self):
+        '''
+        check that running change, followed by restore doesn't alter the repo.
+        '''
+        self.change()
+        self.restore()
+
+
 class Build(_build):
     '''
     re-implement to ensure that ui_files are called.
@@ -178,7 +235,10 @@ class Build(_build):
     def run(self, *args, **kwargs):
         make_uis = MakeUis(self.distribution)
         make_uis.run(*args, **kwargs)
+        alter_version = AlterVersion()
+        alter_version.change()
         _build.run(self, *args, **kwargs)
+        alter_version.restore()
         print("build completed")
 
 
@@ -201,39 +261,13 @@ class Sdist(_sdist):
 
     '''
     overwrite distutils standard source code builder to remove
-    extraneous code from version.py
     '''
-    version_filepath = re.sub("\.pyc$", ".py", version.__file__)
-    backup_version_filepath = version_filepath + "_orig"
 
     def run(self, *args, **kwargs):
-        self.tear_down()
+        alter_version = AlterVersion()
+        alter_version.change()
         _sdist.run(self, *args, **kwargs)
-        self.clean_up()
-
-    def tear_down(self):
-        print("rewriting version.py")
-        f = open(self.version_filepath, "r")
-        new_data = ""
-        add_line = True
-        for line_ in f:
-            if line_.startswith("VERSION ="):
-                print("Forcing version number of '%s'" % VERSION)
-                new_data += 'VERSION = "%s"\n\n\n' % VERSION
-                add_line = False
-            elif line_.startswith("if __name__"):
-                add_line = True
-            if add_line:
-                new_data += line_
-
-        shutil.move(self.version_filepath, self.backup_version_filepath)
-        f = open(self.version_filepath, "w")
-        f.write(new_data)
-        f.close()
-
-    def clean_up(self):
-        os.remove(self.version_filepath)
-        shutil.move(self.backup_version_filepath, self.version_filepath)
+        alter_version.restore()
 
 
 class InstallLocale(install_data):
@@ -244,38 +278,30 @@ class InstallLocale(install_data):
     '''
 
     def run(self):
-        print("COMPILING PO FILES")
+        print("COMPILING PO FILES (gettext translations)")
         i18nfiles = []
         if not os.path.isdir("src/openmolar/locale/"):
             print("WARNING - language files are missing!")
+        temp_dir = tempfile.TemporaryDirectory()
         for po_file in glob.glob("src/openmolar/locale/*.po"):
-            directory, file_ = os.path.split(po_file)
+            file_ = os.path.split(po_file)[1]
             lang = file_.replace(".po", "")
-            mo_dir = os.path.join(directory, lang)
+            os.mkdir(os.path.join(temp_dir.name, lang))
+            mo_file = os.path.join(temp_dir.name, lang, "openmolar.mo")
+            commands = ["msgfmt", "-o", mo_file, po_file]
+            info('executing %s' % " ".join(commands))
             try:
-                os.mkdir(mo_dir)
-                if IS_WINDOWS:
-                    mo_dir = os.path.join(mo_dir, "LC_MESSAGES")
-                    os.mkdir(mo_dir)
-            except OSError:
-                pass
-            mo_file = os.path.join(mo_dir, "openmolar.mo")
-            if not os.path.exists(mo_file) or newer(po_file, mo_file):
-                cmd = 'msgfmt -o %s %s' % (mo_file, po_file)
-                info('compiling %s -> %s' % (po_file, mo_file))
-                if os.system(cmd) != 0:
-                    info('Error while running msgfmt on %s' % po_file)
-
-            destdir = os.path.join("share", "locale", lang)
-            if IS_WINDOWS:
-                destdir = os.path.join(destdir, "LC_MESSAGES")
-            else:
-                destdir = os.path.join("/usr", destdir)
-
-            i18nfiles.append((destdir, [mo_file]))
+                p = subprocess.Popen(commands)
+                p.wait()
+                destdir = os.path.join(il8n_DIR, lang, "LC_MESSAGES")
+                i18nfiles.append((destdir, [mo_file]))
+            except IOError:
+                info('Error while running msgfmt on %s - '
+                     'perhaps msgfmt (gettext) is not installed?' % po_file)
 
         self.data_files.extend(i18nfiles)
         install_data.run(self)
+        temp_dir.cleanup()
 
 
 class Test(Command):
@@ -336,10 +362,7 @@ setup(
                                 'html/*.*',
                                 'html/images/*.*',
                                 'html/firstrun/*.*', ]},
-    data_files=[
-        (USR + 'share/man/man1', ['bin/openmolar.1']),
-        (USR + 'share/icons/hicolor/scalable/apps', ['bin/openmolar.svg']),
-        (USR + 'share/applications', ['bin/openmolar.desktop']), ],
+    data_files=DATA_FILES,
     cmdclass={'sdist': Sdist,
               'clean': Clean,
               'build': Build,

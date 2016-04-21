@@ -98,18 +98,19 @@ class LanguageDialog(Ui_choose_language.Ui_Dialog, QtWidgets.QDialog):
         install the language chosen
         '''
         lang = lang.split(" - ")[1]
-        lang1 = gettext.translation('openmolar', languages=[lang, ])
         try:
-            LOGGER.info("trying install your environment language %s", lang1)
+            lang1 = gettext.translation('openmolar', languages=[lang, ])
+            LOGGER.info("trying install chosen translation %s", lang1)
             lang1 = gettext.translation('openmolar', languages=[lang, ])
             lang1.install()
             return True
-        except IOError:
-            LOGGER.exception("%s not found, sorry" % lang1)
+        except FileNotFoundError:
+            LOGGER.exception("tranlation '%s' not found, sorry" % lang)
             gettext.install('openmolar')
+        return False
 
     def getInput(self):
-        if not self.exec_():
+        if not QtWidgets.QDialog.exec_(self):
             return False
         result = False
         message = _("No language selected")
@@ -125,3 +126,6 @@ class LanguageDialog(Ui_choose_language.Ui_Dialog, QtWidgets.QDialog):
                         _("no translation file found for"), lang)
         QtWidgets.QMessageBox.information(self, _("Advisory"), message)
         return result
+
+    def exec_(self):
+        return self.getInput()
