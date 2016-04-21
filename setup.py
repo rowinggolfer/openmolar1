@@ -42,6 +42,7 @@ import shutil
 import subprocess
 import sys
 import unittest
+import platform
 
 from PyQt5 import uic
 from PyQt5.Qt import PYQT_VERSION_STR
@@ -53,6 +54,10 @@ from openmolar.settings import version
 
 VERSION = version.VERSION
 RESOURCE_FILE = os.path.join(OM_PATH, "openmolar", "qt4gui", "resources_rc.py")
+IS_WINDOWS = platform.system() == 'Windows'
+USR = ""
+if not IS_WINDOWS:
+    USR = "/usr/"
 
 
 def version_fixes(pydata):
@@ -249,6 +254,9 @@ class InstallLocale(install_data):
             mo_dir = os.path.join(directory, lang)
             try:
                 os.mkdir(mo_dir)
+                if IS_WINDOWS:
+                    mo_dir = os.path.join(mo_dir, "LC_MESSAGES")
+                    os.mkdir(mo_dir)
             except OSError:
                 pass
             mo_file = os.path.join(mo_dir, "openmolar.mo")
@@ -258,8 +266,11 @@ class InstallLocale(install_data):
                 if os.system(cmd) != 0:
                     info('Error while running msgfmt on %s' % po_file)
 
-            destdir = os.path.join("/usr", "share", "locale", lang,
-                                   "LC_MESSAGES")
+            destdir = os.path.join("share", "locale", lang)
+            if IS_WINDOWS:
+                destdir = os.path.join(destdir, "LC_MESSAGES")
+            else:
+                destdir = os.path.join("/usr", destdir)
 
             i18nfiles.append((destdir, [mo_file]))
 
@@ -326,9 +337,9 @@ setup(
                                 'html/images/*.*',
                                 'html/firstrun/*.*', ]},
     data_files=[
-        ('/usr/share/man/man1', ['bin/openmolar.1']),
-        ('/usr/share/icons/hicolor/scalable/apps', ['bin/openmolar.svg']),
-        ('/usr/share/applications', ['bin/openmolar.desktop']), ],
+        (USR + 'share/man/man1', ['bin/openmolar.1']),
+        (USR + 'share/icons/hicolor/scalable/apps', ['bin/openmolar.svg']),
+        (USR + 'share/applications', ['bin/openmolar.desktop']), ],
     cmdclass={'sdist': Sdist,
               'clean': Clean,
               'build': Build,
