@@ -30,6 +30,7 @@ from distutils.command.install_data import install_data
 from distutils.command.sdist import sdist as _sdist
 from distutils.command.build import build as _build
 from distutils.command.clean import clean as _clean
+from distutils.command.build_scripts import build_scripts as _build_scripts
 from distutils.core import setup
 from distutils.core import Command
 from distutils.log import info
@@ -55,19 +56,23 @@ from openmolar.settings import version
 VERSION = version.VERSION
 RESOURCE_FILE = os.path.join(OM_PATH, "openmolar", "qt4gui", "resources_rc.py")
 
-
 if platform.system() == 'Windows':
     # getext path is $PYTHONPATH/share/locale
     # eg C:\\Python34\\share\\locale
     il8n_DIR = os.path.join("share", "locale")
-    DATA_FILES = []
+    DATA_FILES = []  # see warning below
+    SCRIPTS = ['win_openmolar.pyw']
 else:
     il8n_DIR = os.path.join("/usr", "share", "locale")
     # also install a man page.
     DATA_FILES = [('share/icons/hicolor/scalable/apps', ['bin/openmolar.svg']),
                   ('share/applications', ['bin/openmolar.desktop']),
                   ('share/man/man1', ['bin/openmolar.1'])]
+    SCRIPTS = ['openmolar']
 
+# warning if DATA_FILES == [], install_data doesn't get called!
+DATA_FILES.append((os.path.join(il8n_DIR, 'openmolar'),
+                   ['src/openmolar/locale/messages.pot']))
 
 def version_fixes(pydata):
     '''
@@ -205,6 +210,7 @@ class AlterVersion(object):
                 add_line = True
             if add_line:
                 new_data += line_
+        f.close()
 
         shutil.move(self.version_filepath, self.backup_version_filepath)
         f = open(self.version_filepath, "w")
@@ -214,10 +220,13 @@ class AlterVersion(object):
     def restore(self):
         '''
         revert the changes made by AlterVersion.change()
+        fails silently if no backup file is present
         '''
         print("restoring version.py")
-        os.remove(self.version_filepath)
-        shutil.move(self.backup_version_filepath, self.version_filepath)
+        try:
+            shutil.move(self.backup_version_filepath, self.version_filepath)
+        except FileNotFoundError:
+            pass
 
     def test(self):
         '''
@@ -227,18 +236,70 @@ class AlterVersion(object):
         self.restore()
 
 
+class WindowsScript(object):
+    '''
+    the openmolar script doesn't work well on windows as
+    from import openmolar import main is a namespace munge with
+    an executable named simply "openmolar"
+    move it to win_openmolar.pyw and all is well :)
+    '''
+
+    def move_executable(self):
+        if platform.system() == 'Windows':
+            print("Moving the executable to win_openmolar.pyw")
+            shutil.copy('openmolar', 'win_openmolar.pyw')
+
+    def remove_executable(self):
+        print("REMOVING win_openmolar.pyw")
+        try:
+            os.remove('win_openmolar.pyw')
+        except FileNotFoundError:
+            print("win_openmolar.pyw NOT removed")
+            pass
+
+    def test(self):
+        '''
+        check that running change, followed by restore doesn't alter the repo.
+        '''
+        self.move_executable()
+        self.remove_executable()
+
+
 class Build(_build):
     '''
     re-implement to ensure that ui_files are called.
     '''
 
-    def run(self, *args, **kwargs):
-        make_uis = MakeUis(self.distribution)
-        make_uis.run(*args, **kwargs)
+    def setup(self):
+        '''
+        before building, modify the version.py file
+        create a windows executable if necessary
+        '''
         alter_version = AlterVersion()
         alter_version.change()
-        _build.run(self, *args, **kwargs)
+        win_script = WindowsScript()
+        win_script.move_executable()
+
+    def tear_down(self):
+        '''
+        after building, return the repo to unaltered state
+        '''
+        alter_version = AlterVersion()
         alter_version.restore()
+        win_script = WindowsScript()
+        win_script.remove_executable()
+
+    def run(self, *args, **kwargs):
+        '''
+        compile ui files and move all files into build dir
+        '''
+        make_uis = MakeUis(self.distribution)
+        make_uis.run(*args, **kwargs)
+
+        self.setup()
+        _build.run(self, *args, **kwargs)
+        self.tear_down()
+
         print("build completed")
 
 
@@ -255,12 +316,14 @@ class Clean(_clean):
         if os.path.exists(RESOURCE_FILE):
             os.remove(RESOURCE_FILE)
         _clean.run(self, *args, **kwargs)
+        win_script = WindowsScript()
+        win_script.remove_executable()
 
 
 class Sdist(_sdist):
 
     '''
-    overwrite distutils standard source code builder to remove
+    re-implement distutils standard source code builder
     '''
 
     def run(self, *args, **kwargs):
@@ -369,5 +432,5 @@ setup(
               'install_data': InstallLocale,
               'makeuis': MakeUis,
               'test': Test},
-    scripts=['openmolar'],
+    scripts=SCRIPTS,
 )
