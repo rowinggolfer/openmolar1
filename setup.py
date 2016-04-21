@@ -42,6 +42,7 @@ import shutil
 import subprocess
 import sys
 import unittest
+import platform
 
 from PyQt5 import uic
 from PyQt5.Qt import PYQT_VERSION_STR
@@ -241,6 +242,7 @@ class InstallLocale(install_data):
     def run(self):
         print("COMPILING PO FILES")
         i18nfiles = []
+        is_windows = platform.system() == 'Windows'
         if not os.path.isdir("src/openmolar/locale/"):
             print("WARNING - language files are missing!")
         for po_file in glob.glob("src/openmolar/locale/*.po"):
@@ -249,6 +251,9 @@ class InstallLocale(install_data):
             mo_dir = os.path.join(directory, lang)
             try:
                 os.mkdir(mo_dir)
+                if is_windows:
+                    mo_dir = os.path.join(mo_dir, "LC_MESSAGES")
+                    os.mkdir(mo_dir)
             except OSError:
                 pass
             mo_file = os.path.join(mo_dir, "openmolar.mo")
@@ -258,8 +263,11 @@ class InstallLocale(install_data):
                 if os.system(cmd) != 0:
                     info('Error while running msgfmt on %s' % po_file)
 
-            destdir = os.path.join("/usr", "share", "locale", lang,
-                                   "LC_MESSAGES")
+            destdir = os.path.join("share", "locale", lang)
+            if is_windows:
+                destdir = os.path.join(destdir, "LC_MESSAGES")
+            else:
+                destdir = os.path.join("/usr", destdir)
 
             i18nfiles.append((destdir, [mo_file]))
 
