@@ -54,6 +54,10 @@ from openmolar.settings import version
 
 VERSION = version.VERSION
 RESOURCE_FILE = os.path.join(OM_PATH, "openmolar", "qt4gui", "resources_rc.py")
+IS_WINDOWS = platform.system() == 'Windows'
+USR = ""
+if not IS_WINDOWS:
+    USR = "/usr/"
 
 
 def version_fixes(pydata):
@@ -242,7 +246,6 @@ class InstallLocale(install_data):
     def run(self):
         print("COMPILING PO FILES")
         i18nfiles = []
-        is_windows = platform.system() == 'Windows'
         if not os.path.isdir("src/openmolar/locale/"):
             print("WARNING - language files are missing!")
         for po_file in glob.glob("src/openmolar/locale/*.po"):
@@ -251,7 +254,7 @@ class InstallLocale(install_data):
             mo_dir = os.path.join(directory, lang)
             try:
                 os.mkdir(mo_dir)
-                if is_windows:
+                if IS_WINDOWS:
                     mo_dir = os.path.join(mo_dir, "LC_MESSAGES")
                     os.mkdir(mo_dir)
             except OSError:
@@ -264,7 +267,7 @@ class InstallLocale(install_data):
                     info('Error while running msgfmt on %s' % po_file)
 
             destdir = os.path.join("share", "locale", lang)
-            if is_windows:
+            if IS_WINDOWS:
                 destdir = os.path.join(destdir, "LC_MESSAGES")
             else:
                 destdir = os.path.join("/usr", destdir)
@@ -334,9 +337,9 @@ setup(
                                 'html/images/*.*',
                                 'html/firstrun/*.*', ]},
     data_files=[
-        ('/usr/share/man/man1', ['bin/openmolar.1']),
-        ('/usr/share/icons/hicolor/scalable/apps', ['bin/openmolar.svg']),
-        ('/usr/share/applications', ['bin/openmolar.desktop']), ],
+        (USR + 'share/man/man1', ['bin/openmolar.1']),
+        (USR + 'share/icons/hicolor/scalable/apps', ['bin/openmolar.svg']),
+        (USR + 'share/applications', ['bin/openmolar.desktop']), ],
     cmdclass={'sdist': Sdist,
               'clean': Clean,
               'build': Build,
