@@ -27,6 +27,7 @@ sane by initialising gettext and logging.
 '''
 
 import os
+import locale
 import sys
 import logging
 import gettext
@@ -79,16 +80,24 @@ try:
 except FileNotFoundError:
     LOGGER.debug("no local translation found")
 
-    lang = os.environ.get("LANG")
+    # defensive coding here as some obscure os (windows??) may give an
+    # unexpected result.
+    try:
+        lang = locale.getdefaultlocale()[0]
+    except IndexError:
+        LOGGER.debug("locale.getdefaultlocale failed")
+        lang = os.environ.get("LANG")
+
     if lang:
         try:
             LOGGER.debug("trying to install your environment language %s", lang)
             lang1 = gettext.translation('openmolar', languages=[lang, ])
             lang1.install()
         except IOError:
-            LOGGER.warning("%s not found, using default", lang)
+            LOGGER.warning("An attempt to install %s failed (file not found)"
+                           ", using default", lang)
             gettext.install('openmolar')
     else:
         # - on windows.. os.environ.get("LANG") is None
-        LOGGER.warning("no language environment found (windows?)")
+        LOGGER.warning("no language environment found")
         gettext.install('openmolar')
