@@ -51,13 +51,21 @@ try:
         try:
             git_version = repo.git.describe()
             VERSION = re.sub("v", "", git_version, 1)
+            if repo.is_dirty():
+                VERSION += "-dirty"
         except git.exc.GitCommandError:
-            LOGGER.exception("No git tags found?")
+            LOGGER.warning(
+                "No git tags found - your versioning will be nonsense")
+        except git.exc.GitCommandNotFound:
+            LOGGER.warning(
+                "Git is not installed - your versioning will be nonsense")
 
-        if repo.is_dirty():
-            VERSION += "-dirty"
+    else:
+        LOGGER.warning("'%s' does not match the required repo description",
+                       repo.description)
 except ImportError:
-    LOGGER.debug("unable to import git")
+    LOGGER.warning("unable to import git-python your versioning will "
+                   "be nonsense")
 
 # --------------------------END OF DEV CODE --------------------------------- #
 
