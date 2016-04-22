@@ -334,3 +334,24 @@ class CheckVersionDialog(ExtendableDialog, Options):
                 self.config.write_config()
             return True
         return False
+
+
+class ThreadedCheckVersion(QtCore.QThread):
+
+    def __init__(self, parent=None):
+        self.parent = parent
+        QtCore.QThread.__init__(self)
+
+    def __del__(self):
+        self.wait()
+
+    def run(self):
+        dl = CheckVersionDialog(False, self.parent)
+        dl.exec_()
+
+
+if __name__ == "__main__":
+    LOGGER.setLevel(logging.DEBUG)
+    app = QtWidgets.QApplication([])
+    thread = ThreadedCheckVersion()
+    thread.run()

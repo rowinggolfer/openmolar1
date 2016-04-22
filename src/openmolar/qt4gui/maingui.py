@@ -120,6 +120,7 @@ from openmolar.qt4gui.dialogs.dialog_collection import (
     SaveMemoDialog,
 )
 from openmolar.qt4gui.dialogs import medical_form_date_entry_dialog
+from openmolar.qt4gui.dialogs.check_version_dialog import ThreadedCheckVersion
 
 from openmolar.qt4gui.phrasebook.phrasebook_dialog import PhraseBookDialog
 from openmolar.qt4gui.phrasebook.phrasebook_dialog import PHRASEBOOKS
@@ -249,7 +250,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
 
         self.forum_timer = QtCore.QTimer()
         self.records_in_use_timer = QtCore.QTimer()
-        QtCore.QTimer.singleShot(100, self.check_first_run)
+        QtCore.QTimer.singleShot(500, self.check_first_run)
 
     def initiate(self):
         '''
@@ -321,9 +322,12 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         ping openmolar.com to see if an application update is available
         if there is one, inform the user.
         '''
-        force = self.sender() == self.ui.actionCheck_for_Updates
-        dl = CheckVersionDialog(force_check=force, parent=self)
-        dl.exec_()
+        if self.sender() == self.ui.actionCheck_for_Updates:
+            dl = CheckVersionDialog(force_check=True, parent=self)
+            dl.exec_()
+        else:
+            thread = ThreadedCheckVersion(self)
+            thread.run()
 
     def check_schema(self):
         '''
