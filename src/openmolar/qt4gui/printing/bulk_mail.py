@@ -61,7 +61,7 @@ FOOTER = _('We are currently accepting new patients to the practice.'
            'friends and family.')
 
 try:
-    filepath = os.path.join(localsettings.localFileDirectory,
+    filepath = os.path.join(localsettings.LOCALFILEDIRECTORY,
                             "recall_footer.txt")
     f = open(filepath, "r")
     CUSTOM_TEXT = f.read()

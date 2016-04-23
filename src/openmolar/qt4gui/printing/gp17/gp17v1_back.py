@@ -110,7 +110,7 @@ class GP17iBack(PrintedForm):
     def BACKGROUND_IMAGE(self):
         if self._bg_pixmap is None:
             self._bg_pixmap = QtGui.QPixmap(
-                os.path.join(localsettings.resources_location,
+                os.path.join(localsettings.RESOURCE_DIR,
                              "gp17-1", "back.png"))
         return self._bg_pixmap
 
@@ -130,7 +130,7 @@ class GP17iBack(PrintedForm):
 
 if __name__ == "__main__":
     os.chdir(os.path.expanduser("~"))  # for print to file
-    TEST_IMAGE = os.path.join(localsettings.resources_location,
+    TEST_IMAGE = os.path.join(localsettings.RESOURCE_DIR,
                               "gp17-1", "back.png")
 
     app = QtWidgets.QApplication([])

@@ -32,7 +32,7 @@ TOOTHPIXMAPS = {}
 
 def toothPixmaps():
     if TOOTHPIXMAPS == {}:
-        filepath = os.path.join(localsettings.resources_location, "teeth")
+        filepath = os.path.join(localsettings.RESOURCE_DIR, "teeth")
         for f in os.listdir(filepath):
             filename = os.path.basename(f)
             reg = re.match("([ul][lr][1-8,a-d]).png", filename)

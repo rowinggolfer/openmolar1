@@ -28,6 +28,7 @@ import logging
 import locale
 import os
 import re
+import shutil
 import subprocess
 import sys
 
@@ -136,56 +137,63 @@ wkdir = determine_path()
 if "win" in sys.platform:
     WINDOWS = True
     LOGGER.info("Windows OS detected - modifying settings")
-    # - sorry about this... but cross platform is a goal :(
-    global_cflocation = 'C:\\Program Files\\openmolar\\openmolar.conf'
-    localFileDirectory = os.path.join(
-        os.environ.get("HOMEPATH", ""), ".openmolar")
+    SHARE_DIR = os.path.join(os.environ.get("ProgramFiles", ""), "openmolar")
+    global_cflocation = os.path.join(SHARE_DIR, "openmolar.conf")
+    LOCALFILEDIRECTORY = os.path.join(os.environ.get("HOMEPATH", ""),
+                                      ".openmolar")
 else:
     WINDOWS = False
     if "linux" not in sys.platform:
         LOGGER.warning(
             "unknown system platform (mac?) - defaulting to linux settings")
+    SHARE_DIR = os.path.join("/usr", "share", "openmolar")
     global_cflocation = '/etc/openmolar/openmolar.conf'
-    localFileDirectory = os.path.join(os.environ.get("HOME"), ".openmolar")
+    LOCALFILEDIRECTORY = os.path.join(os.environ.get("HOME"), ".openmolar")
 
 if os.path.isfile(global_cflocation):
     cflocation = global_cflocation
 else:
-    cflocation = os.path.join(localFileDirectory, "openmolar.conf")
-LOGIN_CONF = os.path.join(localFileDirectory, "autologin.conf")
-TEMP_PDF = os.path.join(localFileDirectory, "temp.pdf")
-DOCS_DIRECTORY = os.path.join(localFileDirectory, "documents")
+    cflocation = os.path.join(LOCALFILEDIRECTORY, "openmolar.conf")
 
-appt_shortcut_file = os.path.join(wkdir, "resources",
-                                  "appointment_shortcuts.xml")
-stylesheet = "file://" + os.path.join(wkdir, "resources", "style.css")
-printer_png = "file://" + os.path.join(wkdir, "resources", "icons", "ps.png")
-medical_png = "file://" + os.path.join(wkdir, "resources", "icons", "med.png")
-money_png = "file://" + os.path.join(wkdir, "resources", "icons", "vcard.png")
-LOGOPATH = "file://" + os.path.join(wkdir, "html", "images", "newlogo.png")
-resources_location = os.path.join(wkdir, "resources")
-resources_path = "file://" + resources_location
+RESOURCE_DIR = os.path.join(wkdir, "resources")
+if not os.path.isdir(RESOURCE_DIR):
+    # as will be the case if application is run from an installed version
+    RESOURCE_DIR = os.path.join(SHARE_DIR, "resources")
 
-if WINDOWS:
-    # - this next line is necessary because I have to resort to relative
-    # - imports for the css stuff eg... ../resources/style.css
-    # - on linux, the root is always /  on windows... ??
 
-    os.chdir(wkdir)
-    resources_path = resources_path.replace(
-        "://", ":///").replace(" ", "%20").replace("\\", "/")
-    stylesheet = stylesheet.replace(
-        "://", ":///").replace(" ", "%20").replace("\\", "/")
-    printer_png = printer_png.replace(
-        "://", ":///").replace(" ", "%20").replace("\\", "/")
-    money_png = money_png.replace(
-        "://", ":///").replace(" ", "%20").replace("\\", "/")
-    LOGOPATH = LOGOPATH.replace(
-        "://", ":///").replace(" ", "%20").replace("\\", "/")
-
+LOGIN_CONF = os.path.join(LOCALFILEDIRECTORY, "autologin.conf")
+TEMP_PDF = os.path.join(LOCALFILEDIRECTORY, "temp.pdf")
+DOCS_DIRECTORY = os.path.join(LOCALFILEDIRECTORY, "documents")
 
 if not os.path.exists(DOCS_DIRECTORY):
     os.makedirs(DOCS_DIRECTORY)
+
+appt_shortcut_file = os.path.join(LOCALFILEDIRECTORY,
+                                  "appointment_shortcuts.xml")
+if not os.path.isfile(appt_shortcut_file):
+    shutil.copy(os.path.join(RESOURCE_DIR, "appointment_shortcuts.xml"),
+                appt_shortcut_file)
+
+stylesheet = "file://%s" % os.path.join(RESOURCE_DIR, "style.css")
+printer_png = "file://%s" % os.path.join(RESOURCE_DIR, "icons", "ps.png")
+medical_png = "file://%s" % os.path.join(RESOURCE_DIR, "icons", "med.png")
+money_png = "file://%s" % os.path.join(RESOURCE_DIR, "icons", "vcard.png")
+LOGOPATH = "file://%s" % os.path.join(RESOURCE_DIR, "newlogo.png")
+resources_path = "file://%s" % RESOURCE_DIR
+
+
+def win_url(url):
+    '''
+    convert the windows filepaths to unix style filepaths
+    '''
+    return url.replace("://", ":///").replace(" ", "%20").replace("\\", "/")
+
+if WINDOWS:
+    resources_path = win_url(resources_path)
+    stylesheet = win_url(stylesheet)
+    printer_png = win_url(printer_png)
+    money_png = win_url(money_png)
+    LOGOPATH = win_url(LOGOPATH)
 
 # this is updated if correct password is given
 successful_login = False
@@ -232,10 +240,8 @@ Project Homepage
 http://www.openmolar.com</a>.
 </p>
 Thanks to <a href="http://rfquerin.org">Richard Querin</a>
-for the wonderful icon and Logo.''' % (
-        VERSION,
-        CLIENT_SCHEMA_VERSION,
-        DB_SCHEMA_VERSION)
+for the wonderful icon and Logo.''' % (VERSION, CLIENT_SCHEMA_VERSION,
+                                       DB_SCHEMA_VERSION)
 
 license_ = '''<hr />
 <p>
@@ -774,10 +780,10 @@ def getLocalSettings():
     if one doesn't exist... knock one up.
     '''
     global surgeryno, last_forumCheck
-    if not os.path.exists(localFileDirectory):
-        os.mkdir(localFileDirectory)
+    if not os.path.exists(LOCALFILEDIRECTORY):
+        os.mkdir(LOCALFILEDIRECTORY)
 
-    localSets = os.path.join(localFileDirectory, "localsettings.conf")
+    localSets = os.path.join(LOCALFILEDIRECTORY, "localsettings.conf")
     if os.path.exists(localSets):
         dom = minidom.parse(localSets)
         node = dom.getElementsByTagName("surgeryno")
@@ -799,7 +805,7 @@ def updateLocalSettings(setting, value):
     '''
     adds or updates node "setting" with text value "value"
     '''
-    localSets = os.path.join(localFileDirectory, "localsettings.conf")
+    localSets = os.path.join(LOCALFILEDIRECTORY, "localsettings.conf")
     LOGGER.debug("updating local settings... %s = %s" % (setting, value))
     dom = minidom.parse(localSets)
     nodes = dom.getElementsByTagName(setting)

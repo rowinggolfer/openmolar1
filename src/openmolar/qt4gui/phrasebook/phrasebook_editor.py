@@ -45,7 +45,7 @@ from openmolar.dbtools.phrasebook import PHRASEBOOKS
 LOGGER = logging.getLogger("openmolar")
 
 STYLESHEET = os.path.join(
-    localsettings.resources_location, "phrasebook", "phrasebook.xsd")
+    localsettings.RESOURCE_DIR, "phrasebook", "phrasebook.xsd")
 
 
 class ControlPanel(QtWidgets.QListView):

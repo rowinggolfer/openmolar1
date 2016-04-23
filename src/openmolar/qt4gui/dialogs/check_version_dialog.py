@@ -61,7 +61,7 @@ MESSAGE = '''<p>%s <b>%s</b></p>
     INFORMATION_URL,
     _("The OpenMolar Website"))
 
-CONFIG_PATH = os.path.join(localsettings.localFileDirectory, "updates.conf")
+CONFIG_PATH = os.path.join(localsettings.LOCALFILEDIRECTORY, "updates.conf")
 
 
 def parse_isodate(isodate):

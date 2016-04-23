@@ -7,3 +7,12 @@ recursive-include src/openmolar/qt4gui *.py
 recursive-include src/openmolar/resources *.qrc *.xsd *.xml *.html *.css *.sql *.svg *.png 
 recursive-include src/openmolar/settings *.py
 recursive-include src/openmolar/locale *.po *.pot
+recursive-include src/openmolar/qt4gui/qt-designer/*.*
+recursive-include scc/openmolar/resources/*.*
+recursive-include scc/openmolar/resources/icons/*.*',
+recursive-include scc/openmolar/resources/teeth/*.png',
+recursive-include scc/openmolar/resources/gp17/*.jpg',
+recursive-include scc/openmolar/resources/gp17-1/*.png',
+recursive-include scc/openmolar/resources/feescales/*.xml',
+recursive-include scc/openmolar/resources/feescales/*.xsd',
+recursive-include scc/openmolar/resources/phrasebook/*.*',

@@ -1113,7 +1113,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
             QtWidgets.QMessageBox.Yes)
         if result == QtWidgets.QMessageBox.Yes:
             try:
-                fpath = os.path.join(localsettings.localFileDirectory,
+                fpath = os.path.join(localsettings.LOCALFILEDIRECTORY,
                                      "import_temp")
                 f = open(fpath, "wb")
                 for data in docsimported.getData(ix):

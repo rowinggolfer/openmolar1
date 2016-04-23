@@ -38,7 +38,7 @@ def getPDF():
         data = f.read()
         f.close()
         return data
-    except Exception as exc:
+    except Exception:
         LOGGER.exception("exception in utilities.getPdf")
 
 
@@ -48,7 +48,7 @@ def deleteTempFiles():
     '''
     LOGGER.info("deleting temporary Files")
     for name in ("import_temp", "temp.pdf"):
-        fpath = os.path.join(localsettings.localFileDirectory, name)
+        fpath = os.path.join(localsettings.LOCALFILEDIRECTORY, name)
         if os.path.exists(fpath):
             os.remove(fpath)
 

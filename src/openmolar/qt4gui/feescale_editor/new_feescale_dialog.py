@@ -31,13 +31,13 @@ import shutil
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
-from openmolar.settings.localsettings import resources_location
+from openmolar.settings.localsettings import RESOURCE_DIR
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 from openmolar.dbtools.feescales import feescale_handler, FEESCALE_DIR
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
 
 EXAMPLE_XML_PATH = os.path.join(
-    resources_location, "feescales", "example_feescale.xml")
+    RESOURCE_DIR, "feescales", "example_feescale.xml")
 
 
 class NewFeescaleDialog(BaseDialog):

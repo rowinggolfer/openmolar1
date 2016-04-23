@@ -29,7 +29,7 @@ import os
 
 from openmolar.settings import localsettings
 
-CONF_PATH = os.path.join(localsettings.localFileDirectory, "gp17.conf")
+CONF_PATH = os.path.join(localsettings.LOCALFILEDIRECTORY, "gp17.conf")
 
 SECTIONS = ("gp17Front", "gp17iFront", "gp17iBack")
 

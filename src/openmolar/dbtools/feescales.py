@@ -39,7 +39,7 @@ def FEESCALE_DIR():
     this is dynamic in case user switches database
     '''
     return os.path.join(
-        localsettings.localFileDirectory,
+        localsettings.LOCALFILEDIRECTORY,
         "feescales",
         connect.params.database_name.replace(" ", "_").replace(":", "_PORT_")
     )

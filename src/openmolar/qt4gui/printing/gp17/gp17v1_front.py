@@ -211,7 +211,7 @@ class GP17iFront(PrintedForm):
     def BACKGROUND_IMAGE(self):
         if self._bg_pixmap is None:
             self._bg_pixmap = QtGui.QPixmap(
-                os.path.join(localsettings.resources_location,
+                os.path.join(localsettings.RESOURCE_DIR,
                              "gp17-1", "front.png"))
         return self._bg_pixmap
 

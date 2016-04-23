@@ -200,7 +200,7 @@ class LoginDialog(ExtendableDialog):
             self.__is_developer_environment = False
             try:
                 dev_path = os.path.join(
-                    localsettings.localFileDirectory, "dev_login.txt")
+                    localsettings.LOCALFILEDIRECTORY, "dev_login.txt")
                 f = open(dev_path, "r")
                 data = f.read().strip("\n")
                 f.close()

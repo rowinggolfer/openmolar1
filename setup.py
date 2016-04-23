@@ -59,10 +59,12 @@ RESOURCE_FILE = os.path.join(OM_PATH, "openmolar", "qt4gui", "resources_rc.py")
 if platform.system() == 'Windows':
     # getext path is $PYTHONPATH/share/locale
     # eg C:\\Python34\\share\\locale
+    RESOURCES_DIR = os.environ.get("ProgramFiles")
     il8n_DIR = os.path.join("share", "locale")
     DATA_FILES = []  # see warning below
     SCRIPTS = ['win_openmolar.pyw']
 else:
+    RESOURCES_DIR = os.path.join("/usr", "share", "openmolar")
     il8n_DIR = os.path.join("/usr", "share", "locale")
     # also install a man page.
     DATA_FILES = [('share/icons/hicolor/scalable/apps', ['bin/openmolar.svg']),
@@ -71,8 +73,13 @@ else:
     SCRIPTS = ['openmolar']
 
 # warning if DATA_FILES == [], install_data doesn't get called!
-DATA_FILES.append((os.path.join(il8n_DIR, 'openmolar'),
-                   ['src/openmolar/locale/messages.pot']))
+DATA_FILES.append((os.path.join(RESOURCES_DIR, "locale"),
+     glob.glob('src/openmolar/locale/*.po*')))
+
+for root, dirs, files in os.walk('src/openmolar/resources'):
+    subdirs = root.split(os.path.sep)[2:]
+    dest_dir = os.path.join(RESOURCES_DIR, *subdirs)
+    DATA_FILES.append((dest_dir, [os.path.join(root, f) for f in files]))
 
 def version_fixes(pydata):
     '''
@@ -413,18 +420,6 @@ setup(
               'openmolar.qt4gui.printing.gp17',
               'openmolar.settings',
               'openmolar.ptModules'],
-    package_data={'openmolar': ['qt-designer/*.*',
-                                'resources/icons/*.*',
-                                'resources/teeth/*.png',
-                                'resources/gp17/*.jpg',
-                                'resources/gp17-1/*.png',
-                                'resources/feescales/*.xml',
-                                'resources/feescales/*.xsd',
-                                'resources/phrasebook/*.*',
-                                'resources/*.*',
-                                'html/*.*',
-                                'html/images/*.*',
-                                'html/firstrun/*.*', ]},
     data_files=DATA_FILES,
     cmdclass={'sdist': Sdist,
               'clean': Clean,

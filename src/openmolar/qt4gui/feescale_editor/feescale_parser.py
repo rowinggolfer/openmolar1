@@ -33,12 +33,12 @@ from PyQt5.QtXmlPatterns import (
     QXmlSchema,
     QAbstractMessageHandler)
 
-from openmolar.settings.localsettings import resources_location
+from openmolar.settings.localsettings import RESOURCE_DIR
 
 LOGGER = logging.getLogger("openmolar")
 
 STYLESHEET = os.path.join(
-    resources_location, "feescales", "feescale_schema.xsd")
+    RESOURCE_DIR, "feescales", "feescale_schema.xsd")
 
 
 class MessageHandler(QAbstractMessageHandler):
@@ -344,7 +344,7 @@ def _test():
     LOGGER.debug("running _test")
 
     example_path = os.path.join(
-        resources_location, "feescales", "example_feescale.xml")
+        RESOURCE_DIR, "feescales", "example_feescale.xml")
     fp = FeescaleParser(example_path, 1)
     fp.parse_file()
 

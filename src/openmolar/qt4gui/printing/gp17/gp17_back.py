@@ -146,7 +146,7 @@ class Gp17Back(PrintedForm):
 if __name__ == "__main__":
     os.chdir(os.path.expanduser("~"))  # for print to file
     from openmolar.settings import localsettings
-    TEST_IMAGE = os.path.join(localsettings.resources_location,
+    TEST_IMAGE = os.path.join(localsettings.RESOURCE_DIR,
                               "gp17", "back.jpg")
 
     app = QtWidgets.QApplication([])
