@@ -123,8 +123,7 @@ def insert_practice_address(address):
 
 def insert_clinician(clinician):
     result = False
-    comments = "added by client - %s" % datetime.datetime.now().strftime(
-        "%m %h %Y %H:%M")
+    comments = "added by client - %s" % datetime.datetime.now().strftime("%c")
     db = connect.connect()
     try:
         db.autocommit = False
