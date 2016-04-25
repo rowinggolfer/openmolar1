@@ -37,13 +37,13 @@ LOGGER = logging.getLogger("openmolar")
 DROP_QUERY = "DROP DATABASE IF EXISTS %s"
 CREATE_QUERY = "CREATE DATABASE %s"
 
-#-- note for production deployments, only grant
-#-- select,insert,update,delete privileges
+# note for production deployments, only grant
+# select,insert,update,delete privileges
 PRIVS_QUERY = "GRANT ALL PRIVILEGES ON %s.* TO '%s'@'%s' IDENTIFIED BY '%s'"
 
 
 def exists_already(host_, port_, db_name, privileged_user_pass,
-privileged_user="root"):
+                   privileged_user="root"):
     '''
     returns true if database 'db_name' exists
     '''
@@ -52,28 +52,26 @@ privileged_user="root"):
                              port=port_,
                              user=privileged_user,
                              passwd=privileged_user_pass,
-                            db=db_name
-                            )
+                             db=db_name)
         if db.open:
             db.close()
             return True
     except:
         LOGGER.warning("exists already through error, passing silently")
-        pass
     return False
 
+
 def create_database(host_, port_, user_, pass_wd, db_name,
-privileged_user_pass, privileged_user="root"):
+                    privileged_user_pass, privileged_user="root"):
     '''
     creates a database called "db_name" on host_, port_, passwd,
     '''
     try:
-        #-- connect as mysqlroot to create the database
+        # connect as mysqlroot to create the database
         db = MySQLdb.connect(host=host_,
                              port=port_,
                              user=privileged_user,
-                             passwd=privileged_user_pass
-                             )
+                             passwd=privileged_user_pass)
 
         cursor = db.cursor()
         LOGGER.info("deleting any existing openmolar_demo database....")
@@ -95,8 +93,7 @@ privileged_user_pass, privileged_user="root"):
 
 def create_tables(host_, port_, user_, pass_wd, db_name):
     try:
-        wkdir = localsettings.determine_path()
-        f = open(os.path.join(wkdir, "resources", "schema.sql"), "r")
+        f = open(os.path.join(localsettings.RESOURCE_DIR, "schema.sql"), "r")
         sql_statements = f.read()
         f.close()
 
@@ -117,26 +114,14 @@ def create_tables(host_, port_, user_, pass_wd, db_name):
 
 
 if __name__ == "__main__":
+    LOGGER.setLevel(logging.DEBUG)
     root_pass = input("please enter your MySQL root users password :")
-    print("exists already", exists_already("localhost",
-                       3306,
-                       "openmolar_demo",
-                       root_pass
-                       ))
+    print("exists already = %s" %
+          exists_already("localhost", 3306, "openmolar_demo", root_pass))
 
-    if create_database("localhost",
-                       3306,
-                       "openmolar",
-                       "password",
-                       "openmolar_demo",
-                       root_pass
-                       ):
+    if create_database("localhost", 3306, "openmolar", "password",
+                       "openmolar_demo", root_pass):
         LOGGER.debug("New database created successfully")
 
-        create_tables(
-            "localhost",
-            3306,
-            "openmolar",
-            "password",
-            "openmolar_demo")
-
+        create_tables("localhost", 3306, "openmolar", "password",
+                      "openmolar_demo")

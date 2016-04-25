@@ -137,6 +137,7 @@ def connect():
     '''
     global mainconnection
     attempts = 0
+    exc = GeneralError
     while attempts < 30:
         try:
             if not (mainconnection and mainconnection.open):

@@ -59,7 +59,8 @@ RESOURCE_FILE = os.path.join(OM_PATH, "openmolar", "qt4gui", "resources_rc.py")
 if platform.system() == 'Windows':
     # getext path is $PYTHONPATH/share/locale
     # eg C:\\Python34\\share\\locale
-    RESOURCES_DIR = os.environ.get("ProgramFiles")
+    RESOURCES_DIR = os.path.join(os.environ.get("ProgramFiles"),
+                                 "openmolar", "resources")
     il8n_DIR = os.path.join("share", "locale")
     DATA_FILES = []  # see warning below
     SCRIPTS = ['win_openmolar.pyw']
