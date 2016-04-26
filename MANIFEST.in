@@ -1,17 +1,12 @@
 include LICENSE MANIFEST MANIFEST.in README openmolar INSTALL.txt
 recursive-include bin *.svg *.desktop
-recursive-include src/openmolar/schema_upgrades *.py
-recursive-include src/openmolar/dbtools *.py
-recursive-include src/openmolar/ptModules *.py
-recursive-include src/openmolar/qt4gui *.py
-recursive-include src/openmolar/resources *.qrc *.xsd *.xml *.html *.css *.sql *.svg *.png 
-recursive-include src/openmolar/settings *.py
+recursive-include src/openmolar/resources *.qrc *.xsd *.xml *.css *.sql *.svg *.png 
 recursive-include src/openmolar/locale *.po *.pot
 recursive-include src/openmolar/qt-designer *.ui
-recursive-include scc/openmolar/resources *.xml *.png *.svg *.sql *.css *.qrc
-recursive-include scc/openmolar/resources/icons *.png *.svg *.ico
-recursive-include scc/openmolar/resources/teeth *.png
-recursive-include scc/openmolar/resources/gp17 *.jpg
-recursive-include scc/openmolar/resources/gp17-1 *.png
-recursive-include scc/openmolar/resources/feescales *.xml *.xsd
-recursive-include scc/openmolar/resources/phrasebook *.xsd
+recursive-include src/openmolar/resources *.xml *.png *.svg *.sql *.css *.qrc
+recursive-include src/openmolar/resources/icons *.png *.svg *.ico
+recursive-include src/openmolar/resources/teeth *.png
+recursive-include src/openmolar/resources/gp17 *.jpg
+recursive-include src/openmolar/resources/gp17-1 *.png
+recursive-include src/openmolar/resources/feescales *.xml *.xsd
+recursive-include src/openmolar/resources/phrasebook *.xsd

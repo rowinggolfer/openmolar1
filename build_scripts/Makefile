@@ -44,7 +44,6 @@ PACKAGE=openmolar
 CURRENT_MAKEFILE_LIST := $(MAKEFILE_LIST)
 BUILD_SCRIPTS_DIR := $(abspath $(dir $(firstword $(CURRENT_MAKEFILE_LIST))))/
 HEAD = $(shell $(BUILD_SCRIPTS_DIR)get_git_branch.py)/
-BUILDS_DIR=$(HEAD)builds/
 
 DIST_DIR=$(HEAD)dist/
 
@@ -96,15 +95,12 @@ tarball:
 	cd $(HEAD) ;\
 		python3 setup.py sdist ;\
 	echo "tarball created!"
-	mkdir -p $(BUILDS_DIR)
-	echo "moving tarball to $(BUILDS_DIR)"
-	cp -av $(DIST_DIR)$(TARBALL) $(BUILDS_DIR);
-	@echo "tarball is located $(BUILDS_DIR)$(TARBALL)"
+	@echo "tarball is located $(DIST_DIR)$(TARBALL)"
 
-	@if [ -e "$(BUILDS_DIR)$(TARBALL)" ]; then echo "SUCCESS!"; fi
+	@if [ -e "$(DIST_DIR)$(TARBALL)" ]; then echo "SUCCESS!"; fi
 	
 sign_tarball:
-	cd $(BUILDS_DIR) ;\
+	cd $(DIST_DIR) ;\
 	gpg --armor --sign --detach-sig -u rowinggolfer@googlemail.com $(TARBALL) ;\
 	md5sum $(TARBALL) | sed "s/ .*//" > $(PACKAGE)-$(VERSION)_md5.txt 	
 	
