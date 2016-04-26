@@ -133,20 +133,20 @@ class GP17Config(configparser.ConfigParser):
             return 1.0
 
     def save_config(self):
-        self.set("gp17Front", "left", self.OFFSET_LEFT)
-        self.set("gp17Front", "top", self.OFFSET_TOP)
-        self.set("gp17Front", "scale_x", self.SCALE_X)
-        self.set("gp17Front", "scale_y", self.SCALE_Y)
+        self.set("gp17Front", "left", str(self.OFFSET_LEFT))
+        self.set("gp17Front", "top", str(self.OFFSET_TOP))
+        self.set("gp17Front", "scale_x", str(self.SCALE_X))
+        self.set("gp17Front", "scale_y", str(self.SCALE_Y))
 
-        self.set("gp17iFront", "left", self.GP17i_OFFSET_LEFT)
-        self.set("gp17iFront", "top", self.GP17i_OFFSET_TOP)
-        self.set("gp17iFront", "scale_x", self.GP17i_SCALE_X)
-        self.set("gp17iFront", "scale_y", self.GP17i_SCALE_Y)
+        self.set("gp17iFront", "left", str(self.GP17i_OFFSET_LEFT))
+        self.set("gp17iFront", "top", str(self.GP17i_OFFSET_TOP))
+        self.set("gp17iFront", "scale_x", str(self.GP17i_SCALE_X))
+        self.set("gp17iFront", "scale_y", str(self.GP17i_SCALE_Y))
 
-        self.set("gp17iBack", "left", self.GP17iback_OFFSET_LEFT)
-        self.set("gp17iBack", "top", self.GP17iback_OFFSET_TOP)
-        self.set("gp17iBack", "scale_x", self.GP17iback_SCALE_X)
-        self.set("gp17iBack", "scale_y", self.GP17iback_SCALE_Y)
+        self.set("gp17iBack", "left", str(self.GP17iback_OFFSET_LEFT))
+        self.set("gp17iBack", "top", str(self.GP17iback_OFFSET_TOP))
+        self.set("gp17iBack", "scale_x", str(self.GP17iback_SCALE_X))
+        self.set("gp17iBack", "scale_y", str(self.GP17iback_SCALE_Y))
 
         f = open(CONF_PATH, "w")
         self.write(f)
