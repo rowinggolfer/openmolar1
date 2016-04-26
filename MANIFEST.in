@@ -9,7 +9,7 @@ recursive-include src/openmolar/settings *.py
 recursive-include src/openmolar/locale *.po *.pot
 recursive-include src/openmolar/qt-designer *.ui
 recursive-include scc/openmolar/resources *.xml *.png *.svg *.sql *.css *.qrc
-recursive-include scc/openmolar/resources/icons *.png *.svg
+recursive-include scc/openmolar/resources/icons *.png *.svg *.ico
 recursive-include scc/openmolar/resources/teeth *.png
 recursive-include scc/openmolar/resources/gp17 *.jpg
 recursive-include scc/openmolar/resources/gp17-1 *.png

@@ -26,12 +26,20 @@ Whenever openmolar is imported, this module ensures the environment is
 sane by initialising gettext and logging.
 '''
 
-import os
-import locale
-import sys
-import logging
 import gettext
+import locale
+import logging
+import os
+import sys
+import platform
 
+LOGGER = logging.getLogger("openmolar")
+
+if platform.system() == "Windows":
+    LOCALEDIR = os.path.join(
+        os.environ.get("ProgramFiles"), "openmolar", "locale")
+else:
+    LOCALEDIR = None
 
 class MyFormatter(logging.Formatter):
     '''
@@ -46,58 +54,84 @@ class MyFormatter(logging.Formatter):
                                     record.getMessage())
 
 
-if "neil" in os.path.expanduser("~"):
-    formatter = MyFormatter()
-    FORMAT = ('%(levelname)s\t {%(filename)s:%(lineno)d}\t %(funcName)s'
-              '\t- %(message)s')
-else:
-    FORMAT = '%(levelname)s - %(message)s'
-    formatter = logging.Formatter(FORMAT)
-
-stream_handler = logging.StreamHandler()
-stream_handler.setFormatter(formatter)
-# logging.basicConfig(level = logging.INFO, format=FORMAT)
-
-LOGGER = logging.getLogger("openmolar")
-LOGGER.addHandler(stream_handler)
-
-if "-q" in sys.argv:
-    LOGGER.setLevel(logging.WARNING)
-elif "-v" in sys.argv:
-    LOGGER.setLevel(logging.DEBUG)
-    LOGGER.warning("verbose logging called by -v flag in sys.argv")
-else:
-    LOGGER.setLevel(logging.INFO)
-
-LOGGER.debug("running openmolar base module = %s", os.path.dirname(__file__))
-
-try:
-    path = os.path.join(os.path.expanduser("~"), ".openmolar", "locale")
-    lang1 = gettext.translation("openmolar", localedir=path,
-                                languages=['default'])
-    lang1.install()
-    LOGGER.debug("Installed translation file found in %s", path)
-except FileNotFoundError:
-    LOGGER.debug("no local translation found")
-
-    # defensive coding here as some obscure os (windows??) may give an
-    # unexpected result.
-    try:
-        lang = locale.getdefaultlocale()[0]
-    except IndexError:
-        LOGGER.debug("locale.getdefaultlocale failed")
-        lang = os.environ.get("LANG")
-
-    if lang:
-        try:
-            LOGGER.debug("trying to install your environment language %s", lang)
-            lang1 = gettext.translation('openmolar', languages=[lang, ])
-            lang1.install()
-        except IOError:
-            LOGGER.warning("An attempt to install %s failed (file not found)"
-                           ", using default", lang)
-            gettext.install('openmolar')
+def initialise_logging():
+    '''
+    Customise the logger used by the openmolar application.
+    '''
+    stream_handler = logging.StreamHandler()
+    if "neil" in os.path.expanduser("~"):
+        stream_handler.setFormatter(MyFormatter())
     else:
-        # - on windows.. os.environ.get("LANG") is None
-        LOGGER.warning("no language environment found")
-        gettext.install('openmolar')
+        stream_handler.setFormatter(
+            logging.Formatter('%(levelname)s - %(message)s'))
+
+    LOGGER.addHandler(stream_handler)
+
+    if "-q" in sys.argv:
+        LOGGER.setLevel(logging.WARNING)
+    elif "-v" in sys.argv:
+        LOGGER.setLevel(logging.DEBUG)
+        LOGGER.warning("verbose logging called by -v flag in sys.argv")
+    else:
+        LOGGER.setLevel(logging.INFO)
+
+
+def initialise_translation():
+    '''
+    Localise the application if possible.
+    If a file named "default.mo" is found in ~/.openmolar then that is used.
+    Otherwise, gnu gettext searches for the "openmolar" domain
+    New with version 0.8.1 - gettext binary files are installed into
+    C:\\Program Files\openmolar\locale
+    (previously the Python environment was getting polluted)
+    '''
+    default_path = os.path.join(os.path.expanduser("~"),
+                                ".openmolar", "default.mo")
+
+    if os.path.isfile(default_path):
+        try:
+            with open(default_path, "rb") as fp:
+                translation = gettext.GNUTranslations(fp)
+                translation.install()
+                LOGGER.info("%s installed as translation", default_path)
+        except:
+            LOGGER.exception("The local translation file %s cannot be intalled",
+                             default_path)
+    else:
+        LOGGER.debug("no local translation found at %s, searching environment",
+                     default_path)
+
+
+        # defensive coding here as some obscure os (windows??) may give an
+        # unexpected result.
+        try:
+            lang = locale.getdefaultlocale()[0]
+        except IndexError:
+            LOGGER.debug("locale.getdefaultlocale failed")
+            lang = os.environ.get("LANG")
+
+        if lang:
+            try:
+                LOGGER.debug("trying to install your environment language %s",
+                             lang)
+                lang1 = gettext.translation('openmolar', localedir=LOCALEDIR,
+                                            languages=[lang, ])
+                lang1.install()
+                LOGGER.debug("Language succesfully installed")
+            except FileNotFoundError:
+                LOGGER.warning("An attempt to install translation %s failed",
+                               lang)
+        else:
+            # - on windows.. os.environ.get("LANG") is None
+            LOGGER.warning("no language environment found")
+
+
+initialise_logging()
+LOGGER.debug("Openmolar package location = %s", os.path.dirname(__file__))
+initialise_translation()
+
+# finally - make sure _() is present in globals
+try:
+    _("Find")
+except NameError:
+    gettext.install('openmolar', localedir=LOCALEDIR)
