@@ -171,8 +171,11 @@ if not os.path.exists(DOCS_DIRECTORY):
 appt_shortcut_file = os.path.join(LOCALFILEDIRECTORY,
                                   "appointment_shortcuts.xml")
 if not os.path.isfile(appt_shortcut_file):
-    shutil.copy(os.path.join(RESOURCE_DIR, "appointment_shortcuts.xml"),
-                appt_shortcut_file)
+    try:
+        shutil.copy(os.path.join(RESOURCE_DIR, "appointment_shortcuts.xml"),
+                    appt_shortcut_file)
+    except FileNotFoundError:
+        LOGGER.exception("Your Resource files are incomplete!")
 
 stylesheet = "file://%s" % os.path.join(RESOURCE_DIR, "style.css")
 printer_png = "file://%s" % os.path.join(RESOURCE_DIR, "icons", "ps.png")

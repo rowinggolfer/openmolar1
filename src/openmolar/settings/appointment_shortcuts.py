@@ -21,11 +21,19 @@
 # #                                                                         # #
 # ########################################################################### #
 
+import logging
 from xml.dom import minidom
+
 from openmolar.settings import localsettings
 
 
+LOGGER = logging.getLogger("openmolar")
+
+
 def getShortCuts():
+    '''
+    parse appointment_shortcuts.xml
+    '''
     try:
         d = minidom.parse(localsettings.appt_shortcut_file)
         shortcuts = d.getElementsByTagName("shortcut")
@@ -57,28 +65,27 @@ def getShortCuts():
                     apptDict["trt3"] = trt
                 length = appointment.getElementsByTagName("length")
                 if length:
-                        a_length = int(length[0].firstChild.data)
-                        apptDict["length"] = a_length
+                    a_length = int(length[0].firstChild.data)
+                    apptDict["length"] = a_length
                 datespec = appointment.getElementsByTagName("datespec")
                 if datespec:
-                        d_spec = datespec[0].firstChild.data
-                        apptDict["datespec"] = d_spec
+                    d_spec = datespec[0].firstChild.data
+                    apptDict["datespec"] = d_spec
                 memo = appointment.getElementsByTagName("memo")
                 if memo:
-                        memo_ = int(length[0].firstChild.data)
-                        apptDict["memo"] = memo_
+                    memo_ = int(length[0].firstChild.data)
+                    apptDict["memo"] = memo_
 
                 shortCutDict["appointments"].append(apptDict)
             retarg.append(shortCutDict)
         return retarg
 
-    except IOError as e:
-        print("error getting appointment shortcuts", end=' ')
-        print(localsettings.appt_shortcut_file)
-        #-- return an iterable variable
+    except IOError:
+        LOGGER.exception("error getting appointment shortcuts from %s",
+                         localsettings.appt_shortcut_file)
+        # return an iterable variable
         return ()
 
 
 if __name__ == "__main__":
-    localsettings.initiate()
     print(getShortCuts())
