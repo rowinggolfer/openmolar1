@@ -29,16 +29,17 @@ from PyQt5 import QtWidgets
 from openmolar.settings import localsettings
 
 
-class estimate(object):
+class EstimateLetter(object):
 
     def __init__(self, parent=None):
+        self.parent = parent
         self.setProps()
         self.estItems = []
         self.printer = QtPrintSupport.QPrinter()
-        self.printer.setPageSize(QtPrintSupport.QPrinter.A5)
+        self.printer.setPaperSize(QtPrintSupport.QPrinter.A5)
 
         self.pdfprinter = QtPrintSupport.QPrinter()
-        self.pdfprinter.setPageSize(QtPrintSupport.QPrinter.A5)
+        self.pdfprinter.setPaperSize(QtPrintSupport.QPrinter.A5)
 
     def setProps(self, tit="", fn="", sn="", serialno=0):
         self.title = tit
@@ -50,7 +51,7 @@ class estimate(object):
         self.estItems = ests
 
     def print_(self):
-        dialog = QtPrintSupport.QPrintDialog(self.printer)
+        dialog = QtPrintSupport.QPrintDialog(self.printer, self.parent)
         if not dialog.exec_():
             return
         self.pdfprinter.setOutputFormat(QtPrintSupport.QPrinter.PdfFormat)
@@ -173,7 +174,7 @@ if __name__ == "__main__":
 
     app = QtWidgets.QApplication([])
 
-    myreceipt = estimate()
+    myreceipt = EstimateLetter()
 
     myreceipt.title = pt.title
     myreceipt.fname = pt.fname

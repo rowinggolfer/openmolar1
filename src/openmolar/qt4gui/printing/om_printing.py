@@ -52,7 +52,7 @@ from openmolar.qt4gui.printing import letterprint
 from openmolar.qt4gui.printing import recallprint
 from openmolar.qt4gui.printing import daylistprint
 from openmolar.qt4gui.printing import multiDayListPrint
-from openmolar.qt4gui.printing import accountPrint
+from openmolar.qt4gui.printing.accountPrint import AccountLetter
 from openmolar.qt4gui.printing import estimatePrint
 
 from openmolar.qt4gui.dialogs.correspondence_dialog import CorrespondenceDialog
@@ -92,7 +92,7 @@ def printReceipt(om_gui, valDict, total="0.00"):
     if om_gui.pt.serialno == 0:
         om_gui.advise(_("no patient selected"), 1)
         return
-    myreceipt = receiptPrint.Receipt()
+    myreceipt = receiptPrint.Receipt(parent=om_gui)
 
     myreceipt.setProps(om_gui.pt.title, om_gui.pt.fname, om_gui.pt.sname,
                        om_gui.pt.addr1, om_gui.pt.addr2, om_gui.pt.addr3,
@@ -120,7 +120,7 @@ def printLetter(om_gui):
     dl.show()
 
     if dl.exec_():
-        letter = letterprint.letter(dl.text)
+        letter = letterprint.letter(dl.text, parent=om_gui)
         if letter.printpage():
             docsprinted.add(dl.pt.serialno,
                             "%s (html)" % dl.letter_description,
@@ -189,7 +189,7 @@ def printAccountsTable(om_gui):
         <td align="right"><b>%s</b></td></tr></table></body></html>''' % (
             localsettings.formatMoney(total))
 
-    myclass = letterprint.letter(html)
+    myclass = letterprint.letter(html, parent=om_gui)
     myclass.printpage()
 
 
@@ -198,7 +198,7 @@ def printEstimate(om_gui):
         om_gui.advise(_("no patient selected"), 1)
         return
 
-    est = estimatePrint.estimate()
+    est = estimatePrint.EstimateLetter(parent=om_gui)
 
     est.setProps(om_gui.pt.title, om_gui.pt.fname, om_gui.pt.sname,
                  om_gui.pt.serialno)
@@ -279,7 +279,7 @@ def htmlEditor(om_gui, type_="", html="", version=0):
     dl.show()
 
     if dl.exec_():
-        letter = letterprint.letter(dl.text)
+        letter = letterprint.letter(dl.text, parent=om_gui)
         if letter.printpage():
             if dl.has_edits:
                 docsprinted.add(
@@ -304,7 +304,7 @@ def printReferral(om_gui):
     dl = CorrespondenceDialog(html, om_gui.pt, preformatted=False, parent=None)
     dl.show()
     if dl.exec_():
-        letter = letterprint.letter(dl.text)
+        letter = letterprint.letter(dl.text, parent=om_gui)
         if letter.printpage():
             docsprinted.add(dl.pt.serialno,
                             "%s referral (html)" % desc,
@@ -327,7 +327,7 @@ def printChart(om_gui):
         om_gui.advise("no patient selected", 1)
         return
     staticimage = om_gui.ui.summaryChartWidget.grab()
-    myclass = chartPrint.printChart(staticimage)
+    myclass = chartPrint.printChart(staticimage, parent=om_gui)
     myclass.printpage()
     om_gui.pt.addHiddenNote("printed", "static chart")
     om_gui.updateHiddenNotesLabel()
@@ -337,7 +337,7 @@ def printMonth(om_gui):
     temp = om_gui.ui.monthView.selectedDate
     om_gui.ui.monthView.selectedDate = None
     printimage = om_gui.ui.monthView.grab()
-    myclass = chartPrint.printChart(printimage, landscape=True)
+    myclass = chartPrint.printChart(printimage, landscape=True, parent=om_gui)
     myclass.sizeToFit()
     myclass.printpage()
     om_gui.ui.monthView.selectedDate = temp
@@ -347,7 +347,7 @@ def printaccount(om_gui, tone="A"):
     if om_gui.pt.serialno == 0:
         om_gui.advise("no patient selected", 1)
     else:
-        doc = accountPrint.document(
+        doc = AccountLetter(
             om_gui.pt.title, om_gui.pt.fname, om_gui.pt.sname,
             (om_gui.pt.addr1, om_gui.pt.addr2, om_gui.pt.addr3,
              om_gui.pt.town, om_gui.pt.county),
@@ -381,7 +381,7 @@ def printdaylists(om_gui, args, expanded=False):
     prints the single book pages
     args is a tuple (dent, date)
     '''
-    dlist = daylistprint.PrintDaylist()
+    dlist = daylistprint.PrintDaylist(parent=om_gui)
     something_to_print = False
     for apptix, adate in args:
         data = appointments.printableDaylistData(adate.toPyDate(), apptix)
@@ -397,7 +397,7 @@ def printmultiDayList(om_gui, args):
     prints the multiday pages
     args = ((dent, date), (dent, date)...)
     '''
-    dlist = multiDayListPrint.PrintDaylist()
+    dlist = multiDayListPrint.PrintDaylist(parent=om_gui)
     something_to_print = False
     for arg in args:
         data = appointments.printableDaylistData(arg[1].toPyDate(), arg[0])
@@ -451,7 +451,7 @@ def printrecall(om_gui):
     if om_gui.pt.serialno == 0:
         om_gui.advise("no patient selected", 1)
     else:
-        recall_printer = recallprint.RecallPrinter(om_gui.pt)
+        recall_printer = recallprint.RecallPrinter(om_gui.pt, parent=om_gui)
         recall_printer.print_()
 
         om_gui.pt.addHiddenNote("printed", "recall - non batch")
@@ -506,18 +506,13 @@ def printSelectedAccounts(om_gui):
                 LOGGER.info("Account tone %s letter to %s", tone, sno)
                 printpt = patient_class.patient(sno)
 
-                doc = accountPrint.document(
-                    printpt.title,
-                    printpt.fname,
-                    printpt.sname,
-                    (printpt.addr1,
-                     printpt.addr2,
-                     printpt.addr3,
-                     printpt.town,
-                     printpt.county),
-                    printpt.pcde,
-                    printpt.fees)
-
+                doc = AccountLetter(printpt.title, printpt.fname, printpt.sname,
+                                    (printpt.addr1,
+                                     printpt.addr2,
+                                     printpt.addr3,
+                                     printpt.town,
+                                     printpt.county),
+                                    printpt.pcde, printpt.fees)
                 doc.setTone(tone)
 
                 if firstPage:
@@ -531,7 +526,7 @@ def printSelectedAccounts(om_gui):
                     firstPage = False
                 else:
                     doc.printer = chosenPrinter
-                    doc.printer.setPageSize(chosenPageSize)
+                    doc.printer.setPaperSize(chosenPageSize)
                 doc.requireDialog = False
                 if tone == "B":
                     doc.setPreviousCorrespondenceDate(printpt.billdate)

@@ -49,8 +49,9 @@ class PrintedForm(object):
     scale_x = 1
     scale_y = 1
 
-    def __init__(self):
+    def __init__(self, parent=None):
 
+        self.parent = parent
         self.printer = QtPrintSupport.QPrinter()
         self.pdfprinter = QtPrintSupport.QPrinter()
         self.pdfprinter.setPrinterName("PDF PRINTER")
@@ -60,7 +61,7 @@ class PrintedForm(object):
         self.chosen_printer = self.printer
 
         for printer in (self.printer, self.pdfprinter):
-            printer.setPageSize(QtPrintSupport.QPrinter.A4)
+            printer.setPaperSize(QtPrintSupport.QPrinter.A4)
             printer.setFullPage(True)
             printer.setResolution(96)
 
@@ -87,7 +88,7 @@ class PrintedForm(object):
         '''
         raise a dialog before printing
         '''
-        dl = QtPrintSupport.QPrintDialog(self.printer)
+        dl = QtPrintSupport.QPrintDialog(self.printer, self.parent)
         if dl.exec_():
             self.chosen_printer = self.printer
             self.print_()

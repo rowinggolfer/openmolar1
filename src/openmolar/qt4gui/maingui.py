@@ -1088,7 +1088,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         '''
         import a document and store into the database
         '''
-        filename = QtWidgets.QFileDialog.getOpenFileName()
+        filename = QtWidgets.QFileDialog.getOpenFileName()[0]
         if filename != '':
             self.advise(_("opening") + " %s" % filename)
             try:
@@ -1751,9 +1751,13 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         save to file is really just a development feature
         '''
         try:
-            filepath = QtWidgets.QFileDialog.getSaveFileName()
+            filepath = QtWidgets.QFileDialog.getSaveFileName(
+                self,
+                directory=os.path.join(os.path.expanduser("~"),
+                                       "%s.patient" % self.pt.serialno),
+                filter=("%s (*.patient)" % _("Patient File")))[0]
             if filepath != '':
-                f = open(filepath, "w")
+                f = open(filepath, "wb")
                 f.write(pickle.dumps(self.pt))
                 f.close()
                 self.advise("Patient File Saved", 1)
@@ -1770,7 +1774,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         if not self.okToLeaveRecord():
             self.advise(_("Not loading patient"))
             return
-        filename = QtWidgets.QFileDialog.getOpenFileName()
+        filename = QtWidgets.QFileDialog.getOpenFileName()[0]
         if filename != '':
             self.advise(_("opening patient file"))
             try:

@@ -32,8 +32,9 @@ from openmolar.settings import localsettings
 class PrintDaylist(object):
 
     def __init__(self, parent=None):
+        self.parent = parent
         self.printer = QtPrintSupport.QPrinter()
-        self.printer.setPageSize(QtPrintSupport.QPrinter.A4)
+        self.printer.setPaperSize(QtPrintSupport.QPrinter.A4)
         self.dates = []
         self.dentist = []
         self.dayMemo = []
@@ -49,7 +50,7 @@ class PrintDaylist(object):
         '''
         if expanded, the list will fill the page
         '''
-        dialog = QtPrintSupport.QPrintDialog(self.printer)
+        dialog = QtPrintSupport.QPrintDialog(self.printer, self.parent)
         if not dialog.exec_():
             return
         # leave space at the bottom for notes?

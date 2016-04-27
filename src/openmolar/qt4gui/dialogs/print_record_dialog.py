@@ -76,7 +76,7 @@ class PrintRecordDialog(BaseDialog):
     def exec_(self):
         if BaseDialog.exec_(self):
             printer = QtPrintSupport.QPrinter()
-            printer.setPageSize(printer.A4)
+            printer.setPaperSize(printer.A4)
             dialog = QtPrintSupport.QPrintDialog(printer, self.parent())
             if not dialog.exec_():
                 return False

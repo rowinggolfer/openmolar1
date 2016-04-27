@@ -26,14 +26,16 @@ from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtPrintSupport
 from PyQt5 import QtWidgets
+
 from openmolar.settings import localsettings
 
 
 class PrintDaylist(object):
 
     def __init__(self, parent=None):
+        self.parent = parent
         self.printer = QtPrintSupport.QPrinter()
-        self.printer.setPageSize(QtPrintSupport.QPrinter.A4)
+        self.printer.setPaperSize(QtPrintSupport.QPrinter.A4)
         self.printer.setOrientation(QtPrintSupport.QPrinter.Landscape)
         self.dates = []
         self.sheets = {}  # dentist,memo,apps
@@ -52,7 +54,7 @@ class PrintDaylist(object):
         '''
         print all.
         '''
-        dialog = QtPrintSupport.QPrintDialog(self.printer)
+        dialog = QtPrintSupport.QPrintDialog(self.printer, self.parent)
         if not dialog.exec_():
             return
         LeftMargin, RightMargin, TopMargin, BottomMargin = 30, 30, 30, 30

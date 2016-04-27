@@ -150,6 +150,6 @@ def daybookView(om_gui, print_=False):
         html = "<h1>%s</h1><pre>%s</pre>" % (_("Unknown Error"), str(exc))
     om_gui.ui.daybookTextBrowser.setHtml(html)
     if print_:
-        myclass = bookprint.printBook(html)
+        myclass = bookprint.printBook(html, om_gui)
         myclass.printpage()
     om_gui.wait(False)

@@ -21,8 +21,6 @@
 # #                                                                         # #
 # ########################################################################### #
 
-import datetime
-
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtPrintSupport
@@ -34,6 +32,7 @@ from openmolar.settings import localsettings
 class Card(object):
 
     def __init__(self, parent=None):
+        self.parent = parent
         self.printer = QtPrintSupport.QPrinter()
         self.pt = None
         self.appts = ()
@@ -43,7 +42,7 @@ class Card(object):
         self.appts = appts
 
     def print_(self):
-        dialog = QtPrintSupport.QPrintDialog(self.printer)
+        dialog = QtPrintSupport.QPrintDialog(self.printer, self.parent)
         if not dialog.exec_():
             return
         self.printer.setPaperSize(QtPrintSupport.QPrinter.A5)

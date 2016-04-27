@@ -192,8 +192,8 @@ class GP17iFront(PrintedForm):
     unhandled_codes = []
     _bg_pixmap = None
 
-    def __init__(self):
-        PrintedForm.__init__(self)
+    def __init__(self, parent=None):
+        PrintedForm.__init__(self, parent)
         self.row = 1
         self.rects = RECTS
 
@@ -437,14 +437,14 @@ class GP17iFront(PrintedForm):
 
         for code in self.data.complex_codes:
             if code.free_replace:
-                other_treatment()
+                self.unhandled_codes.append(code)
                 continue
             try:
                 n = "%02d" % code.number
                 painter.drawText(self.rects["%sa" % code.code], n[0], OPTION)
                 painter.drawText(self.rects["%sb" % code.code], n[1], OPTION)
             except KeyError:
-                other_treatment()
+                self.unhandled_codes.append(code)
 
     def _fill_unhandled_codes(self, painter):
         for item in self.unhandled_ts_codes:

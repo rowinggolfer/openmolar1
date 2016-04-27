@@ -32,13 +32,14 @@ class printBook(object):
     initiates with an image (chart) as the argument
     '''
 
-    def __init__(self, html):
+    def __init__(self, html, parent=None):
+        self.parent = parent
         self.html = html
         self.printer = QtPrintSupport.QPrinter()
-        self.printer.setPageSize(QtPrintSupport.QPrinter.A4)
+        self.printer.setPaperSize(QtPrintSupport.QPrinter.A4)
 
     def printpage(self, askfirst=True):
-        dialog = QtPrintSupport.QPrintDialog(self.printer)
+        dialog = QtPrintSupport.QPrintDialog(self.printer, self.parent)
         if askfirst and not dialog.exec_():
             return
         # print dir(self.printer)

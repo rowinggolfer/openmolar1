@@ -31,12 +31,13 @@ class printChart(object):
 
     '''initiates with an image (chart) as the argument'''
 
-    def __init__(self, chartimage, landscape=False):
+    def __init__(self, chartimage, landscape=False, parent=None):
+        self.parent = parent
         self.image = chartimage
         self.printer = QtPrintSupport.QPrinter()
         if landscape:
             self.printer.setOrientation(QtPrintSupport.QPrinter.Landscape)
-        self.printer.setPageSize(QtPrintSupport.QPrinter.A4)
+        self.printer.setPaperSize(QtPrintSupport.QPrinter.A4)
 
     def sizeToFit(self):
         '''
@@ -49,7 +50,7 @@ class printChart(object):
         '''
         print the chart
         '''
-        dialog = QtPrintSupport.QPrintDialog(self.printer)
+        dialog = QtPrintSupport.QPrintDialog(self.printer, self.parent)
         if askfirst and not dialog.exec_():
             return
 

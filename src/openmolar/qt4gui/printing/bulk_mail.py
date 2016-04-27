@@ -318,7 +318,7 @@ class bulkMails(object):
     def __init__(self, om_gui):
         self.om_gui = om_gui
         self.printer = QtPrintSupport.QPrinter()
-        self.printer.setPageSize(QtPrintSupport.QPrinter.A4)
+        self.printer.setPaperSize(QtPrintSupport.QPrinter.A4)
         self.headers = (_("no data loaded"),)
         self.recipients = ()
         self.bulk_model = treeModel(self.headers, self.recipients)

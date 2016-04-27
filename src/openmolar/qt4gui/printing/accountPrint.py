@@ -26,27 +26,21 @@ from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtPrintSupport
 from PyQt5 import QtWidgets
+
 from openmolar.settings import localsettings
 
 
-class document(object):
+class AccountLetter(object):
 
     ''' this class provides a letter asking for settlement of an account'''
 
-    def __init__(
-        self,
-        title,
-        fname,
-        sname,
-        addresslines,
-        postcode,
-        amount,
-            parent=None):
-        self.type = type
+    def __init__(self, title, fname, sname, addresslines, postcode, amount,
+                 parent=None):
+        self.parent = parent
         self.printer = QtPrintSupport.QPrinter()
-        self.printer.setPageSize(QtPrintSupport.QPrinter.A5)
+        self.printer.setPaperSize(QtPrintSupport.QPrinter.A5)
         self.pdfprinter = QtPrintSupport.QPrinter()
-        self.pdfprinter.setPageSize(QtPrintSupport.QPrinter.A5)
+        self.pdfprinter.setPaperSize(QtPrintSupport.QPrinter.A5)
 
         self.title = title
         self.fname = fname
@@ -57,7 +51,6 @@ class document(object):
         self.tone = "A"
         self.previousCorrespondenceDate = ""
         self.requireDialog = True
-        self.dialog = QtPrintSupport.QPrintDialog(self.printer)
 
     def setTone(self, arg):
         '''determines how aggressive the letter is'''
@@ -67,17 +60,11 @@ class document(object):
     def setPreviousCorrespondenceDate(self, arg):
         self.previousCorrespondenceDate = arg
 
-    def dialogExec(self):
-        retarg = False
-        if self.requireDialog:
-            retarg = self.dialog.exec_()
-        else:
-            retarg = True
-        return retarg
-
     def print_(self):
-        if not self.dialogExec():
-            return False
+        if self.requireDialog:
+            dl = QtPrintSupport.QPrintDialog(self.printer, self.parent)
+            if not dl.exec_():
+                return False
         self.pdfprinter.setOutputFormat(QtPrintSupport.QPrinter.PdfFormat)
         self.pdfprinter.setOutputFileName(localsettings.TEMP_PDF)
 
@@ -196,7 +183,7 @@ if __name__ == "__main__":
     import sys
     localsettings.initiate()
     app = QtWidgets.QApplication(sys.argv)
-    account = document(
+    account = AccountLetter(
         'TITLE',
         'FNAME',
         'SNAME',

@@ -25,16 +25,16 @@ from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtPrintSupport
 from PyQt5 import QtWidgets
-from openmolar.settings import localsettings
 
-import datetime
+from openmolar.settings import localsettings
 
 DATE_FORMAT = "MMMM, yyyy"
 
 
 class RecallPrinter(object):
 
-    def __init__(self, pt):
+    def __init__(self, pt, parent=None):
+        self.parent = parent
         self.printer = QtPrintSupport.QPrinter()
         self.pt = pt
 
@@ -49,7 +49,7 @@ class RecallPrinter(object):
         self.sign_off = _("Yours Sincerely")
 
     def print_(self):
-        dialog = QtPrintSupport.QPrintDialog(self.printer)
+        dialog = QtPrintSupport.QPrintDialog(self.printer, self.parent)
         if not dialog.exec_():
             return
         AddressMargin = 80
@@ -60,8 +60,6 @@ class RecallPrinter(object):
         serifFont = QtGui.QFont("Helvetica", 8)
         serifLineHeight = QtGui.QFontMetrics(serifFont).height()
         sigFont = QtGui.QFont("Lucida Handwriting", 10)
-        fm = QtGui.QFontMetrics(serifFont)
-        DateWidth = fm.width(" September 99, 2999 ")
         painter = QtGui.QPainter(self.printer)
         pageRect = self.printer.pageRect()
         painter.save()

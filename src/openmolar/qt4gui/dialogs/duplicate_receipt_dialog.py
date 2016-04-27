@@ -45,7 +45,6 @@ class DuplicateReceiptDialog(BaseDialog):
         BaseDialog.__init__(self, parent)
         self.pt = patient
 
-        self.main_ui = parent
         patient_label = QtWidgets.QLabel(
             "%s<br /><b>%s</b>" % (_("Duplicate receipts for Patient"),
                                    patient.name_id))
@@ -167,7 +166,7 @@ class DuplicateReceiptDialog(BaseDialog):
     def print_duplicate(self):
         amount = self.amount_spinbox.value()
 
-        myreceipt = receiptPrint.Receipt()
+        myreceipt = receiptPrint.Receipt(self.parent())
         myreceipt.setProps(self.pt.title, self.pt.fname, self.pt.sname,
                            self.pt.addr1, self.pt.addr2, self.pt.addr3,
                            self.pt.town, self.pt.county, self.pt.pcde)

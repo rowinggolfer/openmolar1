@@ -105,7 +105,7 @@ class AppointmentCardDialog(BaseDialog):
             self.get_data()
 
     def accept(self):
-        card = apptcardPrint.Card()
+        card = apptcardPrint.Card(self)
         card.setProps(self.pt, self.appts)
 
         card.print_()

@@ -51,7 +51,7 @@ class MHPrint(object):
         self.pt = pt
         self.parent = parent
         self.printer = QtPrintSupport.QPrinter()
-        self.printer.setPageSize(QtPrintSupport.QPrinter.A4)
+        self.printer.setPaperSize(QtPrintSupport.QPrinter.A4)
 
         if self.parent.include_mh:
             self.mh = get_mh(self.pt.serialno)

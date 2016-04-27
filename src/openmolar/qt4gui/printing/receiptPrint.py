@@ -31,11 +31,12 @@ from openmolar.settings import localsettings
 
 class Receipt(object):
 
-    def __init__(self):
+    def __init__(self, parent=None):
+        self.parent = parent
         self.printer = QtPrintSupport.QPrinter()
-        self.printer.setPageSize(QtPrintSupport.QPrinter.A5)
+        self.printer.setPaperSize(QtPrintSupport.QPrinter.A5)
         self.pdfprinter = QtPrintSupport.QPrinter()
-        self.pdfprinter.setPageSize(QtPrintSupport.QPrinter.A5)
+        self.pdfprinter.setPaperSize(QtPrintSupport.QPrinter.A5)
         self.setProps()
         self.receivedDict = {}
         self.isDuplicate = False
@@ -59,7 +60,7 @@ class Receipt(object):
         self.total = t
 
     def print_(self):
-        dialog = QtPrintSupport.QPrintDialog(self.printer)
+        dialog = QtPrintSupport.QPrintDialog(self.printer, self.parent)
         if not dialog.exec_():
             return
         self.pdfprinter.setOutputFormat(QtPrintSupport.QPrinter.PdfFormat)

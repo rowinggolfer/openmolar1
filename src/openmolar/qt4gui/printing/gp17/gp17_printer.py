@@ -68,7 +68,7 @@ class GP17Printer(object):
         # form = GP17.gp17(self.om_gui.pt, dent, self.om_gui, test)
         if dl.exec_():
             for Form in dl.chosen_forms:
-                form = Form()
+                form = Form(parent=self.om_gui)
                 form.set_data(dl.data)
                 form.printer.setDocName(form.NAME)
                 form.set_testing_mode(dl.print_boxes)

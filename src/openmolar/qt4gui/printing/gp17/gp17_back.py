@@ -127,8 +127,8 @@ class Gp17Back(PrintedForm):
     '''
     data = None
 
-    def __init__(self):
-        PrintedForm.__init__(self)
+    def __init__(self, parent=None):
+        PrintedForm.__init__(self, parent)
         self.rects = RECTS
 
     def print_(self):

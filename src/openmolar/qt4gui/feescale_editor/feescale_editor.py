@@ -715,13 +715,11 @@ class FeescaleEditor(QtWidgets.QMainWindow):
         parser = self.current_parser
         try:
             if filepath is None:
-                filepath = str(
-                    QtWidgets.QFileDialog.getSaveFileName(
-                        self,
-                        _("save as"),
-                        parser.filepath,
-                        "%s (*.xml)" % _("xml_files"))
-                )
+                filepath = QtWidgets.QFileDialog.getSaveFileName(
+                    self,
+                    _("save as"),
+                    parser.filepath,
+                    "%s (*.xml)" % _("xml_files"))[0]
             if filepath == '':
                 return
             if not re.match(".*\.xml$", filepath):

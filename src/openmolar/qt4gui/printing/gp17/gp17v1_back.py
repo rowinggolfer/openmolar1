@@ -94,8 +94,8 @@ class GP17iBack(PrintedForm):
     data = None
     _bg_pixmap = None
 
-    def __init__(self):
-        PrintedForm.__init__(self)
+    def __init__(self, parent=None):
+        PrintedForm.__init__(self, parent)
         self.rects = RECTS
 
     @classmethod
