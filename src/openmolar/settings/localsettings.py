@@ -189,7 +189,7 @@ def win_url(url):
     '''
     convert the windows filepaths to unix style filepaths
     '''
-    return url.replace("://", ":///").replace(" ", "%20").replace("\\", "/")
+    return url.replace("://", ":///").replace("\\", "/")
 
 if WINDOWS:
     resources_path = win_url(resources_path)
