@@ -55,25 +55,28 @@ from openmolar.settings import version
 VERSION = version.VERSION
 RESOURCE_FILE = os.path.join(OM_PATH, "openmolar", "qt4gui", "resources_rc.py")
 
+DATA_FILES = []  # warning if DATA_FILES == [], install_data doesn't get called
+
 if platform.system() == 'Windows':
     # getext path is $PYTHONPATH/share/locale
     # eg C:\\Python34\\share\\locale
     RESOURCES_DIR = os.path.join(os.environ.get("ProgramFiles"), "openmolar")
     il8n_DIR = os.path.join("share", "locale")
-    DATA_FILES = []  # see warning below
     SCRIPTS = ['win_openmolar.pyw']
 else:
     RESOURCES_DIR = os.path.join("/usr", "share", "openmolar")
     il8n_DIR = os.path.join("/usr", "share", "locale")
-    # also install a man page.
-    DATA_FILES = [('share/icons/hicolor/scalable/apps', ['bin/openmolar.svg']),
-                  ('share/applications', ['bin/openmolar.desktop']),
-                  ('share/man/man1', ['bin/openmolar.1'])]
+    for dir_, files in (('share/icons/hicolor/scalable/apps',
+                         ['bin/openmolar.svg']),
+                        ('share/applications', ['bin/openmolar.desktop']),
+                        ('share/man/man1', ['bin/openmolar.1'])):
+        DATA_FILES.append((dir_, [os.path.abspath(p) for p in files]))
     SCRIPTS = ['openmolar']
 
-# warning if DATA_FILES == [], install_data doesn't get called!
-DATA_FILES.append((os.path.join(RESOURCES_DIR, "locale"),
-                   glob.glob('src/openmolar/locale/*.po*')))
+
+DATA_FILES.append(
+    (os.path.join(RESOURCES_DIR, "locale"),
+     [os.path.abspath(p) for p in glob.glob('src/openmolar/locale/*.po*')]))
 
 for root, dirs, files in os.walk(os.path.abspath('src/openmolar/resources')):
     rootdirs = root.split(os.path.sep)
@@ -114,7 +117,6 @@ class MakeUis(Command):
 
     DEST_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "src", "openmolar", "qt4gui", "compiled_uis")
-
 
     def initialize_options(self):
         pass
