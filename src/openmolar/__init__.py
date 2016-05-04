@@ -36,9 +36,13 @@ import platform
 LOGGER = logging.getLogger("openmolar")
 
 if platform.system() == "Windows":
-    LOCALEDIR = os.path.join(
-        os.environ.get("ProgramFiles"), "openmolar", "locale")
+    DEFAULT_MO_PATH = os.path.join(os.environ.get("APPDATA", ""),
+                                   "openmolar", "default.mo")
+    LOCALEDIR = os.path.join(os.environ.get("ProgramFiles", ""),
+                             "openmolar", "locale")
 else:
+    DEFAULT_MO_PATH = os.path.join(os.path.expanduser("~"),
+                                   ".openmolar", "default.mo")
     LOCALEDIR = None
 
 class MyFormatter(logging.Formatter):
@@ -85,21 +89,19 @@ def initialise_translation():
     C:\\Program Files\openmolar\locale
     (previously the Python environment was getting polluted)
     '''
-    default_path = os.path.join(os.path.expanduser("~"),
-                                ".openmolar", "default.mo")
 
-    if os.path.isfile(default_path):
+    if os.path.isfile(DEFAULT_MO_PATH):
         try:
-            with open(default_path, "rb") as fp:
+            with open(DEFAULT_MO_PATH, "rb") as fp:
                 translation = gettext.GNUTranslations(fp)
                 translation.install()
-                LOGGER.info("%s installed as translation", default_path)
+                LOGGER.info("%s installed as translation", DEFAULT_MO_PATH)
         except:
             LOGGER.exception("The local translation file %s cannot be intalled",
-                             default_path)
+                             DEFAULT_MO_PATH)
     else:
         LOGGER.debug("no local translation found at %s, searching environment",
-                     default_path)
+                     DEFAULT_MO_PATH)
 
 
         # defensive coding here as some obscure os (windows??) may give an

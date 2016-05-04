@@ -56,12 +56,30 @@ class DB_Params(object):
         self.port = 0
         self.user = ""
         self.db_name = ""
+        self.password = ""
+        self.subprocs = []
         try:
             self.reload()
         except IOError:
             LOGGER.warning("no such file exists %s", localsettings.cflocation)
 
+    def __del__(self):
+        self.kill_subprocs()
+
+    def kill_subprocs(self):
+        '''
+        kill any subprocesses spawned when before reloading.
+        '''
+        for sub_proc in self.subprocs:
+            # can't use LOGGER here as it may have been destroyed!
+            print("killing subprocess '%s'" % sub_proc)
+            try:
+                sub_proc.terminate()
+            except AttributeError:
+                print("sub_proc %s vanished" % sub_proc)
+
     def reload(self):
+        self.kill_subprocs()
         dom = minidom.parse(localsettings.cflocation)
         settingsversion = dom.getElementsByTagName(
             "version")[0].firstChild.data
@@ -71,12 +89,14 @@ class DB_Params(object):
         for command_node in command_nodes:
             LOGGER.info("commands found in conf file!")
             commands = command_node.getElementsByTagName("str")
-            command_list = []
+            command_list = ["nohup"]
             for command in commands:
                 command_list.append(command.firstChild.data)
             if command_list:
-                LOGGER.info("executing %s" % str(command_list))
-                subprocess.Popen(command_list)
+                LOGGER.info("executing %s", " ".join(command_list))
+                p = subprocess.Popen(command_list, stdout=subprocess.DEVNULL,
+                                     stdin=subprocess.DEVNULL)
+                self.subprocs.append(p)
 
         self.host = xmlnode.getElementsByTagName("location")[0].firstChild.data
         self.port = int(
@@ -172,7 +192,7 @@ if __name__ == "__main__":
             dbc = connect()
             LOGGER.info(dbc)
             LOGGER.debug('ok... we can make Mysql connections!!')
-            LOGGER.debug("    loop no %d " % i)
+            LOGGER.debug("    loop no %d ", i)
             if i == 2:
                 # close the db... let's check it reconnects
                 dbc.close()

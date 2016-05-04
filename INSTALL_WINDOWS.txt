@@ -1,46 +1,41 @@
-DEBIAN / UBUNTU USERS
-PLEASE BE AWARE THAT YOU WOULD BE BETTER OFF INSTALLING FROM THE OFFICIAL
-REPOSITORIES - see http://www.openmolar.com/om1/installation
-
-
-Windows users - please see INSTALL_WINDOWS.txt
 
 
 
+PLEASE BE AWARE THAT YOU MAY BE BETTER OFF INSTALLING 
+A PRE-BUILT INSTALLER OF THE LATEST STABLE RELEASE
+
+
+
+please visit http://www.openmolar.com/om1/installation to check for any updates
+to these instructions, or download a windows installer which makes this all much
+more straightforward.
 
 ----------------------------------------------------------------------------------------------------------------
 
 To get openMolar running from source, please follow these instructions
 
 openmolar requires a python3 runtime, qt5 for python3 and a python3 wrapper around the c-api for
-communicating with the database, along with a few other utilities. 
+communicating with the database "python-mysqlclient", along with a few other utilities. 
 
-
-These are all available for most recent gnu/linux operating system.
 You also need a mysql or mariadb database server running on your network, or on
 the client machine for a standalone test.
 
 ----------------------------------------------------------------------------------------------------------------
 
-    By way of example, I will give instructions for installing these dependencies on debian testing. 
-    On other operating systems, you need to install the equivalent software
-    before running openmolar for the first time.
-
     ## CLIENT MACHINE(S) ##
     ensure depenencies are met on the client machine(s)
 
-    ~$ sudo apt-get install python3-mysqldb python3-pyqt5 python3-pyqt5.qsci python3-pyqt5.qsci 
-                            python3-pyqt5.qtsvg python3-pyqt5.qtxmlpatterns python3-pyqt5.qtwebkit
-                            xdg-utils pyqt5-dev-tools
-
+    1. Install Python (at time of writing 3.5.1 is available from https://www.python.org/downloads)
+    2. Install PyQt5 (from https://www.riverbankcomputing.com/software/pyqt/download5)
+    3. Install python-mysqlclient (from https://pypi.python.org/pypi/mysqlclient)
 
     ## SERVER MACHINE ##
     ensure dependencies are met on the server machine (which will probably be the same machine as your client 
     for testing purposes, providing a service on "localhost")
 
-    ~$ sudo apt-get install mysql-server
-    OR
-    ~$ sudo apt-get install mariadb-server
+    A. install mysql server (from https://dev.mysql.com/downloads/mysql/)
+    OR PERHAPS BETTER STILL??
+    B. install mariadb server (https://downloads.mariadb.org/)
 
     MAKE A CAREFUL NOTE OF THE PASSWORD YOU SET UP FOR THE ROOT MYSQL-USER. 
     YOU CANNOT CREATE A DATABASE WITHOUT THIS.
@@ -51,10 +46,10 @@ the client machine for a standalone test.
 Once you have prepared your machine/network in this way, 
 you are ready to install openmolar
 
-~$ python3 setup.py install
+~$ python setup.py install
 
 
 regards
 
 Neil Wallace <neil@openmolar.com>
-Updated 28th April 2016
+Updated 4th May 2016
