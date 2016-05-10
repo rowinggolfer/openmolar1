@@ -30,9 +30,11 @@ from distutils.command.install_data import install_data
 from distutils.command.sdist import sdist as _sdist
 from distutils.command.build import build as _build
 from distutils.command.clean import clean as _clean
+from distutils.command.install import install as _install
+from distutils import dir_util
 from distutils.core import setup
 from distutils.core import Command
-from distutils.log import info
+from distutils.log import info, warn
 
 import glob
 import os
@@ -40,7 +42,6 @@ import re
 import shutil
 import subprocess
 import sys
-import tempfile
 import unittest
 import platform
 
@@ -57,11 +58,17 @@ RESOURCE_FILE = os.path.join(OM_PATH, "openmolar", "qt4gui", "resources_rc.py")
 
 DATA_FILES = []  # warning if DATA_FILES == [], install_data doesn't get called
 
+# il8n_DIR refers to the location in which compiled gettext translation files
+# are put during install.
+# on linux systems, the default location is /usr/share/locale
+# On Windows the default gettext path is within the python path
+# eg C:\\Python34\share\locale which is a little nasty IMO.
+# I therefore force the path for gettext to be under the %ProgramFiles%
+# directory.
+
 if platform.system() == 'Windows':
-    # getext path is $PYTHONPATH/share/locale
-    # eg C:\\Python34\\share\\locale
     RESOURCES_DIR = os.path.join(os.environ.get("ProgramFiles"), "openmolar")
-    il8n_DIR = os.path.join("share", "locale")
+    il8n_DIR = os.path.join(RESOURCES_DIR, "locale")
     SCRIPTS = ['win_openmolar.pyw']
 else:
     RESOURCES_DIR = os.path.join("/usr", "share", "openmolar")
@@ -75,7 +82,7 @@ else:
 
 
 DATA_FILES.append(
-    (os.path.join(RESOURCES_DIR, "locale"),
+    (os.path.join(RESOURCES_DIR, "locale", "sources"),
      [os.path.abspath(p) for p in glob.glob('src/openmolar/locale/*.po*')]))
 
 for root, dirs, files in os.walk(os.path.abspath('src/openmolar/resources')):
@@ -136,10 +143,11 @@ class MakeUis(Command):
         '''
         return match.groups()[0].strip("()")
 
-    def compile_ui(self, ui_fname, outdir):
+    def compile_ui(self, ui_fname):
+
         name = os.path.basename(ui_fname)
         outname = "Ui_%s.py" % name.rstrip(".ui")
-        pyfile = os.path.join(outdir, outname)
+        pyfile = os.path.join(self.DEST_FOLDER, outname)
 
         print("compiling %s" % ui_fname)
 
@@ -181,7 +189,7 @@ class MakeUis(Command):
         print("compiling qt-designer files")
         for ui_file in self.get_ui_files():
             path = os.path.join(self.SRC_FOLDER, os.path.basename(ui_file))
-            py_file = self.compile_ui(path, self.DEST_FOLDER)
+            py_file = self.compile_ui(path)
             if py_file:
                 print("created/updated py file", py_file)
         print("compiling resource file")
@@ -211,7 +219,7 @@ class AlterVersion(object):
         new_data = ""
         add_line = True
         for line_ in f:
-            if line_.startswith("VERSION ="):
+            if line_.startswith("try:"):
                 print("Forcing version number of '%s'" % VERSION)
                 new_data += 'VERSION = "%s"\n\n\n' % VERSION
                 add_line = False
@@ -298,18 +306,49 @@ class Build(_build):
         win_script = WindowsScript()
         win_script.remove_executable()
 
+    def locale_build(self):
+        '''
+        I want python setup.py build to create the compiled gettext mo files.
+        The primary driver is the ability to create a windows msi installer
+        which includes these files.
+        '''
+        info("COMPILING PO FILES (gettext translations)")
+        if not os.path.isdir("src/openmolar/locale/"):
+            warn("WARNING - language files are missing!")
+        locale_dir = os.path.join(self.build_base, "locale")
+        try:
+            dir_util.remove_tree(locale_dir)
+        except Exception:
+            warn("unable to remove directory %s", locale_dir)
+        self.mkpath(locale_dir)
+        for po_file in glob.glob("src/openmolar/locale/*.po"):
+            file_ = os.path.split(po_file)[1]
+            lang = file_.replace(".po", "")
+            os.mkdir(os.path.join(locale_dir, lang))
+            mo_file = os.path.join(locale_dir, lang, "openmolar.mo")
+            commands = ["msgfmt", "-o", mo_file, po_file]
+            info('executing %s' % " ".join(commands))
+            try:
+                p = subprocess.Popen(commands)
+                p.wait()
+            except IOError:
+                info('Error while running msgfmt on %s - '
+                     'perhaps msgfmt (gettext) is not installed?' % po_file)
+
     def run(self, *args, **kwargs):
         '''
         compile ui files and move all files into build dir
+        also compile gettext mo files.
         '''
-        make_uis = MakeUis(self.distribution)
-        make_uis.run(*args, **kwargs)
 
-        self.setup()
         _build.run(self, *args, **kwargs)
-        self.tear_down()
-
-        print("build completed")
+        make_uis = MakeUis(self.distribution)
+        make_uis.DEST_FOLDER = os.path.join(self.build_base, "lib", "openmolar",
+                                            "qt4gui", "compiled_uis")
+        make_uis.run(*args, **kwargs)
+        self.locale_build()
+        
+        info("build completed")
 
 
 class Clean(_clean):
@@ -342,6 +381,22 @@ class Sdist(_sdist):
         alter_version.restore()
 
 
+class Install(_install):
+
+    '''
+    re-implement distutils standard source code builder
+    '''
+
+    def run(self, *args, **kwargs):
+        alter_version = AlterVersion()
+        alter_version.change()
+        win_script = WindowsScript()
+        win_script.move_executable()
+        _install.run(self, *args, **kwargs)
+        alter_version.restore()
+        win_script.remove_executable()
+
+
 class InstallLocale(install_data):
 
     '''
@@ -350,30 +405,18 @@ class InstallLocale(install_data):
     '''
 
     def run(self):
-        print("COMPILING PO FILES (gettext translations)")
         i18nfiles = []
-        if not os.path.isdir("src/openmolar/locale/"):
-            print("WARNING - language files are missing!")
-        temp_dir = tempfile.TemporaryDirectory()
-        for po_file in glob.glob("src/openmolar/locale/*.po"):
-            file_ = os.path.split(po_file)[1]
-            lang = file_.replace(".po", "")
-            os.mkdir(os.path.join(temp_dir.name, lang))
-            mo_file = os.path.join(temp_dir.name, lang, "openmolar.mo")
-            commands = ["msgfmt", "-o", mo_file, po_file]
-            info('executing %s' % " ".join(commands))
-            try:
-                p = subprocess.Popen(commands)
-                p.wait()
-                destdir = os.path.join(il8n_DIR, lang, "LC_MESSAGES")
-                i18nfiles.append((destdir, [mo_file]))
-            except IOError:
-                info('Error while running msgfmt on %s - '
-                     'perhaps msgfmt (gettext) is not installed?' % po_file)
+        for root, dirs, files in os.walk(os.path.join("build", "locale")):
+            for file_ in files:
+                if file_ == "openmolar.mo":
+                    lang = os.path.split(root)[1]
+                    destdir = os.path.join(il8n_DIR, lang, "LC_MESSAGES")
+                    mo_file = os.path.join(root, file_)
+                    i18nfiles.append((destdir, [mo_file]))
 
+        print(i18nfiles)
         self.data_files.extend(i18nfiles)
         install_data.run(self)
-        temp_dir.cleanup()
 
 
 class Test(Command):
@@ -432,6 +475,7 @@ if __name__ == "__main__":
         cmdclass={'sdist': Sdist,
                   'clean': Clean,
                   'build': Build,
+                  'install': Install,
                   'install_data': InstallLocale,
                   'makeuis': MakeUis,
                   'test': Test},

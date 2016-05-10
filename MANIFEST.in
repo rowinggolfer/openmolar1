@@ -1,5 +1,5 @@
 include LICENSE MANIFEST MANIFEST.in README openmolar INSTALL.txt INSTALL_WINDOWS.txt gpl.rtf
-recursive-include bin *.svg *.desktop
+recursive-include bin openmolar.svg openmolar.desktop openmolar.1
 recursive-include src/openmolar/resources *.qrc *.xsd *.xml *.css *.sql *.svg *.png 
 recursive-include src/openmolar/locale *.po *.pot
 recursive-include src/openmolar/qt-designer *.ui
