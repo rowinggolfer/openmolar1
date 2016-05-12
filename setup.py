@@ -30,6 +30,7 @@ from distutils.command.install_data import install_data
 from distutils.command.sdist import sdist as _sdist
 from distutils.command.build import build as _build
 from distutils.command.clean import clean as _clean
+from distutils.command.build_py import build_py as _build_py
 from distutils.command.install import install as _install
 from distutils import dir_util
 from distutils.core import setup
@@ -124,6 +125,7 @@ class MakeUis(Command):
 
     DEST_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "src", "openmolar", "qt4gui", "compiled_uis")
+    RESOURCE_FILE = RESOURCE_FILE
 
     def initialize_options(self):
         pass
@@ -149,7 +151,7 @@ class MakeUis(Command):
         outname = "Ui_%s.py" % name.rstrip(".ui")
         pyfile = os.path.join(self.DEST_FOLDER, outname)
 
-        print("compiling %s" % ui_fname)
+        info("compiling %s" % ui_fname)
 
         f = open(pyfile, "w")
         uic.compileUi(ui_fname, f, execute=True)
@@ -176,7 +178,7 @@ class MakeUis(Command):
             f.write(newdata)
             f.close()
         else:
-            print("om_pyuic made no changes to the standard uic output!")
+            info("om_pyuic made no changes to the standard uic output!")
 
         return pyfile
 
@@ -186,19 +188,19 @@ class MakeUis(Command):
                 yield ui_file
 
     def run(self, *args, **kwargs):
-        print("compiling qt-designer files")
+        info("compiling qt-designer files")
         for ui_file in self.get_ui_files():
             path = os.path.join(self.SRC_FOLDER, os.path.basename(ui_file))
             py_file = self.compile_ui(path)
             if py_file:
-                print("created/updated py file", py_file)
-        print("compiling resource file")
-        p = subprocess.Popen(
-            ["pyrcc5", "-o", RESOURCE_FILE,
-             os.path.join(OM_PATH, "openmolar", "resources", "resources.qrc")]
-        )
+                info("created/updated py file %s", py_file)
+        qrc_path = os.path.join(OM_PATH, "openmolar", "resources",
+                                "resources.qrc")
+        info("compiling resource file %s from source %s", self.RESOURCE_FILE,
+             qrc_path)
+        p = subprocess.Popen(["pyrcc5", "-o", self.RESOURCE_FILE, qrc_path])
         p.wait()
-        print("MakeUis Completed")
+        info("MakeUis Completed")
 
 
 class AlterVersion(object):
@@ -271,8 +273,7 @@ class WindowsScript(object):
         try:
             os.remove('win_openmolar.pyw')
         except FileNotFoundError:
-            print("win_openmolar.pyw NOT removed")
-            pass
+            info("win_openmolar.pyw NOT removed (file not present)")
 
     def test(self):
         '''
@@ -280,6 +281,22 @@ class WindowsScript(object):
         '''
         self.move_executable()
         self.remove_executable()
+
+
+class BuildPy(_build_py):
+    '''
+    re-implement build_py so that the Ui files are compiled.
+    '''
+
+    def run(self, *args, **kwargs):
+        _build_py.run(self, *args, **kwargs)
+        make_uis = MakeUis(self.distribution)
+
+        qt4gui_path = os.path.join(self.get_package_dir("openmolar"), "qt4gui")
+        make_uis.DEST_FOLDER = os.path.join(qt4gui_path, "compiled_uis")
+        make_uis.RESOURCE_FILE = os.path.join(qt4gui_path, "resources_rc.py")
+        make_uis.run(*args, **kwargs)
+        info("build_py completed")
 
 
 class Build(_build):
@@ -342,12 +359,8 @@ class Build(_build):
         '''
 
         _build.run(self, *args, **kwargs)
-        make_uis = MakeUis(self.distribution)
-        make_uis.DEST_FOLDER = os.path.join(self.build_base, "lib", "openmolar",
-                                            "qt4gui", "compiled_uis")
-        make_uis.run(*args, **kwargs)
         self.locale_build()
-        
+
         info("build completed")
 
 
@@ -397,7 +410,7 @@ class Install(_install):
         win_script.remove_executable()
 
 
-class InstallLocale(install_data):
+class InstallData(install_data):
 
     '''
     re-implement class distutils.install_data install_data
@@ -414,7 +427,6 @@ class InstallLocale(install_data):
                     mo_file = os.path.join(root, file_)
                     i18nfiles.append((destdir, [mo_file]))
 
-        print(i18nfiles)
         self.data_files.extend(i18nfiles)
         install_data.run(self)
 
@@ -474,9 +486,10 @@ if __name__ == "__main__":
         data_files=DATA_FILES,
         cmdclass={'sdist': Sdist,
                   'clean': Clean,
+                  'build_py': BuildPy,
                   'build': Build,
                   'install': Install,
-                  'install_data': InstallLocale,
+                  'install_data': InstallData,
                   'makeuis': MakeUis,
                   'test': Test},
         scripts=SCRIPTS,
