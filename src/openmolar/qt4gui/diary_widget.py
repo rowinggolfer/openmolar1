@@ -716,7 +716,7 @@ class DiaryWidget(Advisor):
         i = self.ui.diary_tabWidget.currentIndex()
 
         if i == 0:
-            self.layout_dayView()
+            self.layout_dayView(automatic)
         elif i == 1:
             self.layout_weekView()
         elif i == 2:
@@ -926,7 +926,7 @@ class DiaryWidget(Advisor):
         for ov in self.ui.apptoverviews:
             ov.update()
 
-    def layout_dayView(self):
+    def layout_dayView(self, automatic=False):
         '''
         this populates the appointment book widgets (on maintab, pageindex 1)
         '''
@@ -998,7 +998,8 @@ class DiaryWidget(Advisor):
 
             book.header_label.setText(localsettings.apptix_reverse[dent])
 
-            book.memo_lineEdit.setText(self.appointmentData.getMemo(dent))
+            if not (automatic and book.memo_lineEdit.hasFocus()):
+                book.memo_lineEdit.setText(self.appointmentData.getMemo(dent))
 
             apps = self.appointmentData.dentAppointments(dent)
             for app in apps:

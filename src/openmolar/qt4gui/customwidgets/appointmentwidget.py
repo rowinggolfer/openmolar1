@@ -243,8 +243,7 @@ class AppointmentWidget(QtWidgets.QFrame):
         user has edited the memo line Edit - emit a signal so the
         gui can handle it
         '''
-        if not self.memo_lineEdit.hasFocus():
-            self.new_memo_signal.emit(self.dentist, self.memo_lineEdit.text())
+        self.new_memo_signal.emit(self.dentist, self.memo_lineEdit.text())
 
     def signals(self):
         '''
