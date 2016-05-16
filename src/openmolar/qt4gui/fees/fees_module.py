@@ -207,8 +207,10 @@ def showTableXML(om_gui):
     user wants to view the full table logic!
     '''
     def editor_closed():
-        om_gui.fee_table_editor.setParent(None)
-        om_gui.fee_table_editor = None
+        def _destroy():
+            om_gui.fee_table_editor.setParent(None)
+            om_gui.fee_table_editor = None
+        QtCore.QTimer.singleShot(100, _destroy)
     if om_gui.fee_table_editor is not None:
         om_gui.fee_table_editor.show()
         om_gui.fee_table_editor.raise_()
