@@ -73,8 +73,7 @@ def getShortCuts():
                     apptDict["datespec"] = d_spec
                 memo = appointment.getElementsByTagName("memo")
                 if memo:
-                    memo_ = int(length[0].firstChild.data)
-                    apptDict["memo"] = memo_
+                    apptDict["memo"] = memo[0].firstChild.data
 
                 shortCutDict["appointments"].append(apptDict)
             retarg.append(shortCutDict)
