@@ -93,6 +93,7 @@ from openmolar.qt4gui.dialogs.dialog_collection import (
     CourseEditDialog,
     CourseMergeDialog,
     CourseHistoryOptionsDialog,
+    DatabaseConnectionProgressDialog,
     DaybookItemDialog,
     DaybookEditDialog,
     DocumentDialog,
@@ -190,6 +191,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
     reception_notes_loaded = False
     summary_notes_loaded = False
     notes_loaded = False
+    _db_connnection_progress_dialog = None
 
     def __init__(self, parent=None):
         QtWidgets.QMainWindow.__init__(self, parent)
@@ -250,12 +252,15 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
 
         self.forum_timer = QtCore.QTimer()
         self.records_in_use_timer = QtCore.QTimer()
+        self.dcp_dialog = DatabaseConnectionProgressDialog(self)
         QtCore.QTimer.singleShot(500, self.check_first_run)
+        LOGGER.debug("__init__ finished")
 
     def initiate(self):
         '''
         initiate settings etc.
         '''
+        LOGGER.debug("Initiate")
         localsettings.initiate()
         self.setWindowTitle("OpenMolar - %s '%s'" % (
             _("connected to"), params.database_name))
@@ -288,6 +293,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         '''
         called to see if the is the first running of the application
         '''
+        LOGGER.debug("check first run")
         if os.path.exists(localsettings.global_cflocation):
             localsettings.cflocation = localsettings.global_cflocation
             cf_found = True
@@ -301,21 +307,47 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
             params.reload()
         self.login()
 
-    def login(self):
+    def forced_quit(self, reason):
+        LOGGER.info("Forced quit %s", reason)
+        app = QtWidgets.QApplication.instance()
+        QtCore.QTimer.singleShot(4000, app.closeAllWindows)
+        self.advise(reason, 1)
+        app.closeAllWindows()
+
+    def login(self, dl=None):
         '''
         raise a dialog and get the user to login
         '''
-        dl = LoginDialog(self)
+        LOGGER.debug("login called")
+        if dl is None:
+            dl = LoginDialog(self)
         if not dl.exec_():
-            app = QtWidgets.QApplication.instance()
-            QtCore.QTimer.singleShot(4000, app.closeAllWindows)
-            self.advise(_("Login Cancelled- Closing Application"), 2)
-            app.closeAllWindows()
-        else:
-            self.advise("%s %s %s" % (
-                _("Login by"), localsettings.operator, "accepted"))
-            self.check_schema()
-            self.initiate()
+            self.forced_quit(_("Login Cancelled- Closing Application"))
+            return
+        if self.await_connection():
+            LOGGER.debug("getting allowed logins")
+            dl.db_check()
+
+            if dl.login_ok:
+                if dl.reception_radioButton.isChecked():
+                    localsettings.station = "reception"
+                localsettings.setOperator(dl.user1, dl.user2)
+                self.advise("%s %s %s" % (
+                    _("Login by"), localsettings.operator, "accepted"))
+                self.check_schema()
+                self.initiate()
+            else:
+                self.advise('<h2>%s %s</h2><em>%s</em>' % (
+                    _('Incorrect'),
+                    _("User/password combination!"),
+                    _('Please Try Again.')), 2)
+                self.login(dl)
+
+    def await_connection(self):
+        LOGGER.debug("await_connection called")
+        if self.dcp_dialog.exec_():
+            return True
+        return False
 
     def check_version(self):
         '''
@@ -434,13 +466,14 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         check for unsaved changes then politely close the app if appropriate
         '''
         LOGGER.info("quit called")
-        if not self.okToLeaveRecord():
-            event.ignore()
-            return
-        try:
-            self.clear_all_records_in_use()
-        except Exception:
-            LOGGER.exception("unable to clear record in use")
+        if params.was_connected and not params.connection_abandoned:
+            if not self.okToLeaveRecord():
+                event.ignore()
+                return
+            try:
+                self.clear_all_records_in_use()
+            except Exception:
+                LOGGER.exception("unable to clear record in use")
         if self.fee_table_tester is not None:
             self.fee_table_tester.accept()
         if self.fee_table_editor:
@@ -794,6 +827,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         elif ci == 9:  # -- history tab
             self.refresh_debug_browser()
 
+        self.updateDetails()
         self.wait(False)
 
     def update_plan_est(self):
@@ -2834,6 +2868,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         '''
         a function to call other functions (to keep the code clean)
         '''
+        params.signaller.message_signal.connect(self.advise)
         self.signals_miscbuttons()
         self.signals_admin()
         self.signals_reception()
@@ -3719,8 +3754,9 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         message = ""
         for l in traceback.format_exception(exc_type, exc_val, tracebackobj):
             message += l
-        self.advise('UNHANDLED EXCEPTION!<hr /><pre>%s' % message, 2)
         sys.stderr.write(message)
+        self.advise('UNHANDLED EXCEPTION!<hr /><pre>%s</pre>' % message, 2)
+        self.await_connection()
 
 
 def main():

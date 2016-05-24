@@ -149,7 +149,7 @@ class LoginDialog(ExtendableDialog):
         self.dirty = True
         self.set_check_on_cancel(True)
 
-        QtCore.QTimer.singleShot(500, self._developer_login)
+        QtCore.QTimer.singleShot(1000, self._developer_login)
 
     def sizeHint(self):
         return QtCore.QSize(350, 300)
@@ -226,10 +226,13 @@ class LoginDialog(ExtendableDialog):
         if self._is_developer_environment:
             LOGGER.info("developer environment found!")
             self.accept()
-        LOGGER.debug("not a developer environment")
+        else:
+            LOGGER.debug("not a developer environment")
 
     @property
     def password_ok(self):
+        if self._is_developer_environment:
+            return True
         LOGGER.info("checking password")
         pword = "diqug_ADD_SALT_3i2some%s" % self.password_lineEdit.text()
         #  hash the salted password (twice!) and compare to the value
@@ -285,18 +288,10 @@ class LoginDialog(ExtendableDialog):
             self.uninitiated = False
 
     def exec_(self):
-        while ExtendableDialog.exec_(self):
-            self.db_check()
-            if self.login_ok:
-                if self.reception_radioButton.isChecked():
-                    localsettings.station = "reception"
-                localsettings.setOperator(self.user1, self.user2)
-                self.accept()
+        if ExtendableDialog.exec_(self):
+            if self.password_ok:
                 return True
             else:
-                # LOGGER.debug("passwords ok %s", self.password_ok)
-                # LOGGER.debug("user1 ok %s", self.user1_ok)
-                # LOGGER.debug("user2 ok %s", self.user2_ok)
                 QtWidgets.QMessageBox.warning(
                     self.parent(),
                     _("Login Error"),
@@ -306,4 +301,5 @@ class LoginDialog(ExtendableDialog):
                         _('Please Try Again.')
                     )
                 )
+                return self.exec_()
         return False

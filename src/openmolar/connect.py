@@ -27,18 +27,18 @@ provide a connection to the mysqldatabase using 3rd party MySQLdb module
 '''
 
 import base64
+import inspect
 import logging
 import time
 import subprocess
 from xml.dom import minidom
 
 import MySQLdb
+from PyQt5 import QtCore
 
 from openmolar.settings import localsettings
 
 LOGGER = logging.getLogger("openmolar")
-
-mainconnection = None
 
 GeneralError = MySQLdb.Error
 ProgrammingError = MySQLdb.ProgrammingError
@@ -46,11 +46,25 @@ IntegrityError = MySQLdb.IntegrityError
 OperationalError = MySQLdb.OperationalError
 
 
-class DB_Params(object):
+class Signaller(QtCore.QObject):
+    '''
+    an instance of this class is added to db_params so that the gui can be
+    informed of connectivity issues via qt's signal/slot mechanism
+    '''
+    message_signal = QtCore.pyqtSignal(object, object)  # message, severity
+    connection_signal = QtCore.pyqtSignal()
 
+
+class Connection(object):
     '''
-    this class provides the attributes needed by MySQLdb to connect
+    an object for communicating with the database and alerting the
+    gui to any problems.
     '''
+
+    _connection = None
+    was_connected = False   # returns True if a connection has been established
+    connection_abandoned = False   # this param altered by a dialog
+
     def __init__(self):
         self.host = ""
         self.port = 0
@@ -58,6 +72,8 @@ class DB_Params(object):
         self.db_name = ""
         self.password = ""
         self.subprocs = []
+        self.signaller = Signaller()
+        self.attempts = 0
         try:
             self.reload()
         except IOError:
@@ -80,6 +96,8 @@ class DB_Params(object):
 
     def reload(self):
         self.kill_subprocs()
+        self._connection = False
+
         dom = minidom.parse(localsettings.cflocation)
         settingsversion = dom.getElementsByTagName(
             "version")[0].firstChild.data
@@ -149,39 +167,65 @@ class DB_Params(object):
     def database_name(self):
         return "%s %s:%s" % (self.db_name, self.host, self.port)
 
+    @property
+    def has_connection(self):
+        return self._connection and self._connection.open
 
-def connect():
-    '''
-    returns a MySQLdb object, connected to the database specified in the
-    settings file
-    '''
-    global mainconnection
-    attempts = 0
-    exc = GeneralError
-    while attempts < 30:
+    def connect(self):
+        '''
+        returns a MySQLdb object, connected to the database specified in the
+        settings file
+        '''
+        if self.connection_abandoned:
+            return None
         try:
-            if not (mainconnection and mainconnection.open):
-                LOGGER.info("New database connection needed")
+            if not self.has_connection:
+                if self.attempts == 0:
+                    LOGGER.info("New database connection needed")
+                    params.signaller.message_signal.emit(
+                        _("Initiating MySQL connection"), 0)
                 LOGGER.debug("connecting to %s", params.database_name)
-                mainconnection = MySQLdb.connect(**params.kwargs)
-                mainconnection.autocommit(True)
+                params._connection = MySQLdb.connect(**params.kwargs)
+                params._connection.autocommit(True)
+                params.was_connected = True  # never returned to False
+                self.attempts = 0
+                params.signaller.message_signal.emit(
+                    _("Connection Established"), 0)
+                params.signaller.connection_signal.emit()
             else:
-                mainconnection.commit()
-
-            return mainconnection
-        except MySQLdb.Error as exc:
+                params._connection.commit()
+            return params._connection
+        except MySQLdb.Error:
             LOGGER.error("unable to connect to Mysql database")
             LOGGER.info("will attempt re-connect in 2 seconds...")
-            mainconnection = None
-        time.sleep(2)
-        attempts += 1
+            self._connection = None
+        self.attempts += 1
+        params.signaller.connection_signal.emit()
+        params.signaller.message_signal.emit("%s %d %s" % (
+            _("Connection attempt"), self.attempts, _("failed")), 0)
+        if self.was_connected:
+            # if the application has previously connected, this function needs
+            # to block all interation until connection is reestablished.
+            sleeps = 0
+            while sleeps < 2000:   # approx 2 seconds between each attempt
+                time.sleep(0.001)
+                QtCore.QCoreApplication.processEvents()
+                sleeps += 1
+            return self.connect()
+        else:
+            # more efficient, but not blocking
+            QtCore.QTimer.singleShot(2000, self.connect)
 
-    raise exc
 
+# create singletons
+params = Connection()
 
-# create a singleton
-params = DB_Params()
-
+# this line prevents a total rewrite of all modules which connect.
+def connect():
+    frameinfo = inspect.getframeinfo(inspect.currentframe().f_back)
+    LOGGER.debug('connect called by %s line %s',
+                 frameinfo.filename, frameinfo.lineno)
+    return params.connect()
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
@@ -204,7 +248,7 @@ if __name__ == "__main__":
                     'update new_patients set dob="196912091" where serialno=4')
                 cursor.close()
         except Exception:
-            LOGGER.exception("exception caught?")
+            LOGGER.exception("exception caught")
         time.sleep(5)
 
     dbc.close()

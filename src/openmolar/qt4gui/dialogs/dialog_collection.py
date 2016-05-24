@@ -87,6 +87,8 @@ from openmolar.qt4gui.dialogs.cancel_appointment_dialog \
     import CancelAppointmentDialog
 from openmolar.qt4gui.dialogs.bookend_dialog import BookendDialog
 from openmolar.qt4gui.dialogs.check_version_dialog import CheckVersionDialog
+from openmolar.qt4gui.dialogs.database_connection_progress_dialog import \
+    DatabaseConnectionProgressDialog
 
 __all__ = ['AccountSeverityDialog',
            'AddClinicianDialog',
@@ -109,6 +111,7 @@ __all__ = ['AccountSeverityDialog',
            'CourseEditDialog',
            'CourseMergeDialog',
            'CourseHistoryOptionsDialog',
+           'DatabaseConnectionProgressDialog',
            'DaybookItemDialog',
            'DaybookEditDialog',
            'DocumentDialog',
