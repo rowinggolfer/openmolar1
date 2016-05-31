@@ -28,26 +28,30 @@ module to retrieve a list of patients who owe money
 from openmolar.settings import localsettings
 from openmolar.connect import connect
 
-QUERY = '''select dnt1, new_patients.serialno, cset, fname, sname, dob, memo,
-tx_date, billdate, billtype, billct, cmpd,
-(money0 + money1 + money9 + money10 - money2 - money3 - money8) as fees
-from new_patients
+QUERY = '''SELECT dnt1, new_patients.serialno, cset, CONCAT(fname, " ", sname),
+status, tx_date, cmpd,
+(money0 + money1 + money9 + money10 - money2 - money3 - money8 +  money11)
+as fees, billdate, billtype, billct, memo from new_patients
 join patient_money on new_patients.serialno = patient_money.pt_sno
 join currtrtmt2 on new_patients.courseno0 = currtrtmt2.courseno
 join (select serialno, max(date) as tx_date from daybook group by serialno)
 as t on new_patients.serialno = t.serialno
-where (money0 + money1 + money9 + money10 - money2 - money3 - money8) > 0
-order by tx_date desc
+where (money0 + money1 + money9 + money10 - money2 - money3 - money8 + money11)
+%s %%s %s order by tx_date desc
 '''
 
 
-def details():
+def details(greater_than=True, amount=0, extra_conditions=[], extra_values=[]):
     '''
     get all patients owing money where the debt has not been written off
     '''
+    extras = " AND ".join(extra_conditions)
+    query = QUERY % (">" if greater_than else "<",
+                     " AND " + extras if extras else "")
+    values = [amount] + extra_values
     db = connect()
     cursor = db.cursor()
-    cursor.execute(QUERY)
+    cursor.execute(query, values)
     rows = cursor.fetchall()
     cursor.close()
     return rows

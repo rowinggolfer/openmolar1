@@ -143,38 +143,33 @@ def printAccountsTable(om_gui):
     # - set a pointer for readability
     table = om_gui.ui.accounts_tableWidget
     rowno = table.rowCount()
+    memo_col = table.columnCount() - 1
     if rowno == 0:
         om_gui.advise(_("Nothing to print - have you loaded the table?"), 1)
         return()
     total = 0
-    html = '<html><body><table border="1">'
-    html += '''<tr><th>%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th>
-               <th>%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th>
-               <th>%s</th><th>%s</th><th>%s</th></tr>''' % (
-                   _('Dent'),
-                   _('SerialNo'),
-                   _('Cset'),
-                   _('FName'),
-                   _('Sname'),
-                   _('DOB'),
-                   _('Memo'),
-                   _('Last Appt'),
-                   _('Last Bill'),
-                   _('Type'),
-                   _('Number'),
-                   _('Complete'),
-                   _('Amount'))
+    html = '''<html><body><table border="1">
+    <tr><th>%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th>
+    <th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>''' % (_('Dent'),
+                                                            _('SerialNo'),
+                                                            _('Cset'),
+                                                            _('Name'),
+                                                            _('Status'),
+                                                            _("Last tx"),
+                                                            _('Complete'),
+                                                            _('Amount'),
+                                                            _('Memo'))
     for row in range(rowno):
         if row % 2 == 0:
             html += '<tr bgcolor="#eeeeee">'
         else:
             html += '<tr>'
-        for col in range(13):
+        for col in (0, 1, 2, 3, 4, 5, 6, 7, memo_col):
             item = table.item(row, col)
             if item:
                 if col == 1:
                     html += '<td align="right">%s</td>' % item.text()
-                elif col == 12:
+                elif col == 7:
                     money = localsettings.pencify(item.text())
                     money_str = localsettings.formatMoney(money)
                     html += '<td align="right">%s</td>' % money_str
@@ -185,9 +180,11 @@ def printAccountsTable(om_gui):
                 html += '<td> </td>'
         html += '</tr>\n'
 
-    html += '<tr><td colspan="11"></td><td><b>' + _('TOTAL') + '''</b></td>
-        <td align="right"><b>%s</b></td></tr></table></body></html>''' % (
-            localsettings.formatMoney(total))
+    html += '''<tr>
+    <td colspan="7" align="right"><b>%s</b></td>
+    <td align="right"><b>%s</b></td><td></td>
+    </tr></table></body></html>''' % (_('TOTAL'),
+                                      localsettings.formatMoney(total))
 
     myclass = letterprint.letter(html, parent=om_gui)
     myclass.printpage()
@@ -498,10 +495,10 @@ def printSelectedAccounts(om_gui):
     firstPage = True
     no_printed = 0
     for row in range(om_gui.ui.accounts_tableWidget.rowCount()):
-        for col in range(13, 16):
+        for col in range(11, 14):
             item = om_gui.ui.accounts_tableWidget.item(row, col)
             if item.checkState():
-                tone = ("A", "B", "C")[col - 13]
+                tone = ("A", "B", "C")[col - 11]
                 sno = int(om_gui.ui.accounts_tableWidget.item(row, 1).text())
                 LOGGER.info("Account tone %s letter to %s", tone, sno)
                 printpt = patient_class.patient(sno)

@@ -1624,7 +1624,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
             self.change_pt_status)
 
     def change_pt_status(self, *args):
-        if self.pt.status == "BAD DEBT" and not permissions.granted(self):
+        if self.pt.status == _("BAD DEBT") and not permissions.granted(self):
             self.updateStatus()
             return
         self.pt.status = str(
@@ -3197,7 +3197,6 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
             self.feeSearch_pushButton_clicked)
         self.ui.feescale_tester_pushButton.clicked.connect(
             self.feescale_tester_pushButton_clicked)
-        self.ui.feetable_xml_pushButton.clicked.connect(self.feetable_xml)
         self.ui.hide_rare_feescale_codes_checkBox.toggled.connect(
             self.hide_rare_feescale_items)
         self.ui.reload_feescales_pushButton.clicked.connect(

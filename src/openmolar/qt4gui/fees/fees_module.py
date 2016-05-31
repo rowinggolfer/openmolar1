@@ -29,6 +29,7 @@ script, concerning fees, accounts and graphical feescale display.
 import logging
 
 from PyQt5 import QtCore
+from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 
 from openmolar.settings import localsettings
@@ -43,6 +44,8 @@ from openmolar.qt4gui.fees.feescale_tester import FeescaleTestingDialog
 from openmolar.qt4gui.feescale_editor import FeescaleEditor
 from openmolar.qt4gui.dialogs.feescale_configure_dialog \
     import FeescaleConfigDialog
+from openmolar.qt4gui.dialogs.accounts_loader_dialog \
+    import AccountsLoaderDialog
 
 from openmolar.qt4gui.printing import om_printing
 from openmolar.qt4gui.dialogs.payment_dialog import PaymentDialog
@@ -206,11 +209,19 @@ def showTableXML(om_gui):
     '''
     user wants to view the full table logic!
     '''
+    def _destroy():
+        '''
+        after closing the editor, free up references to it.
+        '''
+        om_gui.fee_table_editor.setParent(None)
+        om_gui.fee_table_editor = None
+
     def editor_closed():
-        def _destroy():
-            om_gui.fee_table_editor.setParent(None)
-            om_gui.fee_table_editor = None
+        '''
+        after closing the editor, free up references to it.
+        '''
         QtCore.QTimer.singleShot(100, _destroy)
+
     if om_gui.fee_table_editor is not None:
         om_gui.fee_table_editor.show()
         om_gui.fee_table_editor.raise_()
@@ -376,7 +387,7 @@ def makeBadDebt(om_gui):
         om_gui.pt.money11 = om_gui.pt.fees
         om_gui.pt.force_money_changes = True
         om_gui.pt.resetAllMonies()
-        om_gui.pt.status = "BAD DEBT"
+        om_gui.pt.status = _("BAD DEBT")
         om_gui.ui.notesEnter_textEdit.setText(
             _("changed patient's status to BAD DEBT")
         )
@@ -386,57 +397,77 @@ def makeBadDebt(om_gui):
 
 
 def populateAccountsTable(om_gui):
+    dl = AccountsLoaderDialog(om_gui)
+    if not dl.exec_():
+        return
     om_gui.advise(_("Loading Accounts Table"))
     om_gui.wait()
-    rows = accounts.details()
+    rows = accounts.details(greater_than=dl.show_debts,
+                            amount=dl.min_amount,
+                            extra_conditions=dl.conditions,
+                            extra_values=dl.values)
     om_gui.ui.accounts_tableWidget.clear()
     om_gui.ui.accounts_tableWidget.setSortingEnabled(False)
     om_gui.ui.accounts_tableWidget.setRowCount(len(rows))
-    headers = (_("Dent"), _("Serialno"), "", _("First"), _("Last"),
-               _("DOB"), _("Memo"), _("Last Tx"), _("Last Bill"), _("Type"),
-               _("Number"), _("T/C"), _("Fees"), "A", "B", "C")
+
+    headers = [_("Dent"), _("Serialno"), "", _("Name"), _("Status"),
+               _("Last Tx"), _("T/C")]
+    if dl.show_debts:
+        headers.extend([    _("Fees"), _("Last Bill"), _("Type"), _("Number"),
+                        "A", "B", "C"])
+    else:
+        headers.append(_("Credit"))
+    headers.append(_("Memo"))
 
     om_gui.ui.accounts_tableWidget.setColumnCount(len(headers))
     om_gui.ui.accounts_tableWidget.setHorizontalHeaderLabels(headers)
     om_gui.ui.accounts_tableWidget.verticalHeader().hide()
     om_gui.ui.accounts_tableWidget.horizontalHeader().setStretchLastSection(
         True)
-    rowno = 0
     total = 0
-    for row in rows:
-        for col in range(len(row)):
-            d = row[col]
-            if d is not None or col == 11:
+    om_gui.ui.accounts_tableWidget.setSortingEnabled(False)
+
+    for rowno, row in enumerate(rows):
+        for col, val in enumerate(row):
+            if col in (8,9,10) and not dl.show_debts:
+                continue
+            if val is not None:
                 item = QtWidgets.QTableWidgetItem()
                 if col == 0:
-                    item.setText(localsettings.ops.get(d))
-                elif col in (5, 7, 8):
-                    item.setData(QtCore.Qt.DisplayRole, QtCore.QDate(d))
-                elif col == 12:
-                    total += d
-                    # item.setText(localsettings.formatMoney(d))
-                    # jump through hoops to make the string sortable!
-                    money = "%.02f" % float(d / 100)
+                    item.setText(localsettings.ops.get(val))
+                elif col in (5, 8):
+                    item.setData(QtCore.Qt.DisplayRole, QtCore.QDate(val))
+                elif col == 7:
+                    if dl.show_debts:
+                        total += val
+                        item.setForeground(QtGui.QBrush(QtCore.Qt.red))
+                        money = "%.02f" % float(val / 100)
+                    else:
+                        total += -val
+                        item.setForeground(QtGui.QBrush(QtCore.Qt.darkBlue))
+                        money = "%.02f" % float(-val / 100)
                     item.setData(QtCore.Qt.DisplayRole, money.rjust(8, " "))
                     item.setTextAlignment(
                         QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
-                elif col == 11:
-                    if d is None:
+                elif col == 6:
+                    if val is None:
                         item.setText(_("Under Treatment"))
                     else:
-                        item.setData(QtCore.Qt.DisplayRole, QtCore.QDate(d))
+                        item.setData(QtCore.Qt.DisplayRole, QtCore.QDate(val))
                 else:
-                    item.setText(str(d).title())
+                    item.setText(str(val))
+                om_gui.ui.accounts_tableWidget.setItem(rowno,
+                                                       14 if col == 11 else col,
+                                                       item)
+        if dl.show_debts:
+            for col in range(11, 14):
+                item = QtWidgets.QTableWidgetItem()
+                item.setCheckState(QtCore.Qt.Unchecked)
                 om_gui.ui.accounts_tableWidget.setItem(rowno, col, item)
-        for col in range(13, 16):
-            item = QtWidgets.QTableWidgetItem()
-            item.setCheckState(QtCore.Qt.Unchecked)
-            om_gui.ui.accounts_tableWidget.setItem(rowno, col, item)
-        rowno += 1
-    om_gui.ui.accounts_tableWidget.sortItems(7, QtCore.Qt.DescendingOrder)
+    om_gui.ui.accounts_tableWidget.sortItems(5, QtCore.Qt.DescendingOrder)
     om_gui.ui.accounts_tableWidget.setSortingEnabled(True)
-    # om_gui.ui.accounts_tableWidget.update()
     for i in range(om_gui.ui.accounts_tableWidget.columnCount()):
         om_gui.ui.accounts_tableWidget.resizeColumnToContents(i)
     om_gui.ui.accountsTotal_doubleSpinBox.setValue(total / 100)
     om_gui.wait(False)
+    om_gui.ui.printSelectedAccounts_pushButton.setEnabled(dl.show_debts)

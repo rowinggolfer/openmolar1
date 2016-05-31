@@ -395,7 +395,7 @@ def pencify(input_):
     safely convert "0.29" to 29, or "1.50" to 150 etc..
     in python int(0.29 * 100) is 28!
     '''
-    m = re.match("(\d+)?\.?(\d)?(\d)?", input_)
+    m = re.match(" *(\d+)?\.?(\d)?(\d)?", input_)
     if not m:
         return 0
     return int("%s%s%s" % (

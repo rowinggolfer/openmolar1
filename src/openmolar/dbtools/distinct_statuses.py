@@ -43,7 +43,7 @@ class DistinctStatuses(object):
 
             self._distinct_statuses = set(["", _("DECEASED")])
             for row in sorted(rows):
-                if row[0] not in (None, "BAD DEBT"):
+                if row[0] not in (None, _("BAD DEBT")):
                     self._distinct_statuses.add(row[0])
 
         return sorted(self._distinct_statuses)

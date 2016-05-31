@@ -60,11 +60,13 @@ class AccountLetter(object):
     def setPreviousCorrespondenceDate(self, arg):
         self.previousCorrespondenceDate = arg
 
+    def dialogExec(self):
+        dl = QtPrintSupport.QPrintDialog(self.printer, self.parent)
+        return dl.exec_()
+
     def print_(self):
-        if self.requireDialog:
-            dl = QtPrintSupport.QPrintDialog(self.printer, self.parent)
-            if not dl.exec_():
-                return False
+        if self.requireDialog and not self.dialogExec():
+            return False
         self.pdfprinter.setOutputFormat(QtPrintSupport.QPrinter.PdfFormat)
         self.pdfprinter.setOutputFileName(localsettings.TEMP_PDF)
 
@@ -115,7 +117,7 @@ class AccountLetter(object):
                 painter.drawText(
                     x, y,
                     _("We are concerned that despite previous "
-                      "correspondance,"))
+                      "correspondence,"))
                 y += serifLineHeight
                 painter.drawText(
                     x, y,
