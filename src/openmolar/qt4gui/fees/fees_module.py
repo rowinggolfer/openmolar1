@@ -413,7 +413,7 @@ def populateAccountsTable(om_gui):
     headers = [_("Dent"), _("Serialno"), "", _("Name"), _("Status"),
                _("Last Tx"), _("T/C")]
     if dl.show_debts:
-        headers.extend([    _("Fees"), _("Last Bill"), _("Type"), _("Number"),
+        headers.extend([_("Fees"), _("Last Bill"), _("Type"), _("Number"),
                         "A", "B", "C"])
     else:
         headers.append(_("Credit"))
@@ -429,7 +429,7 @@ def populateAccountsTable(om_gui):
 
     for rowno, row in enumerate(rows):
         for col, val in enumerate(row):
-            if col in (8,9,10) and not dl.show_debts:
+            if col in (8, 9, 10) and not dl.show_debts:
                 continue
             if val is not None:
                 item = QtWidgets.QTableWidgetItem()
@@ -437,6 +437,11 @@ def populateAccountsTable(om_gui):
                     item.setText(localsettings.ops.get(val))
                 elif col in (5, 8):
                     item.setData(QtCore.Qt.DisplayRole, QtCore.QDate(val))
+                elif col == 6:
+                    if not val:
+                        item.setText(_("Under Treatment"))
+                    else:
+                        item.setData(QtCore.Qt.DisplayRole, QtCore.QDate(val))
                 elif col == 7:
                     if dl.show_debts:
                         total += val
@@ -449,16 +454,12 @@ def populateAccountsTable(om_gui):
                     item.setData(QtCore.Qt.DisplayRole, money.rjust(8, " "))
                     item.setTextAlignment(
                         QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
-                elif col == 6:
-                    if val is None:
-                        item.setText(_("Under Treatment"))
-                    else:
-                        item.setData(QtCore.Qt.DisplayRole, QtCore.QDate(val))
                 else:
                     item.setText(str(val))
-                om_gui.ui.accounts_tableWidget.setItem(rowno,
-                                                       14 if col == 11 else col,
-                                                       item)
+                gui_col = col
+                if col == 11:
+                    gui_col = 14 if dl.show_debts else 8
+                om_gui.ui.accounts_tableWidget.setItem(rowno, gui_col, item)
         if dl.show_debts:
             for col in range(11, 14):
                 item = QtWidgets.QTableWidgetItem()
