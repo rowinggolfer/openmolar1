@@ -329,6 +329,21 @@ class SettingsFetcher(object):
         self.archived_dents = tuple(archived_dents)
         self.archived_hygs = tuple(archived_hygs)
 
+    @property
+    def account_footer(self):
+        '''
+        this is text for the bottom of account letters
+        '''
+        acc_footer = self.get_unique_value("account footer")
+        return acc_footer if acc_footer else _("ACCOUNT FOOTER NOT SET")
+
+    @property
+    def debt_collector(self):
+        '''
+        The name of debt collection services (for strong account letters)
+        '''
+        debt_col = self.get_unique_value("debt collector")
+        return debt_col if debt_col else _("DEBT COLLECTOR NOT SET")
 
 if __name__ == "__main__":
     sf = SettingsFetcher()
@@ -342,3 +357,5 @@ if __name__ == "__main__":
     print(sf.active_dents)
     print(sf.active_hygs)
     print(sf.dentist_data)
+    print(sf.account_footer)
+    print(sf.debt_collector)

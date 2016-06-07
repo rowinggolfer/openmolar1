@@ -73,6 +73,7 @@ from openmolar.qt4gui.compiled_uis import Ui_showMemo
 from openmolar.qt4gui.dialogs import permissions
 
 from openmolar.qt4gui.dialogs.dialog_collection import (
+    AccountLetterDialog,
     AccountSeverityDialog,
     AddClinicianDialog,
     AddUserDialog,
@@ -3038,7 +3039,8 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         self.ui.actionEdit_Feescales.triggered.connect(self.feetable_xml)
         self.ui.actionConfigure_Feescales.triggered.connect(
             self.configure_feescales)
-
+        self.ui.actionEdit_Account_Letter_Settings.triggered.connect(
+            self.edit_account_letter_settings)
     def signals_estimates(self):
         # Estimates and Course Management
         self.ui.closeTx_pushButton.clicked.connect(
@@ -3674,6 +3676,11 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         dl = EditStandardLettersDialog(self)
         if dl.exec_():
             CorrespondenceDialog.LETTERS = None
+
+    def edit_account_letter_settings(self):
+        dl = AccountLetterDialog(self)
+        if dl.exec_():
+            dl.apply_()
 
     def clear_todays_emergencies(self):
         self.show_diary()

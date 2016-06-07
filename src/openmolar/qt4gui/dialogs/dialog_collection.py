@@ -89,8 +89,10 @@ from openmolar.qt4gui.dialogs.bookend_dialog import BookendDialog
 from openmolar.qt4gui.dialogs.check_version_dialog import CheckVersionDialog
 from openmolar.qt4gui.dialogs.database_connection_progress_dialog import \
     DatabaseConnectionProgressDialog
+from openmolar.qt4gui.dialogs.account_letter_dialog import AccountLetterDialog
 
-__all__ = ['AccountSeverityDialog',
+__all__ = ['AccountLetterDialog',
+           'AccountSeverityDialog',
            'AddClinicianDialog',
            'AddUserDialog',
            'AdvancedRecordManagementDialog',

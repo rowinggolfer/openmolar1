@@ -28,6 +28,7 @@ from PyQt5 import QtPrintSupport
 from PyQt5 import QtWidgets
 
 from openmolar.settings import localsettings
+from openmolar.dbtools.db_settings import SettingsFetcher
 
 
 class AccountLetter(object):
@@ -51,6 +52,7 @@ class AccountLetter(object):
         self.tone = "A"
         self.previousCorrespondenceDate = ""
         self.requireDialog = True
+        self.sf = SettingsFetcher()
 
     def setTone(self, arg):
         '''determines how aggressive the letter is'''
@@ -154,13 +156,13 @@ class AccountLetter(object):
                 y += serifLineHeight
                 painter.drawText(
                     x, y,
-                    _("Scott & Company Sheriff Officers for collection."))
+                    "%s %s" % (self.sf.debt_collector, _("for collection.")))
 
             y += serifLineHeight * 2
-            painter.drawText(x, y, _("Yours sincerely,"))
+            painter.drawText(x, y, _("Yours Sincerely,"))
             y += serifLineHeight * 1.5
             painter.setFont(sigFont)
-            painter.drawText(x, y + 30, "The Academy Dental Practice")
+            painter.drawText(x, y + 30, self.sf.practice_name)
             y = pageRect.height() - 120
             painter.drawLine(x, y, pageRect.width() - (2 * AddressMargin), y)
             y += 2
@@ -170,13 +172,8 @@ class AccountLetter(object):
             option = QtGui.QTextOption(QtCore.Qt.AlignCenter)
             option.setWrapMode(QtGui.QTextOption.WordWrap)
             painter.drawText(
-                QtCore.QRectF(
-                    x, y, pageRect.width() - (2 * AddressMargin), 31),
-                "* %s\n%s" % (
-                    _('Cheques payable to: "Academy Dental Practice"'),
-                    _('Or telephone us with your switch/visa/mastercard '
-                      'details.')),
-                option)
+                QtCore.QRectF(x, y, pageRect.width() - (2 * AddressMargin), 31),
+                "* %s" % self.sf.account_footer, option)
             painter.restore()
         return True
 
