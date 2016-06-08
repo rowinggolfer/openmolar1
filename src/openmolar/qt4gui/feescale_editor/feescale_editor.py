@@ -372,7 +372,10 @@ class FeescaleEditor(QtWidgets.QMainWindow):
 
     def _focus_changed(self, o1d_widget, new_widget):
         if o1d_widget is None:
-            self._check_for_newer_local_files()
+            try:
+                self._check_for_newer_local_files()
+            except AttributeError:  # in case 'self' is now None !
+                pass
 
     def _check_for_newer_local_files(self):
         if self._checking_files:

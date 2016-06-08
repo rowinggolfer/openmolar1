@@ -209,23 +209,18 @@ def showTableXML(om_gui):
     '''
     user wants to view the full table logic!
     '''
-    def _destroy():
-        '''
-        after closing the editor, free up references to it.
-        '''
-        om_gui.fee_table_editor.setParent(None)
-        om_gui.fee_table_editor = None
-
     def editor_closed():
         '''
         after closing the editor, free up references to it.
         '''
-        QtCore.QTimer.singleShot(100, _destroy)
+        om_gui.fee_table_editor.setParent(None)
+        om_gui.fee_table_editor.deleteLater()
+        om_gui.fee_table_editor = None
 
-    if om_gui.fee_table_editor is not None:
+    try:
         om_gui.fee_table_editor.show()
         om_gui.fee_table_editor.raise_()
-    else:
+    except AttributeError:
         om_gui.fee_table_editor = FeescaleEditor(om_gui)
         om_gui.fee_table_editor.show()
         om_gui.fee_table_editor.closed_signal.connect(editor_closed)
