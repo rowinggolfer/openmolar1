@@ -833,11 +833,11 @@ def force_reconnect():
     '''
     user has changed server!
     '''
-    from openmolar import connect
-    if connect.mainconnection:
+    from openmolar.connect import params
+    if params.has_connection:
         LOGGER.warning("closing connection to previously chosen database")
-        connect.mainconnection.close()
-    connect.params.reload()
+        params._connection.close()
+    params.reload()
 
 
 def initiateUsers(changed_server=False):
