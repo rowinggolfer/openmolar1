@@ -96,7 +96,7 @@ class Connection(object):
 
     def reload(self):
         self.kill_subprocs()
-        self._connection = False
+        self._connection = None
 
         dom = minidom.parse(localsettings.cflocation)
         settingsversion = dom.getElementsByTagName(
@@ -107,13 +107,12 @@ class Connection(object):
         for command_node in command_nodes:
             LOGGER.info("commands found in conf file!")
             commands = command_node.getElementsByTagName("str")
-            command_list = ["nohup"]
+            command_list = [] #["nohup"]
             for command in commands:
                 command_list.append(command.firstChild.data)
             if command_list:
                 LOGGER.info("executing %s", " ".join(command_list))
-                p = subprocess.Popen(command_list, stdout=subprocess.DEVNULL,
-                                     stdin=subprocess.DEVNULL)
+                p = subprocess.Popen(command_list)
                 self.subprocs.append(p)
 
         self.host = xmlnode.getElementsByTagName("location")[0].firstChild.data
