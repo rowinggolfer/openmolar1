@@ -159,17 +159,22 @@ def prompt_close_course(om_gui):
 
 
 def recall_check(om_gui):
-    if (not om_gui.pt.recall_active or
-       om_gui.pt.recd > localsettings.currentDay() or
-       om_gui.pt.has_exam_booked):
+    '''
+    presently this just checks the status of the DENTIST recall
+    (ie. ignores hygienist)
+    '''
+    if not om_gui.pt.recall_active or om_gui.pt.has_exam_booked:
+        return True
+    if (om_gui.pt.appt_settings.recdent_period and
+            om_gui.pt.recd > localsettings.currentDay()):
         return True
     dl = RecallPromptDialog(om_gui.pt, om_gui)
     if dl.exec_():
         if dl.result == dl.IGNORE:
             return True
         else:
-            dl = ApptPrefsDialog(om_gui.pt, om_gui)
-            if dl.exec_():
+            dl2 = ApptPrefsDialog(om_gui.pt, om_gui)
+            if dl2.exec_():
                 om_gui.pt.appt_prefs.commit_changes()
                 om_gui.updateDetails()
                 om_gui.advise(_("Appointment Preferences Applied"))

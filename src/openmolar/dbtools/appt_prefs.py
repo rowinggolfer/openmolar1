@@ -80,6 +80,8 @@ class ApptPrefs(object):
             self.note = ""
         if self.recall_active is None:
             self.recall_active = False
+        elif self.recdent is None and self.rechyg is None:
+            self.recall_active = False
 
     def update_recdent(self):
         if not self.recall_active:

@@ -154,8 +154,7 @@ def details(pt):
                 except TypeError:
                     pass
 
-            html += '''
-            <tr>
+            html += '''        <tr>
                 <td align="center">%s</td>
                 <td align="center">%s%s%s</td>
             </tr>''' % (att,
@@ -168,12 +167,18 @@ def details(pt):
         if pt.recall_active:
             month_start = datetime.date(localsettings.currentDay().year,
                                         localsettings.currentDay().month, 1)
-            if pt.recd > month_start or pt.has_exam_booked:
+            if pt.appt_prefs.recdent_period is None:
+                html += _("Dentist recall disabled")
+            elif pt.recd > month_start or pt.has_exam_booked:
                 html += "%s " % localsettings.formatDate(pt.recd)
                 html += _("(Exam Booked)") if pt.has_exam_booked else ""
             else:
                 html += '<div style="color:red;">%s<br />%s</div>' % (
                     localsettings.formatDate(pt.recd), _("Exam Due"))
+            if (pt.appt_prefs.rechyg_period and pt.appt_prefs.rechyg >
+                    month_start):
+                html += '<div style="color:red;">%s</div>' % (
+                    _("Hygienist Due"))
         else:
             html += '<div style="color:red;">%s</div>' % _("DO NOT RECALL")
 

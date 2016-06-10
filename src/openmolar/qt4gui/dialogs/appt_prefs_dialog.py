@@ -140,12 +140,11 @@ class ApptPrefsDialog(BaseDialog):
         self.recall_groupbox.setChecked(appt_prefs.recall_active)
 
         if appt_prefs.recdent_period is not None:
-            self.recdent_groupbox.setChecked(True)
+            self.recdent_groupbox.setChecked(True and appt_prefs.recall_active)
             self.recdent_period_spinbox.setValue(appt_prefs.recdent_period)
-
             self.recdent_date_edit.setDate(appt_prefs.recdent)
         if appt_prefs.rechyg_period is not None:
-            self.rechyg_groupbox.setChecked(True)
+            self.rechyg_groupbox.setChecked(True and appt_prefs.recall_active)
             self.rechyg_period_spinbox.setValue(appt_prefs.rechyg_period)
             self.rechyg_date_edit.setDate(appt_prefs.rechyg)
 
@@ -187,6 +186,15 @@ class ApptPrefsDialog(BaseDialog):
 
     def apply_changed(self):
         print("applying changes")
+        if self.recall_groupbox.isChecked() and not (
+                self.recdent_groupbox.isChecked() or
+                self.rechyg_groupbox.isChecked()):
+            QtWidgets.QMessageBox.warning(
+                self, _("error"),
+                _("Recall active with neither Dentist "
+                "or Hygienist active makes no sense"))
+            return self.exec_()
+
         self.pt.appt_prefs.recall_active = self.recall_groupbox.isChecked()
 
         if self.recdent_groupbox.isChecked():
@@ -194,10 +202,14 @@ class ApptPrefsDialog(BaseDialog):
                 self.recdent_period_spinbox.value()
             self.pt.appt_prefs.recdent = \
                 self.recdent_date_edit.date().toPyDate()
+        else:
+            self.pt.appt_prefs.recdent_period = None
         if self.rechyg_groupbox.isChecked():
             self.pt.appt_prefs.rechyg_period = \
                 self.rechyg_period_spinbox.value()
             self.pt.appt_prefs.rechyg = self.rechyg_date_edit.date().toPyDate()
+        else:
+            self.pt.appt_prefs.rechyg_period = None
 
         i = self.recall_method_combobox.currentIndex()
         if i == -1:
