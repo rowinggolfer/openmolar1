@@ -165,7 +165,7 @@ def recall_check(om_gui):
     '''
     if not om_gui.pt.recall_active or om_gui.pt.has_exam_booked:
         return True
-    if (om_gui.pt.appt_settings.recdent_period and
+    if (om_gui.pt.appt_prefs.recdent_period and
             om_gui.pt.recd > localsettings.currentDay()):
         return True
     dl = RecallPromptDialog(om_gui.pt, om_gui)
