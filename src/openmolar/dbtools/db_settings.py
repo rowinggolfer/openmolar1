@@ -48,7 +48,7 @@ LEFT JOIN diary_link on ix = diary_link.clinician_ix
 ACTIVE_CLINICIANS_QUERY = CLINICIANS_QUERY + \
     '''WHERE start_date<now() AND (end_date IS NULL OR end_date>now());'''
 
-LOGINS_QUERY = "select id from opid"
+LOGINS_QUERY = "select id from opid where active=True"
 
 INSERT_OPID_QUERY = "INSERT INTO opid (id) values (%s)"
 
