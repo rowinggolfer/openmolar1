@@ -48,7 +48,8 @@ LEFT JOIN diary_link on ix = diary_link.clinician_ix
 ACTIVE_CLINICIANS_QUERY = CLINICIANS_QUERY + \
     '''WHERE start_date<now() AND (end_date IS NULL OR end_date>now());'''
 
-LOGINS_QUERY = "select id from opid where active=True"
+OLD_LOGINS_QUERY = "select id from opid"  # pre schema 3.4
+LOGINS_QUERY = "%s where active=True" % OLD_LOGINS_QUERY
 
 INSERT_OPID_QUERY = "INSERT INTO opid (id) values (%s)"
 
@@ -213,13 +214,19 @@ class SettingsFetcher(object):
 
     @property
     def allowed_logins(self):
-        self.cursor.execute(LOGINS_QUERY)
+        try:
+            self.cursor.execute(LOGINS_QUERY)
+            # will get a column error for schema < 3.4
+        except connect.OperationalError:
+            return self.existing_logins()
         # grab initials of those currently allowed to log in
-        trows = self.cursor.fetchall()
-        allowed_logins = []
-        for row in trows:
-            allowed_logins.append(row[0])
-        return allowed_logins
+        rows = self.cursor.fetchall()
+        return [row[0] for row in rows]
+
+    def existing_logins(self):
+        self.cursor.execute(OLD_LOGINS_QUERY)
+        rows = self.cursor.fetchall()
+        return [row[0] for row in rows]
 
     @property
     def wiki_url(self):

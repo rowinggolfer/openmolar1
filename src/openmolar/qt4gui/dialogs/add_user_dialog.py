@@ -58,15 +58,17 @@ class AddUserDialog(ExtendableDialog):
 
         self.line_edit.textChanged.connect(self._check_enable)
         self.line_edit.setFocus()
+        settings_fetcher = db_settings.SettingsFetcher()
+        self.existing_logins = settings_fetcher.existing_logins()
 
         list_widget = QtWidgets.QListWidget()
-        list_widget.addItems(sorted(localsettings.allowed_logins))
+        list_widget.addItems(sorted(self.existing_logins))
         self.add_advanced_widget(list_widget)
         self.set_advanced_but_text(_("view existing users"))
 
     def _check_enable(self, *args):
         input_ = self.username
-        if input_ in localsettings.allowed_logins:
+        if input_ in self.existing_logins:
             QtWidgets.QMessageBox.warning(
                 self,
                 _("error"),
