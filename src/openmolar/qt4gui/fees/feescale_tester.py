@@ -154,8 +154,9 @@ class FeescaleTestingDialog(Ui_codeChecker.Ui_Dialog, QtWidgets.QDialog):
                     code, usercode)
                 self.line_edits[att].setText("%s %s" % (code, description))
         for model in (self.model2, self.model3):
+            model.beginResetModel()
             model.code = tx
-            model.reset()
+            model.endResetModel()
         for att in DECIDMOUTH + ADULTMOUTH:
             for complex_shortcut in self.current_table.complex_shortcuts:
                 if complex_shortcut.matches(att, tx):
