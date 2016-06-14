@@ -21,6 +21,14 @@
 # #                                                                         # #
 # ########################################################################### #
 
+'''
+The versioning for openmolar is the classic MAJOR.MINOR.REVISION
+eg. v1.1.2
+As git is the version control system, I achieve this via tagging.
+example for above would be git tag -a -m "message" v1.1
+and v1.1.2 would be 2 git commits (to the master branch) later.
+'''
+
 import logging
 import os
 import re
@@ -40,7 +48,14 @@ repo = git.Repo(filepath)
 if repo.description == "openmolar1":
     try:
         git_version = repo.git.describe()
-        GIT_VERSION = re.sub("v", "", git_version, 1)
+        m = re.match(r"v?(\d+)\.(\d+)(-(\d+)-(.*))?", git_version)
+        try:
+            GIT_VERSION = "%s.%s" % m.groups()[:2]
+            if m.groups()[2] is not None:
+                GIT_VERSION += ".%s-%s" % m.groups()[3:5]
+        except AttributeError:
+            LOGGER.warning("git tag not in format MAJOR.MINOR")
+            GIT_VERSION = git_version
         if repo.is_dirty():
             GIT_VERSION += "-dirty"
     except git.exc.GitCommandError:
