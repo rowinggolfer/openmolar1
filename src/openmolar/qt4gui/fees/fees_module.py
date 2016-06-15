@@ -362,10 +362,12 @@ def expandFees(om_gui):
     expands/contracts the fees treewidget
     dependent on the state of the feeExpand_radioButton
     '''
+    om_gui.wait()
     if om_gui.ui.feeExpand_radioButton.isChecked():
         om_gui.ui.feeScales_treeView.expandAll()
     else:
         om_gui.ui.feeScales_treeView.collapseAll()
+    om_gui.wait(False)
 
 
 def makeBadDebt(om_gui):

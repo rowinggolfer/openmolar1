@@ -4416,57 +4416,36 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                 </widget>
                </item>
                <item>
-                <spacer name="verticalSpacer_9">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>40</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
-                <widget class="QFrame" name="frame_6">
+                <widget class="QGroupBox" name="groupBox_6">
                  <property name="enabled">
                   <bool>true</bool>
                  </property>
-                 <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                 <property name="title">
+                  <string>Search Options</string>
                  </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Raised</enum>
+                 <property name="flat">
+                  <bool>false</bool>
                  </property>
                  <layout class="QGridLayout" name="gridLayout_16">
-                  <property name="margin">
+                  <property name="leftMargin">
+                   <number>2</number>
+                  </property>
+                  <property name="topMargin">
                    <number>3</number>
                   </property>
-                  <item row="0" column="0">
-                   <widget class="QLabel" name="label_26">
-                    <property name="text">
-                     <string>Search  For an Item</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignCenter</set>
-                    </property>
-                   </widget>
+                  <property name="rightMargin">
+                   <number>2</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>3</number>
+                  </property>
+                  <property name="spacing">
+                   <number>4</number>
+                  </property>
+                  <item row="0" column="0" colspan="2">
+                   <widget class="QLineEdit" name="feeSearch_lineEdit"/>
                   </item>
-                  <item row="2" column="0" colspan="2">
-                   <widget class="QRadioButton" name="search_descriptions_radioButton">
-                    <property name="toolTip">
-                     <string>search for the given phrase in description columns</string>
-                    </property>
-                    <property name="text">
-                     <string>Search Descriptions</string>
-                    </property>
-                    <property name="checked">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="1">
+                  <item row="0" column="2">
                    <widget class="QPushButton" name="feeSearch_pushButton">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -4507,10 +4486,30 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     </property>
                    </widget>
                   </item>
-                  <item row="1" column="0" colspan="2">
-                   <widget class="QLineEdit" name="feeSearch_lineEdit"/>
+                  <item row="3" column="0" colspan="3">
+                   <widget class="QLabel" name="feesearch_results_label">
+                    <property name="text">
+                     <string>TextLabel</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
                   </item>
-                  <item row="3" column="0" colspan="2">
+                  <item row="1" column="0" colspan="3">
+                   <widget class="QRadioButton" name="search_descriptions_radioButton">
+                    <property name="toolTip">
+                     <string>search for the given phrase in description columns</string>
+                    </property>
+                    <property name="text">
+                     <string>Search Descriptions</string>
+                    </property>
+                    <property name="checked">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="0" colspan="3">
                    <widget class="QRadioButton" name="search_itemcodes_radioButton">
                     <property name="toolTip">
                      <string>only search for the given phrase in the usercode column</string>
@@ -4523,83 +4522,71 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                     </property>
                    </widget>
                   </item>
-                  <item row="4" column="0" colspan="2">
-                   <widget class="QLabel" name="feesearch_results_label">
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QGroupBox" name="groupBox_11">
+                 <property name="title">
+                  <string>Display Options</string>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_22">
+                  <property name="spacing">
+                   <number>4</number>
+                  </property>
+                  <property name="leftMargin">
+                   <number>2</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>6</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>2</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>6</number>
+                  </property>
+                  <item>
+                   <widget class="QCheckBox" name="hide_rare_feescale_codes_checkBox">
                     <property name="text">
-                     <string>TextLabel</string>
+                     <string>Hide Rarely Used Codes</string>
                     </property>
-                    <property name="alignment">
-                     <set>Qt::AlignCenter</set>
+                    <property name="checked">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="feeExpand_radioButton">
+                    <property name="enabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="toolTip">
+                     <string>Quickly expand all items</string>
+                    </property>
+                    <property name="text">
+                     <string>Expand All Sections</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="feeCompress_radioButton">
+                    <property name="enabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="toolTip">
+                     <string>Quickly compress all items</string>
+                    </property>
+                    <property name="text">
+                     <string>Compress All Sections</string>
+                    </property>
+                    <property name="checked">
+                     <bool>true</bool>
                     </property>
                    </widget>
                   </item>
                  </layout>
                 </widget>
-               </item>
-               <item>
-                <spacer name="verticalSpacer_8">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>40</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="hide_rare_feescale_codes_checkBox">
-                 <property name="text">
-                  <string>Hide Rarely Used Codes</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="feeExpand_radioButton">
-                 <property name="enabled">
-                  <bool>true</bool>
-                 </property>
-                 <property name="toolTip">
-                  <string>Quickly expand all items</string>
-                 </property>
-                 <property name="text">
-                  <string>Expand All Sections</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="feeCompress_radioButton">
-                 <property name="enabled">
-                  <bool>true</bool>
-                 </property>
-                 <property name="toolTip">
-                  <string>Quickly compress all items</string>
-                 </property>
-                 <property name="text">
-                  <string>Compress All Sections</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="verticalSpacer_3">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>40</height>
-                  </size>
-                 </property>
-                </spacer>
                </item>
                <item>
                 <widget class="QGroupBox" name="groupBox">
@@ -4661,6 +4648,9 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   <bool>false</bool>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_14">
+                  <property name="margin">
+                   <number>3</number>
+                  </property>
                   <item>
                    <widget class="QPushButton" name="feescale_tester_pushButton">
                     <property name="text">
