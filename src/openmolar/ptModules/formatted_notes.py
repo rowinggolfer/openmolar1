@@ -85,13 +85,15 @@ def get_notes_for_date(lines, full_notes=False):
     '''
     this is the actual user clinically relevant stuff!
     '''
+    def non_blocking_repl(m):
+        return "&nbsp" * m.end()
     txs = []
     rev_txs = []
     tx, note, metadata = "", "", ""
     for ntype, noteline in lines:
         if "NOTE" in ntype and noteline != "":
-            note += "%s " % noteline.replace(
-                "<", "&lt;").replace(">", "&gt;").replace(" ", "&nbsp;")
+            note += "%s " % noteline.replace("<", "&lt;").replace(">", "&gt;")
+            note = re.sub(r"^\s+", non_blocking_repl, note)
         else:
             if "TC" in ntype:
                 txs.append((ntype, noteline.strip("\n")))
@@ -277,4 +279,4 @@ if __name__ == "__main__":
     print(notes_)
     notes_ = rec_notes(
         patient_class.patient(serialno).notes_dict, datetime.date(2015, 10, 1))
-    print(notes_)
+    # print(notes_)
