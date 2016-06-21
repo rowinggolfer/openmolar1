@@ -3278,13 +3278,16 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
             self.pt_diary_widget.refresh_ptDiary)
         self.diary_widget.print_mh_signal.connect(self.print_mh_forms)
         self.diary_widget.mh_form_date_signal.connect(self.diary_mh_form_date)
-        self.pt_diary_widget.start_scheduling.connect(self.start_scheduling)
+        self.pt_diary_widget.start_scheduling_signal.connect(self.start_scheduling)
         self.pt_diary_widget.find_appt.connect(self.diary_widget.find_appt)
         self.pt_diary_widget.appointments_changed_signal.connect(
             self.handle_pt_diary_update)
 
-    def start_scheduling(self):
-        LOGGER.debug("starting scheduling")
+    def start_scheduling(self, custom):
+        '''
+        An appointment is to be scheduled.
+        '''
+        LOGGER.debug("starting scheduling, custom=%s", custom)
         appts = self.pt_diary_widget.selected_appointments
         self.pt_diary_widget.layout_ptDiary()
         self.diary_widget.schedule_controller.set_patient(self.pt)
@@ -3293,7 +3296,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         self.ui.main_tabWidget.setCurrentIndex(1)  # appointmenttab
         self.signals_tabs()
         self.updateDetails()
-        self.diary_widget.start_scheduling()
+        self.diary_widget.start_scheduling(custom)
 
     def handle_pt_diary_update(self):
         LOGGER.debug("handle_pt_diary_update")

@@ -135,8 +135,12 @@ class BaseDialog(QtWidgets.QDialog):
         role = self.button_box.buttonRole(but)
         if role == QtWidgets.QDialogButtonBox.AcceptRole:
             self.accept()
-        else:
+        elif role == QtWidgets.QDialogButtonBox.ApplyRole:
+            self.accept()
+        elif role == QtWidgets.QDialogButtonBox.RejectRole:
             self.reject()
+        else:
+            LOGGER.info("BaseDialog Button Box sent Role %s", role)
 
     def reject(self):
         if not (self.check_before_reject_if_dirty and self.dirty):

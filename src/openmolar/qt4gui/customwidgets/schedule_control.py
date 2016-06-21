@@ -63,6 +63,13 @@ FEEDBACK = '''<html>
 </div>
 <ol><li class="trt">%%s</li></ol>''' % localsettings.stylesheet
 
+SETTINGS_HTML = '''<html>
+<head>
+<link rel="stylesheet" href="%s" type="text/css">
+</head>
+%%s<ul class="search-settings-list">
+<li class="search-settings-item">%%s</li></ul>''' % localsettings.stylesheet
+
 
 class DiaryScheduleController(QtWidgets.QStackedWidget):
 
@@ -88,7 +95,7 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
     show_first_appointment = QtCore.pyqtSignal()
     chosen_slot_changed = QtCore.pyqtSignal()
     find_appt = QtCore.pyqtSignal(object)
-    start_scheduling = QtCore.pyqtSignal()  # from embedded pt diary widget
+    schedule_signal = QtCore.pyqtSignal()  # from embedded pt diary widget
     advice_signal = QtCore.pyqtSignal(object, object)
 
     pt = None
@@ -211,9 +218,16 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
 
         diary_button.clicked.connect(self.show_pt_diary)
 
-        self.appt_listView.selectionModel().selectionChanged.connect(
-            self.selection_changed)
+        self.connect_listview_signals()
         self.appt_listView.doubleClicked.connect(self.appointment_2x_clicked)
+
+    def connect_listview_signals(self, connect=True):
+        signal = self.appt_listView.selectionModel().selectionChanged
+        if connect:
+            signal.connect(self.selection_changed)
+        else:
+            signal.disconnect(self.selection_changed)
+
 
     def set_mode(self, mode):
         if self.mode == mode:
@@ -417,7 +431,9 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
         for appt in appts:
             if appt.serialno != self.serialno:
                 return
+        self.connect_listview_signals(False)
         self.appointment_model.set_selected_appointments(appts)
+        self.connect_listview_signals()
 
     def update_selected_appointment(self, appt):
         self.primary_slots = []
@@ -742,11 +758,11 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
             self.appointment_model.selection_model.reset()
             appts = pt_diary_widget.selected_appointments
             self.update_appt_selection(appts)
-            QtCore.QTimer.singleShot(100, self.start_scheduling.emit)
+            QtCore.QTimer.singleShot(100, self.schedule_signal.emit)
 
         pt_diary_widget = PtDiaryWidget()
         pt_diary_widget.find_appt.connect(_find_appt)
-        pt_diary_widget.start_scheduling.connect(_start_scheduling)
+        pt_diary_widget.start_scheduling_signal.connect(_start_scheduling)
 
         pt_diary_widget.set_patient(self.pt)
 
@@ -760,10 +776,9 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
         layout.addStretch()
         layout.addWidget(but_box)
 
-        dl.exec_()
-
-        self.appointment_model.load_from_database(self.pt)
-        self.enable_scheduling_buttons()
+        if not dl.exec_():
+            self.appointment_model.load_from_database(self.pt)
+            self.enable_scheduling_buttons()
 
     def enable_scheduling_buttons(self):
         enabled = self.is_searching
@@ -775,16 +790,20 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
             but.setEnabled(enabled)
         self.update_search_criteria_webview()
 
-    def begin_make_appointment(self):
+    def begin_make_appointment(self, custom):
         '''
         this is when an external widget calls for us to start the process
         of starting an appointment
+        if custom is True, then the ApptSettingsDialog is shown.
         '''
+        LOGGER.debug("begin_make_appointment custom = %s", custom)
         self.set_mode(self.SCHEDULE_MODE)
         self.enable_scheduling_buttons()
         LOGGER.debug("checking appointment settings %s",
                      ApptSettingsDialog.is_default_settings())
-        if not ApptSettingsDialog.is_default_settings():
+        if custom == True:
+            self.show_settings_dialog()
+        elif not ApptSettingsDialog.is_default_settings():
             dl = ApptSettingsResetDialog(self)
             if dl.exec_():
                 if dl.show_settings_dialog:
@@ -945,9 +964,9 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
         if self.appointment_model.currentAppt is None:
             html = _("No Appointment Selected")
         else:
-            html = '%s<ul><li>%s</li></ul>' % (
+            html = SETTINGS_HTML % (
                 _("Search Settings"),
-                "</li><li>". join(
+                '</li><li class="search-settings-item">'. join(
                     [s for s in (
                         self._dentist_message,
                         self._hygienist_message,
@@ -1050,7 +1069,7 @@ class TestWindow(QtWidgets.QMainWindow):
             self.sig_catcher)
         self.schedule_controller.chosen_slot_changed.connect(self.sig_catcher)
         self.schedule_controller.find_appt.connect(self.sig_catcher)
-        self.schedule_controller.start_scheduling.connect(self.sig_catcher)
+        self.schedule_controller.schedule_signal.connect(self.sig_catcher)
         self.change_mode()
 
     def sizeHint(self):

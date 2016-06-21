@@ -20,12 +20,13 @@ li.trt{color:blue;}
 
 /*-- UNORDERED LISTS --*/
 ul{list-style:none;padding-left:0px;}
+ul.search-settings-list{list-style-type:disc;padding-left:10px;}
+
 li.about{list-style:none;color:blue;padding-left:0px}
-
+li.search-settings-item{list-style-type:disc;font-size:9pt}
 li.recep_note{font-size:9pt;list-style-type:none;padding-left:0px;background-color:#ffeedd;}
-
-li.agenda{font-size:9pt;list-style-type:disk}
-li.slot{font-size:9pt;list-style-type:disk;font-style:bold;color:red;background-color:#ffff66;}
+li.agenda{font-size:9pt;list-style-type:disc}
+li.slot{font-size:9pt;list-style-type:disc;font-style:bold;color:red;background-color:#ffff66;}
 li.active_slot{font-size:11pt;list-style-type:circle;font-style:bold;color:red;background-color:#ffff00;}
 
 /* -- reception_notes -- */

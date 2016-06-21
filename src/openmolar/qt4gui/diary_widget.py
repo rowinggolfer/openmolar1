@@ -199,7 +199,7 @@ class DiaryWidget(Advisor):
         self.highlighted_appointment = None
         if not self.laid_out:
             self.initiate()
-            QtCore.QTimer.singleShot(10, self.layout_diary)
+            # QtCore.QTimer.singleShot(10, self.layout_diary)
 
     def resizeEvent(self, event):
         '''
@@ -284,7 +284,7 @@ class DiaryWidget(Advisor):
                 ((apptix, memo),))
             self.advise("%s- %s %s" % (_("Adding day memo"), dentist, memo))
 
-    def load_patient(self, patient, update=True):
+    def load_patient(self, patient, update=False):
         LOGGER.debug("DiaryWidget.load_patient '%s', update=%s",
                      patient, update)
 
@@ -303,7 +303,8 @@ class DiaryWidget(Advisor):
         LOGGER.debug("DiaryWidget.load_patient finished")
 
     def set_appt_mode(self, mode, update_required=True):
-        LOGGER.debug("DiaryWidget.set_appt_mode")
+        LOGGER.debug(
+            "DiaryWidget.set_appt_mode update_required=%s", update_required)
         self.highlighted_appointment = None
         if self.schedule_controller.mode == mode:
             return
@@ -381,19 +382,16 @@ class DiaryWidget(Advisor):
         don't switch to weekview
         '''
         LOGGER.debug("sched_control_begin_makeAppt")
-        self.begin_makeAppt(force_weekview=False)
+        self.begin_makeAppt()
 
-    def begin_makeAppt(self, force_weekview=True):
+    def begin_makeAppt(self, custom=False):
         '''
         make an appointment - switch user to "scheduling mode" and present the
         appointment overview to show possible appointments
         also handles both 1st appointment buttons
         '''
-        LOGGER.debug(
-            "DiaryWidget.begin_makeAppt - force_weekview=%s", force_weekview)
+        LOGGER.debug("DiaryWidget.begin_makeAppt")
         self.ui.appt_notes_webView.setVisible(False)
-        if force_weekview:
-            self.ui.diary_tabWidget.setCurrentIndex(1)
 
         self.schedule_controller.clear_slots()
         appt = self.schedule_controller.appointment_model.currentAppt
@@ -412,7 +410,7 @@ class DiaryWidget(Advisor):
         self.signals_calendar()
 
         self.schedule_controller.set_search_future()
-        self.schedule_controller.begin_make_appointment()
+        self.schedule_controller.begin_make_appointment(custom)
         self.layout_diary()
 
     def makeAppt(self, appt, slot):
@@ -582,7 +580,7 @@ class DiaryWidget(Advisor):
         '''
         this function is called automatically every 30 seconds.
         '''
-        LOGGER.debug("check_update")
+        # LOGGER.debug("check_update")
         if self.isVisible():
             self.layout_diary(True)
         else:
@@ -1282,11 +1280,16 @@ class DiaryWidget(Advisor):
         if self.schedule_controller.mode == self.SCHEDULING_MODE:
             self.start_scheduling()
 
-    def start_scheduling(self):
-        LOGGER.debug("DiaryWidget.start_scheduling")
-        self.set_appt_mode(self.SCHEDULING_MODE)
+    def start_scheduling(self, custom=False, force_weekview=True):
+        LOGGER.debug(
+            "DiaryWidget.start_scheduling, force_weekview = %s", force_weekview)
+        if force_weekview:
+            self.connect_tabwidget(False)
+            self.ui.diary_tabWidget.setCurrentIndex(1)
+            self.connect_tabwidget()
+        self.set_appt_mode(self.SCHEDULING_MODE, update_required=False)
         self.load_patient(self.schedule_controller.pt, update=False)
-        self.begin_makeAppt()
+        self.begin_makeAppt(custom)
 
     def find_appt(self, appt):
         LOGGER.debug("DiaryWidgetfind_appt %s" % appt)
@@ -1457,9 +1460,15 @@ class DiaryWidget(Advisor):
         page = self.ui.appt_notes_webView.page()
         page.setLinkDelegationPolicy(page.DelegateAllLinks)
 
+    def connect_tabwidget(self, connect=True):
+        if connect:
+            func_ = self.ui.diary_tabWidget.currentChanged.connect
+        else:
+            func_ = self.ui.diary_tabWidget.currentChanged.disconnect
+        func_(self.diary_tabWidget_nav)
+
     def init_signals(self):
-        self.ui.diary_tabWidget.currentChanged.connect(
-            self.diary_tabWidget_nav)
+        self.connect_tabwidget()
 
         self.ui.goTodayPushButton.clicked.connect(self.gotoToday_clicked)
 
@@ -1484,13 +1493,10 @@ class DiaryWidget(Advisor):
             self.schedule_controller_appointment_selected)
 
         self.schedule_controller.find_appt.connect(self.find_appt)
-        self.schedule_controller.start_scheduling.connect(
+        self.schedule_controller.schedule_signal.connect(
             self.sched_control_begin_makeAppt)
         self.schedule_controller.advice_signal.connect(self.advise)
-
-        self.view_controller.update_needed.connect(
-            self.layout_diary)
-
+        self.view_controller.update_needed.connect(self.layout_diary)
         self.view_controller.apt_mode_changed.connect(self.set_appt_mode)
 
     def signals_apptWidgets(self, book):
@@ -1566,9 +1572,9 @@ class _testDiary(QtWidgets.QMainWindow):
         dw.initiate()
         dw.patient_card_request.connect(self.sig_catcher)
 
-        # from openmolar.dbtools import patient_class
-        # pt = patient_class.patient(1)
-        # dw.schedule_controller.set_patient(pt)
+        from openmolar.dbtools import patient_class
+        pt = patient_class.patient(11956)
+        dw.schedule_controller.set_patient(pt)
 
         localsettings.operator = "NW"
         self.setCentralWidget(dw)
@@ -1581,6 +1587,8 @@ class _testDiary(QtWidgets.QMainWindow):
 
         self.menuBar().addAction(action1)
         self.menuBar().addAction(action2)
+
+        QtCore.QTimer.singleShot(100, dw.layout_diary)
 
     def sig_catcher(self, *args):
         print("signal caught", args)

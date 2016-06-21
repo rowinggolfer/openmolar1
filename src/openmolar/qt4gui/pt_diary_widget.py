@@ -48,7 +48,7 @@ LOGGER = logging.getLogger("openmolar")
 class PtDiaryWidget(QtWidgets.QWidget):
     _pt = None
 
-    start_scheduling = QtCore.pyqtSignal()
+    start_scheduling_signal = QtCore.pyqtSignal(object)
     find_appt = QtCore.pyqtSignal(object)
     # also inherits a signal from the model "appointments_changed_signal"
 
@@ -283,7 +283,7 @@ class PtDiaryWidget(QtWidgets.QWidget):
                         self.layout_ptDiary()
                         self.select_apr_ix(apr_ix)
                         if dl.makeNow:
-                            self.start_scheduling.emit()
+                            self.start_scheduling_signal.emit()
                     else:
                         # -commit failed
                         self.advise("Error saving appointment", 2)
@@ -329,11 +329,17 @@ class PtDiaryWidget(QtWidgets.QWidget):
         dl.add_appointments_signal.connect(applyApptWizard)
         dl.exec_()
 
-    def scheduleAppt_pushButton_clicked(self):
+    def schedule_appt_clicked(self):
         '''
         user about to make an appointment
         '''
-        self.start_scheduling.emit()
+        self.start_scheduling_signal.emit(False)
+
+    def schedule_appt_custom_clicked(self):
+        '''
+        user about to make an appointment with custom settings
+        '''
+        self.start_scheduling_signal.emit(True)
 
     def clearApptButton_clicked(self):
         '''
@@ -465,7 +471,7 @@ class PtDiaryWidget(QtWidgets.QWidget):
                     if dl.makeNow:
                         self.layout_ptDiary()
                         self.select_apr_ix(appt.aprix)
-                        self.scheduleAppt_pushButton_clicked()
+                        self.schedule_appt_clicked()
                 else:
                     if not appointments.modify_aslot_appt(
                             appt.date, practix, appt.atime, appt.serialno,
@@ -514,12 +520,20 @@ class PtDiaryWidget(QtWidgets.QWidget):
         modify_action.triggered.connect(self.modifyAppt_clicked)
         if self.diary_model.appt_2 is not None:
             action = QtWidgets.QAction(_("Schedule these appointments"), self)
-            action.triggered.connect(self.scheduleAppt_pushButton_clicked)
+            action.triggered.connect(self.schedule_appt_clicked)
+            qmenu.addAction(action)
+            action = QtWidgets.QAction(
+                _("Schedule these appointments (custom settings)"), self)
+            action.triggered.connect(self.schedule_appt_custom_clicked)
             qmenu.addAction(action)
         else:
             if appt.date is None:
                 action = QtWidgets.QAction(_("Schedule this appointment"), self)
-                action.triggered.connect(self.scheduleAppt_pushButton_clicked)
+                action.triggered.connect(self.schedule_appt_clicked)
+                qmenu.addAction(action)
+                action = QtWidgets.QAction(
+                    _("Schedule this appointment (custom settings)"), self)
+                action.triggered.connect(self.schedule_appt_custom_clicked)
                 qmenu.addAction(action)
                 qmenu.addAction(modify_action)
                 qmenu.addSeparator()
@@ -568,7 +582,7 @@ class _TestMainWindow(QtWidgets.QMainWindow):
         self.dw.set_patient(pt)
         self.dw.layout_ptDiary()
 
-        self.dw.start_scheduling.connect(self.start_scheduling)
+        self.dw.start_scheduling_signal.connect(self.start_scheduling)
         self.dw.ui.pt_diary_treeView.clicked.connect(self.selection_changed)
         self.dw.find_appt.connect(self.find_appt)
 
@@ -581,7 +595,8 @@ class _TestMainWindow(QtWidgets.QMainWindow):
     def sizeHint(self):
         return QtCore.QSize(800, 400)
 
-    def start_scheduling(self):
+    def start_scheduling(self, custom):
+        LOGGER.info("start scheduling custom=%s", custom)
         html = '''<h1>Start Scheduling</h1>
             <ul><li>%s</li></ul>
             ''' % '</li><li>'.join(
