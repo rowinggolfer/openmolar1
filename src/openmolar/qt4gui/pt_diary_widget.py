@@ -70,8 +70,8 @@ class PtDiaryWidget(QtWidgets.QWidget):
         self.ui.pt_diary_treeView.setItemDelegate(item_delegate)
         self.signals()
         self.setSizePolicy(
-            QtWidgets.QSizePolicy(
-                QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+            QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                  QtWidgets.QSizePolicy.Preferred)
         )
         self.appointments_changed_signal = \
             self.diary_model.appointments_changed_signal
@@ -526,15 +526,18 @@ class PtDiaryWidget(QtWidgets.QWidget):
                 _("Schedule these appointments (custom settings)"), self)
             action.triggered.connect(self.schedule_appt_custom_clicked)
             qmenu.addAction(action)
+            qmenu.addSeparator()
         else:
             if appt.date is None:
-                action = QtWidgets.QAction(_("Schedule this appointment"), self)
+                action = QtWidgets.QAction(_("Schedule this appointment"),
+                                           self)
                 action.triggered.connect(self.schedule_appt_clicked)
                 qmenu.addAction(action)
                 action = QtWidgets.QAction(
                     _("Schedule this appointment (custom settings)"), self)
                 action.triggered.connect(self.schedule_appt_custom_clicked)
                 qmenu.addAction(action)
+                qmenu.addSeparator()
                 qmenu.addAction(modify_action)
                 qmenu.addSeparator()
                 action = QtWidgets.QAction(
@@ -548,7 +551,8 @@ class PtDiaryWidget(QtWidgets.QWidget):
                 qmenu.addSeparator()
                 if appt.date >= localsettings.currentDay():
                     qmenu.addAction(modify_action)
-                    action = QtWidgets.QAction(_("Cancel this appointment"), self)
+                    action = QtWidgets.QAction(_("Cancel this appointment"),
+                                               self)
                     action.triggered.connect(self.clearApptButton_clicked)
                     qmenu.addAction(action)
 

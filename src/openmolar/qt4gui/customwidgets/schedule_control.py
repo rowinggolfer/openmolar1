@@ -42,6 +42,7 @@ from openmolar.qt4gui.appointment_gui_modules.draggable_list \
 from openmolar.qt4gui.appointment_gui_modules.list_models \
     import SimpleListModel, BlockListModel, ColouredItemDelegate
 
+from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 from openmolar.qt4gui.dialogs.find_patient_dialog import FindPatientDialog
 from openmolar.qt4gui.dialogs.appt_settings_dialog import \
     ApptSettingsDialog, ApptSettingsResetDialog
@@ -772,17 +773,13 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
 
         pt_diary_widget.set_patient(self.pt)
 
-        dl = QtWidgets.QDialog(self)
-        but_box = QtWidgets.QDialogButtonBox(dl)
-        but = but_box.addButton(_("Close"), but_box.AcceptRole)
-        but.clicked.connect(dl.accept)
-
-        layout = QtWidgets.QVBoxLayout(dl)
-        layout.addWidget(pt_diary_widget)
-        layout.addStretch()
-        layout.addWidget(but_box)
-
-        if not dl.exec_():
+        dl = BaseDialog(self, remove_stretch=True)
+        dl.insertWidget(pt_diary_widget)
+        dl.cancel_but.setText(_("OK"))
+        dl.apply_but.hide()
+        dl.setMinimumWidth(800)
+        dl.setMaximumWidth(800)
+        if not dl.exec_():  # dialog is only accepted by subroutines above
             self.appointment_model.load_from_database(self.pt)
             self.enable_scheduling_buttons()
 
