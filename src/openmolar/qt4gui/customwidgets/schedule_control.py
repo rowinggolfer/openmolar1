@@ -25,6 +25,7 @@
 schedule_control.py provides the DiaryScheduleController class for openmolar.
 '''
 
+from functools import partial
 import logging
 
 from PyQt5 import QtCore
@@ -95,7 +96,7 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
     show_first_appointment = QtCore.pyqtSignal()
     chosen_slot_changed = QtCore.pyqtSignal()
     find_appt = QtCore.pyqtSignal(object)
-    schedule_signal = QtCore.pyqtSignal()  # from embedded pt diary widget
+    schedule_signal = QtCore.pyqtSignal(object)  # from embedded pt diary widget
     advice_signal = QtCore.pyqtSignal(object, object)
 
     pt = None
@@ -752,13 +753,18 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
             dl.accept()
             self.find_appt.emit(appt)
 
-        def _start_scheduling():
+        def _start_scheduling(custom):
+            '''
+            if custom, the dialog will be raised giving day of week options etc
+            '''
             dl.accept()
             self.get_data()
             self.appointment_model.selection_model.reset()
             appts = pt_diary_widget.selected_appointments
             self.update_appt_selection(appts)
-            QtCore.QTimer.singleShot(100, self.schedule_signal.emit)
+            QtCore.QTimer.singleShot(100,
+                                     partial(self.schedule_signal.emit, custom)
+                                     )
 
         pt_diary_widget = PtDiaryWidget()
         pt_diary_widget.find_appt.connect(_find_appt)

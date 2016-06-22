@@ -377,13 +377,6 @@ class DiaryWidget(Advisor):
         else:
             self.schedule_controller.set_chosen_2nd_slot(slot)
 
-    def sched_control_begin_makeAppt(self):
-        '''
-        don't switch to weekview
-        '''
-        LOGGER.debug("sched_control_begin_makeAppt")
-        self.begin_makeAppt()
-
     def begin_makeAppt(self, custom=False):
         '''
         make an appointment - switch user to "scheduling mode" and present the
@@ -1484,7 +1477,7 @@ class DiaryWidget(Advisor):
         self.signals_appointmentOVTab()
 
         self.schedule_controller.show_first_appointment.connect(
-            self.sched_control_begin_makeAppt)
+            self.begin_makeAppt)
 
         self.schedule_controller.chosen_slot_changed.connect(
             self.chosen_slot_changed)
@@ -1494,7 +1487,7 @@ class DiaryWidget(Advisor):
 
         self.schedule_controller.find_appt.connect(self.find_appt)
         self.schedule_controller.schedule_signal.connect(
-            self.sched_control_begin_makeAppt)
+            self.begin_makeAppt)
         self.schedule_controller.advice_signal.connect(self.advise)
         self.view_controller.update_needed.connect(self.layout_diary)
         self.view_controller.apt_mode_changed.connect(self.set_appt_mode)
