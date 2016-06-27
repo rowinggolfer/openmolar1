@@ -206,6 +206,7 @@ class SimpleListModel(QtCore.QAbstractListModel):
         '''
 
         self.clear()
+        self.beginResetModel()
         for appt in appts:
             if appt.past:
                 pass
@@ -213,9 +214,8 @@ class SimpleListModel(QtCore.QAbstractListModel):
                 self.unscheduledList.append(appt)
             else:
                 self.scheduledList.append(appt)
-        self.beginResetModel()
-        self.set_selected_appointments(selected_apps)
         self.endResetModel()
+        self.set_selected_appointments(selected_apps)
 
     def set_selected_appointments(self, selected_apps):
         '''

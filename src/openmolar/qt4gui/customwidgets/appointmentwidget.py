@@ -699,7 +699,8 @@ class AppointmentCanvas(QtWidgets.QWidget):
             self.selected_rows = (startcell, endcell)
 
         elif self.pWidget.mode in (self.pWidget.BROWSING_MODE,
-                                   self.pWidget.NOTES_MODE):
+                                   self.pWidget.NOTES_MODE,
+                                   self.pWidget.SCHEDULING_MODE):
             feedback = ""
             if row in self.rows:
                 sno_list = self.rows[row]

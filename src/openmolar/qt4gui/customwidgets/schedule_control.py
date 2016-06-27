@@ -230,7 +230,6 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
         else:
             signal.disconnect(self.selection_changed)
 
-
     def set_mode(self, mode):
         if self.mode == mode:
             return
@@ -286,7 +285,9 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
         if self.pt is None:
             self.clear()
             return
+        self.connect_listview_signals(False)
         self.appointment_model.load_from_database(self.pt)
+        self.connect_listview_signals()
 
     @property
     def patient_text(self):
@@ -557,9 +558,12 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
                 self.secondary_slots.append(slot)
 
     def set_slots_from_day_app_data(self, app_data):
-        self.set_primary_slots([] if self.app1_is_scheduled else
-                               app_data.slots(self.app1_length,
-                                              self.ignore_emergency_spaces))
+        if self.app1_is_scheduled:
+            self.set_primary_slots([])
+        else:
+            self.set_primary_slots(
+                app_data.slots(self.app1_length, self.ignore_emergency_spaces))
+
         app2_slots = []
         if self.is_searching_for_double_appointments and \
                 not self.app2_is_scheduled:

@@ -383,7 +383,7 @@ class DiaryWidget(Advisor):
         appointment overview to show possible appointments
         also handles both 1st appointment buttons
         '''
-        LOGGER.debug("DiaryWidget.begin_makeAppt")
+        LOGGER.info("DiaryWidget.begin_makeAppt")
         self.ui.appt_notes_webView.setVisible(False)
 
         self.schedule_controller.clear_slots()
@@ -394,7 +394,7 @@ class DiaryWidget(Advisor):
         if not appt.unscheduled:
             self.layout_diary()
             self.advise(_("appointment already scheduled for") + " %s" % (
-                        localsettings.readableDate(appt.date)), 1)
+                localsettings.readableDate(appt.date)), 1)
             return
 
         self.signals_calendar(False)
@@ -498,6 +498,7 @@ class DiaryWidget(Advisor):
                 slot.date(), selectedDent, selectedtime, endtime,
                 appt.name[:30], appt.serialno, appt.trt1,
                     appt.trt2, appt.trt3, appt.memo, appt.flag, cst, 0, 0):
+                LOGGER.info("Appointment made in aslot")
 
                 if appt.serialno != 0:
                     if not appointments.pt_appt_made(
@@ -506,12 +507,13 @@ class DiaryWidget(Advisor):
                         self.advise(
                             _("Error putting appointment back "
                               "into patient diary"))
+                    LOGGER.info("Appointment updated in apr")
 
                     self.schedule_controller.get_data()
                     self.pt_diary_changed.emit(self.pt.serialno)
 
                     if appointments.has_unscheduled(appt.serialno):
-                        self.advise(_("more appointments to schedule"))
+                        self.advise(_("more appointments to schedule"), 1)
                     else:
                         self.offer_appointment_card()
                         self.set_appt_mode(self.VIEW_MODE)
@@ -1185,8 +1187,8 @@ class DiaryWidget(Advisor):
         dl = CancelAppointmentDialog(appt, self)
         if dl.exec_():
             self.advise(dl.message, dl.message_severity)
-            self.layout_diary()
             self.schedule_controller.get_data()
+            self.layout_diary()
 
     def clearEmergencySlot(self, start, end, dent, adate=None):
         '''
