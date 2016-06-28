@@ -489,7 +489,7 @@ class DiaryWidget(Advisor):
             endtime = localsettings.minutesPastMidnighttoWystime(
                 localsettings.minutesPastMidnight(selectedtime) + appt.length)
 
-            if self.schedule_controller.ignore_emergency_spaces:
+            if self.schedule_controller.ignore_emergency_spaces():
                 appointments.cancel_emergency_slot(
                     slot.date(), selectedDent, selectedtime, endtime)
 
@@ -1271,9 +1271,6 @@ class DiaryWidget(Advisor):
         LOGGER.debug("appt dropped %s %s %s" % (date_time, dent, appt.length))
         slot = appointments.FreeSlot(date_time, dent, appt.length)
         self.makeAppt(appt, slot)
-
-        if self.schedule_controller.mode == self.SCHEDULING_MODE:
-            self.start_scheduling()
 
     def start_scheduling(self, custom=False, force_weekview=True):
         LOGGER.debug(

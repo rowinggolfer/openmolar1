@@ -35,6 +35,8 @@ from PyQt5 import QtWidgets
 from openmolar.settings import localsettings
 from openmolar.dbtools import appointments
 from openmolar.qt4gui import colours
+from openmolar.qt4gui.customwidgets.schedule_control \
+    import DiaryScheduleController
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -406,9 +408,13 @@ class AppointmentOverviewWidget(QtWidgets.QWidget):
             for col, dent in enumerate(self.dents):
                 left_x = self.timeOffset + (col) * columnWidth
 
+                if DiaryScheduleController.ignore_emergency_spaces():
+                    e_times = ()
+                else:
+                    e_times = self.eTimes[dent.ix]
                 busy_times = [(0, dent.start_mpm)]
                 for block in sorted(
-                        self.eTimes[dent.ix] +
+                        e_times +
                         self.lunches[dent.ix] +
                         self.appts[dent.ix]):
                     busy_times.append((block.mpm, block.end_mpm))

@@ -37,6 +37,8 @@ from PyQt5 import QtWidgets
 from openmolar.settings import localsettings
 from openmolar.qt4gui import colours
 from openmolar.qt4gui.dialogs.blockslot import BlockDialog
+from openmolar.qt4gui.customwidgets.schedule_control \
+    import DiaryScheduleController
 
 LOGGER = logging.getLogger("openmolar")
 
@@ -225,7 +227,8 @@ class AppointmentWidget(QtWidgets.QFrame):
         '''
         self.canvas.appts = []
         self.canvas.doubleAppts = []
-        self.canvas.rows = {}
+        self.canvas._rows = {}
+        self.canvas._drag_rows = None
         self.canvas.freeslots = []
         self.clear_active_slots()
 
@@ -383,7 +386,8 @@ class AppointmentCanvas(QtWidgets.QWidget):
         self.appts = []
         self.freeslots = []
         self.doubleAppts = []
-        self.rows = {}
+        self._rows = {}
+        self._drag_rows = None
         self.setTime = None
         self.selected_rows = (0, 0)
         self.setMouseTracking(True)
@@ -405,6 +409,21 @@ class AppointmentCanvas(QtWidgets.QWidget):
 
         self.blink_timer = BlinkTimer()
         self.blink_timer.timeout.connect(self.toggle_blink)
+
+    @property
+    def rows(self):
+        return self._rows
+
+    @property
+    def drag_rows(self):
+        if not DiaryScheduleController.ignore_emergency_spaces():
+            return self.rows
+        if self._drag_rows is None:
+            self._drag_rows = self.rows.copy()
+            for key, values in self.rows.items():
+                if values < [0]:
+                    self.drag_rows.pop(key)
+        return self._drag_rows
 
     def setDayStartTime(self, sTime):
         '''
@@ -590,14 +609,13 @@ class AppointmentCanvas(QtWidgets.QWidget):
 
     def dragMoveEvent(self, event):
         if event.mimeData().hasFormat("application/x-appointment"):
-
             y = event.pos().y()
             yOffset = self.height() / self.slotNo
             self.drag_startrow = int(y // yOffset)
 
             if (self.drag_startrow < self.firstSlot - 1 or
                     self.drag_startrow >= self.lastSlot or
-                    self.drag_startrow in self.rows):
+                    self.drag_startrow in self.drag_rows):
                 allowDrop = False
             else:
                 n_rows = self.drag_appt.length // self.slotDuration
@@ -607,7 +625,7 @@ class AppointmentCanvas(QtWidgets.QWidget):
                 allowDrop = True
                 row = None
                 for row in range(self.drag_startrow, self.drag_endrow):
-                    if row in self.rows or row >= self.lastSlot:
+                    if row in self.drag_rows or row >= self.lastSlot:
                         allowDrop = False
                         break
                 if not allowDrop:
@@ -615,10 +633,9 @@ class AppointmentCanvas(QtWidgets.QWidget):
                     self.drag_startrow = row - n_rows
                     self.drag_endrow = row
                     for row in range(self.drag_startrow, row):
-                        if row in self.rows or row < self.firstSlot - 1:
+                        if row in self.drag_rows or row < self.firstSlot - 1:
                             allowDrop = False
                             break
-
             if allowDrop:
                 self.dragging = True
                 self.drop_time = self.getTime_from_Cell(self.drag_startrow)

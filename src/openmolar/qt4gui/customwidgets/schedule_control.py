@@ -362,7 +362,7 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
             LOGGER.debug("app2_is_scheduled")
             return False
 
-    @property
+    @classmethod
     def ignore_emergency_spaces(self):
         return ApptSettingsDialog.ignore_emergency_spaces
 
@@ -562,16 +562,15 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
             self.set_primary_slots([])
         else:
             self.set_primary_slots(
-                app_data.slots(self.app1_length, self.ignore_emergency_spaces))
-
+                app_data.slots(self.app1_length,
+                               self.ignore_emergency_spaces()))
         app2_slots = []
         if self.is_searching_for_double_appointments and \
                 not self.app2_is_scheduled:
             self.set_secondary_slots(
                 app_data.slots(self.app2_length,
-                               self.ignore_emergency_spaces,
-                               busy_serialno=self.serialno)
-            )
+                               self.ignore_emergency_spaces(),
+                               busy_serialno=self.serialno))
             app1_slots = set([])
             if self.app1_is_scheduled:
                 iterset = [self.appointment_model.currentAppt.to_freeslot()]
@@ -604,7 +603,7 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
             sunday.toPyDate(),
             self.appt1_clinicians,
             busy_serialno=self.serialno,
-            override_emergencies=self.ignore_emergency_spaces)
+            override_emergencies=self.ignore_emergency_spaces())
 
         if self.app1_is_scheduled:
             self.set_primary_slots([])
@@ -620,7 +619,7 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
                 sunday.toPyDate(),
                 self.appt2_clinicians,
                 busy_serialno=self.serialno,
-                override_emergencies=self.ignore_emergency_spaces)
+                override_emergencies=self.ignore_emergency_spaces())
             self.set_secondary_slots(
                 appointments.getLengthySlots(all_slots,
                                              self.app2_length)
@@ -951,7 +950,7 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
 
     @property
     def _emergency_message(self):
-        if ApptSettingsDialog.ignore_emergency_spaces:
+        if self.ignore_emergency_spaces():
             return "%s" % _("Overwrite Emergencies")
         return ""
 
