@@ -576,7 +576,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
 
         # -notification widget
         self.ui.notificationWidget = \
-            notification_widget.notificationWidget(self)
+            notification_widget.NotificationWidget(self)
 
         self.ui.details_frame.layout().addWidget(self.ui.notificationWidget)
 

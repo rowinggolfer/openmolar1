@@ -60,8 +60,12 @@ class ForumPost(object):
     date = None
     topic = ""
     comment = ""
-    briefcomment = ""
     open = True
+
+    @property
+    def briefcomment(self):
+        bc = self.comment[:20]
+        return bc if bc == self.comment else "%s...." % bc
 
 
 def is_fully_read():
@@ -169,9 +173,6 @@ def getPosts(include_closed=False):
         newpost.date = row[4]
         newpost.recipient = row[5]
         newpost.comment = row[6]
-        newpost.briefcomment = row[6][:40]
-        if newpost.comment != newpost.briefcomment:
-            newpost.briefcomment += "...."
         retarg.append(newpost)
 
     return retarg

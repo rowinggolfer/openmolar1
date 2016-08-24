@@ -192,20 +192,22 @@ class ForumWidget(QtWidgets.QWidget):
             QtWidgets.QApplication.instance().restoreOverrideCursor()
 
     def change_user_but_clicked(self):
+        self.apply_new_reads()
         self._forum_user = self.forum_user(check=True)
         self.loadForum()
 
     def showEvent(self, event=None):
+        self.timer.stop()
         if not self.spliiter_resized:
             self.splitter.setSizes([self.width()*.7, self.width()*.3])
         self.spliiter_resized = True
         QtCore.QTimer.singleShot(100, self.loadForum)
 
     def hideEvent(self, event=None):
-        if self._forum_user:
-            forum.update_forum_read(self._forum_user, self.new_read_ids)
+        self.apply_new_reads()
         self._forum_user = None
         self.departed_signal.emit()
+        self.timer.start(60000)  # fire every minute
 
     def forum_user(self, check=False):
         if check or self._forum_user is None:
@@ -268,6 +270,7 @@ class ForumWidget(QtWidgets.QWidget):
         self.tree_widget.clear()
         self.browser_user_label.setText(_("No User Set"))
         self.clear_browser()
+        self.new_read_ids = set([])
 
     def clear_browser(self):
         self.tree_widget.setHeaderLabels(forum.headers)
@@ -283,8 +286,8 @@ class ForumWidget(QtWidgets.QWidget):
         '''
         loads the forum
         '''
+        self.apply_new_reads()
         self.clear()
-        self.new_read_ids = set([])
         user = self.forum_user()
         if not user:
             QtWidgets.QMessageBox.warning(
@@ -409,6 +412,9 @@ class ForumWidget(QtWidgets.QWidget):
 
         forum.mark_as_unread(self._forum_user, ix)
 
+    def apply_new_reads(self):
+        if self._forum_user:
+            forum.update_forum_read(self._forum_user, self.new_read_ids)
     def forumNewTopic(self):
         '''
         create a new post

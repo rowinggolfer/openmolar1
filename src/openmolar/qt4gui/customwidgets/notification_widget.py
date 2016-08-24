@@ -22,15 +22,15 @@
 # ########################################################################### #
 
 from PyQt5 import QtCore
-from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 
 STYLE = 'color:red; background:yellow; font-weight:bold;'
 
-class NotificationWidget(QtWidgets.QWidget):
+class NotificationLabel(QtWidgets.QWidget):
 
     def __init__(self, message, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
+        self.message = message
         self.setStyleSheet(STYLE)
 
         self.layout = QtWidgets.QVBoxLayout(self)
@@ -48,7 +48,7 @@ class NotificationWidget(QtWidgets.QWidget):
         self.layout.addWidget(self.label)
 
 
-class notificationWidget(QtWidgets.QTabWidget):
+class NotificationWidget(QtWidgets.QTabWidget):
 
     '''
     a custom widget which contains children which come and go
@@ -64,7 +64,19 @@ class notificationWidget(QtWidgets.QTabWidget):
         '''
         pass a message
         '''
-        widg = NotificationWidget(message, self)
+
+        n_tabs = self.count()-1
+        for i in range(n_tabs):
+            if message == self.widget(i).message:
+                self.tabBar().moveTab(i, n_tabs)
+                break
+        self.enable_buts()
+        try:
+            if message == self.currentWidget().message:
+                return
+        except AttributeError:  # currentWidget may be None
+            pass
+        widg = NotificationLabel(message, self)
         self.addTab(widg, "x")
         self.show()
         self.enable_buts()
@@ -80,6 +92,7 @@ class notificationWidget(QtWidgets.QTabWidget):
         '''
         user has "acknowledged a message
         '''
+        return
         widg = self.currentWidget()
         self.removeTab(self.indexOf(widg))
         widg.deleteLater()
@@ -96,12 +109,12 @@ if __name__ == "__main__":
     form = QtWidgets.QMainWindow()
     form.setMinimumWidth(300)
 
-    nw = notificationWidget(form)
+    nw = NotificationWidget(form)
 
-    for i in range(5):
+    for i, n in enumerate([1,2,3,3,3,1,1,5]):
         QtCore.QTimer.singleShot(
-            i * 3000,
-            partial(nw.addMessage, "This is test message %d" % (i + 1)))
+            i * 1500,
+            partial(nw.addMessage, "This is test message %d" % n))
 
     form.setCentralWidget(nw)
     form.show()
