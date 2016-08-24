@@ -283,7 +283,7 @@ class PtDiaryWidget(QtWidgets.QWidget):
                         self.layout_ptDiary()
                         self.select_apr_ix(apr_ix)
                         if dl.makeNow:
-                            self.start_scheduling_signal.emit()
+                            self.start_scheduling_signal.emit(False)
                     else:
                         # -commit failed
                         self.advise("Error saving appointment", 2)
