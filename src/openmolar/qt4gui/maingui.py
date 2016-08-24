@@ -54,7 +54,6 @@ from openmolar.qt4gui.fees import fee_table_model
 from openmolar.qt4gui.fees.treatment_list_models \
     import PlannedTreatmentListModel, CompletedTreatmentListModel
 
-from openmolar.qt4gui import forum_gui_module
 from openmolar.qt4gui import contract_gui_module
 from openmolar.qt4gui import new_patient_gui
 
@@ -168,6 +167,7 @@ from openmolar.qt4gui.printing import bulk_mail
 # -custom widgets
 from openmolar.qt4gui.diary_widget import DiaryWidget
 from openmolar.qt4gui.pt_diary_widget import PtDiaryWidget
+from openmolar.qt4gui.forum_widget import ForumWidget
 from openmolar.qt4gui.customwidgets import chartwidget
 from openmolar.qt4gui.customwidgets import toothProps
 from openmolar.qt4gui.customwidgets import estimate_widget
@@ -200,7 +200,9 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         self.ui = Ui_main.Ui_MainWindow()
         self.ui.setupUi(self)
         self.diary_widget = DiaryWidget(self)
+        self.forum_widget = ForumWidget(self)
         self.ui.tab_appointments.layout().addWidget(self.diary_widget)
+        self.ui.tab_forum.layout().addWidget(self.forum_widget)
 
         self.pt_diary_widget = PtDiaryWidget(self)
         self.ui.pt_diary_groupBox.layout().addWidget(self.pt_diary_widget)
@@ -226,7 +228,6 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
             localsettings.station == "surgery")
         self.setupSignals()
         self.feestableLoaded = False
-        self.forum_parenting_mode = (False, None)
         self.ui.new_patient_frame.hide()
 
         self.ui.plan_listView.setModel(PlannedTreatmentListModel(self))
@@ -251,7 +252,6 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
 
         self.debug_browser_refresh_func = None
 
-        self.forum_timer = QtCore.QTimer()
         self.records_in_use_timer = QtCore.QTimer()
         self.dcp_dialog = DatabaseConnectionProgressDialog(self)
         QtCore.QTimer.singleShot(500, self.check_first_run)
@@ -277,18 +277,15 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         self.load_pt_statuses()
         self.loadDentistComboboxes()
         self.ui.notesSummary_webView.setHtml(localsettings.message)
-        self.ui.forumViewFilter_comboBox.addItems(
-            localsettings.allowed_logins)
 
         QtCore.QTimer.singleShot(500, self.load_todays_patients_combobox)
         QtCore.QTimer.singleShot(1000, self.load_fee_tables)
-        self.forum_timer.start(60000)  # fire every minute
-        self.forum_timer.timeout.connect(self.checkForNewForumPosts)
         self.records_in_use_timer.start(5000)  # fire every 5 seconds
         self.records_in_use_timer.timeout.connect(self.check_records_in_use)
         self.set_referral_centres()
         self.diary_widget.initiate()
         QtCore.QTimer.singleShot(12000, self.check_version)
+        self.forum_widget.log_in_successful()
 
     def check_first_run(self):
         '''
@@ -453,6 +450,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         '''
         pop up a notification
         '''
+        self.advise(message)
         self.ui.notificationWidget.addMessage(message)
 
     def quit(self):
@@ -768,11 +766,6 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
             if self.pt.serialno != 0:
                 self.ui.chooseFeescale_comboBox.setCurrentIndex(
                     self.pt.fee_table.index)
-
-        if ci == 7:
-            # -forum
-            forum_gui_module.loadForum(self)
-
         if ci == 8:
             # - wiki
             if not self.wikiloaded:
@@ -1744,7 +1737,6 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
                      self.ui.pcdeEdit, self.ui.sexEdit):
             widg.setPalette(palette)
 
-        self.forum_mode()
         self.addHistoryMenu()
 
         self.ui.perio_scrollArea.setWidget(
@@ -1766,18 +1758,19 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
 
         self.ui.debug_toolButton.setMenu(self.debugMenu)
 
-    def showForumActivity(self, newItems=True):
+    def new_forum_posts(self):
         tb = self.ui.main_tabWidget.tabBar()
-        if newItems:
-            tb.setTabText(7, _("NEW FORUM POSTS"))
-            tb.setTabTextColor(7, QtGui.QColor("red"))
-            if not self.forum_notified:
-                self.notify("New Forum Posts")
-            self.forum_notified = True
-        else:
+        tb.setTabText(7, _("NEW FORUM POSTS"))
+        tb.setTabTextColor(7, QtGui.QColor("red"))
+
+    def unread_forum_posts(self, message):
+        self.notify(message)
+
+    def forum_departed(self):
+        if self.forum_widget.is_fully_read:
+            tb = self.ui.main_tabWidget.tabBar()
             tb.setTabText(7, _("FORUM"))
             tb.setTabTextColor(7, QtGui.QColor(self.palette().WindowText))
-            self.forum_notified = False
 
     def save_patient_tofile(self):
         '''
@@ -2422,76 +2415,6 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         '''
         fees_module.populateAccountsTable(self)
 
-    def forum_mode(self):
-        '''
-        forum has an advanced mode, disabled by default
-        '''
-        advanced_mode = self.ui.action_forum_show_advanced_options.isChecked()
-        self.ui.forumParent_pushButton.setVisible(advanced_mode)
-        self.ui.forum_deletedposts_checkBox.setVisible(advanced_mode)
-        self.ui.forumExpand_pushButton.setVisible(advanced_mode)
-        self.ui.forumCollapse_pushButton.setVisible(advanced_mode)
-
-    def forum_treeWidget_selectionChanged(self):
-        '''
-        user has selected an item in the forum
-        '''
-        forum_gui_module.forumItemSelected(self)
-
-    def forumViewFilterChanged(self, chosen):
-        '''
-        user has changed the filter for who's posts to show
-        '''
-        forum_gui_module.viewFilterChanged(self, chosen)
-
-    def forumCollapse(self):
-        '''
-        user has pressed the collapse button
-        '''
-        self.ui.forum_treeWidget.collapseAll()
-
-    def forumExpand(self):
-        '''
-        user has pressed the expand button
-        '''
-        self.ui.forum_treeWidget.expandAll()
-
-    def forumNewTopic_clicked(self):
-        '''
-        user has called for a new topic in the forum
-        '''
-        forum_gui_module.forumNewTopic(self)
-
-    def forumDeleteItem_clicked(self):
-        '''
-        user is deleting an item from the forum
-        '''
-        forum_gui_module.forumDeleteItem(self)
-
-    def forumReply_clicked(self):
-        '''
-        user is replying to an existing topic
-        '''
-        forum_gui_module.forumReply(self)
-
-    def forumParent_clicked(self):
-        '''
-        user is setting a parent for an item
-        '''
-        forum_gui_module.forumParent(self)
-
-    def checkForNewForumPosts(self):
-        '''
-        called by a timer - checks for messages
-        '''
-        forum_gui_module.checkForNewForumPosts(self)
-
-    def forum_radioButtons(self):
-        '''
-        the user has requested a different view of the forum
-        '''
-        forum_gui_module.loadForum(self)
-
     def contractTab_navigated(self, i):
         '''
         the contract tab is changing
@@ -3041,6 +2964,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
             self.configure_feescales)
         self.ui.actionEdit_Account_Letter_Settings.triggered.connect(
             self.edit_account_letter_settings)
+
     def signals_estimates(self):
         # Estimates and Course Management
         self.ui.closeTx_pushButton.clicked.connect(
@@ -3085,26 +3009,11 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
             self.bulk_mail_doubleclicked)
 
     def signals_forum(self):
-        self.ui.forum_treeWidget.itemSelectionChanged.connect(
-            self.forum_treeWidget_selectionChanged)
         self.ui.action_forum_show_advanced_options.triggered.connect(
-            self.forum_mode)
-        self.ui.forumDelete_pushButton.clicked.connect(
-            self.forumDeleteItem_clicked)
-        self.ui.forumReply_pushButton.clicked.connect(
-            self.forumReply_clicked)
-        self.ui.forumNewTopic_pushButton.clicked.connect(
-            self.forumNewTopic_clicked)
-        self.ui.forumParent_pushButton.clicked.connect(
-            self.forumParent_clicked)
-        self.ui.forumViewFilter_comboBox.currentIndexChanged[str].connect(
-            self.forumViewFilterChanged)
-        self.ui.forumCollapse_pushButton.clicked.connect(self.forumCollapse)
-        self.ui.forumExpand_pushButton.clicked.connect(self.forumExpand)
-
-        for widg in (self.ui.group_replies_radioButton,
-                     self.ui.forum_deletedposts_checkBox):
-            widg.toggled.connect(self.forum_radioButtons)
+            self.forum_widget.show_advanced_options)
+        self.forum_widget.new_posts_signal.connect(self.new_forum_posts)
+        self.forum_widget.unread_posts_signal.connect(self.unread_forum_posts)
+        self.forum_widget.departed_signal.connect(self.forum_departed)
 
     def signals_history(self):
         self.debugMenu.triggered.connect(self.showPtAttributes)

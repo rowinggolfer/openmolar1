@@ -25,114 +25,68 @@ from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 
+STYLE = 'color:red; background:yellow; font-weight:bold;'
 
-class notificationGB(QtWidgets.QWidget):
+class NotificationWidget(QtWidgets.QWidget):
 
-    '''
-    a customised groupBox
-    '''
-    acknowledged = QtCore.pyqtSignal()
-
-    def __init__(self, parent=None):
+    def __init__(self, message, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
+        self.setStyleSheet(STYLE)
 
-        self.counter = None
-
-        self.layout = QtWidgets.QGridLayout(self)
+        self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setSpacing(0)
 
-        self.t_label = QtWidgets.QLabel()
+        self.t_label = QtWidgets.QLabel(
+            QtCore.QTime.currentTime().toString("HH:mm"))
         self.t_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.label = QtWidgets.QLabel()
+        self.label = QtWidgets.QLabel(message)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
-        self.label.setStyleSheet("color: red")
 
-        icon = QtGui.QIcon.fromTheme(
-            "window-close", QtGui.QIcon(":/quit.png"))
-        self.but = QtWidgets.QPushButton(icon, "")
-        self.but.setMaximumWidth(40)
-
-        self.line = QtWidgets.QFrame()
-        self.line.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
-
-        self.layout.addWidget(self.t_label, 0, 0)
-        self.layout.addWidget(self.label, 1, 0)
-        self.layout.addWidget(self.but, 0, 1, 2, 1)
-        self.layout.addWidget(self.line, 2, 0, 1, 2)
-
-        self.line.hide()
-
-        self.but.clicked.connect(self.send_acknowledged_signal)
-
-    def setId(self, arg):
-        '''
-        give the widget a unique ID
-        '''
-        self.counter = arg
-
-    def setMessage(self, message):
-        '''
-        set the label's text
-        '''
-        t = QtCore.QTime.currentTime()
-        self.t_label.setText("<b>%s:%02d</b>" % (t.hour(), t.minute()))
-        self.label.setText(message)
-
-    def set_minimised(self, bool_):
-        for widg in (self.but, self.t_label, self.label):
-            widg.setVisible(not bool_)
-        self.line.setVisible(bool_)
-
-    def send_acknowledged_signal(self):
-        '''
-        the "acknowledge" check box has been toggled
-        '''
-        self.acknowledged.emit()
+        self.layout.addWidget(self.t_label)
+        self.layout.addWidget(self.label)
 
 
-class notificationWidget(QtWidgets.QWidget):
+class notificationWidget(QtWidgets.QTabWidget):
 
     '''
     a custom widget which contains children which come and go
     '''
 
     def __init__(self, parent=None):
-        super(notificationWidget, self).__init__(parent)
-        self.layout = QtWidgets.QVBoxLayout(self)
-        self.layout.setContentsMargins(0, 0, 0, 0)
-        self.widgets = []
+        super().__init__(parent)
+        self.setMaximumHeight(100)
+        self.tabBar().tabBarClicked.connect(self.removeMessage)
+        self.hide()
 
     def addMessage(self, message):
         '''
         pass a message
         '''
-        for widg in self.widgets:
-            widg.set_minimised(True)
-
-        widg = notificationGB(self)
-        widg.setMessage(message)
-        self.widgets.append(widg)
-
-        self.layout.insertWidget(0, widg)
-
-        widg.acknowledged.connect(self.removeMessage)
+        widg = NotificationWidget(message, self)
+        self.addTab(widg, "x")
         self.show()
+        self.enable_buts()
+
+    def enable_buts(self):
+        n_tabs = self.count()-1
+        for i in range(n_tabs):
+            self.tabBar().setTabEnabled(i, False)
+        self.tabBar().setTabEnabled(n_tabs, True)
+        self.setCurrentIndex(n_tabs)
 
     def removeMessage(self):
         '''
         user has "acknowledged a message
         '''
-        widg = self.sender()
-        widg.hide()
-        self.widgets.remove(widg)
+        widg = self.currentWidget()
+        self.removeTab(self.indexOf(widg))
         widg.deleteLater()
-
-        if len(self.widgets) > 0:
-            self.widgets[-1].set_minimised(False)
-        else:
+        if self.count() == 0:
             self.hide()
+        else:
+            self.enable_buts()
 
 
 if __name__ == "__main__":

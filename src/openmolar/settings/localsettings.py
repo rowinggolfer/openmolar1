@@ -606,6 +606,8 @@ def readableDate(d):
         return _("Yesterday")
     return longDate(d)
 
+def readableDateTime(d):
+    return "%s %s" % (readableDate(d.date()), d.time().strftime("%H:%m"))
 
 def notesDate(d):
     '''

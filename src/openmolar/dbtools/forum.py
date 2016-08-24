@@ -21,14 +21,36 @@
 # #                                                                         # #
 # ########################################################################### #
 
+import logging
+
 from openmolar import connect
 from openmolar.settings import localsettings
 
+LOGGER = logging.getLogger("openmolar")
+
 headers = [_("Subject"), "db_index", _("From"), _("To"),
-           _("Date"), _("Message"), _("Message")]  # , "parent"]
+           _("Date"), _("Message"), ]
 
-HIGHESTID = 0
+QUERY = '''select ix, forum.parent_ix, topic, inits,fdate, recipient, comment
+from forum left join (select parent_ix, max(fdate) as maxdate from forum
+where forum.open group by parent_ix) as t on forum.parent_ix = t.parent_ix
+%s order by maxdate'''
 
+PARENTS_QUERY = '''update forum set parent_ix = ix where parent_ix is NULL'''
+
+READPOSTS_QUERY = "select id from forumread where op=%s"
+
+READPOSTS_UNREAD_QUERY = "delete from forumread where op=%s and id=%s"
+
+READPOSTS_UPDATE_QUERY = '''insert into forumread (op, id, readdate)
+values (%s, %s, NOW())'''
+
+UNREAD_POSTS_QUERY = '''select count(*) from forum where open and ix not in
+(select id from forumread where op=%s)'''
+
+INSERT_QUERY = '''
+insert into forum (parent_ix, inits, recipient, fdate, topic, comment)
+VALUES (%s, %s, %s, NOW(), %s, %s)'''
 
 class ForumPost(object):
     ix = None
@@ -42,21 +64,39 @@ class ForumPost(object):
     open = True
 
 
-def commitPost(post):
-    # use a different connection for forum, as it runs in a separate thread
+def is_fully_read():
+    users = localsettings.operator.split("/")
+    if users == []:  # shouldn't happen!!
+        return True
+    unread_posts = 0
+    for user in users:
+        unread_posts += number_of_unread_posts(user)
+    return unread_posts == 0
 
+
+def number_of_unread_posts(user):
     db = connect.connect()
     cursor = db.cursor()
-    columns = "parent_ix,inits,recipient,fdate,topic,comment"
+    cursor.execute(UNREAD_POSTS_QUERY, (user,))
+    unread_posts = cursor.fetchone()[0]
+    cursor.close()
+    LOGGER.debug("%s has %s unread posts", user, unread_posts)
+    return unread_posts
 
-    values = (post.parent_ix, post.inits, post.recipient,
-              post.topic, post.comment.replace("\n", " "))
 
-    query = \
-        "insert into forum (%s) VALUES (%%s,%%s,%%s,NOW(),%%s,%%s)" % columns
-
-    cursor.execute(query, values)
+def commitPost(post):
+    '''
+    commit a post to the database, and mark it as read by the person posting it
+    '''
+    values = (post.parent_ix, post.inits, post.recipient, post.topic,
+              post.comment)
+    db = connect.connect()
+    cursor = db.cursor()
+    cursor.execute(INSERT_QUERY, values)
+    ix = db.insert_id()
+    cursor.execute(READPOSTS_UPDATE_QUERY, (post.inits, ix))
     db.commit()
+    return ix
 
 
 def deletePost(ix):
@@ -77,63 +117,44 @@ def setParent(ix, parent_ix):
     cursor.close()
 
 
-def newPosts():
-    '''
-    returns a boolean as to whether there have been new posts in the forum
-    since the last visit of the current users.
-    '''
-    users = localsettings.operator.split("/")
-    if users == []:  # shouldn't happen!!
+def update_forum_read(user, read_ids):
+    if not read_ids:
         return
     db = connect.connect()
     cursor = db.cursor()
-    query = 'select max(ix) from forum'
-    cursor.execute(query)
-    max_id = cursor.fetchone()[0]
-    query = ('select min(id) from '
-             '(select max(id) as id, op from forumread where %s group by op) '
-             'as t' % " or ".join(["op=%s" for user in users]))
-    cursor.execute(query, users)
-    max_id2 = cursor.fetchone()[0]
+    cursor.executemany(
+             READPOSTS_UPDATE_QUERY,
+             [(user, id) for id in read_ids])
     cursor.close()
-    try:
-        return max_id > max_id2
-    except TypeError:  # max_id2 may be None
-        pass
-    return True
+    db.commit()
 
 
-def updateReadHistory():
-    users = localsettings.operator.split("/")
-    # print "updating forumread for new posts for ", users
-    if users == []:
-        return
+def mark_as_unread(user, id):
     db = connect.connect()
     cursor = db.cursor()
-    query = "insert into forumread set id=%s, op=%s, readdate=NOW()"
-    for user in users:
-        values = (HIGHESTID, user)
-        cursor.execute(query, values)
+    cursor.execute(READPOSTS_UNREAD_QUERY, (user, id))
+    cursor.close()
+    db.commit()
 
+
+def get_read_post_ids(user):
+    db = connect.connect()
+    cursor = db.cursor()
+    cursor.execute(READPOSTS_QUERY, (user,))
+    for row in cursor.fetchall():
+        yield(row[0])
     cursor.close()
 
 
-def getPosts(user=None, include_closed=False):
+def getPosts(include_closed=False):
     '''
     gets all active rows from a forum table
     '''
-    global HIGHESTID
-    conditions, values = ["open"], [not include_closed]
-    if user:
-        conditions.append('recipient')
-        values.append(user)
     db = connect.connect()
     cursor = db.cursor()
-    query = ('SELECT ix, parent_ix, topic, inits, fdate, recipient, comment '
-             'FROM forum where %s ORDER BY parent_ix, ix' % " and ".join(
-                 ["%s=%%s" % val for val in conditions]))
-
-    cursor.execute(query, values)
+    cursor.execute(PARENTS_QUERY)
+    db.commit()
+    cursor.execute(QUERY % ("" if include_closed else 'where forum.open'))
     rows = cursor.fetchall()
     cursor.close()
 
@@ -142,9 +163,6 @@ def getPosts(user=None, include_closed=False):
     for row in rows:
         newpost = ForumPost()
         newpost.ix = row[0]
-        if newpost.ix > HIGHESTID:
-            HIGHESTID = newpost.ix
-            update = True
         newpost.parent_ix = row[1]
         newpost.topic = row[2]
         newpost.inits = row[3]
@@ -156,12 +174,10 @@ def getPosts(user=None, include_closed=False):
             newpost.briefcomment += "...."
         retarg.append(newpost)
 
-    if update:
-        updateReadHistory()
     return retarg
 
 
 if __name__ == "__main__":
-    forumposts = getPosts(user="NW")
+    forumposts = getPosts()
     for post_ in forumposts:
         print(post_.parent_ix, post_.ix, post_.topic)
