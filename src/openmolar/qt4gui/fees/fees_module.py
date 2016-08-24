@@ -77,22 +77,40 @@ def takePayment(om_gui):
     raise a dialog, and take some money
     '''
     if om_gui.pt.serialno == 0:
-        om_gui.advise("No patient Selected <br />Monies will be " +
-                      "allocated to Other Payments, and no receipt offered")
-    dl = PaymentDialog(om_gui)
-    dl.set_treatment_default_amount(om_gui.pt.fees)
-    dl.hide_treatment(om_gui.pt.serialno == 0)
-    if dl.exec_():
-        if om_gui.pt.serialno == 0:
+        try:
             paymentPt = patient_class.patient(22963)
-        else:
-            paymentPt = om_gui.pt
+        except PatientNotFoundError:
+            om_gui.advise(_("Please choose a patient"), 1)
+            return
+        om_gui.advise(
+            "%s <br />%s" % (
+                _("No patient Selected"),
+                _("Monies will be allocated to Other Payments, and no receipt "
+                  "offered")), 1)
+    else:
+        paymentPt = om_gui.pt
 
-        name = "%s %s" % (paymentPt.sname, paymentPt.fname[:1])
-        if paymentPt.dnt2 != 0:
-            dent = paymentPt.dnt2
-        else:
-            dent = paymentPt.dnt1
+    dl = PaymentDialog(om_gui)
+    dl.set_treatment_default_amount(paymentPt.fees)
+    dl.hide_treatment(om_gui.pt.serialno == 0)
+    payment_taken = False
+    name = "%s %s" % (paymentPt.sname, paymentPt.fname[:1])
+    if paymentPt.dnt2 != 0:
+        dent = paymentPt.dnt2
+    else:
+        dent = paymentPt.dnt1
+
+    while not payment_taken:
+        if not dl.exec_():
+            break
+        if (dl.tx_total > paymentPt.fees and
+            QtWidgets.QMessageBox.question(
+                dl,
+                _("Confirm"),
+                _("Overpayment of treatment fees, is this correct?"),
+                QtWidgets.QMessageBox.Yes| QtWidgets.QMessageBox.No,
+                QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.No):
+            continue
 
         LOGGER.debug("TAKING PAYMENT for patient %s", paymentPt.serialno)
 
@@ -148,14 +166,7 @@ def takePayment(om_gui):
             om_gui.updateDetails()
             om_gui.updateHiddenNotesLabel()
             LOGGER.info("PAYMENT ALL DONE!")
-        else:
-            LOGGER.warning("payment failed to write to database!")
-            message = "%s<br />%s" % (
-                _("error applying payment.... sorry!"),
-                _("This shouldn't happen - please report as an urgent bug")
-            )
-            om_gui.advise(message, 2)
-
+            payment_taken = True
 
 def loadFeesTable(om_gui):
     '''
