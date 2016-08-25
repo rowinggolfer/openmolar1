@@ -92,7 +92,6 @@ class NotificationWidget(QtWidgets.QTabWidget):
         '''
         user has "acknowledged a message
         '''
-        return
         widg = self.currentWidget()
         self.removeTab(self.indexOf(widg))
         widg.deleteLater()

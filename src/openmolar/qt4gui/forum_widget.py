@@ -216,6 +216,8 @@ class ForumWidget(QtWidgets.QWidget):
             if dl.exec_():
                 self._forum_user = dl.chosen_user
                 self.read_ids = set(forum.get_read_post_ids(self._forum_user))
+            else:
+                self._forum_user = None
         return self._forum_user
 
     def signals(self):
