@@ -34,7 +34,7 @@ headers = [_("Subject"), "db_index", _("From"), _("To"),
 QUERY = '''select ix, forum.parent_ix, topic, inits,fdate, recipient, comment
 from forum left join (select parent_ix, max(fdate) as maxdate from forum
 where forum.open group by parent_ix) as t on forum.parent_ix = t.parent_ix
-%s order by maxdate'''
+%s order by parent_ix, maxdate'''
 
 PARENTS_QUERY = '''update forum set parent_ix = ix where parent_ix is NULL'''
 

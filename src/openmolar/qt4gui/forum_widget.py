@@ -181,6 +181,7 @@ class ForumWidget(QtWidgets.QWidget):
     @property
     def is_fully_read(self):
         return forum.is_fully_read()
+
     def advise(self, message):
         QtWidgets.QMessageBox.information(self, _("Information"), message)
 
@@ -385,7 +386,7 @@ class ForumWidget(QtWidgets.QWidget):
             self.parent_button.setStyleSheet("")
             self.loadForum()
         else:
-            QtCore.QTimer.singleShot(5000, partial(self.mark_as_read, ix))
+            QtCore.QTimer.singleShot(3000, partial(self.mark_as_read, ix))
 
     def mark_as_read(self, ix):
         item = self.tree_widget.currentItem()
@@ -417,10 +418,12 @@ class ForumWidget(QtWidgets.QWidget):
     def apply_new_reads(self):
         if self._forum_user:
             forum.update_forum_read(self._forum_user, self.new_read_ids)
+
     def forumNewTopic(self):
         '''
         create a new post
         '''
+        self.apply_new_reads()
         Dialog = QtWidgets.QDialog(self)
         dl = Ui_forumPost.Ui_Dialog()
         dl.setupUi(Dialog)
@@ -449,6 +452,7 @@ class ForumWidget(QtWidgets.QWidget):
         '''
         delete a forum posting
         '''
+        self.apply_new_reads()
         items = self.tree_widget.selectedItems()
         number = len(items)
         if number > 1:
@@ -477,6 +481,7 @@ class ForumWidget(QtWidgets.QWidget):
         '''
         reply to an item
         '''
+        self.apply_new_reads()
         item = self.tree_widget.currentItem()
         heading = item.text(0)
         if heading[:2] != "re":
@@ -516,7 +521,6 @@ class ForumWidget(QtWidgets.QWidget):
         self.parenting_mode = (True, ix)
 
     def show_advanced_options(self, advanced):
-        LOGGER.debug(advanced)
         self.parent_button.setVisible(advanced)
 
 
