@@ -31,11 +31,11 @@ LOGGER = logging.getLogger("openmolar")
 headers = [_("Subject"), _("From"), _("To"), _("Date"), _("Message"), ]
 
 QUERY = '''select ix, ancestor, topic, inits, fdate, recipient, comment,
-is_important from forum left join
+important_id from forum left join
 (select max(parent_id) as ancestor, child_id from forum join forum_parents
-on ix=parent_id %s group by child_id) as t on ix = t.child_id left join
-(select important_id, True as is_important from forum_important where op=%%s)
-as t1 on t1.important_id = ix %s order by ix'''
+on ix=parent_id %s group by child_id) t on ix=t.child_id
+left join (select important_id from forum_important where op=%%s) t1
+on important_id = ix %s order by ix'''
 
 READPOSTS_QUERY = "select id from forumread where op=%s"
 
