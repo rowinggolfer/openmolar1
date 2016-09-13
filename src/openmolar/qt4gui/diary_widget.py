@@ -1295,11 +1295,9 @@ class DiaryWidget(Advisor):
         '''
         user wants to change appointment overview properties for date d
         '''
-        if permissions.granted(self):
-            dl = alterAday.alterDayDialog(self, d)
-
-            if dl.getInput():
-                self.layout_weekView()
+        dl = alterAday.alterDayDialog(self, d)
+        if dl.getInput():
+            self.layout_weekView()
 
     def insert_regular_blocks(self):
         '''
