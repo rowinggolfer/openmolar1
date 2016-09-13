@@ -28,15 +28,14 @@ from openmolar.settings import localsettings
 
 LOGGER = logging.getLogger("openmolar")
 
-headers = [_("Subject"), "db_index", _("From"), _("To"),
-           _("Date"), _("Message"), ]
+headers = [_("Subject"), _("From"), _("To"), _("Date"), _("Message"), ]
 
-QUERY = '''select ix, forum.parent_ix, topic, inits,fdate, recipient, comment
-from forum left join (select parent_ix, max(fdate) as maxdate from forum
-where forum.open group by parent_ix) as t on forum.parent_ix = t.parent_ix
-%s order by parent_ix, maxdate'''
-
-PARENTS_QUERY = '''update forum set parent_ix = ix where parent_ix is NULL'''
+QUERY = '''select ix, ancestor, topic, inits, fdate, recipient, comment,
+is_important from forum left join
+(select max(parent_id) as ancestor, child_id from forum join forum_parents
+on ix=parent_id %s group by child_id) as t on ix = t.child_id left join
+(select important_id, True as is_important from forum_important where op=%%s)
+as t1 on t1.important_id = ix %s order by ix'''
 
 READPOSTS_QUERY = "select id from forumread where op=%s"
 
@@ -49,8 +48,22 @@ UNREAD_POSTS_QUERY = '''select count(*) from forum where open and ix not in
 (select id from forumread where op=%s)'''
 
 INSERT_QUERY = '''
-insert into forum (parent_ix, inits, recipient, fdate, topic, comment)
-VALUES (%s, %s, %s, NOW(), %s, %s)'''
+insert into forum (inits, recipient, fdate, topic, comment)
+VALUES (%s, %s, NOW(), %s, %s)'''
+
+INSERT_PARENT_QUERY = \
+    'insert into forum_parents (child_id, parent_id) values (%s, %s)'
+
+ANCESTORS_QUERY = '''
+insert ignore into forum_parents (child_id, parent_id)
+(select t1.child_id, t2.parent_id from forum_parents t1 join forum_parents t2
+on t1.parent_id=t2.child_id where t1.child_id = %s)'''
+
+MAKE_IMPORTANT_QUERY = '''
+INSERT INTO forum_important (op, important_id) values (%s, %s)'''
+
+REMOVE_IMPORTANT_QUERY = '''
+DELETE from forum_important where important_id=%s and op=%s'''
 
 class ForumPost(object):
     ix = None
@@ -61,10 +74,15 @@ class ForumPost(object):
     topic = ""
     comment = ""
     open = True
+    important = False
+
+    def __repr__(self):
+        return "ForumPost ix=%s ancestor=%s topic=%s" % (
+            self.ix, self.parent_ix, self.topic)
 
     @property
     def briefcomment(self):
-        bc = self.comment[:20]
+        bc = self.comment[:20].replace("\n", " ")
         return bc if bc == self.comment else "%s...." % bc
 
 
@@ -92,12 +110,16 @@ def commitPost(post):
     '''
     commit a post to the database, and mark it as read by the person posting it
     '''
-    values = (post.parent_ix, post.inits, post.recipient, post.topic,
-              post.comment)
+    values = (post.inits, post.recipient, post.topic, post.comment)
     db = connect.connect()
     cursor = db.cursor()
     cursor.execute(INSERT_QUERY, values)
     ix = db.insert_id()
+    if post.parent_ix:
+        # make the forum_parent table aware of ALL ancestors
+        # in case a reply from the middle of the thread is deleted.
+        cursor.execute(INSERT_PARENT_QUERY, (ix, post.parent_ix))
+        cursor.execute(ANCESTORS_QUERY, (ix,))
     cursor.execute(READPOSTS_UPDATE_QUERY, (post.inits, ix))
     db.commit()
     return ix
@@ -126,9 +148,8 @@ def update_forum_read(user, read_ids):
         return
     db = connect.connect()
     cursor = db.cursor()
-    cursor.executemany(
-             READPOSTS_UPDATE_QUERY,
-             [(user, id) for id in read_ids])
+    cursor.executemany(READPOSTS_UPDATE_QUERY,
+                       [(user, id_) for id_ in read_ids])
     cursor.close()
     db.commit()
 
@@ -137,6 +158,19 @@ def mark_as_unread(user, id):
     db = connect.connect()
     cursor = db.cursor()
     cursor.execute(READPOSTS_UNREAD_QUERY, (user, id))
+    cursor.close()
+    db.commit()
+
+
+def update_important_posts(user, important_posts_dict):
+    new_important_values = [(user, ix)
+        for ix, important in important_posts_dict.items() if important]
+    new_non_important_values = [(ix, user)
+        for ix, important in important_posts_dict.items() if not important]
+    db = connect.connect()
+    cursor = db.cursor()
+    cursor.executemany(MAKE_IMPORTANT_QUERY, new_important_values)
+    cursor.executemany(REMOVE_IMPORTANT_QUERY, new_non_important_values)
     cursor.close()
     db.commit()
 
@@ -150,15 +184,14 @@ def get_read_post_ids(user):
     cursor.close()
 
 
-def getPosts(include_closed=False):
+def getPosts(user, include_closed=False):
     '''
     gets all active rows from a forum table
     '''
+    query = QUERY % (("", "") if include_closed else ('AND open', 'WHERE open'))
     db = connect.connect()
     cursor = db.cursor()
-    cursor.execute(PARENTS_QUERY)
-    db.commit()
-    cursor.execute(QUERY % ("" if include_closed else 'where forum.open'))
+    cursor.execute(query, (user,))
     rows = cursor.fetchall()
     cursor.close()
 
@@ -167,18 +200,19 @@ def getPosts(include_closed=False):
     for row in rows:
         newpost = ForumPost()
         newpost.ix = row[0]
-        newpost.parent_ix = row[1]
+        newpost.parent_ix = row[1] if row[1] is not None else row[0]
         newpost.topic = row[2]
         newpost.inits = row[3]
         newpost.date = row[4]
         newpost.recipient = row[5]
         newpost.comment = row[6]
+        newpost.important = row[7] is not None
         retarg.append(newpost)
 
     return retarg
 
 
 if __name__ == "__main__":
-    forumposts = getPosts()
+    forumposts = getPosts("NW")
     for post_ in forumposts:
-        print(post_.parent_ix, post_.ix, post_.topic)
+        print(post_.parent_ix, post_.ix, post_.topic, post_.important)

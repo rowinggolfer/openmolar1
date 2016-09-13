@@ -44,8 +44,8 @@ SUPERVISOR = "c1219df26de403348e211a314ff2fce58aa6e28d"
 
 DBNAME = "default"
 
-# updated 13th June 2016
-CLIENT_SCHEMA_VERSION = "3.4"
+# updated 06th September 2016
+CLIENT_SCHEMA_VERSION = "3.5"
 
 DB_SCHEMA_VERSION = "unknown"
 
@@ -337,6 +337,7 @@ apptTypes = (
     _("FIT"),
     _("HYG"),
     _("IMPS"),
+    _("IMPLANT"),
     _("LF"),
     _("ORTHO"),
     _("PAIN"),
@@ -346,7 +347,8 @@ apptTypes = (
     _("REVIEW"),
     _("SP"),
     _("TRY"),
-    _("XLA")
+    _("XLA"),
+    _("OTHER")
 )
 
 # - default appt font size
@@ -607,7 +609,19 @@ def readableDate(d):
     return longDate(d)
 
 def readableDateTime(d):
-    return "%s %s" % (readableDate(d.date()), d.time().strftime("%H:%m"))
+    date_ = d.date()
+    today = currentDay()
+    elapsed_days = (today - date_).days
+    if elapsed_days == 0:
+        date_str = ""
+    elif elapsed_days == 1:
+        date_str = _("Yesterday")
+    elif elapsed_days < 7:
+        date_str = DAYNAMES[date_.weekday()]
+    else:
+        date_str = formatDate(date_)
+
+    return "%s %s" % (date_str, d.time().strftime("%H:%M"))
 
 def notesDate(d):
     '''

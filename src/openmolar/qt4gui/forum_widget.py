@@ -66,14 +66,14 @@ class GetForumUserDialog(BaseDialog):
                 but.clicked.connect(self.but_clicked)
                 self.insertWidget(but)
 
-        label = QtWidgets.QLabel(_("Or choose another user"))
+        label2 = QtWidgets.QLabel(_("Or choose another user"))
 
         self.cb = QtWidgets.QComboBox()
         self.cb.addItem("--")
         self.cb.addItems(sorted(other_ops))
 
         self.cb.currentTextChanged.connect(self.cb_interaction)
-        self.insertWidget(label)
+        self.insertWidget(label2)
         self.insertWidget(self.cb)
 
     @property
@@ -112,12 +112,14 @@ class ForumWidget(QtWidgets.QWidget):
     parenting_mode = (False, None)
     spliiter_resized = False
     _forum_user = None
+    DEFAULT_BRUSH = QtGui.QBrush()
     BLUE_BRUSH = QtGui.QBrush(QtGui.QColor("blue"))
+    RED_BRUSH = QtGui.QBrush(QtGui.QColor("red"))
     ALT_BRUSH = QtGui.QBrush(QtGui.QColor(250, 250, 250))
     NORM_BRUSH = QtGui.QBrush(QtGui.QColor(240, 240, 240))
-    post_messages = {}
     read_ids = set([])
     new_read_ids = set([])
+    important_post_toggles = {}
 
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
@@ -127,35 +129,40 @@ class ForumWidget(QtWidgets.QWidget):
             self.tree_widget.ExtendedSelection)
         control_frame = QtWidgets.QFrame()
         self.browser_user_label = QtWidgets.QLabel()
+        self.browser_user_label.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         self.browser_user_label.setStyleSheet("color:blue;")
-        button = QtWidgets.QPushButton(_("Change"))
-        browsing_id_frame = QtWidgets.QFrame()
-        layout = QtWidgets.QHBoxLayout(browsing_id_frame)
-        layout.setSpacing(2)
-        layout.addWidget(self.browser_user_label)
-        layout.addWidget(button)
+        change_user_button = QtWidgets.QPushButton(_("Change"))
 
         self.header_label = QtWidgets.QLabel()
         self.topic_label = QtWidgets.QLabel()
         self.browser = QtWidgets.QTextBrowser()
         self.reply_button = QtWidgets.QPushButton(_("Reply"))
         self.archive_button = QtWidgets.QPushButton(_("Archive Post(s)"))
-        self.unread_button = QtWidgets.QPushButton(_("Mark as unread"))
+        self.important_button = QtWidgets.QPushButton(_("Mark as important"))
+        self.all_read_button = QtWidgets.QPushButton(
+            _("Mark Selected Post(s) as Read"))
         self.parent_button = QtWidgets.QPushButton(_("Set Parent"))
         self.new_topic_button = QtWidgets.QPushButton(_("New Topic"))
         self.show_deleted_cb = QtWidgets.QCheckBox(_("Include Archived Posts"))
+        icon = QtGui.QIcon.fromTheme("view-refresh")
+        refresh_button = QtWidgets.QPushButton(icon, "")
+        refresh_button.setFixedWidth(40)
 
-        layout = QtWidgets.QVBoxLayout(control_frame)
-        layout.addWidget(self.header_label)
-        layout.addWidget(self.topic_label)
-        layout.addWidget(self.browser)
-        layout.addWidget(browsing_id_frame)
-        layout.addWidget(self.new_topic_button)
-        layout.addWidget(self.reply_button)
-        layout.addWidget(self.archive_button)
-        layout.addWidget(self.unread_button)
-        layout.addWidget(self.parent_button)
-        layout.addWidget(self.show_deleted_cb)
+        layout = QtWidgets.QGridLayout(control_frame)
+        layout.addWidget(self.header_label, 0, 0, 1, 3)
+        layout.addWidget(self.topic_label, 1, 0, 1, 3)
+        layout.addWidget(self.browser, 2, 0, 1, 3)
+        layout.addWidget(self.browser_user_label, 3, 0, 1, 2)
+        layout.addWidget(change_user_button, 3, 2)
+        layout.addWidget(self.new_topic_button, 4, 0, 1, 3)
+        layout.addWidget(self.reply_button, 5, 0, 1, 3)
+        layout.addWidget(self.archive_button, 6, 0, 1, 3)
+        layout.addWidget(self.all_read_button, 7, 0, 1, 3)
+        layout.addWidget(self.important_button, 8, 0, 1, 3)
+        layout.addWidget(self.parent_button, 9, 0, 1, 3)
+        layout.addWidget(self.show_deleted_cb, 10, 1, 1, 2)
+        layout.addWidget(refresh_button, 10, 0)
 
         self.splitter = QtWidgets.QSplitter()
         self.splitter.addWidget(self.tree_widget)
@@ -170,7 +177,8 @@ class ForumWidget(QtWidgets.QWidget):
         self.bold_font = QtGui.QFont(QtWidgets.QApplication.instance().font())
         self.bold_font.setBold(True)
 
-        button.clicked.connect(self.change_user_but_clicked)
+        change_user_button.clicked.connect(self.change_user_but_clicked)
+        refresh_button.clicked.connect(self.refresh_button_clicked)
         self.signals()
         self.show_advanced_options(False)
 
@@ -195,6 +203,11 @@ class ForumWidget(QtWidgets.QWidget):
     def change_user_but_clicked(self):
         self.apply_new_reads()
         self._forum_user = self.forum_user(check=True)
+        self.loadForum()
+
+    def refresh_button_clicked(self):
+        LOGGER.debug("user forcing forum refresh")
+        self.apply_new_reads()
         self.loadForum()
 
     def showEvent(self, event=None):
@@ -227,8 +240,9 @@ class ForumWidget(QtWidgets.QWidget):
         self.reply_button.clicked.connect(self.forumReply)
         self.new_topic_button.clicked.connect(self.forumNewTopic)
         self.parent_button.clicked.connect(self.forumParent)
-        self.unread_button.clicked.connect(self.mark_as_unread)
+        self.important_button.clicked.connect(self.toggle_importance)
         self.show_deleted_cb.toggled.connect(self.loadForum)
+        self.all_read_button.clicked.connect(self.mark_all_as_read)
 
     def forum_mode(self):
         '''
@@ -269,7 +283,6 @@ class ForumWidget(QtWidgets.QWidget):
             self.new_posts_signal.emit()
 
     def clear(self):
-        self.post_messages = {}
         self.tree_widget.clear()
         self.browser_user_label.setText(_("No User Set"))
         self.clear_browser()
@@ -281,8 +294,9 @@ class ForumWidget(QtWidgets.QWidget):
         self.topic_label.setText("")
         self.browser.setText("")
         self.archive_button.setEnabled(False)
+        self.all_read_button.setEnabled(False)
         self.reply_button.setEnabled(False)
-        self.unread_button.setEnabled(False)
+        self.important_button.setEnabled(False)
         self.parent_button.setEnabled(False)
 
     def loadForum(self):
@@ -303,7 +317,7 @@ class ForumWidget(QtWidgets.QWidget):
 
         self.wait()
         twidg = self.tree_widget
-        posts = forum.getPosts(self.show_deleted_cb.isChecked())
+        posts = forum.getPosts(user, self.show_deleted_cb.isChecked())
         parentItems = {None: twidg}
 
         alt_bg = False
@@ -317,39 +331,36 @@ class ForumWidget(QtWidgets.QWidget):
                 brush = self.ALT_BRUSH if alt_bg else self.NORM_BRUSH
             item = QtWidgets.QTreeWidgetItem(parentItem)
             item.setText(0, post.topic)
-            item.setData(1, QtCore.Qt.DisplayRole, post.ix)
-            item.setText(2, post.inits)
+            item.setData(0, QtCore.Qt.UserRole, post)
+            item.setText(1, post.inits)
             if post.recipient:
-                item.setText(3, post.recipient)
+                item.setText(2, post.recipient)
             else:
-                item.setText(3, "-")
+                item.setText(2, "-")
 
-            item.setText(4, localsettings.readableDateTime(post.date))
+            item.setText(3, localsettings.readableDateTime(post.date))
 
-            item.setText(5, post.briefcomment)
-            self.post_messages[post.ix] = post.comment
+            item.setText(4, post.briefcomment)
             if parentItem == twidg:
                 item.setIcon(0, self.new_topic_button.icon())
-            LOGGER.debug("recipient='%s', user='%s'", post.recipient, user)
 
             if post.recipient == user:
-                # item.setForeground(0, QtGui.QBrush(QtGui.QColor("orange")))
-                item.setForeground(3, self.BLUE_BRUSH)
-            if post.inits == user:
-                # item.setForeground(0, QtGui.QBrush(QtGui.QColor("orange")))
                 item.setForeground(2, self.BLUE_BRUSH)
-            post_is_read = post.ix in self.read_ids
-            for i in range(6):
+            if post.inits == user:
+                item.setForeground(1, self.BLUE_BRUSH)
+            post_is_read = post.ix in self.read_ids.union(self.new_read_ids)
+            for i in range(5):
                 item.setBackground(i, brush)
                 if not post_is_read:
                     item.setFont(i, self.bold_font)
+                if post.important:
+                    item.setForeground(i, self.RED_BRUSH)
             parentItems[post.ix] = item
 
         twidg.expandAll()
 
         for i in range(twidg.columnCount()):
             twidg.resizeColumnToContents(i)
-        twidg.setColumnWidth(1, 0)
 
         self.wait(False)
 
@@ -360,64 +371,102 @@ class ForumWidget(QtWidgets.QWidget):
         user has selected an item in the forum
         '''
         self.clear_browser()
+        n_selected = len(self.tree_widget.selectionModel().selectedRows())
+        if n_selected > 0:
+            self.archive_button.setEnabled(True)
+            self.all_read_button.setEnabled(True)
+        if n_selected != 1:
+            return
         item = self.tree_widget.currentItem()
-        if item is None:
-            return
-        self.archive_button.setEnabled(True)
-        if len(self.tree_widget.selectionModel().selectedRows()) > 1:
-            return
+        post = item.data(0, QtCore.Qt.UserRole)
+        LOGGER.debug("forum post selected %s", post)
         self.topic_label.setText("%s:\t<b>%s</b>" % (_("Subject"),
-                                                       item.text(0)))
-        heading = "%s:\t%s<br />" % (_("From"), item.text(2))
-        heading += "%s:\t%s<br />" % (_("To"), item.text(3))
-        heading += "%s:\t%s" % (_("Post Date"), item.text(4))
-        ix = int(item.text(1))
-        message = self.post_messages.get(ix, "error")
+                                                       post.topic))
+        heading = "%s:\t%s<br />" % (_("From"), post.inits)
+        heading += "%s:\t%s<br />" % (_("To"), post.recipient)
+        heading += "%s:\t%s" % (_("Post Date"),
+                                localsettings.readableDateTime(post.date))
         self.header_label.setText(heading)
-        self.browser.setPlainText(message)
+        self.browser.setPlainText(post.comment)
         self.reply_button.setEnabled(True)
-        self.unread_button.setEnabled(True)
+        if post.important:
+            self.important_button.setStyleSheet("color: red")
+            self.important_button.setText(_("Remove importance"))
+        else:
+            self.important_button.setStyleSheet("")
+            self.important_button.setText(_("Mark as important"))
+
+        self.important_button.setEnabled(True)
         self.parent_button.setEnabled(True)
 
         if self.parenting_mode[0]:
-            parentix = int(item.text(1))
-            forum.setParent(self.parenting_mode[1], parentix)
+            forum.setParent(self.parenting_mode[1], post.ix)
             self.parenting_mode = (False, None)
             self.parent_button.setStyleSheet("")
             self.loadForum()
         else:
-            QtCore.QTimer.singleShot(3000, partial(self.mark_as_read, ix))
+            QtCore.QTimer.singleShot(3000, partial(self.mark_as_read, post.ix))
 
     def mark_as_read(self, ix):
         item = self.tree_widget.currentItem()
         if item is None:
             return
-        if ix == int(item.text(1)):
+        post = item.data(0, QtCore.Qt.UserRole)
+        if ix == post.ix:
             self.new_read_ids.add(ix)
-            for i in range(6):
+            for i in range(5):
                 item.setFont(i, QtWidgets.QApplication.font())
 
-    def mark_as_unread(self):
+    def forumDeleteItem(self):
+        '''
+        delete a forum posting
+        '''
+        self.apply_new_reads()
+        items = self.tree_widget.selectedItems()
+        number = len(items)
+        if number > 1:
+            if QtWidgets.QMessageBox.question(
+                    self, _("Confirm"),
+                    "%s %d %s?" % (_("Archive"), number, _(" Posts")),
+                    QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                    QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes:
+                for item in items:
+                    post = item.data(0, QtCore.Qt.UserRole)
+                    forum.deletePost(post.ix)
+        else:
+            item = self.tree_widget.currentItem()
+            post = item.data(0, QtCore.Qt.UserRole)
+            if QtWidgets.QMessageBox.question(
+                    self, _("Confirm"),
+                    _("Archived selected Post?") +
+                    "<br />'%s'" % post.topic,
+                    QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                    QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes:
+                forum.deletePost(post.ix)
+        self.loadForum()
+    def toggle_importance(self):
         item = self.tree_widget.currentItem()
         if item is None:
             return
-        ix = int(item.text(1))
-        for i in range(6):
-            item.setFont(i, self.bold_font)
-        try:
-            self.new_read_ids.remove(ix)
-        except KeyError:
-            pass
-        try:
-            self.read_ids.remove(ix)
-        except KeyError:
-            pass
-
-        forum.mark_as_unread(self._forum_user, ix)
+        post = item.data(0, QtCore.Qt.UserRole)
+        LOGGER.debug("toggling importance of forum post %s", post)
+        for i in range(5):
+            if post.important:
+                item.setForeground(i, self.DEFAULT_BRUSH)
+            else:
+                item.setForeground(i, self.RED_BRUSH)
+        post.important = not post.important
+        self.important_post_toggles[post.ix] = post.important
+        self.forumItemSelected()
 
     def apply_new_reads(self):
         if self._forum_user:
             forum.update_forum_read(self._forum_user, self.new_read_ids)
+            forum.update_important_posts(self._forum_user,
+                                         self.important_post_toggles)
+        self.read_ids = self.read_ids.union(self.new_read_ids)
+        self.new_read_ids = set([])
+        self.important_post_toggles = {}
 
     def forumNewTopic(self):
         '''
@@ -448,33 +497,24 @@ class ForumWidget(QtWidgets.QWidget):
         self.read_ids.add(ix)
         self.loadForum()
 
-    def forumDeleteItem(self):
+    def mark_all_as_read(self):
         '''
         delete a forum posting
         '''
-        self.apply_new_reads()
         items = self.tree_widget.selectedItems()
-        number = len(items)
-        if number > 1:
-            if QtWidgets.QMessageBox.question(
-                    self, _("Confirm"),
-                    "%s %d %s?" % (_("Archive"), number, _(" Posts")),
-                    QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
-                    QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes:
-                for item in items:
-                    ix = int(item.text(1))
-                    forum.deletePost(ix)
-        else:
-            item = self.tree_widget.currentItem()
-            heading = item.text(0)
-            if QtWidgets.QMessageBox.question(
-                    self, _("Confirm"),
-                    _("Archived selected Post?") +
-                    "<br />'%s'" % heading,
-                    QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
-                    QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes:
-                ix = int(item.text(1))
-                forum.deletePost(ix)
+        if not items:
+            return
+        if QtWidgets.QMessageBox.question(
+                self, _("Confirm"),
+                "%s %s?" % (_("Mark Selected Posts as read by"),
+                               self.forum_user()),
+                QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes,
+                QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes:
+            for item in items:
+                post = item.data(0, QtCore.Qt.UserRole)
+                if post.ix not in self.read_ids:
+                    self.new_read_ids.add(post.ix)
+        self.apply_new_reads()
         self.loadForum()
 
     def forumReply(self):
@@ -483,7 +523,8 @@ class ForumWidget(QtWidgets.QWidget):
         '''
         self.apply_new_reads()
         item = self.tree_widget.currentItem()
-        heading = item.text(0)
+        post = item.data(0, QtCore.Qt.UserRole)
+        heading = post.topic
         if heading[:2] != "re":
             heading = "re. " + heading
         Dialog = QtWidgets.QDialog(self)
@@ -493,14 +534,13 @@ class ForumWidget(QtWidgets.QWidget):
         dl.to_comboBox.addItems([_("EVERYBODY")] + localsettings.allowed_logins)
 
         if Dialog.exec_():
-            parentix = int(item.text(1))
-            post = forum.ForumPost()
-            post.parent_ix = parentix
-            post.topic = dl.topic_lineEdit.text()
-            post.comment = dl.comment_textEdit.toPlainText()
-            post.inits = self.forum_user()
-            post.recipient = dl.to_comboBox.currentText()
-            ix = forum.commitPost(post)
+            newpost = forum.ForumPost()
+            newpost.parent_ix = post.ix
+            newpost.topic = dl.topic_lineEdit.text()
+            newpost.comment = dl.comment_textEdit.toPlainText()
+            newpost.inits = self.forum_user()
+            newpost.recipient = dl.to_comboBox.currentText()
+            ix = forum.commitPost(newpost)
             self.read_ids.add(ix)
         self.loadForum()
 
@@ -509,7 +549,7 @@ class ForumWidget(QtWidgets.QWidget):
         set a parent for the current post
         '''
         item = self.tree_widget.currentItem()
-        ix = int(item.text(1))
+        post = item.data(0, QtCore.Qt.UserRole)
         if self.parenting_mode[0]:
             self.parenting_mode = (False, None)
             self.advise(_("Parenting Cancelled"))
@@ -518,7 +558,7 @@ class ForumWidget(QtWidgets.QWidget):
 
         self.parent_button.setStyleSheet("background-color: red")
         self.advise(_("Click on the Parent Item"))
-        self.parenting_mode = (True, ix)
+        self.parenting_mode = (True, post.ix)
 
     def show_advanced_options(self, advanced):
         self.parent_button.setVisible(advanced)
@@ -537,12 +577,13 @@ class ForumMainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(fw)
 
     def sizeHint(self):
-        return QtCore.QSize(800, 400)
+        return QtCore.QSize(1400, 600)
 
 
 if __name__ == "__main__":
 
     localsettings.initiateUsers()
+    localsettings.operator = "NW"
     LOGGER.setLevel(logging.DEBUG)
     app = QtWidgets.QApplication([])
     mw = ForumMainWindow()
