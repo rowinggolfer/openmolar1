@@ -139,7 +139,7 @@ class ForumWidget(QtWidgets.QWidget):
         self.browser = QtWidgets.QTextBrowser()
         self.reply_button = QtWidgets.QPushButton(_("Reply"))
         self.archive_button = QtWidgets.QPushButton(_("Archive Post(s)"))
-        self.important_button = QtWidgets.QPushButton(_("Mark as important"))
+        self.important_button = QtWidgets.QPushButton(_("Toggle Importance"))
         self.all_read_button = QtWidgets.QPushButton(
             _("Mark Selected Post(s) as Read"))
         self.parent_button = QtWidgets.QPushButton(_("Set Parent"))
@@ -297,6 +297,8 @@ class ForumWidget(QtWidgets.QWidget):
         self.all_read_button.setEnabled(False)
         self.reply_button.setEnabled(False)
         self.important_button.setEnabled(False)
+        self.important_button.setText(_("Toggle Importance"))
+        self.important_button.setStyleSheet("")
         self.parent_button.setEnabled(False)
 
     def loadForum(self):
