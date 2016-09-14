@@ -30,19 +30,32 @@ import os
 import subprocess
 from get_git_branch import module_path
 
-def source_files():
+EXCLUDE_DIRS = ["venv", ".ropeproject", ".git", "__pycache__"]
 
+
+def source_files():
+    '''
+    get all source files for the project
+    '''
     for root, dir_, files in os.walk(module_path):
-        for file_ in files:
-            if file_.endswith('.py'):
-                yield os.path.abspath(os.path.join(root, file_))
+        src_directory = True
+        for exclude_dir in EXCLUDE_DIRS:
+            src_directory = src_directory and (exclude_dir not in root)
+        if src_directory:
+            print("selecting py files from directory %s", root)
+            for file_ in files:
+                if file_.endswith('.py'):
+                    yield os.path.abspath(os.path.join(root, file_))
 
 
 def main():
+    '''
+    main procedure.
+    '''
     files = list(source_files())
     print("%d py files found" % len(files))
     outdir = os.path.join(module_path, "openmolar", "locale")
-    print("using pygettext3 to create messages.pot in directory %s"% outdir)
+    print("using pygettext3 to create messages.pot in directory %s" % outdir)
     pr = subprocess.Popen(["pygettext3", "-p", outdir] + files)
     pr.wait()
     print("ALL DONE!")
