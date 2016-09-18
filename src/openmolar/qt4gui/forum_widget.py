@@ -219,6 +219,8 @@ class ForumWidget(QtWidgets.QWidget):
 
     def hideEvent(self, event=None):
         self.apply_new_reads()
+        parenting_mode = (False, None)
+        self.cancel_parenting_mode()
         self._forum_user = None
         self.departed_signal.emit()
         self.timer.start(60000)  # fire every minute
@@ -402,12 +404,19 @@ class ForumWidget(QtWidgets.QWidget):
         self.parent_button.setEnabled(True)
 
         if self.parenting_mode[0]:
-            forum.setParent(self.parenting_mode[1], post.ix)
-            self.parenting_mode = (False, None)
-            self.parent_button.setStyleSheet("")
-            self.loadForum()
+            try:
+                forum.setParent(self.parenting_mode[1], post.ix)
+            except Exception as exc:
+                raise exc
+            finally:
+                self.cancel_parenting_mode()
         else:
             QtCore.QTimer.singleShot(3000, partial(self.mark_as_read, post.ix))
+
+    def cancel_parenting_mode(self):
+        self.parenting_mode = (False, None)
+        self.parent_button.setStyleSheet("")
+        self.loadForum()
 
     def mark_as_read(self, ix):
         item = self.tree_widget.currentItem()
@@ -576,6 +585,7 @@ class ForumMainWindow(QtWidgets.QMainWindow):
 
         fw = ForumWidget(self)
         fw.log_in_successful()
+        fw.show_advanced_options(True)
         self.setCentralWidget(fw)
 
     def sizeHint(self):

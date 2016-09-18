@@ -35,7 +35,7 @@ important_id from forum left join
 (select max(parent_id) as ancestor, child_id from forum join forum_parents
 on ix=parent_id %s group by child_id) t on ix=t.child_id
 left join (select important_id from forum_important where op=%%s) t1
-on important_id = ix %s order by ix'''
+on important_id = ix %s order by ix, ancestor'''
 
 READPOSTS_QUERY = "select id from forumread where op=%s"
 
@@ -50,6 +50,8 @@ UNREAD_POSTS_QUERY = '''select count(*) from forum where open and ix not in
 INSERT_QUERY = '''
 insert into forum (inits, recipient, fdate, topic, comment)
 VALUES (%s, %s, NOW(), %s, %s)'''
+
+ORPHANED_POST_QUERY = 'delete from forum_parents where child_id = %s'
 
 INSERT_PARENT_QUERY = \
     'insert into forum_parents (child_id, parent_id) values (%s, %s)'
@@ -134,11 +136,13 @@ def deletePost(ix):
     cursor.close()
 
 
-def setParent(ix, parent_ix):
+def setParent(child_id, new_parent_ix):
+    LOGGER.debug("setParent %s %s", child_id, new_parent_ix)
     db = connect.connect()
     cursor = db.cursor()
-    query = "update forum set parent_ix=%s where ix=%s"
-    cursor.execute(query, (parent_ix, ix))
+    cursor.execute(ORPHANED_POST_QUERY, (child_id,))
+    cursor.execute(INSERT_PARENT_QUERY, (child_id, new_parent_ix))
+    cursor.execute(ANCESTORS_QUERY, (child_id,))
     db.commit()
     cursor.close()
 
