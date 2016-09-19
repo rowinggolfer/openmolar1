@@ -405,7 +405,11 @@ class ForumWidget(QtWidgets.QWidget):
 
         if self.parenting_mode[0]:
             try:
-                forum.setParent(self.parenting_mode[1], post.ix)
+                if self.parenting_mode[1] < post.ix:
+                    self.advise(
+                        _("Parent topic is newer, operation not allowed"))
+                else:
+                    forum.setParent(self.parenting_mode[1], post.ix)
             except Exception as exc:
                 raise exc
             finally:

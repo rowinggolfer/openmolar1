@@ -35,7 +35,7 @@ important_id from forum left join
 (select max(parent_id) as ancestor, child_id from forum join forum_parents
 on ix=parent_id %s group by child_id) t on ix=t.child_id
 left join (select important_id from forum_important where op=%%s) t1
-on important_id = ix %s order by ix, ancestor'''
+on important_id = ix %s order by ancestor, ix'''
 
 READPOSTS_QUERY = "select id from forumread where op=%s"
 
