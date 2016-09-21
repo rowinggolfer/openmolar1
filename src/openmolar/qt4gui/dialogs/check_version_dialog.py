@@ -22,17 +22,15 @@
 # ########################################################################### #
 
 import configparser
-from datetime import date, timedelta
+from datetime import date
+from datetime import timedelta
 import logging
 import re
 import os
-import socket
-import urllib.request
-import urllib.error
-import urllib.parse
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
+from PyQt5 import QtNetwork
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
@@ -41,14 +39,10 @@ from openmolar.qt4gui.dialogs.base_dialogs import ExtendableDialog
 LOGGER = logging.getLogger("openmolar")
 
 LOOKUP_URL = "https://openmolar.com/om1/get_version"
-INFORMATION_URL = "https://openmolar.com/om1"
 
-HEADERS = {
-    'User-Agent': 'openmolar%s' % localsettings.VERSION,
-    'Accept': 'text/plain',
-    'Accept-Charset': 'utf-8',
-    'Accept-Encoding': 'none',
-    'Connection': 'close'}
+INFORMATION_URL = "https://openmolar.com/"
+
+USER_AGENT_HEADER = 'openmolar%s' % localsettings.VERSION
 
 MESSAGE = '''<p>%s <b>%s</b></p>
 <hr /><p>%s <b>%%s</b> - %s %%s</p><p><em>%%s</em></p><hr />
@@ -81,18 +75,56 @@ def parse_isodate(isodate):
 
 
 class Options(object):
+    ALWAYS = 0
     DAILY = 1
     WEEKLY = 2
     MONTHLY = 3
     NEVER = 4
-    DEFAULT = DAILY
+    DEFAULT = ALWAYS
 
-    READABLE_VALUES = {DAILY: "DAILY",
+    READABLE_VALUES = {ALWAYS: "ALWAYS",
+                       DAILY: "DAILY",
                        WEEKLY: "WEEKLY",
                        MONTHLY: "MONTHLY",
                        NEVER: "NEVER"}
 
     checked_today = False
+
+
+class DataFetcher(QtCore.QObject):
+    finished_signal = QtCore.pyqtSignal()
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._access_manager = QtNetwork.QNetworkAccessManager()
+        self._data = None
+        self._access_manager.finished.connect(self._access_manager_finished)
+        self.timeout_timer = QtCore.QTimer()
+        self.timeout_timer.timeout.connect(self.timeout)
+        self.timeout_timer.start(20000)
+
+    def _access_manager_finished(self, reply):
+        self.timeout_timer.stop()
+        self._data = reply.readAll()
+        assert isinstance(self._data, QtCore.QByteArray)
+        self.finished_signal.emit()
+
+    def get_webdata(self):
+        request = QtNetwork.QNetworkRequest(QtCore.QUrl(LOOKUP_URL))
+        request.setHeader(QtNetwork.QNetworkRequest.UserAgentHeader,
+                          USER_AGENT_HEADER)
+        self._access_manager.get(request)
+
+    def result(self):
+        try:
+            result = self._data.data().decode("utf8")
+            return result if result else None
+        except:
+            return None
+
+    def timeout(self):
+        self.timeout_timer.stop()
+        self.finished_signal.emit()
 
 
 class MyConfigParser(configparser.ConfigParser, Options):
@@ -115,8 +147,8 @@ class MyConfigParser(configparser.ConfigParser, Options):
         return a human readable (in english!) of the chosen update frequency
         '''
         if self.user_chosen_option:
-            return self.READABLE_VALUES.get(self.user_chosen_option, "DAILY")
-        return self.READABLE_VALUES.get(self.update_option, "DAILY")
+            return self.READABLE_VALUES.get(self.user_chosen_option, "ALWAYS")
+        return self.READABLE_VALUES.get(self.update_option, "ALWAYS")
 
     @property
     def update_option(self):
@@ -162,6 +194,7 @@ class OptionsWidget(QtWidgets.QWidget, Options):
 
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
+        self.rb0 = QtWidgets.QRadioButton(_("Check for updates with every run"))
         self.rb1 = QtWidgets.QRadioButton(_("Check for updates daily"))
         self.rb2 = QtWidgets.QRadioButton(_("Check for updates weekly"))
         self.rb3 = QtWidgets.QRadioButton(_("Check for updates monthly"))
@@ -169,6 +202,7 @@ class OptionsWidget(QtWidgets.QWidget, Options):
 
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(1, 1, 1, 1)
+        layout.addWidget(self.rb0)
         layout.addWidget(self.rb1)
         layout.addWidget(self.rb2)
         layout.addWidget(self.rb3)
@@ -178,6 +212,7 @@ class OptionsWidget(QtWidgets.QWidget, Options):
     def set_chosen_option(self, option=None):
         if option is None:
             option = self.DEFAULT
+        self.rb0.setChecked(option == self.ALWAYS)
         self.rb1.setChecked(option == self.DAILY)
         self.rb2.setChecked(option == self.WEEKLY)
         self.rb3.setChecked(option == self.MONTHLY)
@@ -185,6 +220,8 @@ class OptionsWidget(QtWidgets.QWidget, Options):
 
     @property
     def chosen_option(self):
+        if self.rb0.isChecked():
+            return self.ALWAYS
         if self.rb1.isChecked():
             return self.DAILY
         if self.rb2.isChecked():
@@ -198,77 +235,83 @@ class OptionsWidget(QtWidgets.QWidget, Options):
 class CheckVersionDialog(ExtendableDialog, Options):
     '''
     A dialog which informs the user of any updates to the openmolar application
+    There are 2 ways of calling this dialog.
+    exec_() = show the dialog before polling the wesbite for releases
+    background_exec() = only show the result if there is a new version.
     '''
     result = None
     _new_version = None
     _next_check_date = None
-    header_text = _("A newer version of OpenMolar is available")
+    polling = False
 
-    def __init__(self, force_check=False, parent=None):
+    def __init__(self, parent=None):
+        LOGGER.debug("initiating CheckVersionDialog")
         ExtendableDialog.__init__(self, parent)
+        self.data_fetcher = DataFetcher(self)
         self.config = MyConfigParser()
 
-        self.worth_executing = (self.version_lookup(force_check) and (
-            self.update_available or force_check))
+    def add_widgets(self):
+        self.header_label = WarningLabel(
+            _("Checking for updates.... please wait."))
+        self.result_label = QtWidgets.QLabel("")
+        self.result_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.result_label.setOpenExternalLinks(True)
 
-        if self.worth_executing:
-            header_label = WarningLabel(self.header_text)
-            header_label.label.setOpenExternalLinks(True)
-            details_label = QtWidgets.QLabel(MESSAGE % (self.new_version))
-            details_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.insertWidget(self.header_label)
+        self.insertWidget(self.result_label)
 
-            self.insertWidget(header_label)
-            self.insertWidget(details_label)
+        self.cancel_but.hide()
+        self.apply_but.setText(_("OK"))
+        self.enableApply()
 
-            self.cancel_but.hide()
-            self.apply_but.setText(_("OK"))
-            self.enableApply()
+        self.options_widget = OptionsWidget(self)
+        self.options_widget.set_chosen_option(self.config.update_option)
+        self.set_advanced_but_text(_("Options"))
+        self.add_advanced_widget(self.options_widget)
 
-            self.options_widget = OptionsWidget(self)
-            self.options_widget.set_chosen_option(self.config.update_option)
-            self.set_advanced_but_text(_("Options"))
-            self.add_advanced_widget(self.options_widget)
+    def show_result(self):
+        LOGGER.debug("CheckVersionDialog show result")
+        self.result = self.data_fetcher.result()
+        if self.result is None:
+            self.result_label.setText(
+                "%s<br /><a href='%s'>%s</a>" % (_("Unable to connect to"),
+                                                 INFORMATION_URL,
+                                                 INFORMATION_URL))
+            return
+        if self.update_available:
+            header_text = _("A newer version of OpenMolar is available")
+            self.header_label.label.setStyleSheet("color: red")
+        else:
+            header_text = _("You are running the latest version - thankyou")
 
-    def version_lookup(self, force_check):
+        self.header_label.setText(header_text)
+        self.result_label.setText(MESSAGE % (self.new_version))
+
+    def lookup_due(self):
         '''
-        poll the server for a simd for a postcode
+        check the config file for user preferences on update check
         '''
-        LOGGER.debug("version_lookup")
-        if self.config.update_option == self.NEVER and not force_check:
+        LOGGER.debug("checking user preferences for application update check")
+        if self.config.update_option == self.NEVER:
             return False
         if self.config.update_option == self.MONTHLY:
             delta = timedelta(days=30)
         elif self.config.update_option == self.WEEKLY:
             delta = timedelta(days=7)
-        else:  # DAILY
+        elif self.config.update_option == self.DAILY:
             delta = timedelta(days=1)
-        if force_check:
-            LOGGER.warning("Check Version Dialog Called with force=True")
-        elif self.config.last_check_date + delta > date.today():
+        else:
+            delta = timedelta(days=0)
+        if self.config.last_check_date + delta > date.today():
             LOGGER.debug("update check not due yet")
             return False
-        LOGGER.info("polling for updates")
-        QtWidgets.QApplication.instance().processEvents()
-        try:
-            self.config.checked_today = True
-            req = urllib.request.Request(LOOKUP_URL, headers=HEADERS)
-            response = urllib.request.urlopen(req, timeout=20)
-            self.result = response.read().decode("utf8")
-            LOGGER.info("\n".join(("UPSTREAM VERSION:",
-                                   "- -" * 30,
-                                   self.result,
-                                   "- -" * 30)))
-        except urllib.error.URLError:
-            LOGGER.error("url error polling openmolar website?")
-            self.result = _("Error polling website")
-            return False
-        except socket.timeout:
-            LOGGER.error("timeout error polling openmolar website?")
-            self.result = _("Timeout polling website")
-            return False
-        except Exception:
-            LOGGER.exception("unknown error getting response from website")
         return True
+
+    def hit_website(self):
+        if not self.polling:
+            LOGGER.info("polling website for latest release")
+            self.polling = True
+            self.data_fetcher.get_webdata()
 
     @property
     def update_available(self):
@@ -281,12 +324,11 @@ class CheckVersionDialog(ExtendableDialog, Options):
                 LOGGER.info("There is a newer version available upstream")
                 return True
             else:
-                self.header_text = _(
-                    "You are running the latest version - thankyou")
                 LOGGER.info("You are running the latest version - thankyou")
                 return False
         except:
-            LOGGER.exception("unknown error getting update available")
+            LOGGER.exception("unknown error getting update available "
+                             "perhaps the website returned garbage???")
             return False
 
     @property
@@ -307,6 +349,7 @@ class CheckVersionDialog(ExtendableDialog, Options):
                         release_date = date(int(m.groups()[0]),
                                             int(m.groups()[1]),
                                             int(m.groups()[2]))
+                        self.checked_today = True
                     else:
                         LOGGER.warning("release date not in form 2016,03,09")
                 except configparser.NoOptionError:
@@ -326,32 +369,33 @@ class CheckVersionDialog(ExtendableDialog, Options):
                                  message.replace("\n", "<br />"))
         return self._new_version
 
+    def background_exec(self):
+        if self.lookup_due():
+            self.data_fetcher.finished_signal.connect(self.exec_)
+            self.hit_website()
+        else:
+            self.deleteLater()
+
     def exec_(self):
-        if self.worth_executing:
-            if ExtendableDialog.exec_(self):
-                self.config.user_chosen_option = \
-                    self.options_widget.chosen_option
-                self.config.write_config()
-            return True
-        return False
-
-
-class ThreadedCheckVersion(QtCore.QThread):
-
-    def __init__(self, parent=None):
-        self.parent = parent
-        QtCore.QThread.__init__(self)
-
-    def __del__(self):
-        self.wait()
-
-    def run(self):
-        dl = CheckVersionDialog(False, self.parent)
-        dl.exec_()
+        LOGGER.debug("exec_ called by %s", self.sender())
+        self.add_widgets()
+        if self.sender() == self.data_fetcher:
+            self.show_result()
+        else:
+            self.data_fetcher.finished_signal.connect(self.show_result)
+            QtCore.QTimer.singleShot(5000, self.hit_website)
+        if ExtendableDialog.exec_(self):
+            self.config.user_chosen_option = self.options_widget.chosen_option
+            self.config.checked_today = self.checked_today
+            self.config.write_config()
 
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
     app = QtWidgets.QApplication([])
-    thread = ThreadedCheckVersion()
-    thread.run()
+    dl = CheckVersionDialog()
+    if True:
+        dl.exec_()
+    else:
+        dl.background_exec()
+        app.exec_()
