@@ -247,7 +247,7 @@ class CheckVersionDialog(ExtendableDialog, Options):
     def __init__(self, parent=None):
         LOGGER.debug("initiating CheckVersionDialog")
         ExtendableDialog.__init__(self, parent)
-        self.data_fetcher = DataFetcher(self)
+        self.data_fetcher = DataFetcher(parent)
         self.config = MyConfigParser()
 
     def add_widgets(self):
@@ -373,14 +373,16 @@ class CheckVersionDialog(ExtendableDialog, Options):
         if self.lookup_due():
             self.data_fetcher.finished_signal.connect(self.exec_)
             self.hit_website()
-        else:
-            self.deleteLater()
 
     def exec_(self):
         LOGGER.debug("exec_ called by %s", self.sender())
         self.add_widgets()
         if self.sender() == self.data_fetcher:
             self.show_result()
+            # lookup has been performed discreetly, only bother the user if
+            # there is an update available
+            if not self.update_available:
+                return False
         else:
             self.data_fetcher.finished_signal.connect(self.show_result)
             QtCore.QTimer.singleShot(5000, self.hit_website)
