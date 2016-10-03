@@ -76,6 +76,7 @@ class AdvancedRecordManagementDialog(BaseDialog):
         '''
         self.ui.total_label.setText(
             localsettings.formatMoney(self.pt.fees))
+        self.ui.money0_spinBox.setValue(self.pt.money0)
         self.ui.money1_spinBox.setValue(self.pt.money1)
         self.ui.money2_spinBox.setValue(self.pt.money2)
         self.ui.money3_spinBox.setValue(self.pt.money3)
