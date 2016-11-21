@@ -463,7 +463,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>521</width>
+                      <width>770</width>
                       <height>646</height>
                      </rect>
                     </property>
@@ -804,22 +804,6 @@
                           </property>
                          </widget>
                         </item>
-                        <item row="2" column="1" colspan="3">
-                         <widget class="QLineEdit" name="snameEdit">
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="autoFillBackground">
-                           <bool>false</bool>
-                          </property>
-                          <property name="maxLength">
-                           <number>30</number>
-                          </property>
-                         </widget>
-                        </item>
                         <item row="2" column="4">
                          <widget class="QLabel" name="label_14">
                           <property name="maximumSize">
@@ -1093,29 +1077,13 @@
                         <item row="1" column="0">
                          <widget class="QLabel" name="label_2">
                           <property name="text">
-                           <string>First Name</string>
+                           <string>First Name(s)</string>
                           </property>
                           <property name="alignment">
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
                           <property name="buddy">
                            <cstring>fnameEdit</cstring>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="1" column="1" colspan="3">
-                         <widget class="QLineEdit" name="fnameEdit">
-                          <property name="maximumSize">
-                           <size>
-                            <width>16777215</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="autoFillBackground">
-                           <bool>false</bool>
-                          </property>
-                          <property name="maxLength">
-                           <number>30</number>
                           </property>
                          </widget>
                         </item>
@@ -1211,6 +1179,45 @@
                           </property>
                           <property name="maxLength">
                            <number>30</number>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="1" colspan="3">
+                         <widget class="QLineEdit" name="fnameEdit">
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="autoFillBackground">
+                           <bool>false</bool>
+                          </property>
+                          <property name="maxLength">
+                           <number>30</number>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="2" column="1" colspan="2">
+                         <widget class="QLineEdit" name="snameEdit">
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="autoFillBackground">
+                           <bool>false</bool>
+                          </property>
+                          <property name="maxLength">
+                           <number>30</number>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="2" column="3">
+                         <widget class="QPushButton" name="advanced_names_pushButton">
+                          <property name="text">
+                           <string>Advanced</string>
                           </property>
                          </widget>
                         </item>
@@ -1797,7 +1804,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>457</width>
+                      <width>752</width>
                       <height>423</height>
                      </rect>
                     </property>
@@ -2090,7 +2097,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>491</width>
+                      <width>766</width>
                       <height>457</height>
                      </rect>
                     </property>
@@ -3130,8 +3137,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>98</width>
-                      <height>200</height>
+                      <width>559</width>
+                      <height>377</height>
                      </rect>
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_19"/>
@@ -3160,8 +3167,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>166</width>
-                      <height>218</height>
+                      <width>198</width>
+                      <height>377</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -3280,8 +3287,8 @@ Note - this will not remove items which are currently there. </string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>98</width>
-                      <height>28</height>
+                      <width>783</width>
+                      <height>395</height>
                      </rect>
                     </property>
                    </widget>

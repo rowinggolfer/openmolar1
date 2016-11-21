@@ -76,6 +76,7 @@ from openmolar.qt4gui.dialogs.dialog_collection import (
     AccountSeverityDialog,
     AddClinicianDialog,
     AddUserDialog,
+    AdvancedNamesDialog,
     AdvancedRecordManagementDialog,
     AdvancedTxPlanningDialog,
     AlterTodaysNotesDialog,
@@ -1992,6 +1993,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
             # - only make changes if user has visited this tab
             self.apply_editpage_changes()
         self.pt.monies_reset = patient_write_changes.reset_money(self.pt)
+        self.check_previous_surname()
         uc = self.unsavedChanges()
         if uc != []:
             LOGGER.info(
@@ -3153,6 +3155,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         self.ui.save_new_patient_pushButton.clicked.connect(
             self.checkNewPatient)
         self.ui.abort_new_patient_pushButton.clicked.connect(self.home)
+        self.ui.advanced_names_pushButton.clicked.connect(self.advanced_names)
 
     def signals_notesPage(self):
         # notes page
@@ -3321,6 +3324,14 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         else:
             email = self.ui.email1Edit.text()
         webbrowser.open("mailto:%s" % email)
+
+    def advanced_names(self):
+        self.apply_editpage_changes()
+        dl = AdvancedNamesDialog(self)
+        dl.set_patient(self.pt)
+        if dl.exec_():
+            self.ui.snameEdit.setText(dl.sname)
+            self.ui.fnameEdit.setText(dl.fname)
 
     def load_pt_statuses(self):
         ds = DistinctStatuses()
@@ -3660,6 +3671,12 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
             self.advise("%s %s" % (_("Bookend altered to"),
                                    localsettings.formatDate(dl.chosen_date)),
                         1)
+
+    def check_previous_surname(self):
+        if self.pt.sname != self.pt.dbstate.sname:
+            dl = AdvancedNamesDialog(self)
+            dl.set_patient(self.pt)
+            dl.check_save_previous_surname(self.pt.dbstate.sname)
 
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''

@@ -32,15 +32,17 @@ from openmolar.settings import localsettings
 
 LOGGER = logging.getLogger("openmolar")
 
-ALL_PATIENTS_QUERY = \
-    '''SELECT serialno, status, title, fname, sname, dob, addr1, addr2, town,
-pcde, tel1, tel2, mobile FROM new_patients ORDER BY sname, fname'''
+ALL_PATIENTS_QUERY = '''SELECT new_patients.serialno, status, title, fname,
+sname, dob, addr1, addr2, town, pcde, tel1, tel2, mobile, alt_fname, alt_sname
+FROM new_patients
+LEFT JOIN pseudonyms ON new_patients.serialno = pseudonyms.serialno
+{{CONDITIONS}} GROUP BY serialno ORDER BY sname, fname'''
 
 
 def all_patients():
     db = connect()
     cursor = db.cursor()
-    cursor.execute(ALL_PATIENTS_QUERY)
+    cursor.execute(ALL_PATIENTS_QUERY.replace("{{CONDITIONS}}", ""))
     results = cursor.fetchall()
     cursor.close()
 
@@ -68,41 +70,50 @@ def getcandidates(dob, addr, tel, sname, similar_sname, fname,
         values.append("%" + pcde + "%")
     if sname != '':
         if similar_sname:
-            conditions.append('sname sounds like %s')
-            values.append(sname)
+            conditions.append(
+                '(sname sounds like %s OR alt_sname sounds like %s)')
+            values += [sname, sname]
         else:
             sname += "%"
-            if "'" in sname:
-                conditions.append('(sname like %s or sname like %s)')
-                values.append(sname)
-                values.append(sname.replace("'", ""))
-            elif sname[:1] == "o":
-                conditions.append('(sname like %s or sname like %s)')
-                values.append(sname)
-                values.append("o'" + sname[1:])
-            elif sname[:2] == "mc":
-                conditions.append('(sname like %s or sname like %s)')
-                values.append(sname)
-                values.append(sname.replace("mc", "mac"))
-            elif sname[:3] == "mac":
-                conditions.append('(sname like %s or sname like %s)')
-                values.append(sname)
-                values.append(sname.replace("mac", "mc"))
-            else:
-                conditions.append('sname like %s')
-                values.append(sname)
+            sname_conds = []
+            for field in ('sname', 'alt_sname'):
+                if "'" in sname:
+                    sname_conds.append(
+                        '(%s like %%s or %s like %%s)' % (field, field))
+                    values.append(sname)
+                    values.append(sname.replace("'", ""))
+                elif sname[:1] == "o":
+                    sname_conds.append(
+                        '(%s like %%s or %s like %%s)' % (field, field))
+                    values.append(sname)
+                    values.append("o'" + sname[1:])
+                elif sname[:2] == "mc":
+                    sname_conds.append(
+                        '(%s like %%s or %s like %%s)' % (field, field))
+                    values.append(sname)
+                    values.append(sname.replace("mc", "mac"))
+                elif sname[:3] == "mac":
+                    sname_conds.append(
+                        '(%s like %%s or %s like %%s)' % (field, field))
+                    values.append(sname)
+                    values.append(sname.replace("mac", "mc"))
+                else:
+                    sname_conds.append('%s like %%s' % field)
+                    values.append(sname)
+            conditions.append("(%s)" % " OR ".join(sname_conds))
 
     if fname != '':
         if similar_fname:
             conditions.append('fname sounds like %s')
             values.append(fname)
         else:
-            conditions.append('fname like %s')
+            conditions.append('(fname LIKE %s OR alt_fname LIKE %s)')
+            values.append(fname + "%")
             values.append(fname + "%")
 
     if conditions:
-        conditional = "WHERE %s ORDER BY" % " AND ".join(conditions)
-        query = ALL_PATIENTS_QUERY.replace("ORDER BY", conditional)
+        conditional = "WHERE %s" % " AND ".join(conditions)
+        query = ALL_PATIENTS_QUERY.replace("{{CONDITIONS}}", conditional)
 
         LOGGER.debug(query.replace("\n", " "))
         LOGGER.debug(values)
@@ -123,8 +134,8 @@ def getcandidates_from_serialnos(list_of_snos):
     "double appointments" were commonplace.
     '''
     format_snos = ",". join(('%s',) * len(list_of_snos))  # %s,%s,%s
-    conditional = "WHERE serialno in (%s) ORDER BY" % format_snos
-    query = ALL_PATIENTS_QUERY.replace("ORDER BY", conditional)
+    conditional = "WHERE new_patients.serialno in (%s)" % format_snos
+    query = ALL_PATIENTS_QUERY.replace("{{CONDITIONS}} ", conditional)
 
     db = connect()
     cursor = db.cursor()
@@ -135,9 +146,9 @@ def getcandidates_from_serialnos(list_of_snos):
 
 
 if __name__ == '__main__':
-    values = (datetime.date(1969, 12, 9), "Gables", "772378",
+    values_ = (datetime.date(1969, 12, 9), "Gables", "772378",
               "wallace", "", "neil", "", "IV2")
-    new_vals = getcandidates(*values)
+    new_vals = getcandidates(*values_)
     for candidate in new_vals:
         print(candidate)
 

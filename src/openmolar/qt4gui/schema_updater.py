@@ -66,6 +66,7 @@ UPGRADES_AVAILABLE = (
     ("3.3", ".schema3_2to3_3"),
     ("3.4", ".schema3_3to3_4"),
     ("3.5", ".schema3_4to3_5"),
+    ("3.6", ".schema3_5to3_6"),
 )
 
 MESSAGE = '''<h3>%s</h3>

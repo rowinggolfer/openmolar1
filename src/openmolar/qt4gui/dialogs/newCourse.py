@@ -71,7 +71,7 @@ class NewCourseDialog(Ui_newCourse.Ui_Dialog, QtWidgets.QDialog):
                 retarg = (dnt1, dnt2, cset, self.dateEdit.date())
                 if "" in retarg:
                     QtWidgets.QMessageBox.information(
-                        self.dialog,
+                        self.parent(),
                         _("Error"), _("Some fields are missing, please check"))
                 else:
                     return (True, retarg)

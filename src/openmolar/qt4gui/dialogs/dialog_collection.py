@@ -90,11 +90,13 @@ from openmolar.qt4gui.dialogs.check_version_dialog import CheckVersionDialog
 from openmolar.qt4gui.dialogs.database_connection_progress_dialog import \
     DatabaseConnectionProgressDialog
 from openmolar.qt4gui.dialogs.account_letter_dialog import AccountLetterDialog
+from openmolar.qt4gui.dialogs.advanced_names_dialog import AdvancedNamesDialog
 
 __all__ = ['AccountLetterDialog',
            'AccountSeverityDialog',
            'AddClinicianDialog',
            'AddUserDialog',
+           'AdvancedNamesDialog',
            'AdvancedRecordManagementDialog',
            'AdvancedTxPlanningDialog',
            'AlterTodaysNotesDialog',
