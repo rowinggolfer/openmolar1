@@ -41,16 +41,56 @@ from openmolar.qt4gui.customwidgets.warning_label import WarningLabel
 LOGGER = logging.getLogger("openmolar")
 
 
+class GetForumPosterDialog(BaseDialog):
+    '''
+    raise a dialog to determine who is posting to the forum
+    '''
+
+    _user = None
+
+    def __init__(self, user, parent=None):
+        BaseDialog.__init__(self, parent)
+
+        label = WarningLabel(
+            "%s %s<hr /> %s" % (user,
+                                _("is not allowed to post."),
+                                _("Who are you?")))
+        frame = QtWidgets.QFrame()
+        layout = QtWidgets.QVBoxLayout(frame)
+
+        scroll_area = QtWidgets.QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setWidget(frame)
+
+        for op in localsettings.allowed_logins:
+            if op not in localsettings.disallowed_forum_posters:
+                but = QtWidgets.QPushButton(op)
+                but.clicked.connect(self.but_clicked)
+                layout.addWidget(but)
+
+        self.insertWidget(label)
+        self.insertWidget(scroll_area)
+
+    @property
+    def chosen_user(self):
+        return self._user
+
+    def but_clicked(self):
+        but = self.sender()
+        self._user = but.text()
+        self.accept()
+
+
 class GetForumUserDialog(BaseDialog):
+    '''
+    raise a dialog to determine who is browsing the forum.
+    if check is False, dialog will not show if there is only one registered
+    user.
+    '''
 
     _user = None
 
     def __init__(self, check=False, parent=None):
-        '''
-        raise a dialog to determine who is browsing the forum.
-        if check is False, dialog will not show if there is only one registered
-        user.
-        '''
         BaseDialog.__init__(self, parent)
         self.check = check
         self.enableApply()
@@ -112,6 +152,7 @@ class ForumWidget(QtWidgets.QWidget):
     parenting_mode = (False, None)
     spliiter_resized = False
     _forum_user = None
+    _forum_poster = None
     DEFAULT_BRUSH = QtGui.QBrush()
     BLUE_BRUSH = QtGui.QBrush(QtGui.QColor("blue"))
     RED_BRUSH = QtGui.QBrush(QtGui.QColor("red"))
@@ -202,6 +243,7 @@ class ForumWidget(QtWidgets.QWidget):
 
     def change_user_but_clicked(self):
         self.apply_new_reads()
+        self._forum_poster = None
         self._forum_user = self.forum_user(check=True)
         self.loadForum()
 
@@ -211,6 +253,7 @@ class ForumWidget(QtWidgets.QWidget):
         self.loadForum()
 
     def showEvent(self, event=None):
+        LOGGER.info("ForumWidget showEvent")
         self.timer.stop()
         if not self.spliiter_resized:
             self.splitter.setSizes([self.width()*.7, self.width()*.3])
@@ -222,10 +265,21 @@ class ForumWidget(QtWidgets.QWidget):
         parenting_mode = (False, None)
         self.cancel_parenting_mode()
         self._forum_user = None
+        self._forum_poster = None
         self.departed_signal.emit()
         self.timer.start(60000)  # fire every minute
 
+    def forum_poster(self):
+        if self._forum_poster is None:
+            self._forum_poster = self.forum_user()
+        if self._forum_poster in localsettings.disallowed_forum_posters:
+            dl = GetForumPosterDialog(self._forum_poster, self)
+            dl.exec_()
+            self._forum_poster = dl.chosen_user
+        return self._forum_poster
+
     def forum_user(self, check=False):
+        LOGGER.info("forum_user called")
         if check or self._forum_user is None:
             self.read_ids = set([])
             dl = GetForumUserDialog(check, self)
@@ -414,13 +468,13 @@ class ForumWidget(QtWidgets.QWidget):
                 raise exc
             finally:
                 self.cancel_parenting_mode()
+                self.loadForum()
         else:
             QtCore.QTimer.singleShot(3000, partial(self.mark_as_read, post.ix))
 
     def cancel_parenting_mode(self):
         self.parenting_mode = (False, None)
         self.parent_button.setStyleSheet("")
-        self.loadForum()
 
     def mark_as_read(self, ix):
         item = self.tree_widget.currentItem()
@@ -459,6 +513,7 @@ class ForumWidget(QtWidgets.QWidget):
                     QtWidgets.QMessageBox.Yes) == QtWidgets.QMessageBox.Yes:
                 forum.deletePost(post.ix)
         self.loadForum()
+
     def toggle_importance(self):
         item = self.tree_widget.currentItem()
         if item is None:
@@ -505,7 +560,7 @@ class ForumWidget(QtWidgets.QWidget):
         post = forum.ForumPost()
         post.topic = dl.topic_lineEdit.text()
         post.comment = dl.comment_textEdit.toPlainText()
-        post.inits = self.forum_user()
+        post.inits = self.forum_poster()
         if dl.to_comboBox.currentIndex != 0:
             post.recipient = dl.to_comboBox.currentText()
         ix = forum.commitPost(post)
@@ -553,7 +608,7 @@ class ForumWidget(QtWidgets.QWidget):
             newpost.parent_ix = post.ix
             newpost.topic = dl.topic_lineEdit.text()
             newpost.comment = dl.comment_textEdit.toPlainText()
-            newpost.inits = self.forum_user()
+            newpost.inits = self.forum_poster()
             newpost.recipient = dl.to_comboBox.currentText()
             ix = forum.commitPost(newpost)
             self.read_ids.add(ix)
@@ -600,6 +655,7 @@ if __name__ == "__main__":
 
     localsettings.initiateUsers()
     localsettings.operator = "NW"
+    localsettings.disallowed_forum_posters = ["NW"]
     LOGGER.setLevel(logging.DEBUG)
     app = QtWidgets.QApplication([])
     mw = ForumMainWindow()

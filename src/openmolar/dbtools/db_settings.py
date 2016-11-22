@@ -352,6 +352,12 @@ class SettingsFetcher(object):
         debt_col = self.get_unique_value("debt collector")
         return debt_col if debt_col else _("DEBT COLLECTOR NOT SET")
 
+    @property
+    def disallowed_forum_posters(self):
+        rows = self.getData("disallowed forum poster")
+        return [fields[0] for fields in rows]
+
+
 if __name__ == "__main__":
     sf = SettingsFetcher()
     sf.fetch()
@@ -366,3 +372,4 @@ if __name__ == "__main__":
     print(sf.dentist_data)
     print(sf.account_footer)
     print(sf.debt_collector)
+    print(sf.disallowed_forum_posters)

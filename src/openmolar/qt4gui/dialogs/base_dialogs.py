@@ -125,7 +125,7 @@ class BaseDialog(QtWidgets.QDialog):
                 insertpos -= 1
             if self.extension_frame:
                 insertpos -= 1
-        LOGGER.debug("inserting %s at position %s", widg, insertpos)
+        # LOGGER.debug("inserting %s at position %s", widg, insertpos)
         self.layout_.insertWidget(insertpos, widg)
 
     def _clicked(self, but):

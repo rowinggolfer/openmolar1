@@ -377,11 +377,14 @@ LAST_ADDRESS = BLANK_ADDRESS
 # - 1 less dialog box for these lucky people
 defaultPrinterforGP17 = False
 
-# - my own class of excpetion, for when a serialno is called
-# -from the database and no match is found
-
+# - users who shouldn't post to the forum
+disallowed_forum_posters = []
 
 class PatientNotFoundError(Exception):
+    '''
+    my own class of exception, for when a serialno is called
+    from the database and no match is found
+    '''
     pass
 
 
@@ -510,6 +513,7 @@ def GP17formatDate(d):
     except AttributeError:
         return " " * 8
 
+
 try:
     DAYNAMES = (locale.nl_langinfo(locale.DAY_2),
                 locale.nl_langinfo(locale.DAY_3),
@@ -608,6 +612,7 @@ def readableDate(d):
         return _("Yesterday")
     return longDate(d)
 
+
 def readableDateTime(d):
     date_ = d.date()
     today = currentDay()
@@ -622,6 +627,7 @@ def readableDateTime(d):
         date_str = formatDate(date_)
 
     return "%s %s" % (date_str, d.time().strftime("%H:%M"))
+
 
 def notesDate(d):
     '''
@@ -875,7 +881,7 @@ def initiate(changed_server=False):
     LOGGER.debug("initiating settings from database")
     global message, dentDict, ops, SUPERVISOR, \
         ops_reverse, activedents, activehygs, activedent_ixs, activehyg_ixs, \
-        dent_ixs, hyg_ixs, \
+        dent_ixs, hyg_ixs, disallowed_forum_posters, \
         apptix, apptix_reverse, BOOKEND, clinicianNo, clinicianInits, \
         WIKIURL, cashbookCodesDict, PT_COUNT, PRACTICE_ADDRESS, PRACTICE_NAME
 
@@ -906,6 +912,7 @@ def initiate(changed_server=False):
     activehygs, activehyg_ixs = settings_fetcher.active_hygs
     dent_ixs = settings_fetcher.archived_dents + activedent_ixs
     hyg_ixs = settings_fetcher.archived_hygs + activehyg_ixs
+    disallowed_forum_posters = settings_fetcher.disallowed_forum_posters
 
     PRACTICE_NAME = settings_fetcher.practice_name
     PRACTICE_ADDRESS = settings_fetcher.practice_address
