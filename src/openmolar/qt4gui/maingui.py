@@ -426,6 +426,14 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         QtWidgets.QMainWindow.resizeEvent(self, event)
         self.setBriefMessageLocation()
 
+    def showEvent(self, event):
+        '''
+        this function is overwritten so that the advisor popup can be
+        put in the correct place
+        '''
+        QtWidgets.QMainWindow.showEvent(self, event)
+        QtCore.QTimer.singleShot(100, self.setBriefMessageLocation)
+
     def setBriefMessageLocation(self):
         '''
         make the Advisor sub class aware of the windows geometry.
