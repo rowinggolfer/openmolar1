@@ -91,6 +91,8 @@ from openmolar.qt4gui.dialogs.database_connection_progress_dialog import \
     DatabaseConnectionProgressDialog
 from openmolar.qt4gui.dialogs.account_letter_dialog import AccountLetterDialog
 from openmolar.qt4gui.dialogs.advanced_names_dialog import AdvancedNamesDialog
+from openmolar.qt4gui.dialogs.patient_location_dialog import \
+    PatientLocationDialog, ClearLocationsDialog
 
 __all__ = ['AccountLetterDialog',
            'AccountSeverityDialog',
@@ -109,6 +111,7 @@ __all__ = ['AccountLetterDialog',
            'CheckVersionDialog',
            'ChildSmileDialog',
            'ChooseToothDialog',
+           'ClearLocationsDialog',
            'ClinicianSelectDialog',
            'CorrespondenceDialog',
            'CourseConsistencyDialog',
@@ -137,6 +140,7 @@ __all__ = ['AccountLetterDialog',
            'MedicalHistoryDialog',
            'MedFormCheckDialog',
            'NHSFormsConfigDialog',
+           'PatientLocationDialog',
            'ResetSupervisorPasswordDialog',
            'RecallDialog',
            'SaveDiscardCancelDialog',

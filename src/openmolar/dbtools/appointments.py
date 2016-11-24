@@ -441,6 +441,7 @@ class DayAppointmentData(DaySummary):
         workingDents = []
         self.inOffice = {}
         self.memos = {}
+        self._snos = None
         self.startTimes = {}
         self.endTimes = {}
         self.earliest_start = 2359
@@ -504,6 +505,7 @@ class DayAppointmentData(DaySummary):
         '''
         get the appointments for the date.
         '''
+        self._snos = None
         working_dents = []
         for dent in localsettings.activedents + localsettings.activehygs:
             apptix = localsettings.apptix[dent]
@@ -578,6 +580,18 @@ class DayAppointmentData(DaySummary):
             self.appointments.insert(0, block)
         self.appointments.sort(key=lambda x: x.start)
         self.appointments.sort(key=lambda x: x.apptix)
+
+    @property
+    def serialnos(self):
+        if self._snos is None:
+            self._snos = set()
+            for app in self.appointments:
+                self._snos.add(app.serialno)
+            try:
+                self._snos.remove(0)
+            except KeyError:
+                pass
+        return self._snos
 
 
 class DentistDay(object):

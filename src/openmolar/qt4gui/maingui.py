@@ -67,7 +67,6 @@ from openmolar.qt4gui.compiled_uis import Ui_main
 from openmolar.qt4gui.compiled_uis import Ui_surgeryNumber
 from openmolar.qt4gui.compiled_uis import Ui_showMemo
 
-
 # -custom dialog modules
 from openmolar.qt4gui.dialogs import permissions
 
@@ -89,6 +88,7 @@ from openmolar.qt4gui.dialogs.dialog_collection import (
     ChildSmileDialog,
     ChooseToothDialog,
     ClinicianSelectDialog,
+    ClearLocationsDialog,
     CorrespondenceDialog,
     CourseConsistencyDialog,
     CourseEditDialog,
@@ -116,6 +116,7 @@ from openmolar.qt4gui.dialogs.dialog_collection import (
     MedicalHistoryDialog,
     MedFormCheckDialog,
     NHSFormsConfigDialog,
+    PatientLocationDialog,
     ResetSupervisorPasswordDialog,
     RecallDialog,
     SaveDiscardCancelDialog,
@@ -2972,6 +2973,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
             self.configure_feescales)
         self.ui.actionEdit_Account_Letter_Settings.triggered.connect(
             self.edit_account_letter_settings)
+        self.ui.actionClear_Locations.triggered.connect(self.clear_locations)
 
     def signals_estimates(self):
         # Estimates and Course Management
@@ -3195,6 +3197,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         self.diary_widget.pt_diary_changed.connect(
             self.pt_diary_widget.refresh_ptDiary)
         self.diary_widget.print_mh_signal.connect(self.print_mh_forms)
+        self.diary_widget.location_signal.connect(self.patient_location)
         self.diary_widget.mh_form_date_signal.connect(self.diary_mh_form_date)
         self.pt_diary_widget.start_scheduling_signal.connect(self.start_scheduling)
         self.pt_diary_widget.find_appt.connect(self.diary_widget.find_appt)
@@ -3685,6 +3688,18 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
             dl = AdvancedNamesDialog(self)
             dl.set_patient(self.pt)
             dl.check_save_previous_surname(self.pt.dbstate.sname)
+
+    def patient_location(self, sno):
+        dl = PatientLocationDialog(sno, self)
+        if dl.exec_():
+            self.advise(dl.message)
+            self.diary_widget.layout_diary()
+
+    def clear_locations(self):
+        dl = ClearLocationsDialog(self)
+        if dl.exec_():
+            self.advise(_("All Patient Locations have been cleared"))
+            self.diary_widget.layout_diary()
 
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''

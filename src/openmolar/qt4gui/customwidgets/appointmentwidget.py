@@ -57,6 +57,7 @@ BLUE_PEN = QtGui.QPen(QtCore.Qt.blue, 2)
 CENTRE_OPTION = QtGui.QTextOption(QtCore.Qt.AlignCenter)
 CENTRE_OPTION.setWrapMode(QtGui.QTextOption.WordWrap)
 
+RIGHT_OPTION = QtGui.QTextOption(QtCore.Qt.AlignRight|QtCore.Qt.AlignVCenter)
 
 class AppointmentWidget(QtWidgets.QFrame):
 
@@ -69,6 +70,7 @@ class AppointmentWidget(QtWidgets.QFrame):
     parentWidget =optional
     '''
     selected_serialno = None
+    locations = {}
     BROWSING_MODE = 0
     SCHEDULING_MODE = 1
     BLOCKING_MODE = 2
@@ -81,6 +83,7 @@ class AppointmentWidget(QtWidgets.QFrame):
     print_mh_signal = QtCore.pyqtSignal(object)
     mh_form_date_signal = QtCore.pyqtSignal(object)
     new_memo_signal = QtCore.pyqtSignal(object, object)
+    location_signal = QtCore.pyqtSignal(object)
     edit_memo_signal = QtCore.pyqtSignal(object, object, object)
     block_empty_slot_signal = QtCore.pyqtSignal(object)
     appt_empty_slot_signal = QtCore.pyqtSignal(object)
@@ -231,6 +234,7 @@ class AppointmentWidget(QtWidgets.QFrame):
         self.canvas._drag_rows = None
         self.canvas.freeslots = []
         self.clear_active_slots()
+        self.locations = {}
 
     def clear_active_slots(self):
         self.canvas.active_slots = []
@@ -282,6 +286,7 @@ class AppointmentWidget(QtWidgets.QFrame):
 
         app.startcell = self.canvas.getCell_from_time(str(app.start))
         app.endcell = self.canvas.getCell_from_time(str(app.end))
+        app.location = self.locations.get(app.serialno)
         if app.endcell == app.startcell:  # double and family appointments!!
             app.endcell += 1
             self.canvas.doubleAppts.append(app)
@@ -295,6 +300,13 @@ class AppointmentWidget(QtWidgets.QFrame):
                 self.canvas.rows[row].append(app.serialno)
             else:
                 self.canvas.rows[row] = [app.serialno]
+
+
+    def set_locations(self, locations):
+        '''
+        pass a dictionary of patients who are in the building
+        '''
+        self.locations = locations
 
     def addSlot(self, slot):
         '''
@@ -368,6 +380,7 @@ class AppointmentCanvas(QtWidgets.QWidget):
 
     enabled_slots = True
     ensure_slot_visible = True
+    LOCATION_FONT = QtGui.QFont("Sans", 14, 75)
 
     def __init__(self, pWidget):
         QtWidgets.QWidget.__init__(self, pWidget)
@@ -789,6 +802,8 @@ class AppointmentCanvas(QtWidgets.QWidget):
             elif result.text() == _("Add/Edit Memo"):
                 self.pWidget.edit_memo_signal.emit(tuple(sno_list),
                                                    start, dent)
+            elif result.text() == _("Set Patient Location"):
+                self.pWidget.location_signal.emit(sno_list[0])
             elif result.text() == _("Cancel Appointment"):
                 self.pWidget.cancel_appt(tuple(sno_list), start, dent)
             elif result.text() == _("Clear Block"):
@@ -821,13 +836,13 @@ class AppointmentCanvas(QtWidgets.QWidget):
 
             if sno_list[0] > 0:
                 actions.append(_("Load Patient"))
-
                 actions.append(None)
+                actions.append(_("Set Patient Location"))
                 actions.append(_("Add/Edit Memo"))
                 actions.append(_("Cancel Appointment"))
                 actions.append(None)
-                actions.append(_("Save Medical Form Check Date"))
                 actions.append(_("Print A Medical Form"))
+                actions.append(_("Save Medical Form Check Date"))
 
                 # this next function will emit the appt_clicked_signal
                 self.appointment_clicked(start, finish, sno_list[0])
@@ -939,12 +954,16 @@ class AppointmentCanvas(QtWidgets.QWidget):
 
         selected_rect, highlighted_rect = None, None
         highlighted_rects = []
+        locations = []
         for app in self.appts:
             painter.save()
             rect = QtCore.QRectF(
                 self.timeWidth, app.startcell * self.slotHeight,
                 colwidth - painter.pen().width(),
                 (app.endcell - app.startcell) * self.slotHeight)
+            if app.location:
+                locations.append((app.location, rect.adjusted(0,-10, 0, 10)))
+
             if (app.serialno != 0 and
                     app.serialno == self.pWidget.selected_serialno):
                 painter.setBrush(QtGui.QColor("orange"))
@@ -966,7 +985,8 @@ class AppointmentCanvas(QtWidgets.QWidget):
                 painter.drawRoundedRect(rect, 5, 5)
                 mytext = " ".join((app.name.title(), app.trt1, app.trt2,
                                    app.trt3, app.memo))
-
+                if app.location == "waiting room":
+                    painter.setPen(BLUE_PEN)
                 painter.drawText(rect, mytext, CENTRE_OPTION)
 
             # highlight any appointments booked today
@@ -988,6 +1008,7 @@ class AppointmentCanvas(QtWidgets.QWidget):
                     painter.setPen(colours.BOOKED_TODAY)
                     painter.setBrush(colours.BOOKED_TODAY)
                     painter.drawEllipse(e_rect)
+
 
                 if app.mh_form_required:
                     m_height = app.endcell - app.startcell
@@ -1082,6 +1103,15 @@ class AppointmentCanvas(QtWidgets.QWidget):
             polygon.setPoints(triangle)
             painter.drawPolygon(polygon)
 
+        painter.setBrush(QtGui.QBrush(BGCOLOR))
+        painter.save()
+        painter.setPen(BLUE_PEN)
+        painter.setFont(self.LOCATION_FONT)
+        painter.setBrush(colours.BOOKED_TODAY)
+        for location, rect in locations:
+            painter.drawText(rect, "%s " % location[0], RIGHT_OPTION)
+
+        painter.restore()
         if self.dragging:
             painter.setPen(RED_PEN)
             y = self.drag_startrow * self.slotHeight
@@ -1106,7 +1136,7 @@ class AppointmentCanvas(QtWidgets.QWidget):
                 startcell * self.slotHeight,
                 colwidth - 3,
                 (endcell - startcell) * self.slotHeight)
-        painter.setBrush(QtGui.QBrush(BGCOLOR))
+
         if selected_rect:
             painter.setPen(QtGui.QPen(QtGui.QColor("orange"), 3))
             painter.drawRect(selected_rect)

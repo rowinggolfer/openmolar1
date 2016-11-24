@@ -35,6 +35,7 @@ from PyQt5 import QtWidgets
 from openmolar.settings import localsettings
 
 from openmolar.dbtools import appointments
+from openmolar.dbtools import locations
 from openmolar.dbtools import search
 from openmolar.dbtools.brief_patient import BriefPatient
 from openmolar.ptModules import formatted_notes
@@ -88,6 +89,7 @@ class DiaryWidget(Advisor):
     pt_diary_changed = QtCore.pyqtSignal(object)
     bring_to_front = QtCore.pyqtSignal()
     print_mh_signal = QtCore.pyqtSignal(object)
+    location_signal = QtCore.pyqtSignal(object)
     mh_form_date_signal = QtCore.pyqtSignal(object)
 
     alterAday_clipboard = []  # clipboard used by the alterAday dialog
@@ -943,6 +945,7 @@ class DiaryWidget(Advisor):
 
         self.appointmentData.setDate(date_)
         self.appointmentData.getAppointments(dents)
+        patient_locations = locations.locations()
 
         if self.schedule_controller.mode == self.SCHEDULING_MODE:
             # self.schedule_controller.clear_slots()
@@ -977,6 +980,7 @@ class DiaryWidget(Advisor):
             book = self.apptBookWidgets[i]
 
             book.setDentist(dent)
+            book.set_locations(patient_locations)
 
             book.setDayStartTime(abs_start)
             book.setDayEndTime(abs_end)
@@ -1502,6 +1506,7 @@ class DiaryWidget(Advisor):
         book.appt_dropped_signal.connect(self.appt_dropped_onto_daywidget)
         book.slot_clicked_signal.connect(self.userHasChosen_slot)
         book.print_mh_signal.connect(self.print_mh_signal.emit)
+        book.location_signal.connect(self.location_signal.emit)
         book.mh_form_date_signal.connect(self.mh_form_date_signal.emit)
         book.appt_clicked_signal.connect(self.update_highlighted_appointment)
 

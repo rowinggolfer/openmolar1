@@ -4870,8 +4870,10 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     </property>
     <addaction name="actionClear_Today_s_Emergency_Slots"/>
     <addaction name="separator"/>
-    <addaction name="actionInsert_Regular_Blocks"/>
+    <addaction name="actionClear_Locations"/>
+    <addaction name="separator"/>
     <addaction name="actionSet_Bookend"/>
+    <addaction name="actionInsert_Regular_Blocks"/>
    </widget>
    <addaction name="menuMenu"/>
    <addaction name="menu_Prefences"/>
@@ -5126,6 +5128,11 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
   <action name="actionEdit_Account_Letter_Settings">
    <property name="text">
     <string>Edit Account Letter Settings</string>
+   </property>
+  </action>
+  <action name="actionClear_Locations">
+   <property name="text">
+    <string>Clear All Patient Locations</string>
    </property>
   </action>
  </widget>
