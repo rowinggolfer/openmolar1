@@ -150,6 +150,7 @@ from openmolar.dbtools.distinct_statuses import DistinctStatuses
 from openmolar.dbtools import schema_version
 from openmolar.dbtools import referral
 from openmolar.dbtools import records_in_use
+from openmolar.dbtools import locations
 
 # -modules which act upon the pt class type (and subclasses)
 from openmolar.ptModules import patientDetails
@@ -2093,6 +2094,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
                      self.ui.xray_pushButton,
                      self.ui.newBPE_pushButton,
                      self.ui.hygWizard_pushButton,
+                     self.ui.set_location_button,
                      self.ui.childsmile_button,
                      self.ui.completedChartWidget):
             widg.setEnabled(enable_tx_buts)
@@ -2847,6 +2849,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         self.ui.actionSurgery_Mode.toggled.connect(self.set_surgery_mode)
         self.ui.actionDocuments_Dialog.triggered.connect(
             self.documents_pushButton_clicked)
+        self.ui.set_location_button.clicked.connect(self.set_patient_location)
 
     def signals_admin(self):
         # admin frame
@@ -3633,6 +3636,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         check to see who may be using the current record.
         called when the records_in_use_timer timeouts.
         '''
+        self.check_waiting()
         if not self.pt or self.pt.serialno == 0:
             return
         LOGGER.debug("checking records in use")
@@ -3689,11 +3693,24 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
             dl.set_patient(self.pt)
             dl.check_save_previous_surname(self.pt.dbstate.sname)
 
+    def set_patient_location(self):
+        self.patient_location(self.pt.serialno)
+
     def patient_location(self, sno):
         dl = PatientLocationDialog(sno, self)
         if dl.exec_():
             self.advise(dl.message)
             self.diary_widget.layout_diary()
+
+    def check_waiting(self):
+        n = locations.no_of_patients_waiting()
+        if n == 0:
+            message =_("No patients are waiting")
+        elif n == 1:
+            message = _("1 PATIENT IS WAITING")
+        else:
+            message = "%d %s" % (n, _("PATIENTS ARE WAITING"))
+        self.ui.statusbar.showMessage(message)
 
     def clear_locations(self):
         dl = ClearLocationsDialog(self)

@@ -28,7 +28,21 @@ tools to access the locations table
 
 from openmolar import connect
 
-QUERY = "SELECT serialno, location from locations"
+QUERY = "SELECT serialno, location FROM locations"
+COUNT_QUERY = "SELECT count(*) FROM locations WHERE location NOT REGEXP '[0-9]'"
+
+
+def no_of_patients_waiting():
+
+    db = connect.connect()
+    cursor = db.cursor()
+    if cursor.execute(COUNT_QUERY):
+        value = cursor.fetchone()[0]
+    else:
+        value = 0
+    cursor.close()
+    return value
+
 
 
 def locations():
