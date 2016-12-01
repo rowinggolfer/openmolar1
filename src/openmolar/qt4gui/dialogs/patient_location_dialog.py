@@ -45,11 +45,11 @@ GET_NAME_QUERY = \
     'SELECT CONCAT(fname, " ", sname) from new_patients where serialno=%s'
 
 ## TODO - put these into the database or maybe local settings folder?
-localsettings.PATIENT_LOCATIONS = {"W": "Waiting Room",
-                                   "T": "Toilet",
-                                   "1": "Surgery 1",
-                                   "2": "Surgery 2",
-                                   "3": "Surgery 3"}
+localsettings.PATIENT_LOCATIONS = {"W": _("Waiting Room"),
+                                   "T": _("Toilet"),
+                                   "1": _("Surgery 1"),
+                                   "2": _("Surgery 2"),
+                                   "3": _("Surgery 3")}
 
 
 class ClearLocationsDialog(BaseDialog):
@@ -91,8 +91,9 @@ class PatientLocationDialog(BaseDialog):
             button.clicked.connect(self.button_clicked)
             self.insertWidget(button)
 
-        button = QtWidgets.QPushButton(_("Patient has left the building"))
+        button = QtWidgets.QPushButton(_("Clear Patient Location"))
         button.clicked.connect(self.clear_patient)
+        button.setMinimumHeight(80)
         self.insertWidget(button)
         self.apply_but.hide()
 

@@ -195,6 +195,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
     summary_notes_loaded = False
     notes_loaded = False
     _db_connnection_progress_dialog = None
+    _reloading_record = False
 
     def __init__(self, parent=None):
         QtWidgets.QMainWindow.__init__(self, parent)
@@ -723,9 +724,10 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         if self.pt.serialno == 0:
             return True
 
-        course_module.prompt_close_course(self)
-        if not course_module.recall_check(self):
-            return False
+        if not self._reloading_record:
+            course_module.prompt_close_course(self)
+            if not course_module.recall_check(self):
+                return False
 
         # -apply changes to patient details
         self.pt.synopsis = str(self.ui.synopsis_lineEdit.text())
@@ -893,6 +895,8 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
 
             self.ui.medNotes_pushButton.setStyleSheet("")
             self.ui.medNotes_pushButton2.setStyleSheet("")
+            if not self._reloading_record:
+                self.prompt_clear_location()
 
             # -load a blank version of the patient class
             self.pt = patient_class.patient(0)
@@ -1364,11 +1368,13 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         '''
         reload the current record
         '''
+        self._reloading_record = True
         if self.okToLeaveRecord():
             sno = self.pt.serialno
             self.advise("%s %s" % (_("Reloading record"), sno))
             self.clearRecord()
             self.getrecord(sno)
+        self._reloading_record = False
 
     def set_note_preferences(self):
         formatted_notes.show_printed = \
@@ -1687,11 +1693,15 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
 
     def set_surgery_mode(self, is_surgery=None):
         if is_surgery is None:
-            is_surgery = localsettings.station == "surgery"
+            is_surgery = self.surgery_mode
         localsettings.station = "surgery" if is_surgery else "reception"
         self.ui.actionSurgery_Mode.setChecked(is_surgery)
         self.set_operator_label()
         self.gotoDefaultTab()
+
+    @property
+    def surgery_mode(self):
+        return localsettings.station == "surgery"
 
     def set_operator_label(self):
         if localsettings.clinicianNo == 0:
@@ -3693,6 +3703,11 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
             dl.set_patient(self.pt)
             dl.check_save_previous_surname(self.pt.dbstate.sname)
 
+    def prompt_clear_location(self):
+        if (self.surgery_mode and self.pt and
+                self.pt.serialno in locations.all_snos()):
+            self.set_patient_location()
+
     def set_patient_location(self):
         self.patient_location(self.pt.serialno)
 
@@ -3701,15 +3716,23 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         if dl.exec_():
             self.advise(dl.message)
             self.diary_widget.layout_diary()
+            self.check_waiting()
 
     def check_waiting(self):
-        n = locations.no_of_patients_waiting()
+        serialnos = locations.no_of_patients_waiting()
+        n = len(serialnos)
         if n == 0:
             message =_("No patients are waiting")
         elif n == 1:
             message = _("1 PATIENT IS WAITING")
         else:
             message = "%d %s" % (n, _("PATIENTS ARE WAITING"))
+        if self.pt and self.pt.serialno in serialnos:
+            self.ui.set_location_button.setText(_("WAITING"))
+            self.ui.set_location_button.setStyleSheet("background:red")
+        else:
+            self.ui.set_location_button.setText(_("Location"))
+            self.ui.set_location_button.setStyleSheet("")
         self.ui.statusbar.showMessage(message)
 
     def clear_locations(self):

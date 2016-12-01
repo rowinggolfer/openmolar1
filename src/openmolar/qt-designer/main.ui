@@ -1804,8 +1804,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>765</width>
-                      <height>429</height>
+                      <width>752</width>
+                      <height>423</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout">
@@ -3154,7 +3154,7 @@
                       <x>0</x>
                       <y>0</y>
                       <width>559</width>
-                      <height>429</height>
+                      <height>377</height>
                      </rect>
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_19"/>
@@ -3184,7 +3184,7 @@
                       <x>0</x>
                       <y>0</y>
                       <width>198</width>
-                      <height>429</height>
+                      <height>377</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -3304,7 +3304,7 @@ Note - this will not remove items which are currently there. </string>
                       <x>0</x>
                       <y>0</y>
                       <width>783</width>
-                      <height>447</height>
+                      <height>395</height>
                      </rect>
                     </property>
                    </widget>
@@ -3580,7 +3580,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                      <x>0</x>
                      <y>0</y>
                      <width>118</width>
-                     <height>78</height>
+                     <height>130</height>
                     </rect>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -3727,7 +3727,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                 <item row="1" column="0" rowspan="2">
                  <widget class="QPushButton" name="memos_pushButton">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
