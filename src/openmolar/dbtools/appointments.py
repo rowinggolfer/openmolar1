@@ -1367,7 +1367,10 @@ def get_pts_appts(pt, printing=False):
         appt.serialno = row[0]
         appt.aprix = row[1]
         appt.name = name
-        appt.cset = pt.cset
+        if pt.cset == "M":
+            appt.cset = "I"
+        else:
+            appt.cset = pt.cset[0]
         appt.dent = row[2]
         appt.date = row[7]
         appt.atime = row[8]
