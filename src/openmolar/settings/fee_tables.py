@@ -908,7 +908,9 @@ class Modifier(object):
         self.item_ids = []
         self.item_id_regexes = []
         self._gross_fee = None
-        self._charge_fee = None
+        self._charge_fee = None  # allow for a charge which can vary in any way
+                                 # from the fee (eg. free exams on over 80s)
+        self._charge_percent = None  # allow for a discount or supplement
 
         for node in modifier_node.getElementsByTagName("condition"):
             self.conditions.append(_stripped(node.firstChild.data))
@@ -924,8 +926,12 @@ class Modifier(object):
         except IndexError:
             pass  # no gross fee modification
         try:
-            self._charge_fee = int(modifier_node.getElementsByTagName(
-                                   "charge")[0].firstChild.data)
+            charge_data = modifier_node.getElementsByTagName(
+                "charge")[0].firstChild.data
+            if "%" in charge_data:
+                self._charge_percent = int(charge_data.replace("%", ""))/100
+            else:
+                self._charge_fee = int(charge_data)
         except IndexError:
             pass  # no charge fee modication
 
@@ -973,6 +979,8 @@ class Modifier(object):
         modify the original fee supplied by the feescale
         this function could do more.. eg %age increases etc?
         '''
+        if self._charge_percent is not None:
+            return int(fee * self._charge_percent)
         if self._charge_fee is not None:
             return self._charge_fee
         return fee
