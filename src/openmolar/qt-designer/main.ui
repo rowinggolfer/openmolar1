@@ -1631,6 +1631,20 @@
                     <zorder>editHDP_pushButton</zorder>
                     <zorder>label_20</zorder>
                    </widget>
+                   <widget class="QWidget" name="tab">
+                    <attribute name="title">
+                     <string>HDP Maintenance Plan</string>
+                    </attribute>
+                    <layout class="QHBoxLayout" name="horizontalLayout_13">
+                     <item>
+                      <widget class="QLabel" name="maintenance_contract_label">
+                       <property name="text">
+                        <string>Maintenance Label</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
                    <widget class="QWidget" name="tab_20">
                     <attribute name="title">
                      <string>NHS</string>

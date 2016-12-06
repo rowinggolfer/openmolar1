@@ -25,9 +25,13 @@
 provides functions which act on the contract of the patient
 at gui level
 '''
+
+import logging
+
 from openmolar.settings import localsettings
 from openmolar.ptModules import planDetails, nhsDetails
 
+LOGGER = logging.getLogger("openmolar")
 
 def handle_ContractTab(om_gui):
     '''
@@ -59,14 +63,14 @@ def changeContractedDentist(om_gui, inits):
     newdentist = localsettings.ops_reverse[str(inits)]
     if newdentist == om_gui.pt.dnt1:
         return
-    if om_gui.pt.cset == "I":
-        om_gui.advise("Let Highland Dental Plan know of this change", 1)
+    if om_gui.pt.cset in ("I", "M"):
+        om_gui.advise(_("Let Highland Dental Plan know of this change"), 1)
     elif om_gui.pt.cset == "N":
         om_gui.advise(
-            "Get an NHS form signed to change the patients contract", 1)
+            _("Get an NHS form signed to change the patients contract"), 1)
     else:
         om_gui.advise("changed dentist to %s" % inits, 1)
-    print("changing contracted dentist to ", inits)
+    LOGGER.debug("changing contracted dentist to %s", inits)
     om_gui.pt.dnt1 = newdentist
     om_gui.updateDetails()
 
@@ -82,11 +86,12 @@ def changeCourseDentist(om_gui, inits):
         return
     if om_gui.pt.cset == "N" and om_gui.pt.underTreatment:
         om_gui.advise(
-            "think about getting some nhs forms signed for both dentists", 1)
+            _("think about getting some nhs forms signed for both dentists"),
+            1)
     else:
-        om_gui.advise("changed course dentist to %s" % inits, 1)
+        om_gui.advise("%s %s " % (_("Changed course dentist to %s"), inits), 1)
 
-    print("changing course dentist to ", inits)
+    LOGGER.debug("changing course dentist to %s", inits)
     om_gui.pt.dnt2 = newdentist
     om_gui.updateDetails()
 
@@ -97,7 +102,7 @@ def changeCourseType(om_gui, cset):
     '''
     om_gui.pt.cset = str(cset)
     om_gui.updateDetails()
-    i = ["P", "I", "N"].index(om_gui.pt.cset[:1])
+    i = localsettings.CSETYPES.index(om_gui.pt.cset[:1])
     om_gui.ui.contract_tabWidget.setCurrentIndex(i)
     # do this so that the table is reset at any lookup
     om_gui.pt.forget_fee_table()

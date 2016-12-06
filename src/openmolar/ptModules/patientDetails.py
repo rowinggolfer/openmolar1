@@ -97,11 +97,12 @@ def details(pt):
         elif "I" in pt.cset:
             html += '''<img src="%s/hdp_small.png" alt="HDP" />
             <br />''' % localsettings.resources_path
-
+        elif "M" in pt.cset:
+            html += '''<img src="%s/hdp_maintenance.png" alt="HDP-Maint" />
+            <br />''' % localsettings.resources_path
         elif "P" in pt.cset:
             html += '''<img src="%s/private.png" alt="PRIVATE" />
             <br />''' % localsettings.resources_path
-
         else:
             html += '%s = %s <br />' % (_("UNKNOWN COURSETYPE"), pt.cset)
 

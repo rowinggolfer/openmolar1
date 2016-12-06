@@ -124,6 +124,7 @@ class FeeTables(object):
             for cset in table.categories:
                 if cset not in csetypes:
                     csetypes.append(cset)
+        LOGGER.debug("Coursetypes found are %s", csetypes)
         return csetypes
 
     @property
