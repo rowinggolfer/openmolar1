@@ -89,7 +89,7 @@ def changeCourseDentist(om_gui, inits):
             _("think about getting some nhs forms signed for both dentists"),
             1)
     else:
-        om_gui.advise("%s %s " % (_("Changed course dentist to %s"), inits), 1)
+        om_gui.advise("%s %s" % (_("Changed course dentist to"), inits), 1)
 
     LOGGER.debug("changing course dentist to %s", inits)
     om_gui.pt.dnt2 = newdentist

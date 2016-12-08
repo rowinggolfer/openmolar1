@@ -869,7 +869,6 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         '''
         if self.pt.serialno != 0:
             LOGGER.debug("clearing record")
-            self.clear_record_in_use()
             self.forget_notes_loaded()
             self.ui.dobEdit.setDate(QtCore.QDate(1900, 1, 1))
             self.ui.detailsBrowser.setText("")
@@ -906,6 +905,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
                 LOGGER.debug("blanking edit page fields")
                 self.load_editpage()
                 self.editPageVisited = False
+            self.clear_record_in_use()
         else:
             self.load_notes()
             self.pt.familyno = None
@@ -1321,7 +1321,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         else:
             current_address = localsettings.LAST_ADDRESS
 
-        self.clear_record_in_use()
+        self.clearRecord()
         try:
             # update saved last address
             self.pt = patient_class.patient(serialno)

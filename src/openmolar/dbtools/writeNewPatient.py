@@ -21,38 +21,38 @@
 # #                                                                         # #
 # ########################################################################### #
 
-import MySQLdb
 from openmolar import connect
 from openmolar.dbtools import patient_class
-from openmolar.settings import localsettings
+
+NEXT_SNO_QUERY = "SELECT MAX(serialno) + 1 FROM new_patients"
+QUERY = '''INSERT INTO new_patients (serialno, %s) VALUES (%%s, %s)'''
 
 
 def commit(pt):
-    sqlcond = ""
-    values = []
+    db = connect.connect()
+    cursor = db.cursor()
+    cursor.execute(NEXT_SNO_QUERY)
+    sno = cursor.fetchone()[0]
+    cursor.close()
+    if sno is None:
+        sno = 1
+
+    attrs, vals = [], []
     for attr in patient_class.patientTableAtts:
         value = pt.__dict__[attr]
         if value:
-            sqlcond += '%s = %%s,' % attr
-            values.append(value)
+            attrs.append(attr)
+            vals.append(value)
 
-    sqlcommand = "insert into new_patients SET %s serialno=%%s" % sqlcond
+    query = QUERY % (",".join([a for a in attrs]),
+                     ",".join(['%s' for a in attrs]))
 
-    query = "select max(serialno) from new_patients"
-
-    Attempts = 0
+    _attempts = 0
     while True:
-        db = connect.connect()
-        cursor = db.cursor()
-        cursor.execute(query)
-        currentMax = cursor.fetchone()[0]
-
-        if currentMax:
-            newSerialno = currentMax + 1
-        else:
-            newSerialno = 1
         try:
-            cursor.execute(sqlcommand, tuple(values + [newSerialno]))
+            db = connect.connect()
+            cursor = db.cursor()
+            cursor.execute(query, [sno] + vals)
             cursor.close()
             db.commit()
             break
@@ -60,21 +60,18 @@ def commit(pt):
         except connect.IntegrityError as exc:
             print("error saving new patient, will retry with new serialno")
             print(exc)
-            newSerialno = -1
+            sno += 1
 
-        Attempts += 1
-        if Attempts > 20:
+        _attempts += 1
+        if _attempts > 20:
+            sno = -1
             break
-    # db.close()
-    return newSerialno
+    return sno
 
 
 if __name__ == "__main__":
-    global pt
-    from openmolar.dbtools import patient_class
-    import copy
-    pt = patient_class.patient(0)
-    pt.fname = "Norman"
-    pt.sname = "Wisdom"
+    test_pt = patient_class.patient(0)
+    test_pt.fname = "Norman"
+    test_pt.sname = "Wisdom"
     # ok - so a trivial change has been made - now write to the database
-    print(commit(pt))
+    print(commit(test_pt))

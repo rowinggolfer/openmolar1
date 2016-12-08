@@ -309,10 +309,7 @@ def toNotes(serialno, newnotes):
     if values:
         db = connect()
         cursor = db.cursor()
-        # this (superior code?) didn't work on older MySQLdb versions.
-        # rows = cursor.executemany(query, tuple(values))
-        for value in values:
-            rows += cursor.execute(INSERT_NOTE_QUERY, value)
+        rows = cursor.executemany(INSERT_NOTE_QUERY, values)
         cursor.close()
         db.commit()
 
