@@ -896,6 +896,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
             self.ui.medNotes_pushButton2.setStyleSheet("")
             if not self._reloading_record:
                 self.prompt_clear_location()
+            self.clear_record_in_use()
 
             # -load a blank version of the patient class
             self.pt = patient_class.patient(0)
@@ -905,7 +906,6 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
                 LOGGER.debug("blanking edit page fields")
                 self.load_editpage()
                 self.editPageVisited = False
-            self.clear_record_in_use()
         else:
             self.load_notes()
             self.pt.familyno = None
