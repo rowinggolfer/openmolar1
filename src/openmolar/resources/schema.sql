@@ -34,15 +34,6 @@ CREATE TABLE `aday` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `aday`
---
-
-LOCK TABLES `aday` WRITE;
-/*!40000 ALTER TABLE `aday` DISABLE KEYS */;
-/*!40000 ALTER TABLE `aday` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `appt_prefs`
 --
 
@@ -63,15 +54,6 @@ CREATE TABLE `appt_prefs` (
   PRIMARY KEY (`serialno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `appt_prefs`
---
-
-LOCK TABLES `appt_prefs` WRITE;
-/*!40000 ALTER TABLE `appt_prefs` DISABLE KEYS */;
-/*!40000 ALTER TABLE `appt_prefs` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `apr`
@@ -102,15 +84,6 @@ CREATE TABLE `apr` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `apr`
---
-
-LOCK TABLES `apr` WRITE;
-/*!40000 ALTER TABLE `apr` DISABLE KEYS */;
-/*!40000 ALTER TABLE `apr` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `aslot`
 --
 
@@ -138,15 +111,6 @@ CREATE TABLE `aslot` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `aslot`
---
-
-LOCK TABLES `aslot` WRITE;
-/*!40000 ALTER TABLE `aslot` DISABLE KEYS */;
-/*!40000 ALTER TABLE `aslot` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `bpe`
 --
 
@@ -160,15 +124,6 @@ CREATE TABLE `bpe` (
   PRIMARY KEY (`serialno`,`bpedate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `bpe`
---
-
-LOCK TABLES `bpe` WRITE;
-/*!40000 ALTER TABLE `bpe` DISABLE KEYS */;
-/*!40000 ALTER TABLE `bpe` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `calendar`
@@ -186,15 +141,6 @@ CREATE TABLE `calendar` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `calendar`
---
-
-LOCK TABLES `calendar` WRITE;
-/*!40000 ALTER TABLE `calendar` DISABLE KEYS */;
-/*!40000 ALTER TABLE `calendar` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `calldurr`
 --
 
@@ -207,15 +153,6 @@ CREATE TABLE `calldurr` (
   PRIMARY KEY (`stn`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `calldurr`
---
-
-LOCK TABLES `calldurr` WRITE;
-/*!40000 ALTER TABLE `calldurr` DISABLE KEYS */;
-/*!40000 ALTER TABLE `calldurr` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `cashbook`
@@ -240,15 +177,6 @@ CREATE TABLE `cashbook` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `cashbook`
---
-
-LOCK TABLES `cashbook` WRITE;
-/*!40000 ALTER TABLE `cashbook` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cashbook` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `cbcodes`
 --
 
@@ -261,15 +189,6 @@ CREATE TABLE `cbcodes` (
   `descr` char(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `cbcodes`
---
-
-LOCK TABLES `cbcodes` WRITE;
-/*!40000 ALTER TABLE `cbcodes` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cbcodes` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `claims`
@@ -328,15 +247,6 @@ CREATE TABLE `claims` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `claims`
---
-
-LOCK TABLES `claims` WRITE;
-/*!40000 ALTER TABLE `claims` DISABLE KEYS */;
-/*!40000 ALTER TABLE `claims` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `clinical_memos`
 --
 
@@ -356,15 +266,6 @@ CREATE TABLE `clinical_memos` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `clinical_memos`
---
-
-LOCK TABLES `clinical_memos` WRITE;
-/*!40000 ALTER TABLE `clinical_memos` DISABLE KEYS */;
-/*!40000 ALTER TABLE `clinical_memos` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `clinician_dates`
 --
 
@@ -380,15 +281,6 @@ CREATE TABLE `clinician_dates` (
   CONSTRAINT `clinician_dates_ibfk_1` FOREIGN KEY (`clinician_ix`) REFERENCES `clinicians` (`ix`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `clinician_dates`
---
-
-LOCK TABLES `clinician_dates` WRITE;
-/*!40000 ALTER TABLE `clinician_dates` DISABLE KEYS */;
-/*!40000 ALTER TABLE `clinician_dates` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `clinicians`
@@ -410,15 +302,6 @@ CREATE TABLE `clinicians` (
   PRIMARY KEY (`ix`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `clinicians`
---
-
-LOCK TABLES `clinicians` WRITE;
-/*!40000 ALTER TABLE `clinicians` DISABLE KEYS */;
-/*!40000 ALTER TABLE `clinicians` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `currtrtmt2`
@@ -523,15 +406,6 @@ CREATE TABLE `currtrtmt2` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `currtrtmt2`
---
-
-LOCK TABLES `currtrtmt2` WRITE;
-/*!40000 ALTER TABLE `currtrtmt2` DISABLE KEYS */;
-/*!40000 ALTER TABLE `currtrtmt2` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `daybook`
 --
 
@@ -565,15 +439,6 @@ CREATE TABLE `daybook` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `daybook`
---
-
-LOCK TABLES `daybook` WRITE;
-/*!40000 ALTER TABLE `daybook` DISABLE KEYS */;
-/*!40000 ALTER TABLE `daybook` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `daybook_link`
 --
 
@@ -591,15 +456,6 @@ CREATE TABLE `daybook_link` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `daybook_link`
---
-
-LOCK TABLES `daybook_link` WRITE;
-/*!40000 ALTER TABLE `daybook_link` DISABLE KEYS */;
-/*!40000 ALTER TABLE `daybook_link` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `diary_link`
 --
 
@@ -613,15 +469,6 @@ CREATE TABLE `diary_link` (
   CONSTRAINT `diary_link_ibfk_1` FOREIGN KEY (`clinician_ix`) REFERENCES `clinicians` (`ix`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `diary_link`
---
-
-LOCK TABLES `diary_link` WRITE;
-/*!40000 ALTER TABLE `diary_link` DISABLE KEYS */;
-/*!40000 ALTER TABLE `diary_link` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `docsimported`
@@ -643,15 +490,6 @@ CREATE TABLE `docsimported` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `docsimported`
---
-
-LOCK TABLES `docsimported` WRITE;
-/*!40000 ALTER TABLE `docsimported` DISABLE KEYS */;
-/*!40000 ALTER TABLE `docsimported` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `docsimporteddata`
 --
 
@@ -666,15 +504,6 @@ CREATE TABLE `docsimporteddata` (
   KEY `master_idx` (`masterid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `docsimporteddata`
---
-
-LOCK TABLES `docsimporteddata` WRITE;
-/*!40000 ALTER TABLE `docsimporteddata` DISABLE KEYS */;
-/*!40000 ALTER TABLE `docsimporteddata` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `est_link2`
@@ -695,15 +524,6 @@ CREATE TABLE `est_link2` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `est_link2`
---
-
-LOCK TABLES `est_link2` WRITE;
-/*!40000 ALTER TABLE `est_link2` DISABLE KEYS */;
-/*!40000 ALTER TABLE `est_link2` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `est_logger`
 --
 
@@ -719,15 +539,6 @@ CREATE TABLE `est_logger` (
   PRIMARY KEY (`ix`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `est_logger`
---
-
-LOCK TABLES `est_logger` WRITE;
-/*!40000 ALTER TABLE `est_logger` DISABLE KEYS */;
-/*!40000 ALTER TABLE `est_logger` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `exemptions`
@@ -748,15 +559,6 @@ CREATE TABLE `exemptions` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `exemptions`
---
-
-LOCK TABLES `exemptions` WRITE;
-/*!40000 ALTER TABLE `exemptions` DISABLE KEYS */;
-/*!40000 ALTER TABLE `exemptions` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `families`
 --
 
@@ -769,15 +571,6 @@ CREATE TABLE `families` (
   PRIMARY KEY (`familyno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `families`
---
-
-LOCK TABLES `families` WRITE;
-/*!40000 ALTER TABLE `families` DISABLE KEYS */;
-/*!40000 ALTER TABLE `families` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `feescales`
@@ -795,15 +588,6 @@ CREATE TABLE `feescales` (
   PRIMARY KEY (`ix`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `feescales`
---
-
-LOCK TABLES `feescales` WRITE;
-/*!40000 ALTER TABLE `feescales` DISABLE KEYS */;
-/*!40000 ALTER TABLE `feescales` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `feetable_key`
@@ -828,15 +612,6 @@ CREATE TABLE `feetable_key` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `feetable_key`
---
-
-LOCK TABLES `feetable_key` WRITE;
-/*!40000 ALTER TABLE `feetable_key` DISABLE KEYS */;
-/*!40000 ALTER TABLE `feetable_key` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `formatted_notes`
 --
 
@@ -858,15 +633,6 @@ CREATE TABLE `formatted_notes` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `formatted_notes`
---
-
-LOCK TABLES `formatted_notes` WRITE;
-/*!40000 ALTER TABLE `formatted_notes` DISABLE KEYS */;
-/*!40000 ALTER TABLE `formatted_notes` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `forum`
 --
 
@@ -886,15 +652,6 @@ CREATE TABLE `forum` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `forum`
---
-
-LOCK TABLES `forum` WRITE;
-/*!40000 ALTER TABLE `forum` DISABLE KEYS */;
-/*!40000 ALTER TABLE `forum` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `forum_important`
 --
 
@@ -909,15 +666,6 @@ CREATE TABLE `forum_important` (
   CONSTRAINT `forum_important_ibfk_1` FOREIGN KEY (`important_id`) REFERENCES `forum` (`ix`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `forum_important`
---
-
-LOCK TABLES `forum_important` WRITE;
-/*!40000 ALTER TABLE `forum_important` DISABLE KEYS */;
-/*!40000 ALTER TABLE `forum_important` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `forum_parents`
@@ -937,15 +685,6 @@ CREATE TABLE `forum_parents` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `forum_parents`
---
-
-LOCK TABLES `forum_parents` WRITE;
-/*!40000 ALTER TABLE `forum_parents` DISABLE KEYS */;
-/*!40000 ALTER TABLE `forum_parents` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `forumread`
 --
 
@@ -963,15 +702,6 @@ CREATE TABLE `forumread` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `forumread`
---
-
-LOCK TABLES `forumread` WRITE;
-/*!40000 ALTER TABLE `forumread` DISABLE KEYS */;
-/*!40000 ALTER TABLE `forumread` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `locations`
 --
 
@@ -987,15 +717,6 @@ CREATE TABLE `locations` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `locations`
---
-
-LOCK TABLES `locations` WRITE;
-/*!40000 ALTER TABLE `locations` DISABLE KEYS */;
-/*!40000 ALTER TABLE `locations` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `medforms`
 --
 
@@ -1008,15 +729,6 @@ CREATE TABLE `medforms` (
   PRIMARY KEY (`pt_sno`,`chk_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `medforms`
---
-
-LOCK TABLES `medforms` WRITE;
-/*!40000 ALTER TABLE `medforms` DISABLE KEYS */;
-/*!40000 ALTER TABLE `medforms` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `medhist`
@@ -1057,15 +769,6 @@ CREATE TABLE `medhist` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `medhist`
---
-
-LOCK TABLES `medhist` WRITE;
-/*!40000 ALTER TABLE `medhist` DISABLE KEYS */;
-/*!40000 ALTER TABLE `medhist` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `medication_link`
 --
 
@@ -1084,15 +787,6 @@ CREATE TABLE `medication_link` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `medication_link`
---
-
-LOCK TABLES `medication_link` WRITE;
-/*!40000 ALTER TABLE `medication_link` DISABLE KEYS */;
-/*!40000 ALTER TABLE `medication_link` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `medications`
 --
 
@@ -1105,15 +799,6 @@ CREATE TABLE `medications` (
   PRIMARY KEY (`medication`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `medications`
---
-
-LOCK TABLES `medications` WRITE;
-/*!40000 ALTER TABLE `medications` DISABLE KEYS */;
-/*!40000 ALTER TABLE `medications` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `new_patients`
@@ -1159,15 +844,6 @@ CREATE TABLE `new_patients` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `new_patients`
---
-
-LOCK TABLES `new_patients` WRITE;
-/*!40000 ALTER TABLE `new_patients` DISABLE KEYS */;
-/*!40000 ALTER TABLE `new_patients` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `newdocsprinted`
 --
 
@@ -1185,15 +861,6 @@ CREATE TABLE `newdocsprinted` (
   KEY `newdocsprinted_serialno_index` (`serialno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `newdocsprinted`
---
-
-LOCK TABLES `newdocsprinted` WRITE;
-/*!40000 ALTER TABLE `newdocsprinted` DISABLE KEYS */;
-/*!40000 ALTER TABLE `newdocsprinted` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `newestimates`
@@ -1228,15 +895,6 @@ CREATE TABLE `newestimates` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `newestimates`
---
-
-LOCK TABLES `newestimates` WRITE;
-/*!40000 ALTER TABLE `newestimates` DISABLE KEYS */;
-/*!40000 ALTER TABLE `newestimates` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `newfeetable`
 --
 
@@ -1263,15 +921,6 @@ CREATE TABLE `newfeetable` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `newfeetable`
---
-
-LOCK TABLES `newfeetable` WRITE;
-/*!40000 ALTER TABLE `newfeetable` DISABLE KEYS */;
-/*!40000 ALTER TABLE `newfeetable` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `opid`
 --
 
@@ -1286,15 +935,6 @@ CREATE TABLE `opid` (
   KEY `fk_opid_serialno` (`serialno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `opid`
---
-
-LOCK TABLES `opid` WRITE;
-/*!40000 ALTER TABLE `opid` DISABLE KEYS */;
-/*!40000 ALTER TABLE `opid` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `patient_dates`
@@ -1326,15 +966,6 @@ CREATE TABLE `patient_dates` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `patient_dates`
---
-
-LOCK TABLES `patient_dates` WRITE;
-/*!40000 ALTER TABLE `patient_dates` DISABLE KEYS */;
-/*!40000 ALTER TABLE `patient_dates` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `patient_money`
 --
 
@@ -1361,15 +992,6 @@ CREATE TABLE `patient_money` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `patient_money`
---
-
-LOCK TABLES `patient_money` WRITE;
-/*!40000 ALTER TABLE `patient_money` DISABLE KEYS */;
-/*!40000 ALTER TABLE `patient_money` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `patient_nhs`
 --
 
@@ -1391,15 +1013,6 @@ CREATE TABLE `patient_nhs` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `patient_nhs`
---
-
-LOCK TABLES `patient_nhs` WRITE;
-/*!40000 ALTER TABLE `patient_nhs` DISABLE KEYS */;
-/*!40000 ALTER TABLE `patient_nhs` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `perio`
 --
 
@@ -1417,15 +1030,6 @@ CREATE TABLE `perio` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `perio`
---
-
-LOCK TABLES `perio` WRITE;
-/*!40000 ALTER TABLE `perio` DISABLE KEYS */;
-/*!40000 ALTER TABLE `perio` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `phrasebook`
 --
 
@@ -1438,15 +1042,6 @@ CREATE TABLE `phrasebook` (
   PRIMARY KEY (`clinician_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `phrasebook`
---
-
-LOCK TABLES `phrasebook` WRITE;
-/*!40000 ALTER TABLE `phrasebook` DISABLE KEYS */;
-/*!40000 ALTER TABLE `phrasebook` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `plandata`
@@ -1470,15 +1065,6 @@ CREATE TABLE `plandata` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `plandata`
---
-
-LOCK TABLES `plandata` WRITE;
-/*!40000 ALTER TABLE `plandata` DISABLE KEYS */;
-/*!40000 ALTER TABLE `plandata` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `previous_snames`
 --
 
@@ -1493,15 +1079,6 @@ CREATE TABLE `previous_snames` (
   KEY `serialno` (`serialno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `previous_snames`
---
-
-LOCK TABLES `previous_snames` WRITE;
-/*!40000 ALTER TABLE `previous_snames` DISABLE KEYS */;
-/*!40000 ALTER TABLE `previous_snames` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `pseudonyms`
@@ -1522,15 +1099,6 @@ CREATE TABLE `pseudonyms` (
   CONSTRAINT `pseudonyms_ibfk_1` FOREIGN KEY (`serialno`) REFERENCES `new_patients` (`serialno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `pseudonyms`
---
-
-LOCK TABLES `pseudonyms` WRITE;
-/*!40000 ALTER TABLE `pseudonyms` DISABLE KEYS */;
-/*!40000 ALTER TABLE `pseudonyms` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `ptmemos`
@@ -1554,15 +1122,6 @@ CREATE TABLE `ptmemos` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ptmemos`
---
-
-LOCK TABLES `ptmemos` WRITE;
-/*!40000 ALTER TABLE `ptmemos` DISABLE KEYS */;
-/*!40000 ALTER TABLE `ptmemos` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `records_in_use`
 --
 
@@ -1577,15 +1136,6 @@ CREATE TABLE `records_in_use` (
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `records_in_use`
---
-
-LOCK TABLES `records_in_use` WRITE;
-/*!40000 ALTER TABLE `records_in_use` DISABLE KEYS */;
-/*!40000 ALTER TABLE `records_in_use` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `referral_centres`
@@ -1610,15 +1160,6 @@ CREATE TABLE `referral_centres` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `referral_centres`
---
-
-LOCK TABLES `referral_centres` WRITE;
-/*!40000 ALTER TABLE `referral_centres` DISABLE KEYS */;
-/*!40000 ALTER TABLE `referral_centres` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `settings`
 --
 
@@ -1640,15 +1181,6 @@ CREATE TABLE `settings` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `settings`
---
-
-LOCK TABLES `settings` WRITE;
-/*!40000 ALTER TABLE `settings` DISABLE KEYS */;
-/*!40000 ALTER TABLE `settings` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `standard_letters`
 --
 
@@ -1664,15 +1196,6 @@ CREATE TABLE `standard_letters` (
   UNIQUE KEY `description` (`description`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `standard_letters`
---
-
-LOCK TABLES `standard_letters` WRITE;
-/*!40000 ALTER TABLE `standard_letters` DISABLE KEYS */;
-/*!40000 ALTER TABLE `standard_letters` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `static_chart`
@@ -1725,15 +1248,6 @@ CREATE TABLE `static_chart` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `static_chart`
---
-
-LOCK TABLES `static_chart` WRITE;
-/*!40000 ALTER TABLE `static_chart` DISABLE KEYS */;
-/*!40000 ALTER TABLE `static_chart` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `userdata`
 --
 
@@ -1746,15 +1260,6 @@ CREATE TABLE `userdata` (
   PRIMARY KEY (`serialno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `userdata`
---
-
-LOCK TABLES `userdata` WRITE;
-/*!40000 ALTER TABLE `userdata` DISABLE KEYS */;
-/*!40000 ALTER TABLE `userdata` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -1765,4 +1270,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-12-12 10:36:37
+-- Dump completed on 2016-12-13 13:51:43

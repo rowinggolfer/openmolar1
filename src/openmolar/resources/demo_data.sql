@@ -24,7 +24,6 @@ INSERT INTO `clinical_memos` VALUES (1,1,'REC','2014-06-10 20:28:10',0,'This pat
 /*!40000 ALTER TABLE `clinical_memos` ENABLE KEYS */;
 UNLOCK TABLES;
 
-
 --
 -- Dumping data for table `feescales`
 --
@@ -35,6 +34,9 @@ INSERT INTO `feescales` VALUES (1,1,0,'example feescale','<?xml version=\"1.0\" 
 /*!40000 ALTER TABLE `feescales` ENABLE KEYS */;
 UNLOCK TABLES;
 
+--
+-- Dumping data for table `formatted_notes`
+--
 
 LOCK TABLES `formatted_notes` WRITE;
 /*!40000 ALTER TABLE `formatted_notes` DISABLE KEYS */;
@@ -92,7 +94,6 @@ INSERT INTO `new_patients` VALUES (1,'PATIENT','EXAMPLE','MR','M','1969-12-09','
 /*!40000 ALTER TABLE `new_patients` ENABLE KEYS */;
 UNLOCK TABLES;
 
-
 --
 -- Dumping data for table `patient_dates`
 --
@@ -132,7 +133,6 @@ LOCK TABLES `static_chart` WRITE;
 INSERT INTO `static_chart` VALUES (1,NULL,16,NULL,NULL,'PV ','CR,LAVA ','MI ','B,GL ','MOD ','MO,CO ','','UE ','IM/TIT IM/ABUT  CR,V1 ','','','GI/MOD RT ','','','','UE ','','','','','OL,CO ','B ','FS ','UE ','','','','','','MOL,CO ','','UE ');
 /*!40000 ALTER TABLE `static_chart` ENABLE KEYS */;
 UNLOCK TABLES;
-
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -142,4 +142,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-12-12 11:07:07
+-- Dump completed on 2016-12-13 13:51:43
