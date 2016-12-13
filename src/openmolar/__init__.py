@@ -52,10 +52,15 @@ class MyFormatter(logging.Formatter):
 
     def format(self, record):
         filename = "{%s:%s}" % (record.filename, record.lineno)
-        return "%s\t %s %s - %s" % (record.levelname,
-                                    filename.ljust(25),
-                                    record.funcName[:15].ljust(15),
-                                    record.getMessage())
+        if record.exc_info:
+            exc_info = "\n" + self.formatException(record.exc_info)
+        else:
+            exc_info = ""
+        return "%s\t %s %s - %s%s" % (
+            record.levelname,
+            filename.ljust(25),
+            record.funcName[:15].ljust(15),
+            record.getMessage(), exc_info)
 
 
 def initialise_logging():
