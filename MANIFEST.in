@@ -3,7 +3,7 @@ recursive-include bin openmolar.svg openmolar.desktop openmolar.1
 recursive-include src/openmolar/resources *.qrc *.xsd *.xml *.css *.sql *.svg *.png 
 recursive-include src/openmolar/locale *.po *.pot
 recursive-include src/openmolar/qt-designer *.ui
-recursive-include src/openmolar/resources *.xml *.png *.svg *.sql *.css *.qrc
+recursive-include src/openmolar/resources *.xml *.png *.svg *.sql *.css *.qrc *.bmp
 recursive-include src/openmolar/resources/icons *.png *.svg *.ico
 recursive-include src/openmolar/resources/teeth *.png
 recursive-include src/openmolar/resources/gp17 *.jpg

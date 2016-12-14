@@ -450,6 +450,35 @@ class Test(Command):
         print(result)
 
 
+class Mock(Command):
+
+    description = "do nothing except printing out build environment variables"
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self, *args, **kwargs):
+        print("---- VERSION ----")
+        print(VERSION)
+        print("\n---- RESOURCE_FILE ----")
+        print(RESOURCE_FILE)
+        print("\n---- DATA_FILES ----")
+        for folder, files in DATA_FILES:
+            print(folder)
+            for file_ in files:
+                print("\t%s" % file_)
+        print("\n---- RESCOURCES_DIR ----")
+        print(RESOURCES_DIR)
+        print("\n---- il8n_DIR ----")
+        print(il8n_DIR)
+        print("\n---- SCRIPTS ----")
+        print(SCRIPTS)
+
+
 if __name__ == "__main__":
 
     # I need to import this module so the windows installer can access the
@@ -491,6 +520,7 @@ if __name__ == "__main__":
                   'install': Install,
                   'install_data': InstallData,
                   'makeuis': MakeUis,
-                  'test': Test},
+                  'test': Test,
+                  'mock': Mock},
         scripts=SCRIPTS,
     )
