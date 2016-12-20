@@ -30,7 +30,11 @@ import logging
 
 from PyQt5 import QtCore
 from PyQt5 import QtGui
-from PyQt5 import QtWebKitWidgets
+try:
+    from PyQt5.QtWebEngineWidgets import QWebEngineView as QWebView
+except ImportError:
+    # QtWebKitWidgets is deprecated in Qt5.6
+    from PyQt5.QtWebKitWidgets import QWebView
 from PyQt5 import QtWidgets
 
 from openmolar.settings import localsettings
@@ -176,7 +180,7 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
             QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                               QtWidgets.QSizePolicy.Minimum))
 
-        self.search_criteria_webview = QtWebKitWidgets.QWebView(self)
+        self.search_criteria_webview = QWebView(self)
         self.search_criteria_webview.setMinimumHeight(100)
         self.search_criteria_webview.setHtml(
             _("No appointment selected for scheduling"))
@@ -184,7 +188,7 @@ class DiaryScheduleController(QtWidgets.QStackedWidget):
         # now arrange the stacked widget
 
         # page 0 - Browsing mode
-        self.browsing_webview = QtWebKitWidgets.QWebView(self)
+        self.browsing_webview = QWebView(self)
         self.reset_browsing_webview()
         self.addWidget(self.browsing_webview)
 

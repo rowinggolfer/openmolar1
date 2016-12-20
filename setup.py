@@ -117,8 +117,16 @@ class MakeUis(Command):
     user_options = []
     REMOVALS = ("        _translate = QtCore.QCoreApplication.translate\n",)
 
-    REPLACEMENTS = [("import resources_rc",
-                     "from openmolar.qt4gui import resources_rc")]
+    REPLACEMENTS = [
+        ("import resources_rc", "from openmolar.qt4gui import resources_rc"),
+        ("QtWebKitWidgets.QWebView", "QWebView"),
+        ("from PyQt5 import QtWebKitWidgets",
+         "try:||"
+         "    from PyQt5.QtWebEngineWidgets import QWebEngineView as QWebView||"
+         "except ImportError:||"
+         "    from PyQt5.QtWebKitWidgets import QWebView".replace(
+             "||", os.linesep))
+    ]
 
     SRC_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                               "src", "openmolar", "qt-designer")

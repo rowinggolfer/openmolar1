@@ -23,10 +23,17 @@
 
 import logging
 import re
+LOGGER = logging.getLogger("openmolar")
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
-from PyQt5 import QtWebKitWidgets
+try:
+    from PyQt5.QtWebEngineWidgets import QWebEngineView as QWebView
+    LOGGER.info("Using QtWebEngineWidgets.QWebEngineView for QWebView")
+except ImportError:
+    # QtWebKitWidgets is deprecated in Qt5.6
+    LOGGER.info("Using QtWebKitWidgets for QWebView")
+    from PyQt5.QtWebKitWidgets import QWebView
 
 from openmolar.connect import connect
 
@@ -35,7 +42,6 @@ from openmolar.qt4gui.customwidgets.upper_case_line_edit \
     import UpperCaseLineEdit
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
-LOGGER = logging.getLogger("openmolar")
 
 PSEUDONYMS_QUERY = '''SELECT ix, alt_fname, alt_sname, comment, search_include
 FROM pseudonyms WHERE serialno=%s'''
@@ -125,7 +131,7 @@ class AdvancedNamesDialog(BaseDialog):
         label = WarningLabel(_("Previous Surnames, Nicknames, and alternate "
             "spelling can help when searching for patients"))
 
-        self.browser = QtWebKitWidgets.QWebView(self)
+        self.browser = QWebView(self)
         self.browser.linkClicked.connect(self.link_clicked)
 
         self.insertWidget(label)
