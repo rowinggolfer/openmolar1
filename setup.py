@@ -119,13 +119,31 @@ class MakeUis(Command):
 
     REPLACEMENTS = [
         ("import resources_rc", "from openmolar.qt4gui import resources_rc"),
-        ("QtWebKitWidgets.QWebView", "QWebView"),
+        ("QtWebKitWidgets.QWebView", "OMWebView"),
         ("from PyQt5 import QtWebKitWidgets",
-         "try:||"
-         "    from PyQt5.QtWebEngineWidgets import QWebEngineView as QWebView||"
-         "except ImportError:||"
-         "    from PyQt5.QtWebKitWidgets import QWebView".replace(
-             "||", os.linesep))
+         "from openmolar.qt4gui.customwidgets.om_webview import OMWebView"),
+        ("class Ui_MainWindow(object):",
+         "from openmolar.qt4gui.customwidgets.upper_case_line_edit \\%s"
+         "    import UpperCaseLineEdit%s"
+         "class Ui_MainWindow(object):" % (os.linesep, os.linesep)),
+        ("self.titleEdit = QtWidgets.QLineEdit",
+         "self.titleEdit = UpperCaseLineEdit"),
+        ("self.fnameEdit = QtWidgets.QLineEdit",
+         "self.fnameEdit = UpperCaseLineEdit"),
+        ("self.snameEdit = QtWidgets.QLineEdit",
+         "self.snameEdit = UpperCaseLineEdit"),
+        ("self.addr1Edit = QtWidgets.QLineEdit",
+         "self.addr1Edit = UpperCaseLineEdit"),
+        ("self.addr2Edit = QtWidgets.QLineEdit",
+         "self.addr2Edit = UpperCaseLineEdit"),
+        ("self.addr3Edit = QtWidgets.QLineEdit",
+         "self.addr3Edit = UpperCaseLineEdit"),
+        ("self.townEdit = QtWidgets.QLineEdit",
+         "self.townEdit = UpperCaseLineEdit"),
+        ("self.countyEdit = QtWidgets.QLineEdit",
+         "self.countyEdit = UpperCaseLineEdit"),
+        ("self.pcdeEdit = QtWidgets.QLineEdit",
+         "self.pcdeEdit = UpperCaseLineEdit"),
     ]
 
     SRC_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)),
@@ -407,8 +425,12 @@ class Install(_install):
     '''
     re-implement distutils standard source code builder
     '''
+    def __init__(self, *args, **kwargs):
+        self.make_uis = MakeUis(*args, **kwargs)
+        _install.__init__(self, *args, **kwargs)
 
     def run(self, *args, **kwargs):
+        self.make_uis.run(*args, **kwargs)
         alter_version = AlterVersion()
         alter_version.change()
         win_script = WindowsScript()

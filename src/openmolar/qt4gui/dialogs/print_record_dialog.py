@@ -24,13 +24,8 @@
 
 from PyQt5 import QtCore
 from PyQt5 import QtPrintSupport
-try:
-    from PyQt5.QtWebEngineWidgets import QWebEngineView as QWebView
-except ImportError:
-    # QtWebKitWidgets is deprecated in Qt5.6
-    from PyQt5.QtWebKitWidgets import QWebView
-from PyQt5 import QtWidgets
 
+from openmolar.qt4gui.customwidgets.om_webview import OMWebView
 from openmolar.ptModules import formatted_notes
 from openmolar.ptModules import patientDetails
 from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
@@ -48,7 +43,7 @@ class PrintRecordDialog(BaseDialog):
 
         patient_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.web_view = QWebView(self)
+        self.web_view = OMWebView(self)
         self.web_view.loadStarted.connect(self.print_start)
         self.web_view.loadFinished.connect(self.print_load_result)
 
