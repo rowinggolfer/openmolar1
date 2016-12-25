@@ -236,8 +236,7 @@ class AdvancedNamesDialog(BaseDialog):
             [p.html() for p in alts if p.comment!="previous surname"] +
             ['<a href="add_alt">%s</a>' % _("Add New")])
         self.browser.setHtml(HTML % (self.fname, self.sname, previous, alts))
-        page = self.browser.page()
-        page.setLinkDelegationPolicy(page.DelegateAllLinks)
+        self.browser.delegate_links()
 
     @property
     def sname(self):

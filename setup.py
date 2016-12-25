@@ -123,9 +123,9 @@ class MakeUis(Command):
         ("from PyQt5 import QtWebKitWidgets",
          "from openmolar.qt4gui.customwidgets.om_webview import OMWebView"),
         ("class Ui_MainWindow(object):",
-         "from openmolar.qt4gui.customwidgets.upper_case_line_edit \\%s"
-         "    import UpperCaseLineEdit%s"
-         "class Ui_MainWindow(object):" % (os.linesep, os.linesep)),
+         "from openmolar.qt4gui.customwidgets.upper_case_line_edit \\\n"
+         "    import UpperCaseLineEdit\n\n"
+         "class Ui_MainWindow(object):"),
         ("self.titleEdit = QtWidgets.QLineEdit",
          "self.titleEdit = UpperCaseLineEdit"),
         ("self.fnameEdit = QtWidgets.QLineEdit",

@@ -21,54 +21,24 @@
 # #                                                                         # #
 # ########################################################################### #
 
+'''
+This executable script simply imports openmolar.main and calls run().
 
-import logging
+Since openmolar version 0.7 requires python 3 to run, warnings are given if
+this is called with python2.
+'''
 
-LOGGER = logging.getLogger("openmolar")
+import os
+import sys
 
-try:
-    from PyQt5.QtWebEngineWidgets import QWebEngineView
-    from PyQt5 import QtCore
-    LOGGER.info("Using QtWebEngineWidgets.QWebEngineView for QWebView")
-
-    class OMWebView(QWebEngineView):
-        '''
-        A wrapper for QtWebEngineWidgets.QWebEngineView
-        to emulate functions of QtWebKitWidgets.QWebView
-        '''
-        linkClicked = QtCore.pyqtSignal(object)
-        def __init__(self, parent=None):
-            super().__init__(parent)
-
-        def scroll_to_bottom(self): 
-            LOGGER.warning("TODO - OMWebView.scroll_to_bottom")
-
-        def delegate_links(self):
-            LOGGER.warning("TODO - OMWebView.delegate_links")
-
-
-except ImportError:
-    # QtWebKitWidgets is deprecated in Qt5.6
-    LOGGER.info("Using QtWebKitWidgets for QWebView")
-    from PyQt5.QtWebKitWidgets import QWebView
-    
-    class OMWebView(OMWebView):
-        def __init__(self, parent=None):
-            super().__init__(parent)
-
-        def scroll_to_bottom(self):
-            wf = self.page().mainFrame() 
-            orientation = QtCore.Qt.Vertical
-            wf.setScrollBarValue(orientation, 
-                                 wf.scrollBarMaximum(orientation))
-
-        def delegate_links(self):
-            self.page().setLinkDelegationPolicy(page.DelegateAllLinks)
-
+if sys.version < '3.0':
+    sys.exit("This program requires a python3 runtime")
 
 if __name__ == "__main__":
-    from PyQt5 import QtWidgets
-    app = QtWidgets.QApplication([])
-    wv = OMWebView()
-    wv.show()
-    app.exec_()
+    DEV_MODULE = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "src"))
+    print("openmolar_dev called using %s as DEV_MODULE" % DEV_MODULE)
+    sys.path.insert(0, DEV_MODULE)
+
+    from openmolar import main
+    main.run()

@@ -926,9 +926,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         scroll to the bottom
         '''
         wv = self.sender()
-        wf = wv.page().mainFrame()
-        orientation = QtCore.Qt.Vertical
-        wf.setScrollBarValue(orientation, wf.scrollBarMaximum(orientation))
+        wv.scroll_to_bottom()
 
     def load_newEstPage(self):
         '''
@@ -1397,9 +1395,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         self.set_note_preferences()
         note_html = formatted_notes.notes(self.pt.notes_dict)
         self.ui.notes_webView.setHtml(note_html)
-
-        page = self.ui.notes_webView.page()
-        page.setLinkDelegationPolicy(page.DelegateAllLinks)
+        self.ui.notes_webView.delegate_links()
         self.notes_loaded = True
 
     def load_receptionSummaryPage(self):
@@ -1481,8 +1477,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
             self.set_note_preferences()
             note_html = formatted_notes.summary_notes(self.pt.notes_dict)
             self.ui.notesSummary_webView.setHtml(note_html)
-            page = self.ui.notesSummary_webView.page()
-            page.setLinkDelegationPolicy(page.DelegateAllLinks)
+            self.ui.notesSummary_webView.delegate_links()
             self.summary_notes_loaded = True
 
     def loadpatient(self, newPatientReload=False):
