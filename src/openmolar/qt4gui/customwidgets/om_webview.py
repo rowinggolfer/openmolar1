@@ -24,11 +24,13 @@
 
 import logging
 
+from PyQt5 import QtCore
+
 LOGGER = logging.getLogger("openmolar")
+
 
 try:
     from PyQt5.QtWebEngineWidgets import QWebEngineView
-    from PyQt5 import QtCore
     LOGGER.info("Using QtWebEngineWidgets.QWebEngineView for QWebView")
 
     class OMWebView(QWebEngineView):
@@ -40,7 +42,7 @@ try:
         def __init__(self, parent=None):
             super().__init__(parent)
 
-        def scroll_to_bottom(self): 
+        def scroll_to_bottom(self):
             LOGGER.warning("TODO - OMWebView.scroll_to_bottom")
 
         def delegate_links(self):
@@ -51,19 +53,20 @@ except ImportError:
     # QtWebKitWidgets is deprecated in Qt5.6
     LOGGER.info("Using QtWebKitWidgets for QWebView")
     from PyQt5.QtWebKitWidgets import QWebView
-    
-    class OMWebView(OMWebView):
+
+    class OMWebView(QWebView):
         def __init__(self, parent=None):
             super().__init__(parent)
 
         def scroll_to_bottom(self):
-            wf = self.page().mainFrame() 
+            wf = self.page().mainFrame()
             orientation = QtCore.Qt.Vertical
-            wf.setScrollBarValue(orientation, 
+            wf.setScrollBarValue(orientation,
                                  wf.scrollBarMaximum(orientation))
 
         def delegate_links(self):
-            self.page().setLinkDelegationPolicy(page.DelegateAllLinks)
+            page = self.page()
+            page.setLinkDelegationPolicy(page.DelegateAllLinks)
 
 
 if __name__ == "__main__":
