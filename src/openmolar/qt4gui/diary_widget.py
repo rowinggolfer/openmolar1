@@ -26,6 +26,7 @@ diary_widget.py provides the DiaryWidget class for openmolar.
 '''
 
 import datetime
+import gettext
 import logging
 import time
 
@@ -42,7 +43,6 @@ from openmolar.ptModules import formatted_notes
 
 from openmolar.qt4gui.dialogs import alterAday
 from openmolar.qt4gui.dialogs import finalise_appt_time
-from openmolar.qt4gui.dialogs import permissions
 from openmolar.qt4gui.dialogs.choose_clinicians import ChooseCliniciansDialog
 from openmolar.qt4gui.dialogs.find_patient_dialog import FinalChoiceDialog
 from openmolar.qt4gui.dialogs.appointments_insert_blocks_dialog \
@@ -97,6 +97,7 @@ class DiaryWidget(Advisor):
 
     message_alert = None
     laid_out = False
+    current_weekViewClinicians = set()
 
     def __init__(self, parent=None):
         Advisor.__init__(self, parent)
@@ -144,8 +145,7 @@ class DiaryWidget(Advisor):
                      self.ui.day4_frame,
                      self.ui.day5_frame,
                      self.ui.day6_frame,
-                     self.ui.day7_frame
-                     ):
+                     self.ui.day7_frame):
             hlayout = QtWidgets.QHBoxLayout(widg)
             hlayout.setContentsMargins(0, 0, 0, 0)
             control = aptOVcontrol.control()
@@ -342,8 +342,8 @@ class DiaryWidget(Advisor):
         '''
         radiobutton toggling who's book to show on the appointment
         '''
-        self.dl = ChooseCliniciansDialog(self.monthClinicianSelector, self)
-        self.dl.exec_()
+        dl = ChooseCliniciansDialog(self.monthClinicianSelector, self)
+        dl.exec_()
         val = self.monthClinicianSelector.allChecked()
         self.ui.monthClinicians_checkBox.setChecked(val)
         self.ui.yearClinicians_checkBox.setChecked(val)
@@ -497,14 +497,14 @@ class DiaryWidget(Advisor):
 
             # - make appointment
             if appointments.make_appt(
-                slot.date(), selectedDent, selectedtime, endtime,
-                appt.name[:30], appt.serialno, appt.trt1,
+                    slot.date(), selectedDent, selectedtime, endtime,
+                    appt.name[:30], appt.serialno, appt.trt1,
                     appt.trt2, appt.trt3, appt.memo, appt.flag, cst, 0, 0):
                 LOGGER.info("Appointment made in aslot")
 
                 if appt.serialno != 0:
                     if not appointments.pt_appt_made(
-                        appt.serialno, appt.aprix, slot.date(),
+                            appt.serialno, appt.aprix, slot.date(),
                             selectedtime, selectedDent):
                         self.advise(
                             _("Error putting appointment back "
@@ -1072,7 +1072,7 @@ class DiaryWidget(Advisor):
         if triggered and chosen_slot:
             sync_date = QtCore.QDate(chosen_slot.date())
 
-            LOGGER.debug("chosen_slot changed %s" % chosen_slot)
+            LOGGER.debug("chosen_slot changed %s", chosen_slot)
             self.signals_calendar(False)
             self.ui.weekCalendar.setSelectedDate(sync_date)
             self.set_date(sync_date)
@@ -1272,7 +1272,7 @@ class DiaryWidget(Advisor):
             self.selected_date().toPyDate(),
             droptime)
 
-        LOGGER.debug("appt dropped %s %s %s" % (date_time, dent, appt.length))
+        LOGGER.debug("appt dropped %s %s %s", date_time, dent, appt.length)
         slot = appointments.FreeSlot(date_time, dent, appt.length)
         self.makeAppt(appt, slot)
 
@@ -1288,7 +1288,7 @@ class DiaryWidget(Advisor):
         self.begin_makeAppt(custom)
 
     def find_appt(self, appt):
-        LOGGER.debug("DiaryWidgetfind_appt %s" % appt)
+        LOGGER.debug("DiaryWidgetfind_appt %s", appt)
         pt = BriefPatient(appt.serialno)
         self.load_patient(pt)
         self.set_appt_mode(self.VIEW_MODE)
@@ -1590,13 +1590,12 @@ class _testDiary(QtWidgets.QMainWindow):
 
 if __name__ == "__main__":
     LOGGER.setLevel(logging.DEBUG)
-    import gettext
     gettext.install("openmolar")
 
     localsettings.initiate()
 
-    app = QtWidgets.QApplication([])
+    q_app = QtWidgets.QApplication([])
     mw = _testDiary()
     mw.show()
 
-    app.exec_()
+    q_app.exec_()
