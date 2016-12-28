@@ -1451,8 +1451,7 @@ class DiaryWidget(Advisor):
     def show_todays_notes(self, serialno):
         html = formatted_notes.todays_notes(serialno)
         self.ui.appt_notes_webView.setHtml(html)
-        page = self.ui.appt_notes_webView.page()
-        page.setLinkDelegationPolicy(page.DelegateAllLinks)
+        self.ui.appt_notes_webView.delegate_links()
 
     def connect_tabwidget(self, connect=True):
         if connect:
