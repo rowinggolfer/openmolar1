@@ -66,7 +66,7 @@ def details(sno):
         retarg += '    <tr>' if i % 2 else '    <tr bgcolor="#eeeeee">'
 
         if ALLOW_TX_EDITS:
-            extra_link = ' / <a href="daybook_id_edit?%s">%s</a>' % (
+            extra_link = ' / <a href="om://daybook_id_edit?%s">%s</a>' % (
                 id_, _("Edit Tx"))
         else:
             extra_link = ""
@@ -78,7 +78,7 @@ def details(sno):
         <td>%s</td>
         <td>%s</td>
         <td align="center">
-        <a href="daybook_id?%sfeesa=%sfeesb=%s">%s</a>%s
+        <a href="om://daybook_id?%sfeesa=%sfeesb=%s">%s</a>%s
         </td>
         <td align="right">%s</td><td align="right">%s</td>\n</tr>\n''' % (
             date_, cset,

@@ -2767,7 +2767,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
     def notes_link_clicked(self, url):
         LOGGER.debug("notes link clicked '%s'", url)
         url_text = url.toString()
-        m = re.match(r"edit_notes\?(\d+|__SNO__)", url_text)
+        m = re.match(r"om://edit_notes\?(\d+|__SNO__)", url_text)
         if m:
             if m.groups()[0] == "__SNO__":
                 serialno = self.pt.serialno
@@ -3536,13 +3536,13 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         this will catch "edit links"
         '''
         url = str(url.toString())
-        m1 = re.match(r"daybook_id\?(\d+)feesa=(\d+)feesb=(\d+)", url)
-        m2 = re.match(r"daybook_id_edit\?(\d+)", url)
-        m3 = re.match(r"edit_courseno\?(\d+)", url)
-        m4 = re.match(r"edit_estimate\?(\d+)", url)
-        m5 = re.match(r"merge_courses\?(\d+)\+(\d+)", url)
-        m6 = re.match(r"consistent_courseno\?(\d+)", url)
-        m7 = re.match(r"edit_tx_courseno\?(\d+)", url)
+        m1 = re.match(r"om://daybook_id\?(\d+)feesa=(\d+)feesb=(\d+)", url)
+        m2 = re.match(r"om://daybook_id_edit\?(\d+)", url)
+        m3 = re.match(r"om://edit_courseno\?(\d+)", url)
+        m4 = re.match(r"om://edit_estimate\?(\d+)", url)
+        m5 = re.match(r"om://merge_courses\?(\d+)\+(\d+)", url)
+        m6 = re.match(r"om://consistent_courseno\?(\d+)", url)
+        m7 = re.match(r"om://edit_tx_courseno\?(\d+)", url)
 
         if m1:
             id_ = int(m1.groups()[0])

@@ -37,7 +37,8 @@ COURSE_QUERY = QUERY.replace(
 
 ALLOW_EDIT = False
 
-EDIT_STRING = '<a href="edit_estimate?%%s">%s</a>' % _("Edit this Estimate")
+EDIT_STRING = '<a href="om://edit_estimate?%%s">%s</a>' % _(
+    "Edit this Estimate")
 
 
 def getEsts(sno, courseno=None):

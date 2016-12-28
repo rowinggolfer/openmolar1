@@ -142,7 +142,7 @@ def details(sno, current_csno, include_estimates=False, include_daybook=False):
 
                     gap = cmpd - daybook_entry.date
                     if daybook.ALLOW_TX_EDITS:
-                        id_col = '<a href="daybook_id_edit?%s">%s</a>' % (
+                        id_col = '<a href="om://daybook_id_edit?%s">%s</a>' % (
                             daybook_entry.id, _("Edit Tx"))
                     else:
                         id_col = str(daybook_entry.id)
@@ -190,14 +190,15 @@ def details(sno, current_csno, include_estimates=False, include_daybook=False):
                     course_checker_errors += 1
                     course_html += course_check.results
                     course_html += '''<br />
-                        <a href="consistent_courseno?%s">%s</a>''' % (
+                        <a href="om://consistent_courseno?%s">%s</a>''' % (
                         course.courseno, _("Examine these Issues."))
 
         days_elapsed = ""
         try:
             prev_course = courses[i + 1]
             if ALLOW_EDIT:
-                merge_link = '<br /><a href="merge_courses?%s+%s">%s?</a>' % (
+                merge_link = \
+                    '<br /><a href="om://merge_courses?%s+%s">%s?</a>' % (
                     course.courseno, prev_course.courseno,
                     _("Merge with previous course")
                 )

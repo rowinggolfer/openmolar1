@@ -65,7 +65,7 @@ HTML = '''
 
 LINK = '''
 %s %s
-<a href='edit_name_%s'>
+<a href='om://edit_name_%s'>
 <img src='qrc:/icons/pencil.png' height='25' width='25'/>
 </a>
 %s%s'''
@@ -136,12 +136,12 @@ class AdvancedNamesDialog(BaseDialog):
 
     def link_clicked(self, url):
         url_text = url.toString()
-        if url_text == "add_psn":
+        if url_text == "om://add_psn":
             self.add_previous_surname()
-        elif url_text == "add_alt":
+        elif url_text == "om://add_alt":
             self.add_alt_name()
         else:
-            m = re.match(r"edit_name_(\d+)", url_text)
+            m = re.match(r"om://edit_name_(\d+)", url_text)
             if m:
                 ix = int(m.groups()[0])
                 self.edit_name(ix)
@@ -231,10 +231,10 @@ class AdvancedNamesDialog(BaseDialog):
 
         previous = '</li><li>'.join(
             [p.html() for p in alts if p.comment=="previous surname"] +
-            ['<a href="add_psn">%s</a>' % _("Add New")])
+            ['<a href="om://add_psn">%s</a>' % _("Add New")])
         alts = '</li><li>'.join(
             [p.html() for p in alts if p.comment!="previous surname"] +
-            ['<a href="add_alt">%s</a>' % _("Add New")])
+            ['<a href="om://add_alt">%s</a>' % _("Add New")])
         self.browser.setHtml(HTML % (self.fname, self.sname, previous, alts))
         self.browser.delegate_links()
 

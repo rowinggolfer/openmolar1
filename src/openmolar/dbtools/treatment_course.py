@@ -442,8 +442,8 @@ class TreatmentCourse(object):
             return " ".join(sorted([item for item in items if item != ""]))
 
         if allow_edit:
-            edit_str = '''<a href="edit_courseno?%s">%s</a><br />
-            <a href="edit_tx_courseno?%s">%s</a>
+            edit_str = '''<a href="om://edit_courseno?%s">%s</a><br />
+            <a href="om://edit_tx_courseno?%s">%s</a>
             <!--merge-->''' % (
                 self.courseno, _("Edit Course Dates"),
                 self.courseno, _("Edit Treatments"))

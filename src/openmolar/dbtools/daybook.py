@@ -201,12 +201,12 @@ def details(regdent, trtdent, startdate, enddate, filters=""):
             txs.append(row[15].decode("utf8").strip(" %s" % chr(0)))
 
             if ALLOW_TX_EDITS:
-                extra_link = ' / <a href="daybook_id_edit?%s">%s</a>' % (
+                extra_link = ' / <a href="om://daybook_id_edit?%s">%s</a>' % (
                     row[19], _("Edit Tx"))
             else:
                 extra_link = ""
             retarg += '''<td>%s</td>
-            <td><a href="daybook_id?%sfeesa=%sfeesb=%s">%s</a>%s</td>
+            <td><a href="om://daybook_id?%sfeesa=%sfeesb=%s">%s</a>%s</td>
             <td align="right">%s</td>
             <td align="right">%s</td></tr>''' % (
                 " ".join(txs),

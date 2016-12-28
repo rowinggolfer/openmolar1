@@ -209,7 +209,7 @@ def details(dent, startdate, enddate,
         if len(headers) == 11:
             if full_edit or row[6] == localsettings.currentDay():
                 retarg += '''<td align="center">
-                <a href="edit_%s">edit</a></td>''' % row[7]
+                <a href="om://edit_%s">edit</a></td>''' % row[7]
             else:
                 retarg += '<td align="center">n/a</a>'
         retarg += '</tr>\n'
