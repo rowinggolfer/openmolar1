@@ -179,11 +179,12 @@ if not os.path.isfile(appt_shortcut_file):
     except FileNotFoundError:
         LOGGER.exception("Your Resource files are incomplete!")
 
-stylesheet = "file://%s" % os.path.join(RESOURCE_DIR, "style.css")
-printer_png = "file://%s" % os.path.join(RESOURCE_DIR, "icons", "ps.png")
-medical_png = "file://%s" % os.path.join(RESOURCE_DIR, "icons", "med.png")
-money_png = "file://%s" % os.path.join(RESOURCE_DIR, "icons", "vcard.png")
-LOGOPATH = "file://%s" % os.path.join(RESOURCE_DIR, "newlogo.png")
+stylesheet = "qrc:/style.css"
+printer_png = "qrc:/ps.png"
+medical_png = "qrc:/med.png"
+money_png = "qrc:/vcard.png"
+LOGOPATH = "qrc:/newlogo.png"
+
 resources_path = "file://%s" % RESOURCE_DIR
 
 
@@ -195,10 +196,6 @@ def win_url(url):
 
 if WINDOWS:
     resources_path = win_url(resources_path)
-    stylesheet = win_url(stylesheet)
-    printer_png = win_url(printer_png)
-    money_png = win_url(money_png)
-    LOGOPATH = win_url(LOGOPATH)
 
 # this is updated if correct password is given
 successful_login = False

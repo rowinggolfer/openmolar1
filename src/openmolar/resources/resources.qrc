@@ -1,5 +1,6 @@
 <RCC>
   <qresource>
+    <file>style.css</file>
     <file>icons/mail_new.png</file>
     <file>icons/schedule_active.png</file>
     <file>icons/pencil.png</file>
@@ -8,9 +9,6 @@
     <file>icons/wikipedia.png</file>
     <file>icons/action.png</file>
     <file>icons/memos.png</file>
-    <file alias="lower_implant.svg">icons/lower_implant.svg</file>
-    <file alias="upper_implant.svg">icons/upper_implant.svg</file>
-    <file alias="database.png">icons/database.png</file>
     <file>openmolar.svg</file>
     <file>appt_ov.png</file>
     <file>newlogo_launchpadSize.png</file>
@@ -19,6 +17,10 @@
     <file>icons/chain.png</file>
     <file>private.png</file>
     <file>nhs_scot.png</file>
+    <file alias="lower_implant.svg">icons/lower_implant.svg</file>
+    <file alias="upper_implant.svg">icons/upper_implant.svg</file>
+    <file alias="database.png">icons/database.png</file>
+    <file alias="med.png">icons/med.png</file>
     <file alias="first.png">icons/number1.png</file>
     <file alias="speaker.svg">icons/Speaker_Icon.svg</file>
     <file alias="logo.png">icons/logo.png</file>
