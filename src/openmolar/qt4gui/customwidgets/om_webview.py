@@ -30,8 +30,25 @@ LOGGER = logging.getLogger("openmolar")
 
 
 try:
-    from PyQt5.QtWebEngineWidgets import QWebEngineView
+    from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage
     LOGGER.info("Using QtWebEngineWidgets.QWebEngineView for QWebView")
+
+    class OMWebPage(QWebEnginePage):
+        delegate_links = False
+
+        def __init__(self, parent=None):
+            print("initiated OMWebPage")
+            super().__init__(parent)
+
+        def acceptNavigationRequest(self, url, type_, bool_):
+            if self.delegate_links and \
+                    type_ == self.NavigationTypeLinkClicked and \
+                    url.url().startswith("om://"):
+                LOGGER.debug("acceptNavigationRequest %s", url)
+                self.parent().linkClicked.emit(url)
+                return False
+            return QWebEnginePage.acceptNavigationRequest(
+                self, url, type_, bool_)
 
     class OMWebView(QWebEngineView):
         '''
@@ -41,12 +58,23 @@ try:
         linkClicked = QtCore.pyqtSignal(object)
         def __init__(self, parent=None):
             super().__init__(parent)
+            self.om_web_page = OMWebPage(self)
+            self.setPage(self.om_web_page)
 
         def scroll_to_bottom(self):
-            LOGGER.warning("TODO - OMWebView.scroll_to_bottom")
+            '''
+            Scroll the page contents down to the bottom.
+            if this is called before the page is loaded, it won't work.
+            '''
+            self.om_web_page.loadFinished.connect(self._scroll)
+
+        def _scroll(self):
+            LOGGER.debug("scrolling webpage")
+            self.om_web_page.runJavaScript(
+                    "window.scrollTo(0,document.body.scrollHeight);")
 
         def delegate_links(self):
-            LOGGER.warning("TODO - OMWebView.delegate_links")
+            self.om_web_page.delegate_links=True
 
 
 except ImportError:
@@ -70,8 +98,16 @@ except ImportError:
 
 
 if __name__ == "__main__":
+    LOGGER.setLevel(logging.DEBUG)
     from PyQt5 import QtWidgets
     app = QtWidgets.QApplication([])
     wv = OMWebView()
     wv.show()
+    html = ("<html><body>%s<hr />"
+            "<a href='om://clickhere'>click here</a></body></html>" %
+            "<br />".join(["line %d" % i for i in range(200)]))
+    wv.setHtml(html)
+    wv.scroll_to_bottom()
+    wv.delegate_links()
+    wv.linkClicked.connect(print)
     app.exec_()
