@@ -68,11 +68,15 @@ class NotificationWidget(QtWidgets.QTabWidget):
     def remove_forum_messages(self, user):
         LOGGER.debug("remove_forum_messages %s", user)
         n_tabs = self.count()
-        for i in range(n_tabs):
-            widg = self.widget(i)
-            if re.match("%s %s" % (user, _("has unread posts")), widg.message):
-                self.removeTab(i)
-                widg.deleteLater()
+        try:
+            for i in range(n_tabs):
+                widg = self.widget(i)
+                if re.match("%s %s" % (user, _("has unread posts")),
+                            widg.message):
+                    self.removeTab(i)
+                    widg.deleteLater()
+        except AttributeError:
+            LOGGER.info("ignoring remove message")
         if self.count() == 0:
             self.hide()
 
