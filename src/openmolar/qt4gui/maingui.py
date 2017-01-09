@@ -460,8 +460,12 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         '''
         pop up a notification
         '''
-        self.advise(message)
-        self.ui.notificationWidget.addMessage(message)
+        m = re.match("CLEAR USER (.*)", message)
+        if m:
+            self.ui.notificationWidget.remove_forum_messages(m.groups()[0])
+        else:
+            self.advise(message)
+            self.ui.notificationWidget.addMessage(message)
 
     def quit(self):
         '''
@@ -777,6 +781,8 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
             if self.pt.serialno != 0:
                 self.ui.chooseFeescale_comboBox.setCurrentIndex(
                     self.pt.fee_table.index)
+        if ci == 0:
+            self.forum_widget.check_for_new_posts()
         if ci == 8:
             # - wiki
             if not self.wikiloaded:

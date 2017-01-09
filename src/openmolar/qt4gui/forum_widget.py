@@ -335,6 +335,8 @@ class ForumWidget(QtWidgets.QWidget):
             if n:
                 self.unread_posts_signal.emit(
                     "%s %s (%s)" % (user, _("has unread posts"), n))
+            else:
+                self.unread_posts_signal.emit("CLEAR USER %s" % user)
         if total_unread:
             self.new_posts_signal.emit()
 

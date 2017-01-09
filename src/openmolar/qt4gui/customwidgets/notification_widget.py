@@ -21,8 +21,13 @@
 # #                                                                         # #
 # ########################################################################### #
 
+import logging
+import re
+
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
+
+LOGGER = logging.getLogger("openmolar")
 
 STYLE = 'color:red; background:yellow; font-weight:bold;'
 
@@ -60,10 +65,25 @@ class NotificationWidget(QtWidgets.QTabWidget):
         self.tabBar().tabBarClicked.connect(self.removeMessage)
         self.hide()
 
+    def remove_forum_messages(self, user):
+        LOGGER.debug("remove_forum_messages %s", user)
+        n_tabs = self.count()
+        for i in range(n_tabs):
+            widg = self.widget(i)
+            if re.match("%s %s" % (user, _("has unread posts")), widg.message):
+                self.removeTab(i)
+                widg.deleteLater()
+        if self.count() == 0:
+            self.hide()
+
     def addMessage(self, message):
         '''
         pass a message
         '''
+        LOGGER.debug("addMessage %s", message)
+        m = re.match("(.*) %s" % _("has unread posts"), message)
+        if m:
+            self.remove_forum_messages(m.groups()[0])
 
         n_tabs = self.count()-1
         for i in range(n_tabs):
@@ -103,6 +123,8 @@ class NotificationWidget(QtWidgets.QTabWidget):
 
 if __name__ == "__main__":
     from functools import partial
+    from gettext import gettext as _
+    LOGGER.setLevel(logging.DEBUG)
 
     app = QtWidgets.QApplication([])
     form = QtWidgets.QMainWindow()
@@ -110,10 +132,10 @@ if __name__ == "__main__":
 
     nw = NotificationWidget(form)
 
-    for i, n in enumerate([1,2,3,3,3,1,1,5]):
+    for i, n in enumerate([1, 2, 3, 3, 3, 1, 1, 5]):
         QtCore.QTimer.singleShot(
-            i * 1500,
-            partial(nw.addMessage, "This is test message %d" % n))
+            i * 2500,
+            partial(nw.addMessage, "NW has unread posts (%d)" % n))
 
     form.setCentralWidget(nw)
     form.show()
