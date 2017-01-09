@@ -75,7 +75,7 @@ class NotificationWidget(QtWidgets.QTabWidget):
                             widg.message):
                     self.removeTab(i)
                     widg.deleteLater()
-        except AttributeError:
+        except AttributeError:  # currentWidget may be None
             LOGGER.info("ignoring remove message")
         if self.count() == 0:
             self.hide()
@@ -91,9 +91,12 @@ class NotificationWidget(QtWidgets.QTabWidget):
 
         n_tabs = self.count()-1
         for i in range(n_tabs):
-            if message == self.widget(i).message:
-                self.tabBar().moveTab(i, n_tabs)
-                break
+            try:
+                if message == self.widget(i).message:
+                    self.tabBar().moveTab(i, n_tabs)
+                    break
+            except AttributeError:  # currentWidget may be None
+                pass
         self.enable_buts()
         try:
             if message == self.currentWidget().message:
