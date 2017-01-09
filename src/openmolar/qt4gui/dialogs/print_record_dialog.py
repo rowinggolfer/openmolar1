@@ -23,6 +23,7 @@
 
 
 from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 from PyQt5 import QtPrintSupport
 
 from openmolar.qt4gui.customwidgets.om_webview import OMWebView
