@@ -31,7 +31,7 @@ try:
     from openmolar_dev import gitversion
     VERSION = gitversion.GIT_VERSION
 except ImportError:
-    VERSION = "1.0.0-UNKNOWN"
+    VERSION = "1.1-UNKNOWN"
 
 
 if __name__ == '__main__':
