@@ -119,7 +119,7 @@ class ChildSmileDialog(BaseDialog):
 
     @property
     def valid_postcode(self):
-        return bool(re.match("[A-Z][A-Z](\d+) (\d+)[A-Z][A-Z]", self.pcde))
+        return bool(re.match(r"[A-Z][A-Z]?(\d+) (\d+)[A-Z][A-Z]", self.pcde))
 
     def postcode_warning(self):
         if not self.valid_postcode:
