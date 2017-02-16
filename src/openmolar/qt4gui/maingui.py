@@ -280,7 +280,8 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         self.load_pt_statuses()
         self.loadDentistComboboxes()
         self.ui.notesSummary_webView.setHtml(localsettings.message)
-
+        self.ui.actionCheck_Recall_Date_on_Exit_Record.setChecked(
+            localsettings.CHECK_RECALL_ON_EXIT_RECORD)
         QtCore.QTimer.singleShot(500, self.load_todays_patients_combobox)
         QtCore.QTimer.singleShot(1000, self.load_fee_tables)
         self.records_in_use_timer.start(5000)  # fire every 5 seconds
@@ -2988,6 +2989,8 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         self.ui.actionEdit_Account_Letter_Settings.triggered.connect(
             self.edit_account_letter_settings)
         self.ui.actionClear_Locations.triggered.connect(self.clear_locations)
+        self.ui.actionCheck_Recall_Date_on_Exit_Record.triggered.connect(
+            self.save_prompting_prefs)
 
     def signals_estimates(self):
         # Estimates and Course Management
@@ -3475,7 +3478,7 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         if dialog.exec_():
             localsettings.surgeryno = dl.comboBox.currentIndex()
             localsettings.updateLocalSettings(
-                "surgeryno", str(localsettings.surgeryno))
+                "surgeryno", localsettings.surgeryno)
             return True
         return False
 
@@ -3741,6 +3744,16 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         if dl.exec_():
             self.advise(_("All Patient Locations have been cleared"))
             self.diary_widget.layout_diary()
+
+    def save_prompting_prefs(self):
+        '''
+        write changes to localsettings.conf
+        '''
+        for key, value in (
+            ("recall_check_on_exit_record",
+             self.ui.actionCheck_Recall_Date_on_Exit_Record.isChecked()),
+        ):
+            localsettings.updateLocalSettings(key, value)
 
     def excepthook(self, exc_type, exc_val, tracebackobj):
         '''

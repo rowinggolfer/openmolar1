@@ -377,6 +377,8 @@ defaultPrinterforGP17 = False
 # - users who shouldn't post to the forum
 disallowed_forum_posters = []
 
+CHECK_RECALL_ON_EXIT_RECORD = True
+
 class PatientNotFoundError(Exception):
     '''
     my own class of exception, for when a serialno is called
@@ -803,7 +805,7 @@ def getLocalSettings():
     and "knows" it's surgery number etc...
     if one doesn't exist... knock one up.
     '''
-    global surgeryno, last_forumCheck
+    global surgeryno, CHECK_RECALL_ON_EXIT_RECORD
     if not os.path.exists(LOCALFILEDIRECTORY):
         os.mkdir(LOCALFILEDIRECTORY)
 
@@ -816,13 +818,11 @@ def getLocalSettings():
             LOGGER.debug("setting as surgery number %s" % surgeryno)
         else:
             LOGGER.debug("unknown surgery number")
+        node = dom.getElementsByTagName("recall_check_on_exit_record")
+        if node and node[0].hasChildNodes():
+            CHECK_RECALL_ON_EXIT_RECORD = \
+                node[0].firstChild.data.strip(" \n") == "True"
         dom.unlink()
-    else:
-        # - no file found..
-        # -so create a settings file.
-        f = open(localSets, "w")
-        f.write(LOCALSETTINGS_TEMPLATE)
-        f.close()
 
 
 def updateLocalSettings(setting, value):
@@ -831,19 +831,25 @@ def updateLocalSettings(setting, value):
     '''
     localSets = os.path.join(LOCALFILEDIRECTORY, "localsettings.conf")
     LOGGER.debug("updating local settings... %s = %s" % (setting, value))
-    dom = minidom.parse(localSets)
+    try:
+        dom = minidom.parse(localSets)
+    except FileNotFoundError:
+        dom = minidom.parseString(LOCALSETTINGS_TEMPLATE)
+
     nodes = dom.getElementsByTagName(setting)
     if len(nodes) == 0:
         new_node = dom.createElement(setting)
         dom.firstChild.appendChild(new_node)
-        text_node = dom.createTextNode(value)
+        text_node = dom.createTextNode(str(value))
         new_node.appendChild(text_node)
         dom.firstChild.appendChild(new_node)
     else:
-        nodes[0].firstChild.replaceWholeText(value)
-    f = open(localSets, "w")
-    f.write(dom.toxml())
-    f.close()
+        nodes[0].firstChild.replaceWholeText(str(value))
+    with open(localSets, "w") as f:
+        xml = dom.toprettyxml()
+        while re.search(r"\n(\s*)?\n", xml):
+            xml = re.sub(r"\n(\s*)?\n", "\n", xml)
+        f.write(xml)
     dom.unlink()
     return True
 

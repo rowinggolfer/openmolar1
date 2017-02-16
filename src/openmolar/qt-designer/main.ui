@@ -46,7 +46,16 @@
     <property name="spacing">
      <number>0</number>
     </property>
-    <property name="margin">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
      <number>0</number>
     </property>
     <item>
@@ -63,14 +72,23 @@
          <x>0</x>
          <y>0</y>
          <width>991</width>
-         <height>608</height>
+         <height>611</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
         <property name="spacing">
          <number>0</number>
         </property>
-        <property name="margin">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
          <number>0</number>
         </property>
         <item>
@@ -96,7 +114,16 @@
             <string>Patient Database</string>
            </attribute>
            <layout class="QHBoxLayout" name="horizontalLayout_24">
-            <property name="margin">
+            <property name="leftMargin">
+             <number>6</number>
+            </property>
+            <property name="topMargin">
+             <number>6</number>
+            </property>
+            <property name="rightMargin">
+             <number>6</number>
+            </property>
+            <property name="bottomMargin">
              <number>6</number>
             </property>
             <item>
@@ -129,7 +156,16 @@
                <property name="spacing">
                 <number>0</number>
                </property>
-               <property name="margin">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
                 <number>0</number>
                </property>
                <item>
@@ -144,7 +180,16 @@
                   <property name="spacing">
                    <number>3</number>
                   </property>
-                  <property name="margin">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
                    <number>0</number>
                   </property>
                   <item>
@@ -276,7 +321,16 @@
                   <property name="spacing">
                    <number>2</number>
                   </property>
-                  <property name="margin">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
                    <number>0</number>
                   </property>
                   <item>
@@ -450,7 +504,16 @@
                  <property name="spacing">
                   <number>0</number>
                  </property>
-                 <property name="margin">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
                   <number>0</number>
                  </property>
                  <item>
@@ -463,8 +526,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>770</width>
-                      <height>646</height>
+                      <width>769</width>
+                      <height>613</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -480,11 +543,20 @@
                         <string>Details</string>
                        </property>
                        <layout class="QGridLayout" name="gridLayout_2">
+                        <property name="leftMargin">
+                         <number>6</number>
+                        </property>
+                        <property name="topMargin">
+                         <number>6</number>
+                        </property>
+                        <property name="rightMargin">
+                         <number>6</number>
+                        </property>
+                        <property name="bottomMargin">
+                         <number>6</number>
+                        </property>
                         <property name="verticalSpacing">
                          <number>3</number>
-                        </property>
-                        <property name="margin">
-                         <number>6</number>
                         </property>
                         <item row="3" column="0">
                          <widget class="QLabel" name="label_18">
@@ -1252,8 +1324,7 @@
                           </property>
                           <property name="icon">
                            <iconset theme="window-close">
-                            <normaloff/>
-                           </iconset>
+                            <normaloff>.</normaloff>.</iconset>
                           </property>
                          </widget>
                         </item>
@@ -1340,7 +1411,16 @@
                         <string>Family Groups</string>
                        </property>
                        <layout class="QGridLayout" name="gridLayout_11">
-                        <property name="margin">
+                        <property name="leftMargin">
+                         <number>6</number>
+                        </property>
+                        <property name="topMargin">
+                         <number>6</number>
+                        </property>
+                        <property name="rightMargin">
+                         <number>6</number>
+                        </property>
+                        <property name="bottomMargin">
                          <number>6</number>
                         </property>
                         <property name="spacing">
@@ -1621,7 +1701,7 @@
                         <string/>
                        </property>
                        <property name="pixmap">
-                        <pixmap resource="../resources/resources.qrc">:/hdp.png</pixmap>
+                        <pixmap>:/hdp.png</pixmap>
                        </property>
                       </widget>
                      </item>
@@ -1818,8 +1898,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>752</width>
-                      <height>423</height>
+                      <width>751</width>
+                      <height>399</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout">
@@ -2095,7 +2175,16 @@
                  <property name="spacing">
                   <number>3</number>
                  </property>
-                 <property name="margin">
+                 <property name="leftMargin">
+                  <number>3</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>3</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>3</number>
+                 </property>
+                 <property name="bottomMargin">
                   <number>3</number>
                  </property>
                  <item>
@@ -2111,15 +2200,24 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>766</width>
-                      <height>471</height>
+                      <width>765</width>
+                      <height>429</height>
                      </rect>
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_26">
                      <property name="spacing">
                       <number>3</number>
                      </property>
-                     <property name="margin">
+                     <property name="leftMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="topMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="rightMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="bottomMargin">
                       <number>0</number>
                      </property>
                      <item>
@@ -2154,7 +2252,16 @@
                           <property name="spacing">
                            <number>0</number>
                           </property>
-                          <property name="margin">
+                          <property name="leftMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
                            <number>0</number>
                           </property>
                          </layout>
@@ -2166,7 +2273,16 @@
                           <property name="spacing">
                            <number>3</number>
                           </property>
-                          <property name="margin">
+                          <property name="leftMargin">
+                           <number>3</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>3</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>3</number>
+                          </property>
+                          <property name="bottomMargin">
                            <number>3</number>
                           </property>
                           <item>
@@ -2174,7 +2290,7 @@
                             <property name="orientation">
                              <enum>Qt::Horizontal</enum>
                             </property>
-                            <widget class="QWebView" name="reception_webview" native="true">
+                            <widget class="QWebView" name="reception_webview">
                              <property name="sizePolicy">
                               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
                                <horstretch>0</horstretch>
@@ -2193,13 +2309,13 @@
                                <height>16777215</height>
                               </size>
                              </property>
-                             <property name="url" stdset="0">
+                             <property name="url">
                               <url>
                                <string>about:blank</string>
                               </url>
                              </property>
                             </widget>
-                            <widget class="QWebView" name="reception_webview2" native="true">
+                            <widget class="QWebView" name="reception_webview2">
                              <property name="sizePolicy">
                               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
                                <horstretch>0</horstretch>
@@ -2218,7 +2334,7 @@
                                <height>16777215</height>
                               </size>
                              </property>
-                             <property name="url" stdset="0">
+                             <property name="url">
                               <url>
                                <string>about:blank</string>
                               </url>
@@ -2266,7 +2382,16 @@
                              <string>MED Questionaire</string>
                             </property>
                             <layout class="QGridLayout" name="gridLayout_15">
-                             <property name="margin">
+                             <property name="leftMargin">
+                              <number>2</number>
+                             </property>
+                             <property name="topMargin">
+                              <number>2</number>
+                             </property>
+                             <property name="rightMargin">
+                              <number>2</number>
+                             </property>
+                             <property name="bottomMargin">
                               <number>2</number>
                              </property>
                              <property name="spacing">
@@ -2351,7 +2476,16 @@
                              <property name="spacing">
                               <number>3</number>
                              </property>
-                             <property name="margin">
+                             <property name="leftMargin">
+                              <number>2</number>
+                             </property>
+                             <property name="topMargin">
+                              <number>2</number>
+                             </property>
+                             <property name="rightMargin">
+                              <number>2</number>
+                             </property>
+                             <property name="bottomMargin">
                               <number>2</number>
                              </property>
                              <item>
@@ -2402,7 +2536,16 @@
                              <property name="spacing">
                               <number>3</number>
                              </property>
-                             <property name="margin">
+                             <property name="leftMargin">
+                              <number>2</number>
+                             </property>
+                             <property name="topMargin">
+                              <number>2</number>
+                             </property>
+                             <property name="rightMargin">
+                              <number>2</number>
+                             </property>
+                             <property name="bottomMargin">
                               <number>2</number>
                              </property>
                              <item>
@@ -2478,7 +2621,16 @@
                  <property name="spacing">
                   <number>3</number>
                  </property>
-                 <property name="margin">
+                 <property name="leftMargin">
+                  <number>3</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>3</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>3</number>
+                 </property>
+                 <property name="bottomMargin">
                   <number>3</number>
                  </property>
                  <item>
@@ -2494,12 +2646,21 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>766</width>
-                      <height>468</height>
+                      <width>765</width>
+                      <height>458</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_4">
-                     <property name="margin">
+                     <property name="leftMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="topMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="rightMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="bottomMargin">
                       <number>0</number>
                      </property>
                      <property name="spacing">
@@ -2557,8 +2718,8 @@
                       </widget>
                      </item>
                      <item row="2" column="0" rowspan="2">
-                      <widget class="QWebView" name="notesSummary_webView" native="true">
-                       <property name="url" stdset="0">
+                      <widget class="QWebView" name="notesSummary_webView">
+                       <property name="url">
                         <url>
                          <string>about:blank</string>
                         </url>
@@ -2673,7 +2834,16 @@
                         <enum>QFrame::Raised</enum>
                        </property>
                        <layout class="QHBoxLayout" name="horizontalLayout_6">
-                        <property name="margin">
+                        <property name="leftMargin">
+                         <number>2</number>
+                        </property>
+                        <property name="topMargin">
+                         <number>2</number>
+                        </property>
+                        <property name="rightMargin">
+                         <number>2</number>
+                        </property>
+                        <property name="bottomMargin">
                          <number>2</number>
                         </property>
                         <item>
@@ -2789,8 +2959,8 @@
                 </attribute>
                 <layout class="QGridLayout" name="gridLayout_6">
                  <item row="0" column="0" colspan="3">
-                  <widget class="QWebView" name="notes_webView" native="true">
-                   <property name="url" stdset="0">
+                  <widget class="QWebView" name="notes_webView">
+                   <property name="url">
                     <url>
                      <string>about:blank</string>
                     </url>
@@ -2899,7 +3069,16 @@
                    </widget>
                    <widget class="QWidget" name="charts">
                     <layout class="QGridLayout" name="gridLayout_14">
-                     <property name="margin">
+                     <property name="leftMargin">
+                      <number>3</number>
+                     </property>
+                     <property name="topMargin">
+                      <number>3</number>
+                     </property>
+                     <property name="rightMargin">
+                      <number>3</number>
+                     </property>
+                     <property name="bottomMargin">
                       <number>3</number>
                      </property>
                      <item row="3" column="1">
@@ -3029,7 +3208,16 @@
                     <property name="spacing">
                      <number>0</number>
                     </property>
-                    <property name="margin">
+                    <property name="leftMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
                      <number>0</number>
                     </property>
                     <item>
@@ -3039,7 +3227,16 @@
                       </property>
                       <widget class="QWidget" name="plan_buttons_page1">
                        <layout class="QHBoxLayout" name="horizontalLayout_9">
-                        <property name="margin">
+                        <property name="leftMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="topMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="rightMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="bottomMargin">
                          <number>0</number>
                         </property>
                         <item>
@@ -3127,7 +3324,16 @@
                         <property name="spacing">
                          <number>12</number>
                         </property>
-                        <property name="margin">
+                        <property name="leftMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="topMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="rightMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="bottomMargin">
                          <number>0</number>
                         </property>
                         <item>
@@ -3168,7 +3374,7 @@
                       <x>0</x>
                       <y>0</y>
                       <width>559</width>
-                      <height>377</height>
+                      <height>393</height>
                      </rect>
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_19"/>
@@ -3198,7 +3404,7 @@
                       <x>0</x>
                       <y>0</y>
                       <width>198</width>
-                      <height>377</height>
+                      <height>393</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -3304,7 +3510,16 @@ Note - this will not remove items which are currently there. </string>
                  <property name="spacing">
                   <number>0</number>
                  </property>
-                 <property name="margin">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
                   <number>0</number>
                  </property>
                  <item>
@@ -3318,7 +3533,7 @@ Note - this will not remove items which are currently there. </string>
                       <x>0</x>
                       <y>0</y>
                       <width>783</width>
-                      <height>395</height>
+                      <height>411</height>
                      </rect>
                     </property>
                    </widget>
@@ -3334,7 +3549,16 @@ Note - this will not remove items which are currently there. </string>
                  <property name="spacing">
                   <number>3</number>
                  </property>
-                 <property name="margin">
+                 <property name="leftMargin">
+                  <number>3</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>3</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>3</number>
+                 </property>
+                 <property name="bottomMargin">
                   <number>3</number>
                  </property>
                  <item>
@@ -3358,7 +3582,16 @@ Note - this will not remove items which are currently there. </string>
                     <property name="spacing">
                      <number>3</number>
                     </property>
-                    <property name="margin">
+                    <property name="leftMargin">
+                     <number>3</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>3</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>3</number>
+                    </property>
+                    <property name="bottomMargin">
                      <number>3</number>
                     </property>
                     <item>
@@ -3549,7 +3782,16 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                 <enum>QFrame::Raised</enum>
                </property>
                <layout class="QGridLayout" name="gridLayout_7">
-                <property name="margin">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
                  <number>0</number>
                 </property>
                 <property name="spacing">
@@ -3594,14 +3836,23 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                      <x>0</x>
                      <y>0</y>
                      <width>118</width>
-                     <height>130</height>
+                     <height>123</height>
                     </rect>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_20">
                     <property name="spacing">
                      <number>0</number>
                     </property>
-                    <property name="margin">
+                    <property name="leftMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
                      <number>0</number>
                     </property>
                     <item>
@@ -3786,7 +4037,16 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
             <property name="spacing">
              <number>0</number>
             </property>
-            <property name="margin">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
              <number>0</number>
             </property>
            </layout>
@@ -3975,7 +4235,16 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
             <string>Daybook</string>
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_5">
-            <property name="margin">
+            <property name="leftMargin">
+             <number>3</number>
+            </property>
+            <property name="topMargin">
+             <number>3</number>
+            </property>
+            <property name="rightMargin">
+             <number>3</number>
+            </property>
+            <property name="bottomMargin">
              <number>3</number>
             </property>
             <item>
@@ -4145,7 +4414,16 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                  <enum>QFrame::Raised</enum>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_18">
-                 <property name="margin">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
                   <number>0</number>
                  </property>
                  <property name="spacing">
@@ -4171,8 +4449,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                    </property>
                    <property name="icon">
                     <iconset theme="help">
-                     <normaloff/>
-                    </iconset>
+                     <normaloff>.</normaloff>.</iconset>
                    </property>
                   </widget>
                  </item>
@@ -4400,7 +4677,16 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
             <string>Feescales</string>
            </attribute>
            <layout class="QHBoxLayout" name="horizontalLayout_16">
-            <property name="margin">
+            <property name="leftMargin">
+             <number>3</number>
+            </property>
+            <property name="topMargin">
+             <number>3</number>
+            </property>
+            <property name="rightMargin">
+             <number>3</number>
+            </property>
+            <property name="bottomMargin">
              <number>3</number>
             </property>
             <item>
@@ -4445,7 +4731,16 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                <property name="spacing">
                 <number>3</number>
                </property>
-               <property name="margin">
+               <property name="leftMargin">
+                <number>3</number>
+               </property>
+               <property name="topMargin">
+                <number>3</number>
+               </property>
+               <property name="rightMargin">
+                <number>3</number>
+               </property>
+               <property name="bottomMargin">
                 <number>3</number>
                </property>
                <item>
@@ -4650,7 +4945,16 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   <property name="spacing">
                    <number>3</number>
                   </property>
-                  <property name="margin">
+                  <property name="leftMargin">
+                   <number>3</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>3</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>3</number>
+                  </property>
+                  <property name="bottomMargin">
                    <number>3</number>
                   </property>
                   <item>
@@ -4701,7 +5005,16 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
                   <bool>false</bool>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_14">
-                  <property name="margin">
+                  <property name="leftMargin">
+                   <number>3</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>3</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>3</number>
+                  </property>
+                  <property name="bottomMargin">
                    <number>3</number>
                   </property>
                   <item>
@@ -4731,7 +5044,16 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
             <string>FORUM</string>
            </attribute>
            <layout class="QHBoxLayout" name="horizontalLayout_20">
-            <property name="margin">
+            <property name="leftMargin">
+             <number>3</number>
+            </property>
+            <property name="topMargin">
+             <number>3</number>
+            </property>
+            <property name="rightMargin">
+             <number>3</number>
+            </property>
+            <property name="bottomMargin">
              <number>3</number>
             </property>
             <item>
@@ -4757,12 +5079,21 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
             <string>Wiki</string>
            </attribute>
            <layout class="QHBoxLayout" name="horizontalLayout_33">
-            <property name="margin">
+            <property name="leftMargin">
+             <number>3</number>
+            </property>
+            <property name="topMargin">
+             <number>3</number>
+            </property>
+            <property name="rightMargin">
+             <number>3</number>
+            </property>
+            <property name="bottomMargin">
              <number>3</number>
             </property>
             <item>
-             <widget class="QWebView" name="wiki_webView" native="true">
-              <property name="url" stdset="0">
+             <widget class="QWebView" name="wiki_webView">
+              <property name="url">
                <url>
                 <string>about:blank</string>
                </url>
@@ -4785,7 +5116,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
      <x>0</x>
      <y>0</y>
      <width>991</width>
-     <height>21</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMenu">
@@ -4873,6 +5204,12 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
      <addaction name="actionEdit_Estimates"/>
      <addaction name="actionAllow_Edit_Treatment"/>
     </widget>
+    <widget class="QMenu" name="menuPrompting_Preferences">
+     <property name="title">
+      <string>Prompting Preferences</string>
+     </property>
+     <addaction name="actionCheck_Recall_Date_on_Exit_Record"/>
+    </widget>
     <addaction name="actionChange_Language"/>
     <addaction name="separator"/>
     <addaction name="menuView"/>
@@ -4883,6 +5220,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <addaction name="menuDaybook"/>
     <addaction name="menu_History"/>
     <addaction name="menuPrinting"/>
+    <addaction name="menuPrompting_Preferences"/>
     <addaction name="separator"/>
     <addaction name="menuMode"/>
    </widget>
@@ -5181,12 +5519,23 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
     <string>Clear All Patient Locations</string>
    </property>
   </action>
+  <action name="actionCheck_Recall_Date_on_Exit_Record">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Check Recall Date on Exit Record</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
    <class>QWebView</class>
    <extends>QWidget</extends>
-   <header>QtWebKit/QWebView</header>
+   <header>QtWebKitWidgets/QWebView</header>
   </customwidget>
  </customwidgets>
  <tabstops>

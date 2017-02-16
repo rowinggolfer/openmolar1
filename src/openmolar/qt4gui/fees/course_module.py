@@ -168,17 +168,21 @@ def recall_check(om_gui):
     if (om_gui.pt.appt_prefs.recdent_period and
             om_gui.pt.recd > localsettings.currentDay()):
         return True
-    dl = RecallPromptDialog(om_gui.pt, om_gui)
-    if dl.exec_():
-        if dl.result == dl.IGNORE:
-            return True
-        else:
-            dl2 = ApptPrefsDialog(om_gui.pt, om_gui)
-            if dl2.exec_():
-                om_gui.pt.appt_prefs.commit_changes()
-                om_gui.updateDetails()
-                om_gui.advise(_("Appointment Preferences Applied"))
+    if not om_gui.ui.actionCheck_Recall_Date_on_Exit_Record.isChecked():
+        om_gui.advise(_("ignoring recall date as per preferences"))
+        return True
+    else:
+        dl = RecallPromptDialog(om_gui.pt, om_gui)
+        if dl.exec_():
+            if dl.result == dl.IGNORE:
                 return True
+            else:
+                dl2 = ApptPrefsDialog(om_gui.pt, om_gui)
+                if dl2.exec_():
+                    om_gui.pt.appt_prefs.commit_changes()
+                    om_gui.updateDetails()
+                    om_gui.advise(_("Appointment Preferences Applied"))
+                    return True
     return False
 
 
