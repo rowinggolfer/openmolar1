@@ -166,6 +166,7 @@ if not os.path.isdir(RESOURCE_DIR):
 LOGIN_CONF = os.path.join(LOCALFILEDIRECTORY, "autologin.conf")
 TEMP_PDF = os.path.join(LOCALFILEDIRECTORY, "temp.pdf")
 DOCS_DIRECTORY = os.path.join(LOCALFILEDIRECTORY, "documents")
+RECORD_PROMPT_FILE = os.path.join(LOCALFILEDIRECTORY, "autoload.txt")
 
 if not os.path.exists(DOCS_DIRECTORY):
     os.makedirs(DOCS_DIRECTORY)
@@ -178,6 +179,13 @@ if not os.path.isfile(appt_shortcut_file):
                     appt_shortcut_file)
     except FileNotFoundError:
         LOGGER.exception("Your Resource files are incomplete!")
+
+if not os.path.exists(RECORD_PROMPT_FILE):
+    try:
+        with open(RECORD_PROMPT_FILE, "w") as f:
+            f.write("0")
+    except:
+        LOGGER.exception("couldn't write %s", RECORD_PROMPT_FILE)
 
 stylesheet = "qrc:/style.css"
 printer_png = "qrc:/ps.png"
@@ -399,7 +407,7 @@ def pencify(input_):
     safely convert "0.29" to 29, or "1.50" to 150 etc..
     in python int(0.29 * 100) is 28!
     '''
-    m = re.match(" *(\d+)?\.?(\d)?(\d)?", input_)
+    m = re.match(r" *(\d+)?\.?(\d)?(\d)?", input_)
     if not m:
         return 0
     return int("%s%s%s" % (
