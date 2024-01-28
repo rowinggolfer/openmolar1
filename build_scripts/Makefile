@@ -37,13 +37,13 @@ usual steps for a release would be as follows.
 	make sign_tarball
 
 endef
-	
+
 export USEAGE
 
 PACKAGE=openmolar
 CURRENT_MAKEFILE_LIST := $(MAKEFILE_LIST)
 BUILD_SCRIPTS_DIR := $(abspath $(dir $(firstword $(CURRENT_MAKEFILE_LIST))))/
-HEAD = $(shell $(BUILD_SCRIPTS_DIR)get_git_branch.py)/
+HEAD := $(shell python3 $(BUILD_SCRIPTS_DIR)get_git_branch.py)/
 
 DIST_DIR=$(HEAD)dist/
 
@@ -71,7 +71,7 @@ help:
 
 examples:
 	@echo "$$EXAMPLES"
-	
+
 clean_tmp:
 	mkdir -p $(TMP_DIR)
 	rm -rf $(TMP_DIR)*
@@ -98,10 +98,8 @@ tarball:
 	@echo "tarball is located $(DIST_DIR)$(TARBALL)"
 
 	@if [ -e "$(DIST_DIR)$(TARBALL)" ]; then echo "SUCCESS!"; fi
-	
+
 sign_tarball:
 	cd $(DIST_DIR) ;\
 	gpg --armor --sign --detach-sig -u rowinggolfer@googlemail.com $(TARBALL) ;\
-	md5sum $(TARBALL) | sed "s/ .*//" > $(PACKAGE)-$(VERSION)_md5.txt 	
-	
-	
+	md5sum $(TARBALL) | sed "s/ .*//" > $(PACKAGE)-$(VERSION)_md5.txt
