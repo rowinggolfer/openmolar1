@@ -37,7 +37,7 @@ class TestDialog(BaseTestDialog):
     reject = True
 
     def test_exec(self):
-        self.exec_(force_check=True)
+        self.exec_()
 
 
 if __name__ == "__main__":
