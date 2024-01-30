@@ -24,6 +24,7 @@
 import unittest
 
 from omtests.qt4gui.dialogs.base_test_dialog import BaseTestDialog
+from omtests import skipUnlessConfigured
 
 from openmolar.qt4gui.dialogs.course_consistency_dialog import \
     CourseConsistencyDialog
@@ -39,6 +40,10 @@ class TestDialog(BaseTestDialog):
     '''
 
     dl_class = CourseConsistencyDialog
+
+    @skipUnlessConfigured
+    def setUp(self):
+        super(self)
 
     def test_exec1(self):
         self.exec_(serialno, coursenos[0])

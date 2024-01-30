@@ -24,6 +24,7 @@
 import unittest
 
 from omtests.qt4gui.dialogs.base_test_dialog import BaseTestDialog
+from omtests import skipUnlessConfigured
 
 from openmolar.qt4gui.dialogs.login_dialog import LoginDialog
 
@@ -36,6 +37,7 @@ class TestDialog(BaseTestDialog):
     dl_class = LoginDialog
     reject = True
 
+    @skipUnlessConfigured
     def test_exec(self):
         self.init()
         self.dl.dirty = False  # prevents a blocking "are you sure" message

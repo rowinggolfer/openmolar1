@@ -24,6 +24,7 @@
 import unittest
 
 from omtests.qt4gui.dialogs.base_test_dialog import BaseTestDialog
+from omtests import skipUnlessConfigured
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs.assistant_select_dialog import \
@@ -38,6 +39,7 @@ class TestDialog(BaseTestDialog):
     dl_class = AssistantSelectDialog
     reject = True
 
+    @skipUnlessConfigured
     def setUp(self):
         localsettings.initiateUsers()
         super().setUp()

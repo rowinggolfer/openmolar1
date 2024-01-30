@@ -24,6 +24,7 @@
 import unittest
 
 from omtests.qt4gui.dialogs.base_test_dialog import BaseTestDialog
+from omtests import skipUnlessConfigured
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs.find_patient_dialog import FindPatientDialog
@@ -38,6 +39,7 @@ class TestDialog(BaseTestDialog):
     dl_class = FindPatientDialog
     reject = True
 
+    @skipUnlessConfigured
     def setUp(self):
         localsettings.initiateUsers()
         localsettings.initiate()
@@ -55,6 +57,7 @@ class TestDialog1(BaseTestDialog):
     dl_class = FinalChoiceDialog
     reject = True
 
+    @skipUnlessConfigured
     def setUp(self):
         localsettings.initiateUsers()
         localsettings.initiate()

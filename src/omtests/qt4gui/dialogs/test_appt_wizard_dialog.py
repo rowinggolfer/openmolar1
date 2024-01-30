@@ -26,6 +26,7 @@ import unittest
 from PyQt5 import QtWidgets
 
 from omtests.qt4gui.dialogs.base_test_dialog import BaseTestDialog
+from omtests import skipUnlessConfigured
 
 from openmolar.dbtools import patient_class
 from openmolar.qt4gui.dialogs.appt_wizard_dialog import apptWizard
@@ -38,6 +39,7 @@ class TestDialog(BaseTestDialog):
 
     dl_class = apptWizard
 
+    @skipUnlessConfigured
     def test_exec(self):
         mw = QtWidgets.QWidget()
         mw.pt = patient_class.patient(3)

@@ -24,6 +24,7 @@
 import unittest
 
 from omtests.qt4gui.dialogs.base_test_dialog import BaseTestDialog
+from omtests import skipUnlessConfigured
 
 from openmolar.dbtools import patient_class
 from openmolar.qt4gui.dialogs.duplicate_receipt_dialog import \
@@ -38,6 +39,7 @@ class TestDialog(BaseTestDialog):
     dl_class = DuplicateReceiptDialog
     reject = True
 
+    @skipUnlessConfigured
     def test_exec(self):
         pt = patient_class.patient(10781)
         self.exec_(pt, None)

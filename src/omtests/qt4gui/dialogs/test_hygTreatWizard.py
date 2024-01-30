@@ -26,7 +26,7 @@ import unittest
 from PyQt5 import QtWidgets
 
 from omtests.qt4gui.dialogs.base_test_dialog import BaseTestDialog
-
+from omtests import skipUnlessConfigured
 from openmolar.settings import localsettings
 from openmolar.dbtools import patient_class
 from openmolar.qt4gui.dialogs.hygTreatWizard import HygTreatWizard
@@ -47,6 +47,7 @@ class TestDialog(BaseTestDialog):
     dl_class = HygTreatWizard
     reject = True
 
+    @skipUnlessConfigured
     def setUp(self):
         localsettings.initiateUsers()
         localsettings.initiate()

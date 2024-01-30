@@ -24,6 +24,7 @@
 import unittest
 
 from omtests.qt4gui.dialogs.base_test_dialog import BaseTestDialog
+from omtests import skipUnlessConfigured
 
 from openmolar.qt4gui.dialogs.course_edit_dialog import CourseEditDialog
 
@@ -35,6 +36,7 @@ class TestDialog(BaseTestDialog):
 
     dl_class = CourseEditDialog
 
+    @skipUnlessConfigured
     def test_exec(self):
         self.exec_(17437)
 

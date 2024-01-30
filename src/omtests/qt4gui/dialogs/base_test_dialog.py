@@ -70,6 +70,7 @@ class BaseTestDialog(unittest.TestCase):
             self.dl = None
 
     def doCleanups(self):
-        LOGGER.info("Cleaning up (destroying QApplication)")
-        self.app.closeAllWindows()
-        self.app = None
+        if hasattr(self, "app"):
+            LOGGER.info("Cleaning up (destroying QApplication)")
+            self.app.closeAllWindows()
+            self.app = None
