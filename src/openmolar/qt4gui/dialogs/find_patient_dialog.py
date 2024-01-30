@@ -189,7 +189,7 @@ class FinalChoiceDialog(ExtendableDialog):
         widths = (0, 12, 12, 15, 15, 15, 25, 20, 20, 15, 10, 10, 10)
         sum_widths = sum(widths) + 10  # allow for vertical scrollbar
         for col in range(self.table_widget.columnCount()):
-            col_width = widths[col] * self.width() / sum_widths
+            col_width = widths[col] * self.width() // sum_widths
             self.table_widget.setColumnWidth(col, col_width)
 
     def set_more_but_text(self):

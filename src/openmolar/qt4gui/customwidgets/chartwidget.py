@@ -408,11 +408,11 @@ class chartWidget(QtWidgets.QWidget):
         painter = QtGui.QPainter(self)
         painter.save()
         painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
-        midline = self.width() / 100
+        midline = self.width() // 100
         #  cell width
-        xOffset = (self.width() - midline) / 16
+        xOffset = (self.width() - midline) // 16
         #  cell height
-        yOffset = self.height() / 2
+        yOffset = self.height() // 2
         # red pen
         if self.isEnabled():
             painter.setPen(QtGui.QPen(QtCore.Qt.red, 2))
@@ -425,10 +425,10 @@ class chartWidget(QtWidgets.QWidget):
         rightpad = fm.width(" Left")
 
         # big horizontal dissection of entire widget
-        painter.drawLine(leftpad, self.height() / 2, self.width() - rightpad,
-                         self.height() / 2)
+        painter.drawLine(leftpad, self.height() // 2, self.width() - rightpad,
+                         self.height() // 2)
         # vertical dissection of entire widget
-        painter.drawLine(self.width() / 2, 0, self.width() / 2, self.height())
+        painter.drawLine(self.width() // 2, 0, self.width() // 2, self.height())
 
         for x in range(16):
             if x > 7:
@@ -494,7 +494,7 @@ class chartWidget(QtWidgets.QWidget):
 
         #  split tooth rectangle into a large graphic square...
         #  and a smaller text square
-        thirdheight = rect.height() * 1 / 3
+        thirdheight = rect.height() // 3
         if isUpper:
             #  the 2 allows for the "select" box to be drawn around the tooth
             toothRect = rect.adjusted(0, 2, 0, -thirdheight)
@@ -697,48 +697,48 @@ class toothSurfaces():
 
         if self.props != []:
             if self.backTooth:
-                toothdimen = self.rect.width()
-                ax = self.rect.topLeft().x() + toothdimen * 0.05
-                bx = self.rect.topLeft().x() + toothdimen * 0.15
-                cx = self.rect.topLeft().x() + toothdimen * 0.2
-                dx = self.rect.topLeft().x() + toothdimen * 0.35
-                ex = self.rect.topLeft().x() + toothdimen * 0.5
-                fx = self.rect.topLeft().x() + toothdimen * 0.7
-                gx = self.rect.topLeft().x() + toothdimen * 0.8
-                hx = self.rect.topLeft().x() + toothdimen * 0.85
-                ix = self.rect.topLeft().x() + toothdimen * 0.95
-                toothdimen = self.rect.height()
-                ay = self.rect.topLeft().y() + toothdimen * 0.05
-                by = self.rect.topLeft().y() + toothdimen * 0.15
-                cy = self.rect.topLeft().y() + toothdimen * 0.2
-                dy = self.rect.topLeft().y() + toothdimen * 0.35
-                ey = self.rect.topLeft().y() + toothdimen * 0.5
-                fy = self.rect.topLeft().y() + toothdimen * 0.65
-                gy = self.rect.topLeft().y() + toothdimen * 0.8
-                hy = self.rect.topLeft().y() + toothdimen * 0.85
-                iy = self.rect.topLeft().y() + toothdimen * 0.95
+                toothdimen = int(self.rect.width())
+                ax = int(self.rect.topLeft().x() + toothdimen * 0.05)
+                bx = int(self.rect.topLeft().x() + toothdimen * 0.15)
+                cx = int(self.rect.topLeft().x() + toothdimen * 0.2)
+                dx = int(self.rect.topLeft().x() + toothdimen * 0.35)
+                ex = int(self.rect.topLeft().x() + toothdimen * 0.5)
+                fx = int(self.rect.topLeft().x() + toothdimen * 0.7)
+                gx = int(self.rect.topLeft().x() + toothdimen * 0.8)
+                hx = int(self.rect.topLeft().x() + toothdimen * 0.85)
+                ix = int(self.rect.topLeft().x() + toothdimen * 0.95)
+                toothdimen = int(self.rect.height())
+                ay = int(self.rect.topLeft().y() + toothdimen * 0.05)
+                by = int(self.rect.topLeft().y() + toothdimen * 0.15)
+                cy = int(self.rect.topLeft().y() + toothdimen * 0.2)
+                dy = int(self.rect.topLeft().y() + toothdimen * 0.35)
+                ey = int(self.rect.topLeft().y() + toothdimen * 0.5)
+                fy = int(self.rect.topLeft().y() + toothdimen * 0.65)
+                gy = int(self.rect.topLeft().y() + toothdimen * 0.8)
+                hy = int(self.rect.topLeft().y() + toothdimen * 0.85)
+                iy = int(self.rect.topLeft().y() + toothdimen * 0.95)
             else:
                 # front tooth - different patterns
-                toothdimen = self.rect.width()
-                ax = self.rect.topLeft().x() + toothdimen * 0.05
-                bx = self.rect.topLeft().x() + toothdimen * 0.15
-                cx = self.rect.topLeft().x() + toothdimen * 0.2
-                dx = self.rect.topLeft().x() + toothdimen * 0.3
-                ex = self.rect.topLeft().x() + toothdimen * 0.5
-                fx = self.rect.topLeft().x() + toothdimen * 0.7
-                gx = self.rect.topLeft().x() + toothdimen * 0.8
-                hx = self.rect.topLeft().x() + toothdimen * 0.85
-                ix = self.rect.topLeft().x() + toothdimen * 0.95
-                toothdimen = self.rect.height()
-                ay = self.rect.topLeft().y() + toothdimen * 0.05
-                by = self.rect.topLeft().y() + toothdimen * 0.15
-                cy = self.rect.topLeft().y() + toothdimen * 0.2
-                dy = self.rect.topLeft().y() + toothdimen * 0.3
-                ey = self.rect.topLeft().y() + toothdimen * 0.5
-                fy = self.rect.topLeft().y() + toothdimen * 0.7
-                gy = self.rect.topLeft().y() + toothdimen * 0.8
-                hy = self.rect.topLeft().y() + toothdimen * 0.85
-                iy = self.rect.topLeft().y() + toothdimen * 0.95
+                toothdimen = int(self.rect.width())
+                ax = int(self.rect.topLeft().x() + toothdimen * 0.05)
+                bx = int(self.rect.topLeft().x() + toothdimen * 0.15)
+                cx = int(self.rect.topLeft().x() + toothdimen * 0.2)
+                dx = int(self.rect.topLeft().x() + toothdimen * 0.3)
+                ex = int(self.rect.topLeft().x() + toothdimen * 0.5)
+                fx = int(self.rect.topLeft().x() + toothdimen * 0.7)
+                gx = int(self.rect.topLeft().x() + toothdimen * 0.8)
+                hx = int(self.rect.topLeft().x() + toothdimen * 0.85)
+                ix = int(self.rect.topLeft().x() + toothdimen * 0.95)
+                toothdimen = int(self.rect.height())
+                ay = int(self.rect.topLeft().y() + toothdimen * 0.05)
+                by = int(self.rect.topLeft().y() + toothdimen * 0.15)
+                cy = int(self.rect.topLeft().y() + toothdimen * 0.2)
+                dy = int(self.rect.topLeft().y() + toothdimen * 0.3)
+                ey = int(self.rect.topLeft().y() + toothdimen * 0.5)
+                fy = int(self.rect.topLeft().y() + toothdimen * 0.7)
+                gy = int(self.rect.topLeft().y() + toothdimen * 0.8)
+                hy = int(self.rect.topLeft().y() + toothdimen * 0.85)
+                iy = int(self.rect.topLeft().y() + toothdimen * 0.95)
 
             for prop in self.props:
                 prop = prop.strip(" ")

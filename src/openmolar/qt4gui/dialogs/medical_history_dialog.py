@@ -222,7 +222,7 @@ class MedicalHistoryDialog(BaseDialog):
         self.setMinimumWidth(
             QtWidgets.QApplication.desktop().screenGeometry().width() - 20)
         self.setMinimumHeight(
-            QtWidgets.QApplication.desktop().screenGeometry().height() * .6)
+            QtWidgets.QApplication.desktop().screenGeometry().height() * 3 // 5)
 
         QtCore.QTimer.singleShot(10, self.load_mh)
         self.enableApply()

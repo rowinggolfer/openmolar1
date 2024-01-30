@@ -186,11 +186,11 @@ class SimpleChartWidg(QtWidgets.QWidget):
         painter = QtGui.QPainter(self)
         painter.save()
         painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
-        midline = self.width() / 100
+        midline = self.width() // 100
         # cell width
-        xOffset = (self.width() - midline) / 16
+        xOffset = (self.width() - midline) // 16
         # cell height
-        yOffset = self.height() / 2
+        yOffset = self.height() // 2
         # red pen
         if self.isEnabled():
             painter.setPen(QtGui.QPen(QtCore.Qt.red, 2))
@@ -204,10 +204,10 @@ class SimpleChartWidg(QtWidgets.QWidget):
         rightpad = fm.width(" Left")
 
         # big horizontal dissection of entire widget
-        painter.drawLine(leftpad, self.height() / 2, self.width() - rightpad,
-                         self.height() / 2)
+        painter.drawLine(leftpad, self.height() // 2, self.width() - rightpad,
+                         self.height() // 2)
         # vertical dissection of entire widget
-        painter.drawLine(self.width() / 2, 0, self.width() / 2, self.height())
+        painter.drawLine(self.width() // 2, 0, self.width() // 2, self.height())
 
         highlight_rects, selected_rects = [], []
 
