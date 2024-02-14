@@ -43,7 +43,7 @@ class TestDialog(BaseTestDialog):
 
     @skipUnlessConfigured
     def setUp(self):
-        super(self)
+        super().setUp()
 
     def test_exec1(self):
         self.exec_(serialno, coursenos[0])
