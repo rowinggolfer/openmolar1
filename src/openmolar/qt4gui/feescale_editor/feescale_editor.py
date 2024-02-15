@@ -331,7 +331,7 @@ class FeescaleEditor(QtWidgets.QMainWindow):
         '''
         notify user
         '''
-        if importance is 0:
+        if importance == 0:
             LOGGER.debug(message)
             m = QtWidgets.QMessageBox(self)
             m.setText(message)
