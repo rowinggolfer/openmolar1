@@ -466,10 +466,10 @@ class Test(Command):
         pass
 
     def run(self, *args, **kwargs):
-        loader = unittest.TestLoader()
+        loader = unittest.defaultTestLoader
         tests = loader.discover(start_dir="src")
-        result = unittest.TestResult()
-        tests.run(result)
+        runner = unittest.TextTestRunner()
+        result = runner.run(tests)
         print(result)
 
 
