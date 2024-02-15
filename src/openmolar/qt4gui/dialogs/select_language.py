@@ -33,7 +33,7 @@ import logging
 
 from PyQt5 import QtWidgets
 
-from openmolar import LOCALEDIR
+from openmolar import L10N_DIR
 from openmolar.qt4gui.compiled_uis import Ui_choose_language
 
 LOGGER = logging.getLogger("openmolar")
@@ -101,7 +101,7 @@ class LanguageDialog(Ui_choose_language.Ui_Dialog, QtWidgets.QDialog):
         lang = lang.split(" - ")[1]
         try:
             LOGGER.info("trying install chosen translation %s", lang)
-            lang1 = gettext.translation('openmolar', localedir=LOCALEDIR,
+            lang1 = gettext.translation('openmolar', localedir=L10N_DIR,
                                         languages=[lang, ])
             lang1.install()
             return True

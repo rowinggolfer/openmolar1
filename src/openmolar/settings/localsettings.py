@@ -34,6 +34,7 @@ import sys
 
 from xml.dom import minidom
 
+from openmolar import SHARE_DIR
 from openmolar.settings.version import VERSION
 
 LOGGER = logging.getLogger("openmolar")
@@ -137,7 +138,6 @@ wkdir = determine_path()
 if "win" in sys.platform:
     WINDOWS = True
     LOGGER.info("Windows OS detected - modifying settings")
-    SHARE_DIR = os.path.join(os.environ.get("ProgramFiles", ""), "openmolar")
     global_cflocation = os.path.join(SHARE_DIR, "openmolar.conf")
     LOCALFILEDIRECTORY = os.path.join(os.environ.get("APPDATA", ""),
                                       "openmolar")
@@ -146,7 +146,6 @@ else:
     if "linux" not in sys.platform:
         LOGGER.warning(
             "unknown system platform (mac?) - defaulting to linux settings")
-    SHARE_DIR = os.path.join("/usr", "share", "openmolar")
     global_cflocation = '/etc/openmolar/openmolar.conf'
     LOCALFILEDIRECTORY = os.path.join(os.environ.get("HOME", ""), ".openmolar")
 
