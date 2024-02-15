@@ -33,8 +33,7 @@ from openmolar.settings import localsettings
 LOGGER = logging.getLogger("openmolar")
 
 ALL_PATIENTS_QUERY = '''SELECT new_patients.serialno, status, title, fname,
-sname, dob, addr1, addr2, town, pcde, tel1, tel2, mobile, alt_fname, alt_sname
-FROM new_patients
+sname, dob, addr1, addr2, town, pcde, tel1, tel2, mobile FROM new_patients
 LEFT JOIN pseudonyms ON new_patients.serialno = pseudonyms.serialno
 {{CONDITIONS}} GROUP BY serialno ORDER BY sname, fname'''
 
