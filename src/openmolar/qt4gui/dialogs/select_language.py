@@ -125,7 +125,7 @@ class LanguageDialog(Ui_choose_language.Ui_Dialog, QtWidgets.QDialog):
                 else:
                     message = "%s %s" % (
                         _("no translation file found for"), lang)
-        QtWidgets.QMessageBox.information(self, _("Advisory"), message)
+        LOGGER.info(message)
         return result
 
     def exec_(self):
