@@ -331,7 +331,7 @@ class FeescaleEditor(QtWidgets.QMainWindow):
         '''
         notify user
         '''
-        if importance is 0:
+        if importance == 0:
             LOGGER.debug(message)
             m = QtWidgets.QMessageBox(self)
             m.setText(message)
@@ -571,7 +571,7 @@ class FeescaleEditor(QtWidgets.QMainWindow):
             return True
         except Exception as exc:
             self.advise("<b>%s</b><hr />%s" % (
-                _("feescale is not well formed"), exc.message), 2)
+                _("feescale is not well formed"), str(exc)), 2)
         return False
 
     def check_validity(self):

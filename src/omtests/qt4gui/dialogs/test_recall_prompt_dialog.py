@@ -24,6 +24,7 @@
 import unittest
 
 from omtests.qt4gui.dialogs.base_test_dialog import BaseTestDialog
+from omtests import skipUnlessConfigured
 
 from openmolar.dbtools import patient_class
 from openmolar.qt4gui.dialogs.recall_prompt_dialog import RecallPromptDialog
@@ -36,6 +37,7 @@ class TestDialog(BaseTestDialog):
 
     dl_class = RecallPromptDialog
 
+    @skipUnlessConfigured
     def test_exec(self):
         pt = patient_class.patient(11932)
         if self.exec_(pt):

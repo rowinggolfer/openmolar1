@@ -26,6 +26,7 @@ import unittest
 from PyQt5 import QtWidgets
 
 from omtests.qt4gui.dialogs.base_test_dialog import BaseTestDialog
+from omtests import skipUnlessConfigured
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs.auto_address_dialog import AutoAddressDialog
@@ -55,6 +56,7 @@ class TestDialog(BaseTestDialog):
     dl_class = AutoAddressDialog
     reject = True
 
+    @skipUnlessConfigured
     def setUp(self):
         localsettings.initiate()
         localsettings.LAST_ADDRESS = ("test",) * 8

@@ -24,6 +24,7 @@
 import unittest
 
 from omtests.qt4gui.dialogs.base_test_dialog import BaseTestDialog
+from omtests import skipUnlessConfigured
 
 from openmolar.qt4gui.dialogs.edit_treatment_dialog import EditTreatmentDialog
 
@@ -36,6 +37,7 @@ class TestDialog(BaseTestDialog):
     dl_class = EditTreatmentDialog
     reject = True
 
+    @skipUnlessConfigured
     def test_exec(self):
         serialno, courseno = (14469, 45869)
         self.exec_(serialno, courseno)

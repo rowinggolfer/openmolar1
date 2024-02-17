@@ -24,6 +24,7 @@
 import unittest
 
 from omtests.qt4gui.dialogs.base_test_dialog import BaseTestDialog
+from omtests import skipUnlessConfigured
 
 from openmolar.qt4gui.dialogs.edit_referral_centres_dialog import \
     EditReferralCentresDialog
@@ -36,6 +37,7 @@ class TestDialog(BaseTestDialog):
 
     dl_class = EditReferralCentresDialog
 
+    @skipUnlessConfigured
     def test_exec(self):
         self.exec_()
 

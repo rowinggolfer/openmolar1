@@ -26,6 +26,7 @@ import unittest
 from PyQt5 import QtWidgets
 
 from omtests.qt4gui.dialogs.base_test_dialog import BaseTestDialog
+from omtests import skipUnlessConfigured
 
 from openmolar.qt4gui.dialogs.family_manage_dialog import _DuckPatient
 from openmolar.qt4gui.dialogs.family_manage_dialog import LoadRelativesDialog
@@ -39,6 +40,7 @@ class TestDialog(BaseTestDialog):
 
     dl_class = LoadRelativesDialog
 
+    @skipUnlessConfigured
     def test_exec(self):
         mw = QtWidgets.QWidget()
         mw.pt = _DuckPatient((1, "", "", "", "The Gables",
@@ -55,6 +57,7 @@ class TestDialog2(BaseTestDialog):
 
     dl_class = FamilyManageDialog
 
+    @skipUnlessConfigured
     def test_exec(self):
         mw = QtWidgets.QWidget()
         mw.pt = _DuckPatient((1, "", "", "", "The Gables",

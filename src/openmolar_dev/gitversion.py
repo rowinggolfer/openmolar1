@@ -23,10 +23,11 @@
 
 '''
 The versioning for openmolar is the classic MAJOR.MINOR.REVISION
-eg. v1.1.2
+modified according to PEP 440.
+eg. v1.1.dev2
 As git is the version control system, I achieve this via tagging.
 example for above would be git tag -a -m "message" v1.1
-and v1.1.2 would be 2 git commits (to the master branch) later.
+and v1.1.dev2 would be 2 git commits (to the master branch) later.
 '''
 
 import logging
@@ -52,7 +53,7 @@ if repo.description == "openmolar1":
         try:
             GIT_VERSION = "%s.%s" % m.groups()[:2]
             if m.groups()[2] is not None:
-                GIT_VERSION += ".%s-%s" % m.groups()[3:5]
+                GIT_VERSION += ".dev%s" % m.groups()[3]
         except AttributeError:
             LOGGER.warning("git tag not in format MAJOR.MINOR")
             GIT_VERSION = git_version

@@ -526,7 +526,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>769</width>
+                      <width>546</width>
                       <height>613</height>
                      </rect>
                     </property>
@@ -1898,7 +1898,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>751</width>
+                      <width>465</width>
                       <height>399</height>
                      </rect>
                     </property>
@@ -2200,7 +2200,7 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>765</width>
+                      <width>487</width>
                       <height>429</height>
                      </rect>
                     </property>
@@ -3373,8 +3373,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>559</width>
-                      <height>393</height>
+                      <width>98</width>
+                      <height>200</height>
                      </rect>
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_19"/>
@@ -3403,8 +3403,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>198</width>
-                      <height>393</height>
+                      <width>161</width>
+                      <height>192</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -3532,8 +3532,8 @@ Note - this will not remove items which are currently there. </string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>783</width>
-                      <height>411</height>
+                      <width>98</width>
+                      <height>28</height>
                      </rect>
                     </property>
                    </widget>
@@ -5209,6 +5209,7 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
       <string>Prompting Preferences</string>
      </property>
      <addaction name="actionCheck_Recall_Date_on_Exit_Record"/>
+     <addaction name="actionWatch_for_external_record_prompt"/>
     </widget>
     <addaction name="actionChange_Language"/>
     <addaction name="separator"/>
@@ -5528,6 +5529,17 @@ If the &quot;changes only&quot; checkbox is checked, only data which has been ch
    </property>
    <property name="text">
     <string>Check Recall Date on Exit Record</string>
+   </property>
+  </action>
+  <action name="actionWatch_for_external_record_prompt">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Watch for external record prompt</string>
    </property>
   </action>
  </widget>

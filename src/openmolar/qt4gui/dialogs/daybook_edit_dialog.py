@@ -83,7 +83,7 @@ class DaybookEditDialog(ExtendableDialog):
 
     def get_data(self):
         row = daybook.get_treatments(self.daybook_id)
-        for i, value in enumerate(row):
+        for i, value in enumerate(row or []):
             try:
                 line_edit = self.line_edits[KEYS[i]]
                 line_edit.setText(value.strip(" "))

@@ -24,6 +24,7 @@
 import unittest
 
 from omtests.qt4gui.dialogs.base_test_dialog import BaseTestDialog
+from omtests import skipUnlessConfigured
 
 from openmolar.qt4gui.dialogs.medical_form_date_entry_dialog import \
     MedFormDateEntryDialog
@@ -37,6 +38,7 @@ class TestDialog(BaseTestDialog):
     dl_class = MedFormDateEntryDialog
     reject = True
 
+    @skipUnlessConfigured
     def test_exec(self):
         self.exec_(1)
 

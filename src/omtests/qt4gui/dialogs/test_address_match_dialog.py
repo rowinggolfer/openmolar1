@@ -26,6 +26,7 @@ import unittest
 from PyQt5 import QtWidgets
 
 from omtests.qt4gui.dialogs.base_test_dialog import BaseTestDialog
+from omtests import skipUnlessConfigured
 
 from openmolar.settings import localsettings
 from openmolar.qt4gui.dialogs.family_manage_dialog import _DuckPatient
@@ -40,6 +41,7 @@ class TestDialog(BaseTestDialog):
     dl_class = AddressMatchDialog
     reject = True
 
+    @skipUnlessConfigured
     def setUp(self):
         localsettings.initiate()
         super().setUp()

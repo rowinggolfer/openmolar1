@@ -229,6 +229,8 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         self.ui.bulk_mailings_treeView.setModel(self.letters.bulk_model)
         self.ui.actionSurgery_Mode.setChecked(
             localsettings.station == "surgery")
+        self.record_prompt_file_watcher = QtCore.QFileSystemWatcher([
+            localsettings.RECORD_PROMPT_FILE])
         self.setupSignals()
         self.feestableLoaded = False
         self.ui.new_patient_frame.hide()
@@ -290,6 +292,8 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
         self.diary_widget.initiate()
         QtCore.QTimer.singleShot(12000, self.check_version)
         self.forum_widget.log_in_successful()
+        self.record_prompt_file_watcher.fileChanged.connect(
+            self.check_for_external_record_prompt)
 
     def check_first_run(self):
         '''
@@ -1297,7 +1301,8 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
     def getrecord(self,
                   serialno,
                   addToRecentSnos=True,
-                  newPatientReload=False):
+                  newPatientReload=False,
+                  autoload=False):
         '''
         a record has been called by one of several means
         '''
@@ -1345,8 +1350,14 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
 
         except localsettings.PatientNotFoundError:
             LOGGER.exception("Patient Not Found - %s", serialno)
-            self.advise(_("error getting serialno") + " %d - " % serialno +
-                        _("please check this number is correct?"), 1)
+            message = "%s %d <hr />%s" % (
+                _("error getting serialno"),
+                serialno, _("please check this number is correct?"))
+            if autoload:
+                self.home()
+                self.advise(message)
+            else:
+                self.advise(message, 1)
         except Exception as exc:
             LOGGER.exception("Unknown ERROR loading patient - serialno %s",
                              serialno)
@@ -3738,6 +3749,23 @@ class OpenmolarGui(QtWidgets.QMainWindow, Advisor):
             self.ui.set_location_button.setText(_("Location"))
             self.ui.set_location_button.setStyleSheet("")
         self.ui.statusbar.showMessage(message)
+
+    def check_for_external_record_prompt(self):
+        if self.ui.actionWatch_for_external_record_prompt.isChecked():
+            try:
+                with open(localsettings.RECORD_PROMPT_FILE, "r") as f:
+                    data = f.read()
+                    serialno = int(data)
+                    if serialno == -1:
+                        self.home()
+                    else:
+                        self.getrecord(serialno, autoload=True)
+            except:
+                LOGGER.exception(
+                    "unable to read %s", localsettings.RECORD_PROMPT_FILE)
+        else:
+            LOGGER.info("%s has changed, but user settings prevent record load",
+                localsettings.RECORD_PROMPT_FILE)
 
     def clear_locations(self):
         dl = ClearLocationsDialog(self)

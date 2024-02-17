@@ -287,7 +287,7 @@ class PhrasebookEditor(QtWidgets.QMainWindow):
             return True
         except Exception as exc:
             self.advise("<b>%s</b><hr />%s" % (
-                _("Phrasebook is not well formed"), exc.message), 2)
+                _("Phrasebook is not well formed"), str(exc)), 2)
         return False
 
     def check_validity(self):

@@ -25,8 +25,6 @@ import logging
 import re
 import socket
 import urllib.request, urllib.error, urllib.parse
-from xml.dom import minidom
-from xml.parsers.expat import ExpatError
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
@@ -38,36 +36,8 @@ from openmolar.qt4gui.dialogs.base_dialogs import BaseDialog
 
 LOGGER = logging.getLogger("openmolar")
 
-LOOKUP_URL = "http://www.psd.scot.nhs.uk/dev/simd/simdLookup.aspx"
-
-# here is the result when using this
-
-EXAMPLE_RESULT = '''
-    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head><title>
- SIMD Lookup for PSD
-</title></head>
-<body>
-    <form method="post" action="simdLookup.aspx?_=1348071532912&amp;pCode=IV2+5XQ" id="form1">
-<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUJODExMDE5NzY5D2QWAgIDD2QWAgIBDw8WAh4EVGV4dAUMU0lNRCBBcmVhOiA0ZGRkXUm1+PLLKbrXDulhPdHkxpJgof6hEmrnSC3uCZiOeQ0=" />
-    <div>
-        <span id="simd">SIMD Area: 4</span>
-    </div>
-    </form>
-</body>
-</html>
-'''
-
-HEADERS = {
-    'User-Agent': ('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 '
-                   '(KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11'),
-    'Accept':
-        'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-    'Accept-Encoding': 'none',
-    'Accept-Language': 'en-US,en;q=0.8',
-    'Connection': 'keep-alive'}
+LOOKUP_URL = "https://find-out-if-an-area-is-deprived.nss.nhs.scot/?postcode="
+ANSWER = "<span class=\"delta bold\">SIMD Area: (\d)</span>" 
 
 TODAYS_LOOKUPS = {}  # {"IV1 1PP": "SIMD Area: 1"}
 
@@ -151,14 +121,12 @@ class ChildSmileDialog(BaseDialog):
 
         self.header_label.setText(_("Polling website with Postcode"))
 
-        pcde = self.pcde.replace(" ", "%20")
-
-        url = "%s?pCode=%s" % (LOOKUP_URL, pcde)
+        url = LOOKUP_URL + self.pcde.replace(" ", "+")
 
         try:
             QtWidgets.QApplication.instance().setOverrideCursor(
                 QtCore.Qt.WaitCursor)
-            req = urllib.request.Request(url, headers=HEADERS)
+            req = urllib.request.Request(url)
             response = urllib.request.urlopen(req, timeout=20)
             result = response.read()
             self.result = self._parse_result(result)
@@ -180,12 +148,11 @@ class ChildSmileDialog(BaseDialog):
         self.header_label.setText("SIMD %d" % self.simd_number)
 
     def _parse_result(self, result):
-        try:
-            dom = minidom.parseString(result)
-            e = dom.getElementsByTagName("span")[0]
-            return e.firstChild.data
-        except ExpatError:
-            return "UNDECIPHERABLE REPLY"
+        match = re.search(ANSWER, str(result))
+        if match:
+            return match.group(1)
+        else:
+            return "Unknown"
 
     def manual_entry(self):
         dl = QtWidgets.QInputDialog(self)
@@ -288,7 +255,7 @@ if __name__ == "__main__":
     ui.addNewNote = _mock_function
 
     dl = ChildSmileDialog(ui)
-    # print dl._parse_result(EXAMPLE_RESULT)
+
     if dl.exec_():
         print((dl.result))
         print((dl.simd_number))

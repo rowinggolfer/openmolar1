@@ -64,7 +64,7 @@ class MessagePopup(QtWidgets.QWidget):
             height = pic_height
         height += padding * 2
 
-        self.setFixedSize(width, height)
+        self.setFixedSize(int(width), int(height))
 
         # values required at painttime.
         self.rect_f = QtCore.QRectF(0, 0, width, height)
@@ -100,7 +100,7 @@ class MessagePopup(QtWidgets.QWidget):
         w = 300
         if self.parent() is not None:
             if self.parent().width() > w * 4:
-                w = self.parent().width() / 4
+                w = self.parent().width() // 4
         return w
 
     def toggleMouseEvents(self, off=True):

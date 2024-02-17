@@ -38,12 +38,14 @@ LOGGER = logging.getLogger("openmolar")
 if platform.system() == "Windows":
     DEFAULT_MO_PATH = os.path.join(os.environ.get("APPDATA", ""),
                                    "openmolar", "default.mo")
-    LOCALEDIR = os.path.join(os.environ.get("ProgramFiles", ""),
-                             "openmolar", "locale")
+    SHARE_DIR = os.path.join(os.environ.get("ProgramFiles", ""),
+                                 "openmolar")
+    L10N_DIR = os.path.join(SHARE_DIR, "locale")
 else:
     DEFAULT_MO_PATH = os.path.join(os.path.expanduser("~"),
                                    ".openmolar", "default.mo")
-    LOCALEDIR = None
+    SHARE_DIR = "/usr/share/openmolar"
+    L10N_DIR = "/usr/share/locale"
 
 class MyFormatter(logging.Formatter):
     '''
@@ -121,7 +123,7 @@ def initialise_translation():
             try:
                 LOGGER.debug("trying to install your environment language %s",
                              lang)
-                lang1 = gettext.translation('openmolar', localedir=LOCALEDIR,
+                lang1 = gettext.translation('openmolar', localedir=L10N_DIR,
                                             languages=[lang, ])
                 lang1.install()
                 LOGGER.debug("Language succesfully installed")
@@ -141,4 +143,4 @@ initialise_translation()
 try:
     _("Find")
 except NameError:
-    gettext.install('openmolar', localedir=LOCALEDIR)
+    gettext.install('openmolar', localedir=L10N_DIR)

@@ -178,7 +178,7 @@ class monthCalendar(QtWidgets.QWidget):
         calculate how much space we need to display the data
         '''
         self.defaultColWidth = (self.width() - self.bankHolColwidth -
-                                self.vheaderwidth) / self.colNo
+                                self.vheaderwidth) // self.colNo
 
         vheaders_total = self.bankHolColwidth + self.vheaderwidth
         dentwidth = 0
@@ -191,7 +191,7 @@ class monthCalendar(QtWidgets.QWidget):
 
         # if there is space, fill it up....
         if self.width() > minrequiredWidth:
-            factor = (self.width() - vheaders_total) / (dentwidth)
+            factor = (self.width() - vheaders_total) // (dentwidth)
 
             for dent in self.dents:
                 self.dentColWidths[dent] = self.dentColWidths[dent] * factor
@@ -268,7 +268,7 @@ class monthCalendar(QtWidgets.QWidget):
         self.rowNo = calendar.monthrange(self.year, self.month)[1] + 2
 
     def getDateFromPosition(self, xpos, ypos):
-        rowheight = self.height() / self.rowNo
+        rowheight = self.height() // self.rowNo
         day = int(ypos // rowheight) - 1
         try:
             d = datetime.date(self.year, self.month, day)
@@ -359,7 +359,7 @@ class monthCalendar(QtWidgets.QWidget):
         painter = QtGui.QPainter(self)
         painter.setFont(self.font)
 
-        rowHeight = self.height() / (self.rowNo)
+        rowHeight = self.height() // (self.rowNo)
 
         # HEADER ROW - the month and year, highlighted
         painter.setBrush(self.palette().highlight())
@@ -599,7 +599,7 @@ class yearCalendar(QtWidgets.QWidget):
         self.startDOW = startday
 
     def getDateFromPosition(self, xpos, ypos):
-        rowheight = self.height() / 13
+        rowheight = self.height() // 13
         month = int(ypos // rowheight)
         if 0 < month < 13:
             day = (xpos - self.vheaderwidth) // self.columnWidth
@@ -694,9 +694,9 @@ class yearCalendar(QtWidgets.QWidget):
         painter = QtGui.QPainter(self)
         painter.setFont(self.font)
 
-        rowHeight = self.height() / 13
+        rowHeight = self.height() // 13
 
-        self.columnWidth = (self.width() - self.vheaderwidth) / self.columnNo
+        self.columnWidth = (self.width() - self.vheaderwidth) // self.columnNo
 
         for month in range(13):
             rect = QtCore.QRectF(0, month * rowHeight, self.vheaderwidth,
@@ -827,12 +827,12 @@ class yearCalendar(QtWidgets.QWidget):
                                 painter.setBrush(QtCore.Qt.blue)
                                 painter.setPen(QtCore.Qt.blue)
                                 topleftX = rect.topLeft().x() +\
-                                    rect.width() / 2
+                                    rect.width() // 2
 
                                 topY = rect.topLeft().y() + 2
                                 rightX = rect.topRight().x()
                                 bottomrightY = rect.topRight().y() +\
-                                    rect.width() / 2
+                                    rect.width() // 2
 
                                 shape = QtGui.QPolygon()
                                 shape.setPoints([topleftX, topY,

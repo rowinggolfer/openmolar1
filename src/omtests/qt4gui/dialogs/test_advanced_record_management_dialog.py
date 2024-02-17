@@ -24,6 +24,7 @@
 import unittest
 
 from omtests.qt4gui.dialogs.base_test_dialog import BaseTestDialog
+from omtests import skipUnlessConfigured
 
 from openmolar.settings import localsettings
 from openmolar.dbtools.patient_class import patient
@@ -38,6 +39,7 @@ class TestDialog(BaseTestDialog):
 
     dl_class = AdvancedRecordManagementDialog
 
+    @skipUnlessConfigured
     def setUp(self):
         localsettings.initiate()
         super().setUp()

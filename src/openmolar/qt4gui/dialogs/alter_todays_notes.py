@@ -76,7 +76,7 @@ class AlterTodaysNotesDialog(BaseDialog):
         try:
             self.patient_label.setText(db_patients.name(self.sno))
         except localsettings.PatientNotFoundError as exc:
-            QtWidgets.QMessageBox.warning(self, "Error", exc.message)
+            QtWidgets.QMessageBox.warning(self, "Error", str(exc))
 
     def show_phrasebook(self):
         dl = PhraseBookDialog(self)

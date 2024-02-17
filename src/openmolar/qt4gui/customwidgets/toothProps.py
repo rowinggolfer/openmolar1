@@ -812,15 +812,14 @@ class Tooth(QtWidgets.QWidget):
         self.shapes()
 
     def shapes(self):
-        self.toothRect = QtCore.QRectF(0, 0, self.width(), self.height())
-        irw = self.toothRect.width() * \
-            0.25  # inner rectangle width
+        self.toothRect = QtCore.QRect(0, 0, self.width(), self.height())
+        irw = self.toothRect.width() // 4 # inner rectangle width
         if self.isBacktooth:
-            irh = self.toothRect.height() * \
-                0.25  # backtooth inner rectangle height
+            # backtooth inner rectangle height
+            irh = self.toothRect.height() // 4
         else:
-            irh = self.toothRect.height() * \
-                0.40  # fronttooth inner rectangle height
+            # fronttooth inner rectangle height
+            irh = self.toothRect.height() * 2 // 5
         self.innerRect = self.toothRect.adjusted(irw, irh, -irw, -irh)
 
         self.mesial = QtGui.QPolygon()

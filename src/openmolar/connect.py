@@ -54,7 +54,6 @@ class Signaller(QtCore.QObject):
     message_signal = QtCore.pyqtSignal(object, object)  # message, severity
     connection_signal = QtCore.pyqtSignal()
 
-
 class Connection(object):
     '''
     an object for communicating with the database and alerting the
@@ -72,12 +71,24 @@ class Connection(object):
         self.db_name = ""
         self.password = ""
         self.subprocs = []
-        self.signaller = Signaller()
+        self._signaller = None
         self.attempts = 0
         try:
             self.reload()
         except IOError:
             LOGGER.warning("no such file exists %s", localsettings.cflocation)
+
+    @property
+    def signaller(self):
+        try:
+            # signaller is vulnerable to garbage collection
+            # in the context of unittesting the application
+            s = self._signaller or Signaller()
+        except RuntimeError:
+            s = Signaller()
+        finally:
+            self._signaller = s
+            return s
 
     def __del__(self):
         self.kill_subprocs()

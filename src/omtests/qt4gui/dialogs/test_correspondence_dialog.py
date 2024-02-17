@@ -24,6 +24,7 @@
 import unittest
 
 from omtests.qt4gui.dialogs.base_test_dialog import BaseTestDialog
+from omtests import skipUnlessConfigured
 
 from openmolar.dbtools import standard_letter
 from openmolar.qt4gui.dialogs.correspondence_dialog import CorrespondenceDialog
@@ -36,6 +37,7 @@ class TestDialog(BaseTestDialog):
 
     dl_class = CorrespondenceDialog
 
+    @skipUnlessConfigured
     def test_exec(self):
         self.exec_(standard_letter._test())
 

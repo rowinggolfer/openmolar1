@@ -52,6 +52,7 @@ from PyQt5.Qt import PYQT_VERSION_STR
 OM_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "src")
 sys.path.insert(0, OM_PATH)
 
+from openmolar import SHARE_DIR, L10N_DIR
 from openmolar.settings import version
 
 VERSION = version.VERSION
@@ -59,7 +60,7 @@ RESOURCE_FILE = os.path.join(OM_PATH, "openmolar", "qt4gui", "resources_rc.py")
 
 DATA_FILES = []  # warning if DATA_FILES == [], install_data doesn't get called
 
-# il8n_DIR refers to the location in which compiled gettext translation files
+# L10N_DIR refers to the location in which compiled gettext translation files
 # are put during install.
 # on linux systems, the default location is /usr/share/locale
 # On Windows the default gettext path is within the python path
@@ -68,12 +69,8 @@ DATA_FILES = []  # warning if DATA_FILES == [], install_data doesn't get called
 # directory.
 
 if platform.system() == 'Windows':
-    RESOURCES_DIR = os.path.join(os.environ.get("ProgramFiles"), "openmolar")
-    il8n_DIR = os.path.join(RESOURCES_DIR, "locale")
     SCRIPTS = ['win_openmolar.pyw']
 else:
-    RESOURCES_DIR = os.path.join("/usr", "share", "openmolar")
-    il8n_DIR = os.path.join("/usr", "share", "locale")
     for dir_, files in (('share/icons/hicolor/scalable/apps',
                          ['bin/openmolar.svg']),
                         ('share/applications', ['bin/openmolar.desktop']),
@@ -82,14 +79,10 @@ else:
     SCRIPTS = ['openmolar']
 
 
-DATA_FILES.append(
-    (os.path.join(RESOURCES_DIR, "locale", "sources"),
-     [os.path.abspath(p) for p in glob.glob('src/openmolar/locale/*.po*')]))
-
 for root, dirs, files in os.walk(os.path.abspath('src/openmolar/resources')):
     rootdirs = root.split(os.path.sep)
     subdirs = rootdirs[rootdirs.index("resources"):]
-    dest_dir = os.path.join(RESOURCES_DIR, *subdirs)
+    dest_dir = os.path.join(SHARE_DIR, *subdirs)
     DATA_FILES.append((dest_dir, [os.path.join(root, f) for f in files]))
 
 
@@ -453,7 +446,7 @@ class InstallData(install_data):
             for file_ in files:
                 if file_ == "openmolar.mo":
                     lang = os.path.split(root)[1]
-                    destdir = os.path.join(il8n_DIR, lang, "LC_MESSAGES")
+                    destdir = os.path.join(L10N_DIR, lang, "LC_MESSAGES")
                     mo_file = os.path.join(root, file_)
                     i18nfiles.append((destdir, [mo_file]))
 
@@ -473,10 +466,10 @@ class Test(Command):
         pass
 
     def run(self, *args, **kwargs):
-        loader = unittest.TestLoader()
+        loader = unittest.defaultTestLoader
         tests = loader.discover(start_dir="src")
-        result = unittest.TestResult()
-        tests.run(result)
+        runner = unittest.TextTestRunner()
+        result = runner.run(tests)
         print(result)
 
 
@@ -501,10 +494,10 @@ class Mock(Command):
             print(folder)
             for file_ in files:
                 print("\t%s" % file_)
-        print("\n---- RESCOURCES_DIR ----")
-        print(RESOURCES_DIR)
-        print("\n---- il8n_DIR ----")
-        print(il8n_DIR)
+        print("\n---- SHARE_DIR ----")
+        print(SHARE_DIR)
+        print("\n---- L10N_DIR ----")
+        print(L10N_DIR)
         print("\n---- SCRIPTS ----")
         print(SCRIPTS)
 

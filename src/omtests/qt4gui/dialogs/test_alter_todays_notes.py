@@ -25,6 +25,7 @@ import unittest
 
 from openmolar.settings import localsettings
 from omtests.qt4gui.dialogs.base_test_dialog import BaseTestDialog
+from omtests import skipUnlessConfigured
 
 from openmolar.qt4gui.dialogs.alter_todays_notes import AlterTodaysNotesDialog
 
@@ -37,6 +38,7 @@ class TestDialog(BaseTestDialog):
     dl_class = AlterTodaysNotesDialog
     reject = True
 
+    @skipUnlessConfigured
     def setUp(self):
         localsettings.initiate()
         localsettings.operator = "NW"

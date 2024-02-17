@@ -24,6 +24,7 @@
 import unittest
 
 from omtests.qt4gui.dialogs.base_test_dialog import BaseTestDialog
+from omtests import skipUnlessConfigured
 
 from openmolar.dbtools import patient_class
 from openmolar.qt4gui.dialogs.print_record_dialog import PrintRecordDialog
@@ -40,6 +41,7 @@ class TestDialog(BaseTestDialog):
     def setUp(self):
         super().setUp()
 
+    @skipUnlessConfigured
     def test_exec(self):
         pt = patient_class.patient(10781)
         self.exec_(pt, "file:///home/neil/chart.png", None)
